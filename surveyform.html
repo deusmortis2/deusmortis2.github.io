@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Survey Form</title>
+  </head>
+
+  <body>
+    <header>
+      <h1 id="title">Rate My Teaching Survey Form</h1>
+      <p id="description">Thank you for taking the time to input on my teaching practices.</p>
+    </header>
+    <main>
+    <form id="survey-form">
+    <fieldset>
+    <legend>Personal Information</legend>
+    <label for="name" id="name-label">Name (required):</label>
+    <input required id="name" name="name" placeholder="Ex. John Doe" type="text">
+    <br>
+    <label for="email" id="email-label">Email address (required): </label>
+    <input required id="email" type="email" name="email" placeholder="Ex. sample@email.com">
+    <br>
+    <label for="number" id="number-label">Age (optional):</label>
+    <input id="number" type="number" name="number" min="3" max="100" placeholder="Ex. 41">
+    </fieldset>
+    <br>
+    <fieldset>
+    <legend>Notes</legend>
+    <label for="dropdown">Which of the following would you prefer to learn from for the main lesson ideas?</label>
+    <select id="dropdown">
+    <option value="default">Please choose one of these options</option>
+    <option value="doccamera">Write Notes with Document Camera</option>
+    <option value="movie">Watch a Video from an Expert</option>
+    <option value="quizizz">Do a quizizz presentation</option>
+    <option value="peardeck">Do a Peardeck presentation or Powerpoint</option>
+    </select>
+    </fieldset>
+    <br>
+    <fieldset>
+      <legend>Warm Up</legend>
+      <label for="radio">What is your preferred style of warm up?</label><br>
+      <input class="radio" id="blooket" type="radio" name="radio" value="blooket" />
+      <label for="blooket">Blooket</label>
+      <input class="radio" id="worked" type="radio" name="radio" value="worked"/>
+      <label for="worked">Pre-worked examples</label>
+      <input class="radio" id="student" type="radio" name="radio" value="student"/>
+      <label for="student">Student worked examples</label>
+      <input class="radio" id="teacher" type="radio" name="radio" value="teacher"/>
+      <label for="teacher">Teacher explained</label>
+    </fieldset>
+    <br>
+    <fieldset>
+      <legend>Practice</legend>
+      <p>Which of the following would you like to see more of for practicing problems?</p>
+      <input type="checkbox" id="around" name="around" value="around" />
+          <label for="around">Working problems around the room</label>
+      <input type="checkbox" id="ind" name="ind" value="ind" />
+          <label for="ind">Indepenendent practice</label>
+      <input type="checkbox" id="stations" name="stations" value="stations" />
+          <label for="stations">Stations</label>
+      <input type="checkbox" id="sirius" name="sirius" value="sirius">
+          <label for="sirius">Sirius</label>
+    </fieldset>
+    <br>
+    <fieldset>
+            <label for="comments">Is there anything else that you would like to see changed or improved?</label>
+        <textarea cols="80" rows="10" name="comments" id="comments"></textarea>
+    <br>
+    <button type="submit" id="submit">Submit</button> 
+    </form>
+    </main> 
+    <footer>
+    <br>
+     
+     <br>
+     <br>
+     <a href="htmlworkshops.html">Return to Previous Page</a>
+     <a href="index.html">Return Home</a>
+    </footer>
+  </body>
+</html>

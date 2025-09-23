@@ -185,8 +185,57 @@
                 </li>
                 <li>
                     <h4>What Are Some Common Accessibility Auditing Tools to Use?</h4>
-                    <p>
+                    <p> Accessibility auditing tools like google lighthouse can be used to find ways to improve accessibility, but should not be depended upon solely. You can use it by pressing F12 in your devtools. You can also use pagespeed.web.dev as a web source, WAVE, IBM equal accessibility checker.</p>
+                </li>
+                <li>
+                    <h4>How Does Proper Heading Level Structure Affect Accessibility?</h4>
+                    <p>Proper headings give structure as far as how to navigate a website. They should present a logical flow from 1-6. Use clear descriptive text</p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Tables and Accessibility?</h4>
+                    <p>Talks about how tables may be harder to navigate for people with disabilities. Talks about how you need to use a caption items so users can understand purpose and content. Talks about how using the scope attribute to distinguish between row headers or column headers. </p>
+                </li>
+                <li>
+                    <h4>Why Is It Important for Inputs to Have an Associated Label?</h4>
+                    <p>Talks about importance of labels to input fields. Proper labels also benefits SEO. </p>
+                </li>
+                <li>
+                    <h4>What Is the Purpose of WAI-ARIA, and How Does It Work?</h4>
+                    <p>WAI-ARIA = Web Accessibility Initiatve - Accessible Rich Internet Applications. It works by a set of attributes you can add to elements to provide semantic information. Aria-labelledby attribute lets you connectan element to a specific label.</p>
+                </li>
+                <li>
+                    <h4>What Are ARIA Roles?</h4>
+                    <p> ARIA Accessible Rich Internet Applications. They specify the semantic meaning of html elements. To specify the ARIA role of an element use the role attribute like role="aria role". 6 categories - Document Structure Roles, Widget Roles, LandMark Roles, Live Region Roles, Window Roles, Abstract Roles. </p>
+                    <p>Document Structure Roles - define structure of a webpage. Specify roles that dont have semantic elements such as toolbar, tooltip, feed, math, presentation, note. Widget roles are scrollbar, searchbox, separator, slider, spinbutton, switch, tab, tabpanel,treeitem. Landmarks classify and label primary sections ex. banner, complementary, contentinfo, form, main, navigation, region, search. Live Regions define elements that change dynamically including alert, log, maruqee, status, timer. Window Roles - alertdialog and dialog it is considered best practice to use dialog and the JavaScript methods. Abstract roles help organize a document.  </p>
+                </li>
+                <li>
+                    <h4>What Are the Roles of the area-label and aria-labelledby Attributes?</h4>
+                    <p>Aria-label is for interactive elements it adds a text label that screen readers can read. Aria Labeledby does the same thing but you use texst that already exists on the page. Dangers of labeledby over label - sometimes its not translated. It can provide a mismatch between the label text and the invisible label. It can create complex invisible labels. Never use both together.</p>
+                </li>
+                <li>
+                    <h4>What is the aria-hidden Attribute, and How Does It Work?</h4>
+                    <p>Aria hidden is good for when you want to display content but keep it hidden from screen readers. Good for icons and images for decoration, and duplicated content. Never use hidden on something that is focusable with a keyboard. Hidden is not necessary when already using a hidden attribute, if it is display none or visibility hidden. </p>
+                </li>
+                <li>
+                    <h4>What is the aria-describedby Attribute, and How Does It Work? </h4>
+                    <p>Provides additional information about an element by referencing content on the page. Most common uses associating instructions or error messages with form inputs. Such as password requirements or warnings about deletion. </p>
+                </li>
+                <li>
+                    <h4>When Is the alt Attribute Needed, and What Are Some Examples of Good Alt Text?</h4>
+                    <p>Stresses that alt texts are the only way that people with disabilities will understand an image. alt texts need to be extra descriptive to give a visual of important images. Alt text needs to be short but detailed enough to understand the image. Don't describe all details, if there is similar text don't write it twice, end alt text with period. If its just for decoration you can have a null alt. </p>
+                </li>
+                <li>
+                    <h4>What Are the Accessibility Benefits for Good Link Text, and What are Examples of Good Link Text?</h4>
+                    <p>Helps users to know how to find information quickly. Make sure links are visually distinct, avoid generic links, aim for concise descriptive links, don't repeat the same link text for different places,  make it make sense. 
                     </p>
+                </li>
+                <li>
+                    <h4>What Are Good Ways to Make Audio and Video Content Accessible?</h4>
+                    <p>You can add captions or subtitles to content by using the track element inside your video or audio elements. Kind attribute is used to tell how the track element shoudl be used valid values include captions, subtitles, chapters, and metadata. Providing a transcript is also important you can add these below the content. Some places have automatic captions like youtube or vimeo, but you can also use veed, rev, amara, descript. </p>
+                </li>
+                <li>
+                    <h4>What Are Some Ways to Make Web Applications Keyboard Accessible?</h4>
+                    <p>Tab index can help to change focus order.  Accesskey will make activation easier. </p>
                 </li>
                 </ul>
             </ol>

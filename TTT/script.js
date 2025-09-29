@@ -23,6 +23,10 @@ function creatGrid() {
 
 function handleCellClick(index) {
     if (!gameActive || cells[index].textContent) return;
+    let questionAnswer = prompt("What is 1 + 1 ");
+        if (questionAnswer !== 2) {
+            gameActive = false;
+        }
     cells[index].textContent = currentPlayer;
     cells[index].classList.add('disabled');
 

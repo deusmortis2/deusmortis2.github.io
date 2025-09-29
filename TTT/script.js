@@ -23,7 +23,7 @@ function creatGrid() {
 
 function handleCellClick(index) {
      let questionAnswer = prompt("What is 1 + 1 ");
-    if (questionAnswer !== 2) {
+    if (questionAnswer !== "2") {
             gameActive = false;
         }
     if (!gameActive || cells[index].textContent) return;

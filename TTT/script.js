@@ -27,7 +27,7 @@ function handleCellClick(index) {
             gameActive = false;
         }
     if (!gameActive || cells[index].textContent) return;
-    }
+    
         
     cells[index].textContent = currentPlayer;
     cells[index].classList.add('disabled');

@@ -100,8 +100,16 @@
                 <li>
                     <h4>What is ASCII, and How Does It Work with charCodeAt() and fromCharCode()?</h4>
                     <p>
-                        
-                    </p>
+                        ASCII (*AMerican Standard Code for Information Interchange) is a character encoding standard that assigns a numeric value to each character. Example A is 65, a is 97. The ASCII standard covers 128 characters including A-Z,a-z, 0-9, common punctuation, and control characters.</p><br>
+                    <p>You can easily access teh code of a character by using charCodeAt(). This method will call a string and return the ASCII code of the character at a specified index (console.log(letter.charCodeAt(0)). fromCharCode() will let you do the opposite, convert ASCII code to the character. This can be useful to check cases and to dynamically generate characters. </p>
+                </li>
+                <li>
+                    <h4>How Can You Test if a String Contains a Substring?</h4>
+                    <p>A substring is a smaller part of a string. You can check whether input has a specific word or character by using the includes() method. This method will return a boolean. Includes is case sensitive, and you can also test if it starts at a specific index using the second parameter. Ex. let result = text.includes("JavaScript", 7);</p>
+                </li>
+                <li>
+                    <h4>How Can You Extract a Substring from a String?</h4>
+                    <p>IF you want to take a certain substring from a larger string you can use the slice() method. This does not modify the original string but lets you take just a part (string.slice(startIndex, endIndex);. The endIndex part is optional, because it will go to the end of the string without it. </p>
                 </li>
                 </ol>
   </main>

@@ -1,0 +1,91 @@
+.radio-group {
+  position: flex;
+}
+
+body {
+  background-image: radial-gradient(circle at bottom right, midnightblue, black);
+}
+
+.container {
+  margin: 10% auto;
+  item-align: left;
+  text-align: left;
+  background-color: lightgray;
+  padding: 1%;
+  color: black;
+  width: calc(80vw - 2px);
+  border-radius: 10px;
+  line-height: 1.5;
+  box-shadow: 0 4px 8px darkgray;
+}
+
+#name, #email {
+width: 93.5%;
+}
+
+.text {
+  width: 90%;
+}
+#position {
+  width: 94.2%;
+}
+
+input {
+  margin-bottom: .5%;
+}
+
+fieldset {
+  margin: 10px 0;
+  width: 91.8%;
+}
+
+form {
+  padding: 2.3em;
+}
+
+textarea {
+  padding: .5%;
+}
+
+#message {
+  width: 93.35%;
+}
+
+#submit {
+  item-align: left;
+  text-align: center;
+  width: 94.5%;
+}
+
+h1 {
+  margin-bottom: 0;
+  text-align: center;
+}
+input:focus, textarea:focus {
+  border-color: orange;
+}
+
+input:invalid, select:invalid, textarea:invalid {
+  border-color: red;
+}
+
+input:valid, select:valid, textarea:valid {
+  border-color: green;
+}
+button:hover {
+  background-color: darkgray;
+}
+
+.radio-group input[type="radio"]:checked {
+border-color: blue;
+box-shadow: 0 4px 8px blue;
+background-color: blue;
+}
+
+.radio-group input[type="radio"]:checked + label {
+  color: blue;
+}
+
+input:first-of-type {
+  border-radius: 5px;
+}

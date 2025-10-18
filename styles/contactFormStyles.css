@@ -1,0 +1,37 @@
+.form-container {
+  background-color: hsl(195, 90%,90%);
+  border-radius: 5px;
+  padding: 1rem;
+  width: 80%;
+  margin: 0 auto;
+  display: block;
+}
+
+label {
+  display: block;
+  margin: 1rem auto;
+  color: midnightblue;
+}
+
+input, textarea {
+  display: block;
+  width: 90%;
+  padding: .3rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  align-items: center;
+  margin: 0 47% 0;
+  background: linear-gradient(to right, midnightblue, navy, steelblue);
+  color: palegoldenrod;
+  font-size: 1.3em;
+}
+
+button:hover {
+  background: linear-gradient(to left, midnightblue, navy, steelblue);
+}
+
+h1, h2 {
+  text-align: center;
+}

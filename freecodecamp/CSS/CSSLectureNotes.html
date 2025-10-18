@@ -498,7 +498,28 @@
                     </p>
                 </li>
             </section>
-
+            <section id="bestPracticeStylingForms">
+                <li>
+                    <h4>What Are Some Best Practices for Styling Text Inputs?</h4>
+                    <p>
+                        You should make sure all text elements are accessible. Its important to remember the placeholder and make its text readable. Also make sure you have a noticeable focus indicator. Make sure there is an invalid indicator too. 
+                    </p>
+                </li>
+                <li>
+                    <h4>When Should You Use appearance: none to Deal with Issues Styling Search Inputs and Checkboxes?</h4>
+                    <p>
+                        Browsers apply a lot of default styles and with input elements your ability to style them may feel restricted. You may want to use appearance:none to remove the default and build your own. WebKit based browsers will shwo a default search icon and cancel button. Hiding these will allow you to create your own indicators. 
+                        Webkit is a software engine that helps browsers display websites. Safari uses webkit to make sure pages look and work correctly. However make sure that the user doesn't lose functionality in states like focus etc. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Common Issues When Styling Special Input Elements?</h4>
+                    <p>
+                        datetime-local and color inputs are special inputs that rely on complex pseudo elements to create the date and color pickers. The default styling is entirely browser dependent so it may look completely different on different browsers. Also the pseudo elements are complex like date selector there is a lot of moving parts. If you choose to manually style, you may lose important
+                        functionality. For these reeasons many developers rely on JavaScript libraries instead of the brwoser's built in components. 
+                    </p>
+                </li>
+            </section>
         </ol>
         </main>
         <a href="../freecodecamp.html">Return Home</a>

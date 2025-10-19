@@ -520,6 +520,59 @@
                     </p>
                 </li>
             </section>
+            <section id="boxmodel">
+                <li>
+                    <h4>What is Overflow in CSS, and How Does It Work?</h4>
+                    <p>
+                        Overflow refers to the way elements handle content that exceeds the size of the container. Div element text can overflow outside of the borders of the element. There are properties that can be manipulated to change this overflow-y and overflow-x. You can set this to things like hidden or scroll, where scroll will allow you to view it by scrolling.
+                        It's considered best practice to use vertical scrolling, but horizontal scrolling is not recommended. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the CSS Transform Property, and How Does It Work?</h4>
+                    <p>
+                        The CSS transform property allows to modify the visual presentation of elements. It allows you to apply transformations such as rotating, scaling, skewing, or translating. You can do this by doing something like transform: translate(50px,100px); which would move it 50 to the right and 100 pixels down. There is also rotate and scale which an example
+                        would be transform: scale(1.5,2); which would make it 1.5 times wider and 2xs taller. You can combine multiple translations in a single transform with () parameters for each. Transform does present some accessibility issues, screen readers may not properly utilize the transformations. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the CSS Box Model, and How Does It Work? </h4>
+                    <p>
+                         CSS box model is a fundamental concept. If you understand this model you will be able to control size, spacing and appearance of elements. In the CSS box model everything is surrounded by a box. This consists of 4 elements: content, padding, border, margin. Content area is the innermost space of the box. Padding outside of that, then border, then margin. 
+                        You can set a lot in shorthand border, but if you want specific you can use border-width, border-style, border-color. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is Margin Collapsing, and How Does It Work?</h4>
+                    <p>
+                        Margin collapsing is a fundamental concept of CSS but basically when 2 elements overlap they take the larger value and not add them. For example an element wiht margin bottom of 20px that is directyl above a margin top of 30 px is not 50 px of margin, its just 30px. You can use a padding sometimes to stop a parent and child from collapsing and get the full
+                    sum of the margins of both elements. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Different Between content-box and border-box?</h4>
+                    <p>
+                        Box-sizing can be set to either content-box or border-box to control how the width and height of elements are calculated. This can also be used as a universal selector *. The value of box-sizing is content-box by default. In the content box model the width and height you set for an element determines the dimensions of the content area, but they do not include
+                        padding, border, or margin. To find the actual dimensions of the element you will still have to add in your padding, orders, etc. In border-box the width and height include the content area, padding, and border but they do not include the margin. You should use border box when you need to keep a fixed element size. It is also helpful in responsive web design. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is a CSS Reset, and What Are Some Common Examples?</h4>
+                    <p>
+                        CSS reset is a stylesheet that removes all of the default formatting of web browsers for HTML elements. You may also notice that not all default styles are the same across browsers. There are 2 approaches: either define custom CSS resets, or use a third party reset. Custom CSS resets are stylesheets you create to fit the needs of the specific project. You may see
+                        something like * {margin:0} in order to take away all margins before styling. This can take time which is where third party resets come into play like Normalize.css. This takes many of the default HTML styles out and keeps some useful ones esp for accessibility. You could also use sanitize.css which is a third party library that will default behavior across all major 
+                        browsers. You should also take accessibility into account and realize the third party may not be helpful, and it also may impact peformance. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the CSS Filter Property, and What Are Common Examples?</h4>
+                    <p>
+                        The filter property allows you to apply graphical effects to elements. It can create blurring, color shifting, and contrast adjustments. example woudl be like filter: blur(5px); This CSS will apply a 5 pixel blur to elements. You can also use brightness and make something have more contrast by setting it less than 100% and more bright by going over 100%. You can use the 
+                        grayscale function to make elements grayscale. The amount is defined as a percentage where 100% is complete grayscale and 0% leaves it unscathed. You can apply the sepia property to give a vintage or old timey look, which also uses a % value. You can also use hue-rotate to change the color to another color within a set degree value on the color wheel. You can apply multiple
+                        properties with the same filter element like filter: contrast(150%) brightness(110%) sepia(30%); There are a few more in contrast, invert, and saturate.  
+                    </p>
+                </li>
+            </section>
         </ol>
         </main>
         <a href="../freecodecamp.html">Return Home</a>

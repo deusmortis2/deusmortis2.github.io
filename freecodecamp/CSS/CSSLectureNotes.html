@@ -668,31 +668,37 @@
                 <li>
                     <h4>What Are Common Use Cases for Using Floats, and How Do They Work?</h4>
                     <p>
-
+                        Floats in CSS are a technique originally designed  to allow text to wrap around an element. Over time, people found new ways to use floats applying them to layout designs in creative ways. Modern layout methods like flexbox and grid are now more commonly used. When an element is floated it's taken out of the normal document flow and pushed to the left or right of its container. The content will wrap around
+                        the floated element. This technique is used when articles and blogs need to put images alongside text. Floats were formerly popular for creating multi column layouts before flex/grid. By floating elements next to each other developers could create columns that aligned horizontally. The clearfix technique is a for handling collapsing parent elements when children float. ::after pseudo element that adds an invisible block of code after the container. 
+                        Content: "" ensures the element is present but doesn't display content.  Display-block, makes the element a block level element. clear:both, ensures the pseudo element clears both sides of floating element above. The clearfix technique ensures the parent element wraps properly. Clearfix forces the container to see the children after the floated content. Float is still used for wrapping images and working on legacy projects.
                     </p>
                 </li>
                 <li>
                     <h4>What is Relative Positioning, and How Does This Differ from the Default Static Positioning?</h4>
                     <p>
-
+                        There are 2 kinds of positioning static and relative. Static is the default which mneans they follow the normal document flow one after another from top to bottom left to  right. Static positioning is the default and doesn't require declaring. When rendering the browser the element will appear in its natural position, following normal document flow. Relative positioning on the other hand allows an element  to be shifted
+                        within the flow by giving the elements new coordinates. Relative positioning is useful when you want to move an element slightly without changing the rest of the layout. 
                     </p>
                 </li>
                 <li>
                     <h4>What is Absolute Positioning, and How Does It Work?</h4>
                     <p>
-
+                        Absolute positioning allows you to take an element out of the normal document flow, making it behave independently. When an element is absolute positioned, it has its own layer this is useful for modals, tooltips, dropdown menus, etc. Absolute elements are placed relative to the closest positioned ancestor. If none is found, the element will be positioned relative to the containing block or browser viewport. You can move
+                        the element around using the top bottom left right properties to show how far it should be from its containing element. Ex. position: absolute; top 30px; left 30px; this is 30 away from the top and 30 away from the left of its container. Absolute positioning is very useful for things that are supposed to overlap the rest of the content like a modal or overlay. It can also create gaps or cause element collapse when not proper.
                     </p>
                 </li>
                 <li>
                     <h4>What Is Fixed and Sticky Positioning, and How Does It Differ From Absolute Positioning?</h4>
                     <p>
-
+                        Fixed and Sticky positioning are two important CSS strategfies, each offering distinct behaviors in comparison to absolute. when something is position: fixed it is removed from the flow and placed relative to the viewport. This means it will stay in the same place even if the user scrolls. This is typically used for navigation bars and headers. The position:sticky property behaves like a hybrid ebtween relative and fixed positioning.
+                        The element will behave with the normal flow of the document until the user scrolls past a point, then it will stick to the viewport usually the top. Absolute removes an element from the document flow and positions relative to positioned ancestor. Element stays in position regardless of scrolling. Fixed position removes the element from document flow but fixes it relative to the viewport staying in place when scrolled. Sticky keeps the
+                        element in normal flow but only sticks after scrolling past a threshold. 
                     </p>
                 </li>
                 <li>
                     <h4>What is the Z-Index Property, and How Does It Work to Control the Stacking of Positioned Elements?</h4>
                     <p>
-
+                        Z-index is used to control the vertical stacking of positioned elements that overlap on the page. The z index determines which one is stacked on top during overlap. The higher the z index value the closer the element is to the viewer. Z index only works on elements that are positioned such as relative absolute or fixed. The default is auto which places the eleemnt in default stacking order. This is a way to create layers on the page. 
                     </p>
                 </li>
             </section><hr>

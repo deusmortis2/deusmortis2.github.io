@@ -22,9 +22,11 @@ table {
   border: 1px solid #696969;
   border-collapse: collapse;
 }
+
 tr {
     border-bottom: 1px solid #696969;
 }
+
 th {
     font-size:1.7vw;
     padding: .6em;

@@ -7,6 +7,7 @@ body {
 span {
   display: inline-block;
 }
+
 table {
   height:50vh;
   width: 65vw;
@@ -27,7 +28,7 @@ background: linear-gradient(
   hsl(270, 80%, 90%) 95%
 );
 }
-
+/*
 span[class^=rate] > span {
   border: .5px solid darkgray;
   border-radius: 10px;
@@ -36,7 +37,7 @@ span[class^=rate] > span {
   margin: 0 .1em;
   background-color: ivory;
 }
-
+*/
 span[class=status], span[class^=rate] {
   height: auto;
   width: auto;

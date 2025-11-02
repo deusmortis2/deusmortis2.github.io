@@ -1,4 +1,6 @@
 body {
+    height: 4rem;
+    width: 90%;
   background: #dcdcdc;
 }
 
@@ -34,7 +36,7 @@ span[class^=rate] > span {
 }
 
 span[class=status], span[class^=rate] {
-  height: .4rem;
+  height: auto;
   width: auto;
   padding: 3px;
 }

@@ -9,6 +9,7 @@ span {
 }
 
 footer {
+    font-size: 1.3vw;
     text-align: center;
 }
 
@@ -18,8 +19,15 @@ table {
   height:65vh;
   width: 75vw;
   font-size: 1.5vw;
-  border: none;
+  border: 1px solid #696969;
   border-collapse: collapse;
+}
+tr {
+    border-bottom: 1px solid #696969;
+}
+th {
+    font-size:1.7vw;
+    padding: .6em;
 }
 
 h1 {
@@ -32,10 +40,10 @@ h1 {
 #header {
 background: linear-gradient(
   to top,
-  hsl(270, 80%, 70%) 5%,
-  hsl(270, 80%, 75%) 50%,
-  hsl(270, 80%, 80%) 80%,
-  hsl(270, 80%, 90%) 95%
+  hsl(270, 80%, 65%) 5%,
+  hsl(270, 80%, 70%) 50%,
+  hsl(270, 80%, 75%) 80%,
+  hsl(270, 80%, 80%) 95%
 );
 }
 
@@ -82,10 +90,10 @@ span[class~=three] > span {
 tr[class=read] {
 background: linear-gradient(
   to top,
-  hsl(155 80% 70%) 5%,
-  hsl(155 80% 80%) 50%,
-  hsl(155 80% 90%) 80%,
-  hsl(155 80% 95%) 90%
+  hsl(155 80% 65%) 5%,
+  hsl(155 80% 70%) 50%,
+  hsl(155 80% 75%) 80%,
+  hsl(155 80% 80%) 90%
 );
 }
 
@@ -106,9 +114,9 @@ tr[class=in-progress] {
 background: linear-gradient(
   to top,
   hsl(41 80% 60%) 5%,
-  hsl(41 80% 70%) 50%,
-  hsl(41 80% 80%) 80%,
-  hsl(41 80% 90%) 95%
+  hsl(41 80% 65%) 50%,
+  hsl(41 80% 75%) 80%,
+  hsl(41 80% 80%) 95%
 );
 }
 
@@ -142,8 +150,8 @@ tr[class=to-read] {
 background: linear-gradient(
   to top,
   hsl(200 80% 60%) 5%,
-  hsl(200 80% 70%) 50%,
-  hsl(200 80% 80%) 80%,
-  hsl(200 80% 95%) 95%
+  hsl(200 80% 65%) 50%,
+  hsl(200 80% 75%) 80%,
+  hsl(200 80% 80%) 95%
 );
 }

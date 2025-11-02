@@ -1,6 +1,6 @@
 body {
     height: 60vh;
-    width: 75vh;
+    width: 75w;
   background: #dcdcdc;
 }
 
@@ -8,6 +8,8 @@ span {
   display: inline-block;
 }
 table {
+  height:50vh;
+  width: 65vw;
   font-size: .4rem;
   border: none;
   border-collapse: collapse;

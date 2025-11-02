@@ -8,15 +8,25 @@ span {
   display: inline-block;
 }
 
+footer {
+    text-align: center;
+}
+
 table {
-  height:50vh;
-  width: 65vw;
-  font-size: 2rem;
+  margin: 0 auto;
+  text-align: center;
+  height:65vh;
+  width: 75vw;
+  font-size: 1.5vw;
   border: none;
   border-collapse: collapse;
 }
 
-
+h1 {
+    font-size: 3vw;
+    font-weight: 800;
+    text-align: center;
+}
 
 
 #header {
@@ -28,16 +38,16 @@ background: linear-gradient(
   hsl(270, 80%, 90%) 95%
 );
 }
-/*
+
 span[class^=rate] > span {
   border: .5px solid darkgray;
-  border-radius: 10px;
-  height: 10px;
-  width: 10px;
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
   margin: 0 .1em;
   background-color: ivory;
 }
-*/
+
 span[class=status], span[class^=rate] {
   height: auto;
   width: auto;
@@ -47,9 +57,11 @@ span[class=status], span[class^=rate] {
 span[class*=three] :nth-child(1) {
  background: linear-gradient(45deg, yellow, orange);
 }
+
 span[class*=three] :nth-child(2) {
   background: linear-gradient(45deg, yellow, orange);
 }
+
 span[class*=three] :nth-child(3) {
  background: linear-gradient(45deg, yellow, orange);
 }
@@ -84,7 +96,7 @@ tr[class=read] span[class=status] {
   hsl(155 90% 49%),
   hsl(155 90% 55%)
   );
-  border-radius: 15px;
+  border-radius: 1.2vw;
   background-size: contain;
   background-position: center;
   padding: .4em 1.6em;
@@ -107,7 +119,7 @@ tr[class=in-progress] span[class=status] {
   hsl(41 90% 49%),
   hsl(41 90% 55%)
   );
-  border-radius: 15px;
+  border-radius: 1.2vw;
   background-size: contain;
   background-position: center;
   padding: .4em;
@@ -120,7 +132,7 @@ tr[class=to-read] span[class=status] {
   hsl(200 90% 49%),
   hsl(200 90% 55%)
   );
-  border-radius: 15px;
+  border-radius: 1.2vw;
   background-size: contain;
   background-position: center;
   padding: .4em 1em;

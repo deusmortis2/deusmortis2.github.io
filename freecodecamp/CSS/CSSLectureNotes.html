@@ -728,25 +728,32 @@
                 <li>
                     <h4>What Is Responsive Web Design, and What Is Its Relationship to Tools Like CSS Grid and Flexbox?</h4>
                     <p>
-
+                        Responsive web design is an approach that aims to create websites that provides optimal viewing and interaction. The core principle is adaptability ability of a website to adjust layout and content based on screen size and capabilities of the device. RWD relies on 3 main components, fluid grids, flexible images, and media queries. Fluid grids use relative units like percentages over pixels. 
+                        Flexible images are set to resize within containing elemetns. Media queries allow application of styles based on the size of the device. The relationship between RWD and CSS grid and flexbox is symbiotic. CSS grid is a 2 d layout that allows for complex arrangements. Flexbox and grid offer advantages over old layouts, they give more flexibility and control with less code. Flexbox and grid are
+                        often used together in RWD. Flexbox is for components and one dimensional layouts, grid is for overall page structure and 2 d layouts. Calc() is useful for making layouts flexible. The srcset attribute and picture element allow for serving image files based on device. 
                     </p>
                 </li>
                 <li>
                     <h4>How Do Media Queries Work, and What Are Some Common Media Types and Features?</h4>
                     <p>
-
+                        Media queries are a component of RWD, allow developers to apply styles based on the users device or browser. A media query consists of a media type and on or more expressions that check for specific conditions. If the conditions are true, the styles are applied. Media types describe the general category some common ones, all for all devices, print for paged materials, and screen for screens.
+                        Media features describe characteristics of the user agent, output device, or environment. Properties including aspect-ratio, orientation, resolution, hover, prefers-color-scheme(dark mode). Media queries can include conditions using logical operators including and, not, only, and commas are similar to or. Consider the cascade, media queries group conditional rules. Approach for mobile first is 
+                        common and adding enhancements for larger screens. 
                     </p>
                 </li>
                 <li>
                     <h4>What Are Media Breakpoints, and What Are Common Breakpoints in Media Design?</h4>
                     <p>
-
+                        Media breakpoints are points in web design where the layout and content adjust to accomodate screen size. These are crucial in RWD allowing developers to make websites for all devices. In CSS media breakpoints are used for media queries, these queries apply styles based on characteristics most commonly viewport width. You can use @media to set styles based on current screen size. When it comes to 
+                        choosing breakpoints, there is no one size fits all but there are common breakpoints. Small devices up to 640 pxs, medium 641-1024(tablet), large 1025px or bigger. Some designers do extra small up to 576, small 768, medium 992, large 1200, XL 1201. XXL 1400px. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the Mobile First Approach in Responsive Web Design?</h4>
                     <p>
-
+                        Mobile first approach is a strategy where websites are designed first for mobile devices and has become a cornerstone in web development. This is the reverse from traditional approach where computers were designed for first. The principle is to ensure that content and functionality is for the smallest screen first. One of the primary drivers in this adoption is the dramatic shift in internet usage.
+                        Performance optimization is another crucial step, since mobile devices have less processing power and may be connected to slower networks. Designers must make critical decisions about what content is essential in order to know what is important. Start with the base style suited for mobile device, then use queries using minwidth in order to modify styles for larger screens. Mobile first also aligns well
+                        with SEO, even though it can be restrictive for large screens and complex features. 
                     </p>
                 </li>
             </section><hr>
@@ -754,13 +761,16 @@
                 <li>
                     <h4>What Are CSS Custom Properties, and How Do They Work?</h4>
                     <p>
-
+                        CSS custom properties AKA variables are entities defined by CSS that contains values to be reused throughout the document. The syntax begins with two dashes -- followed by the property name <code>:root {--main-color: #3498db;}</code> In this we are declaring a property with a value. The :root psuedo class is commonly used to declare global properties. To use a custom property you employ the var() function.
+                        You could send the previous color to an element later with var(--main-color);. Custom properties follow the CSS cascade, so you can redefine them for specific elements. You can also use fallback values with custom properties. Custom properties are useful when creating themable designs like for light/dark themes. Custom properties can also be used with media queries to create responsive designs. Custom properties
+                        make it easier to create consistent themes across the site, but they may not be recognized by older browsers. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the @property Rule, and How Does It Work with Fallbacks?</h4>
                     <p>
-
+                        The @property rule is a powerful CSS feature that lets you give properties values. This will have the syntax @property --property-name { syntax: '<type>'; inherits: true | false; initial-value: <value>; }. An example would be like @property --main-color { syntax: '<color>'; inherits: false; initial-value: #3498db; } The @property rule allows animations of custom properties. You can achieve this by having something
+                        like a hover property. The @property fallbacks work on 2 levels, the rule itself and for the use of the custom property. You can define properties in the traditional way so that way browsers that don't support @property have a fallback. 
                     </p>
                 </li>
             </section><hr>

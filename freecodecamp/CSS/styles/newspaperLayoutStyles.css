@@ -76,7 +76,16 @@ body {
 h2, h3 {
   text-align: left;
 }
+h1 {
+    font-size: 6rem;
+}
 
+h2 {
+    font-size: 4rem;
+}
+h3 {
+    font-size: 3rem;
+}
 h1, h2, h3 {
   font-family: Georgia, serif;
   padding: 5px;
@@ -85,5 +94,6 @@ h1, h2, h3 {
 p {
   padding: 5px;
   font-family: arial;
-  text-wrap: pretty;
+  text-wrap: stable;
+  font-size: 2.5rem;
 }

@@ -778,49 +778,51 @@
                 <li>
                     <h4>What Is CSS Grid, and How Does It Differ from Flexbox?</h4>
                     <p>
-
+                        CSS is a layout system that allows for responsive web pages. CSS grid allows you to divide your webpages into rows and columns like a grid. Flexbox is for one dimensional layouts, grid is for 2 dimensional layouts. Flexbox is content first and grid is layout first. 
                     </p>
                 </li>
                 <li>
                     <h4>How Can You Create Flexible Grids with the fr Unit?</h4>
                     <p>
-
+                        You can create flexible grid layouts using the <code>fr</code> unit. Fr is a fractional unit which represents a fraction of the space for the grid container. Fr becoems a great way to distribute space since it is flexible and responsive. Grid template colums is used to set the size for each column. The gap property is used to create space around each column. 
                     </p>
                 </li>
                 <li>
                     <h4>How Can You Create Gaps Between Tracks in a Grid?</h4>
                     <p>
-
+                        You can use row-gap, column-gap, and gap to create space in a grid layout. You can assign these values like the em unit, percentage, pixels, or the normal keyword. If you use normal then you will get 0 for grid layouts and 1em for multi column layouts. The gap property can be used as shorthand for rows and columns with gap: row column; 
                     </p>
                 </li>
                 <li>
                     <h4>How Can You Repeat Track Listings in a Grid Layout?</h4>
                     <p>
-
+                        You can use repeat() to repeat a track of rows or columns. grid-template-columns: 1fr 1fr 1fr 1fr; = grid-template-columns: repeat(4, 1fr); grid-template-columns: repeat(2, 20px 1fr); creates 4 columns in 20px 1fr 20 px 1fr specifics. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the Difference Between an Implicit and Explicit Grid?</h4>
                     <p>
-
+                        An implicit grid refers to rows and columns created automatically when placing items in grid, not explicitly defined using grid-template-rows or columns. The properties to use implicit is grid-auto-columns or rows. You can use a combination of the two by explicitly naming column count to 2 with more than 2 divs so it will implicitly create rows to place the items.
+                        Explicit are fully customizable by declaring, implicit are controlled by auto-rows or default to auto. Explicit doesnt adapt but implicit does. Explicit is better for performance but implicit is better for frequent changes. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the minmax() Function and How Does It Work?</h4>
                     <p>
-
+                        The minmax() function is used to define the size of a grid trick, and how much space a row or column can occupy. You can use fr units with track size the syntax is minmax(min, max). grid-template-columns: minmax(150px, 300px) 1fr;  This will create 2 columns one with the min/max 150-300 and the other 1 fr, if there is extra space it will go to the fr column. 
                     </p>
                 </li>
                 <li>
                     <h4>How Do the grid-column and grid-row Properties Work?</h4>
                     <p>
-
+                        The grid-column and grid-row properties specify horizontal and vertical placement of grid items within the grid layout. <code>grid-row: &lt;start-line&gt; / &lt;end-line&gt;;</code> both start line and end line start with 1. grid-column: 1 / 3; this means the item starts at column 1 and ends at 3. You can also use the span keyword to tell which row/column to span across.
                     </p>
                 </li>
                 <li>
                     <h4>How Can You Position Items on the Grid Using the grid-template-areas Property?</h4>
                     <p>
-
+                        grid-template-areas allows you to design a grid layout by using named labels. <code>grid-template-areas: 'header header header' 'left-sidebar main right-sidebar' 'footer footer footer';</code> In this example we have a 3x3 grid container. The values like header and main  are the names of the grid areas. After you define the template you can use grid-area and the labels to tell 
+                        the items where they belong. A popular way to demonstrate grid template areas is with the Holy Grail layout. The layout is header,footer, 2 sidebars and the main. 
                     </p>
                 </li>
             </section><hr>

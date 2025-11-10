@@ -10,14 +10,17 @@
         text-align:center;
       }
 }
+
 body {
   font-size: 4vh;
   width: 100vw;
   background: #FAF2DB;
 }
+
 h2, h3, h4{
     font-size: 5vh;
 }
+
 #header {
   width: 100vw;
   height: 10vh;
@@ -119,18 +122,24 @@ main {
 }
 
 #icon1 {
+       display: flex;
+    place-items: center;
   margin-left: 3vw;
   grid-area: icon1;
   
 }
 
 #icon2 {
+    display: flex;
+    place-items: center;
   margin-left: 3vw;
   grid-area: icon2;
 
 }
 
 #icon3 {
+       display: flex;
+    place-items: center;
   margin-left: 3vw;
   grid-area: icon3;
 }

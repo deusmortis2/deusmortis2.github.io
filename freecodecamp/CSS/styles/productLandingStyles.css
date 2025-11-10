@@ -114,6 +114,7 @@ main {
 }
 
 #how_it_works {
+    padding-top: 5vh;
   grid-area: row2;
 }
 

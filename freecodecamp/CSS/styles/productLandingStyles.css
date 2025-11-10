@@ -23,7 +23,7 @@ h2, h3, h4{
 
 #header {
   width: 100vw;
-  height: 10vh;
+  height: 8vh;
   background: #FAF2DB;
   position: fixed;
   top: 0;
@@ -69,8 +69,8 @@ h2, h3, h4{
   position: absolute;
   left: 0;
   top: 0;
-  height: 10vh;
-  width: 10vh;
+  height: 8vh;
+  width: 8vh;
   justify-content: right;
   border-bottom: 1px solid black;
 }
@@ -145,16 +145,22 @@ main {
 }
 
 .feature1 {
+    display: grid;
+    text-align: left;
   grid-area: feature1;
   margin-right: 5vw;
 }
 
 .feature2 {
+        display: grid;
+    text-align: left;
   grid-area: feature2;
   margin-right: 5vw;
 }
 
 .feature3 {
+        display: grid;
+    text-align: left;
   grid-area: feature3;
   margin-right: 5vw;
 }

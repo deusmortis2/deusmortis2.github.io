@@ -1,0 +1,52 @@
+body {
+  background-image: url("https://wallpapers.com/images/high/worn-paper-texture-png-97-5apxlhxg3glplmie.png");
+  background-repeat: no repeat;
+  background-position: center;
+  background-size: cover;
+  text-align: center;
+  font-size: 2vh;
+}
+
+header {
+  padding-top:60px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.date {
+  font-weight: 800;
+}
+
+#tribute-info {
+  text-align: left;
+}
+
+ul {
+  padding-left: 10%;
+  padding-right: 6%;
+  font-size: 2vh;
+}
+
+main {
+font-size: 2vh;
+}
+
+img {
+  display:block;
+  height: auto;
+  max-height: 250px;
+  max-width: 100%;
+  margin: 0 auto 0;
+}
+
+#quote {
+  text-align: center;
+  font-style: italic;
+  font-size: 2vh;
+}
+
+#tribute {
+  margin-bottom: 30px;
+}

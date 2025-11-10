@@ -202,3 +202,24 @@ text-align: center;
 ul {
   list-style-type: none;
 }
+
+input {
+    height: 4vh;
+}
+
+#email {
+    width: 20vw;
+}
+
+#submit {
+    width: 10vw;
+    font-size: 3vh;
+}
+
+button {
+    position: flex;
+    margin-top: 10%;
+    width: 10vw;
+    height: 4vh;
+    font-size: 3vh;
+}

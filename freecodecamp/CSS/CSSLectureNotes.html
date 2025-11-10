@@ -837,13 +837,18 @@
                 <li>
                     <h4>What Are CSS Animations, and How Do They Work?</h4>
                     <p>
-
+                        CSS animations allow you to create dynamic engaging web pages without javascript. CSS animations contain two main components the @keyframes rule and the animation property. @keyframes also defines the stages and styles of animations. Example <code>@keyframes slide-in { 0% { transform: translateX(-100%); } 100% { transform: translateX(0); } } this moves an element from left to right. You
+                            would apply this animation like <code>.sliding-element { animation: slide-in 2s ease-out infinite;}</code> this applies slide in with a duration of 2 seconds on an ease-out timing. The animation property is shorthand for several individual properties including animation-name, animation-duration, animation-timing-function, animation-delay, animation-iteration-count, animation-direction,
+                            animation-fill-mode, animation-play-state. Overuse of animation can lead to poor performance and accessibility issues. 
+                        </code>
                     </p>
                 </li>
                 <li>
                     <h4>What Are Accessibility Concerns Around Using Animations, and How Can prefers-reduced-motion Help?</h4>
                     <p>
-
+                        Animations can greatly enhance visual appeal and user experience. However, that can also pose accessibility challenges for users. One of the primary acessibility concerns is that they can cause discomfort or physical harm to some users. Animation can be distracting for people with cognitive disabilities, and they can trigger seizures in epileptic people. Another issueis that animations can
+                        make reading difficult. CSS provides the prefers-reduced-motion media query to address these issues. <code>@media (prefers-reduced-motion: reduce) { * {    animation-duration: 0.01ms !important;    animation-iteration-count: 1 !important;    transition-duration: 0.01ms !important;scroll-behavior: auto !important;}} </code> this snippet disables most animations and transitions for users who prefer it.
+                        The media query checks if the user prefers reduced motion, then it applies styles to a universal selector. Finally, the !important declaration makes sure it takes precedence over other styles. 
                     </p>
                 </li>
             </section>

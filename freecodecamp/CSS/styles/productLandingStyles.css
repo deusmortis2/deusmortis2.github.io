@@ -103,7 +103,7 @@ main {
   padding: 2px;
   display: grid;
   width: 100%;
-  height: 60vh;
+  height: 100%;
   grid-area: row1;
   grid-template-columns: calc(1fr/3) 2fr;
   grid-template-rows: 1fr 1fr 1fr;
@@ -147,13 +147,15 @@ main {
 }
 
 #icon3 {
-     padding-left: 5vw;
-       display: flex;
+    padding-right: 3vw;
+    padding-top: 5vh;
+    padding-left: 5vw;
+    display: flex;
     place-items: center;
-       width: 20vh;
-    height: 15vw;
-  margin-left: 3vw;
-  grid-area: icon3;
+    width: 16vw;
+    height: 14vh;
+    margin-left: 3vw;
+    grid-area: icon3;
 }
 
 .feature1 {

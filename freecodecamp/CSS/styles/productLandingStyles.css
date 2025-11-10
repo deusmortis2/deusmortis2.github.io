@@ -110,7 +110,7 @@ main {
   grid-template-areas: 'icon1 feature1'
   'icon2 feature2'
   'icon3 feature3';
-  column-gap: 10vw;
+  column-gap: 5vw;
 }
 
 #how_it_works {
@@ -122,30 +122,35 @@ main {
 }
 
 #icon1 {
+    padding-left: 5vw;
        display: flex;
     place-items: center;
-    width: 60%;
-    height: 60%;
+       width: 20vh;
+    height: 15vw;
+    object-fit: contain;
   margin-left: 3vw;
   grid-area: icon1;
   
 }
 
 #icon2 {
+     padding-left: 5vw;
     display: flex;
     place-items: center;
-    width: 60%;
-    height: 60%;
+      width: 20vh;
+    height: 15vw;
+    object-fit: contain;
   margin-left: 3vw;
   grid-area: icon2;
 
 }
 
 #icon3 {
+     padding-left: 5vw;
        display: flex;
     place-items: center;
-    width: 60%;
-    height: 60%;
+       width: 20vh;
+    height: 15vw;
   margin-left: 3vw;
   grid-area: icon3;
 }

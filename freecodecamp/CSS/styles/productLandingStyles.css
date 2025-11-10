@@ -124,6 +124,9 @@ main {
 #icon1 {
        display: flex;
     place-items: center;
+    width: 90%;
+    height: 90%;
+    object-fit:cover;
   margin-left: 3vw;
   grid-area: icon1;
   
@@ -132,6 +135,9 @@ main {
 #icon2 {
     display: flex;
     place-items: center;
+    width: 90%;
+    height: 90%;
+    object-fit:cover;
   margin-left: 3vw;
   grid-area: icon2;
 
@@ -140,6 +146,9 @@ main {
 #icon3 {
        display: flex;
     place-items: center;
+    width: 90%;
+    height: 90%;
+    object-fit:cover;
   margin-left: 3vw;
   grid-area: icon3;
 }

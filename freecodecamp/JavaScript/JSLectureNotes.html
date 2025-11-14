@@ -119,6 +119,120 @@
                     <h4>How Can You Trim Whitespace from a String?</h4>
                     <p>White space refers to spaces, tabs, linebreaks. You can trim this using the methods trim(), trimStart(), trimEnd(). trim() removes white space from beginning and end. trimStart beginning, trimEnd from the end. </p>
                 </li>
+                <li>
+                    <h4>How Can You Replace Parts of a String with Anotehr?</h4>
+                    <p>In JavaScript, tehre are many scenarios where you need to replace a portion of a string with another. The replace() method in JavaScript allows you to find a specificied value and replace it with another value. The basic syntax is <code>string.replace(searchValue, newValue);</code> searchValue is the value you want to search for in a string. The newValue is the value you will replace it with.
+                    <code>let newText = text.replace("JavaScript", "coding");</code> In this JavaScript is replaced with coding. replace() is case sensitive. replace() also only replaces the first value found. </p>
+                </li>
+                <li>
+                    <h4>How Can You Repeat a String x Number of Times?</h4>
+                    <p> When working with JavaScript you may encounter situatiuons where you need to repeat a string. The repeat() method provides a way to do this. The syntax is as follows: <code>string.repeat(count);</code> string what you want to repeaet, count is the number of repeats. Here's an example: <code>let repeatedWord = word.repeat(3);</code> In this example the value of repeatedWord is repeated 3 times. 
+                    The count parameter must be a non-negative number. Count has to be finite therefore the special value Infinity that represents infinity cannot be used. If the count is rational it will round it down to the nearest integer. </p>
+                </li>
+                <li>
+                    <h4>What is the Number Type in JavaScript, and What Are the Diffeerent Types of Numbers Available?</h4>
+                    <p>In JavaScript a number represents a numeric value. It includes decimals and negatives, Infinity and NaN(not a number). Floating numbers are numbers with decimal points they're often referred to as floats by JS devs. When you try to divide a number by zero you get the value of infinity. If you try to divide a value that isn't a number by a value, then you will get NaN. JS also supports other base
+                        systems including base 2, base 8, and base 16.  </p>
+                </li>
+                <li>
+                    <h4>What Are the Different Arithmetic Operators in JavaScript?</h4>
+                    <p>JavaScript provides tools to perform basic arithmetic opoerations on numbers, add, sub, mult, div(+,-,*,/). Also some more complex ones like remainder or exponentation. The remainder operation is the % which returns the remainder of division. The exponentation operator is ** and raises one number to the power of another value. JS uses operator precedence to determine the order of operations. </p>
+                </li>
+                <li>
+                    <h4>What Happens When You Try to Do Calculations with Numbers and Strings?</h4>
+                    <p>JavaScript is a language where things can work in weird ways sometimes, like when mixing strings and numbers. The + sign works double duty, it is for both addition and string concatenation. If you use the + with a number and a string, it will join them and create a string. If you do other operations with a string/number you will find that JS will convert it to a number if possible then calculate. 
+                        If the string doesn't look like a number it will typically result in NaN. When using booleans true becomes 1 and false becomes 0 typically and the operation is performed. Null is treated as 0 and undefined is treated as NaN.   </p>
+                </li>
+                <li>
+                    <h4>How Does Operator Precedence Work?</h4>
+                    <p>If you write an expression with several operators in JavaScript operator precendence comes in. JavaScript treats multiplication as a higher precendence than addition. You can use () to make something have precedence. Mult/Div always take priority over +/-. Exponents and equal are right to left associative. a = b = 5, means b is 5 first, then a is 5. </p>
+                </li>
+                <li>
+                    <h4>How Do the Increment and Decrement Operators Work?</h4>
+                    <p> Increment and decrement operators are ++ and --. They both allow you to adjust the value by 1. There is also prefix ++x and postfix x++. Prefix increases the value of the variable first, then returns a new value. Postfix returns the current value then increases it. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Compound Assignment Operators in JavaScript, and How Do They Work?</h4>
+                    <p>Compound assignment operators allow you to perform a mathematical operation and reassign the result back to the variable in one line of code. You can use += and -= to perform the operation and assign. You can also use *= and /= to use multiply/divide. %=, **= &= which is a bitwise and assignment, |= bitwise or assignment operator.   </p>
+                </li>
+                <li>
+                    <h4>What Are Booleans, and How Do They Work with Equality and Inequality Operators?</h4>
+                    <p>Booleans are a type that represent true/false. They are essential when you want to determine if something happened or not. You can use variable inside a conditional like this <code>let isOldEnoughToDrive = true;
+if (isOldEnoughToDrive) {
+ console.log("You're old enough to drive"); // You're old enough to drive
+} else {
+ console.log("Sorry, you are not old enough to drive");
+}</code><br>To compare two values you can use eithe rhte equality or strict equality operator. The equality operator is represented by ==. The strict operator === does not perform type coercion so 5 === '5' is false unlike ==. You can also use != and !== (strict) for not equal. Strict is usually preferred. </p>
+                </li>
+              <li>
+                <h4>What Are Comparison Operators, and How Do They Work?</h4>
+                <p>Comparison operators allows you to compare two values and return true or false. These include >, <, >=, <=. </p>
+              </li>  
+              <li>
+                <h4>What Are Unary Operators, and How Do They Work?</h4>
+                <p>Unary operators are operators that act on a single operand to perform operations like a type conversion, value manipulation, or certain conditions. Unary plkus operator converts its operand into a number. If you have a string like 42 and you use = +variable you will convert that value to a number. You can also use - and flip the sign  = - will flip the sign of the value.
+                    ! is hte logical operator for not, flips a boolean to its opposite value. The bitwise not operator is a less commonly which is ~ it inverts the binary representation of the number. If you use ~num on a number that is 5, you will get back -6. The void keyword is a unary operator that evaluates the expression and returns undefined. There is also typeof. </p>
+              </li>
+              <li>
+                <h4>What Are Bitwise Operators, and How Do They Work?</h4>
+                <p>Bitwise operators work on the binary representation of numbers. In computing a bit is the most basic unit of information, it can only have two values.. 0 or 1. The binary representation of the number 10 is 1010. JS provides several bitwise operators including & and, | or, ^ xor, ~ not, << left shift, >> right shift. If a = 5 (Binary: 101) and b = 3(binary: 011), a&b returns 1 because only
+                the ones digit is set in both numbers. a | b will return 7(binary: 111) becasue it returns a 1 in each position for which eihter of the corrsponding bits have a 1 in that value. The bitwise XOR return a 1 in each position where there is only 1 in one of the numbers position not both. Therefore it returns 6 for this case because it is binary 110 because both numbers have a 1 in the ones place.
+                the bitwise ~ inverts all bits in the operand. So not a(binary 101) is -6. The << used on just a by 1 will result in 10 because it was oriignally 101(5) and shifting it one place over will effectively multiply it by 2 resulting in 1010 or 10. The >> will effectively divide by two and rounding down so the resullt of a >> 1 will be 2.  </p>
+              </li>
+              <li>
+                <h4>What Are Conditional Statements, and How Do If/Else If/Else Statements Work?</h4>
+                <p>Conditional statements let you make decision in your code. They allow the program to flow in a particular way based on certain conditions. If statements takes a condition and runs a block of code to determine if that condition is truthy. Truthy values: non-empty strings, any number other than 0 or -0, arrays, objects, the boolean true. Falsy values: boolean false, 0, empty strings, null, undefined,
+                    and NaN. When using just an if statement if the condition is false the code block will not run. If you use an if else statement when the if statement condition is false, the else code will run. You can use elseif you want to check additional paths before the else. You can use a ternary statement like this one <code> const weather = temperature > 25 ? 'sunny' : 'cool'; </code> this will return It's sunny if 
+                    the temperature is greater than 25. Cool otherwise. Only use ternary when you want a compact simple logic statement, if/else for more complex conditions.   
+                </p>
+              </li>
+              <li>
+                <h4>What Are Binary Logical Operators, and How Do They Work?</h4>
+                <p>Binary logical operators help you evaluate two expressions and return a result based on their truth. The logical AND operator is represented by && it checks if both operands are true and returns a result. If both operands are true then it returns hte one on the right. If one is false, it returns the false one. If both are false then it returns the first false value. The logical OR operator checks if at least one 
+                    is truthy. It will then return the value that is truthy. If both are false then it returns the last false value. The nullish coalescing operator is more sophisticated it is represented by a ??. It helps in scenarios where you want to return a value on if the first one is null or undefined. 
+                </p>
+              </li>
+              <li>
+                <h4>What Is the Math Object in JavaScript, and What Are Some Common Methods?</h4>
+                <p>
+                    When exploring JavaScript you will discover mathematical operations is a common task. JavaScript offers a built in Math object to tackle more complex math challenges. Math.random() generates a random floating-point number between 0 and 1. This value can be 0 but it will never be 1. Math.min() and Math.max() return the min/max values from that data set. If you want to round numbers up or down you can use Math.ceil() or Math.floor().
+                    Another helpful math method is Math.trunc(). This removes the decimal part of a number, returning only the integer portion. You can also use Math.sqrt() and Math.cbrt() for squareroot/cuberoot. Math.abs() will give you the absolute value of a number. Math.pow() takes two numbers and raise the first to the power of the second. Math.round combines ceil/floor.  
+
+                </p>
+              </li>
+              <li>
+                <h4>How Does isNaN Work?</h4>
+                <p>Nan stands for Not a Number. Its a special value that represents an unrepresentable or undefined numerical result. NaN is a property of the global object, and its also a considered type in JavaScript. NaN is typically the result of operations that should return a number but can't produce a meaningful numerical value. Such as, 0/0. One odd property about NaN is that it's not equal to anything.. including itself. This unique
+                    behavior makes it challenging to check if a value is NaN using comparison operators. To address this, JavaScript provides the isNaN() function. isNaN() first attempts to convert the parameter to a number. If it can't be converted it returns true. Due to this in ES6 introduced Number.isNaN() which does not convert the parameter to a number before testing. It only returns true if the value is exactly NaN. 
+                </p>
+              </li>
+              <li>
+                <h4>How Do the parseFloat() and parseInt() Methods Work?</h4>
+                <p>parseFloat() and parseInt() are methods used to convert strings to numbers. parseFloat() parses a string argument and retursn a floating point number. It's designed to extract a number from the beginning of a string, even if the string contains non numeric characters. Float numbers are numbers with decimal points, heres how parseFloat works: it starts parsing from the beginning of the string and continues until it ecncounters a char that can' 
+                    be a floating point number. parseFloat starts parsing from the beginning of a string until it encounters a character that can't be part of a floating point. If it can't find a valid number it returns NaN. parseInt on the other hand parses a string and returns an integer. It starts from the beginning of a string, but it stops on the first non digit character. parseInt() stops parsing at the first non-digit it encounters. Both methods ignore whitespace, 
+                    they handle plus and minus at the beginning of the string. They also have some limitations. They do not handle all number formats, such as scientific notation. 
+                </p>
+              </li>
+              <li>
+                <h4>What is the toFixed() Method, and How Does It Work?</h4>
+                <p>
+                    The .toFixed() method is buitl in JavaScript function that formats a numebr using fixed point notation. It's particularly useful when you need to control the decimal places in a number like when using currency values or precise measurements. It's important to know that .toFixed() returns a string not a number. The .toFixed() method rounds to the nearest value that can be represented wiht the specified number of decimal places. If you call .toFixed() without
+                    arguments it will default to 0 decimal places. This can be particularly useful when working with financial calculations or displaying prices. 
+                </p>
+              </li>
+              <li>
+                <h4>How Do Comparisons Work with Null and Undefined Data Types?</h4>
+                <p>In JavaScript, null and undefined are two distinct data types that represent the absence of a value, but they behave differently in comparisons. Undefined when a variable is declared but it is not assigned a value. It's the default value of uninitialized varaibels and function parramets that aren't provided an argument. The null type on the other hand is an assignment value that represents a deliberate non-value. When comparing null and undefinedusing the == operator, 
+                    JavaScript performs type coercion. This means it tries to convert the operands to the same type before making a comparison. In this case, null and undefined are considered equal. However, strict equality will not say they are equal. null and undefined are only equal to each other when using the equality operator. undefined always converts to NaN which amkes all numeric comparisons false. It's recommended to use the strict equality operator ===. 
+                </p>
+              </li>
+              <li>
+                <h4>What Are Switch Statements and How Do They Differ from If/Else Chains?</h4>
+                <p>switch statements and if/else if/else chains are both control flow structures that allow us to execute different code blocks based on conditions. A switch statement evaluates an expression and matches its value against a series of case clauses. When a match is found, the code block associated with that case is executed. The break statement at the end of each case is crucial. Without it, the program will continue executing subsequent cases known as fall through. If you are
+                    comparing many values for a single variable, switch statemetns can be more readable and concise. if/else if statemetns are more flexible. They can evaluate complex conditions and different variables in each clause. Switch statements use strict comparison === operators. 
+                </p>
+              </li>
                 </ol>
   </main>
   <footer>

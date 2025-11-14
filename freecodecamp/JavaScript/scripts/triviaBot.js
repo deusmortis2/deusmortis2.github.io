@@ -1,0 +1,13 @@
+console.log("Hello! I'm your coding fun fact guide!");
+let botName = "G.O.A.T.";
+let botLocation = "Jupiter";
+let favoriteLanguage = "JavaScript";
+console.log("My name is " + botName + " and I live on " + botLocation + ".");
+console.log("My favorite programming language is " + favoriteLanguage + ".");
+let codingFact = "You can store variables in " + favoriteLanguage + " with let and const.";
+console.log(codingFact);
+codingFact = "You can change the values of a let variable in " + favoriteLanguage + " but you cannot change the value of a const.";
+console.log(codingFact);
+codingFact = "In " + favoriteLanguage + " if you want to create a string you just add single or double quotes.";
+console.log(codingFact);
+console.log("It was fun sharing these facts with you. Goodbye! - " + botName + " from " + botLocation + ".");

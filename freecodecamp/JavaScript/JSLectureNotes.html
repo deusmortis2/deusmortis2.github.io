@@ -248,6 +248,35 @@ if (isOldEnoughToDrive) {
                 <p> Scope refers to visibility and accessiblity of variables in diff parts of your code. It determines where variables can be accessed. In JS scope is crucial for good code. There are 3 types of scope global, local and block scopes. Global scope is the outermost scope in the JS program. These are accessible everywhere in your code. While these can be convenient, they should be used sparingly as they can make naming conflicts and harder to maintain code. Local scope refers to variables only accessible within
                     a function. Local scope will result in a variable that will only be usable in a function, outside of that it will return an error. Block scope is created by let and const keywords in ES6. A block is any code section within curly braces {}. If statements, for, while use these. Block var are only useable within the block access outside of the block throws an error.   </p>
               </li>
+              <li>
+                <h4>What Are the Key Characteristics of JavaScript Arrays?</h4>
+                <p>An array in JavaScript is an ordered collection of values, each identified by a numeric index. The values in a JS array can be different data types, nums, strings, booleans, objects, other arrays. You create an array with [] and separate values with commas. One of the key characteristics of arrays are they are zero indexed. Arrays have a property of length that returns the number of items. They are also dynamic so their size can be changed after creation. You can add or remove elements from an array using 
+                    push(), pop(), shift(), unshift(), and splice().
+                </p>
+              </li>
+              <li>
+                <h4>How Do You Access and Update Elements in an Array?</h4>
+                <p>Arrays start with 0, and its imoprtant to note if you try to access an index that doesn't exist it returns undefined. You can update by assigning a new value to an index. You can also assign values to index that don't exist yet. Be careful not to create undefined indices in between the numbers created. </p>
+              </li>
+              <li>
+                <h4>How Do You Add and Remove Elements from the Beginning and End of an Array?</h4>
+                <p>Arrays in JS are dynamic, there are 4 main methods for adding to an array push, pop, shift, and unshift. The push() method is used to add one or more elements to the end of an array. The push() value will return the new length. You can add values to an array declared with const. You cannot assign new values to an array with just = operator. The next method is with pop() this removes the last element from an array and returns that element. The unshift() method adds one or more elements to the beginning of an array 
+                    and returns its new length. The shift() method removes the first element of an array and returns that element.  </p>
+              </li>
+              <li>
+                <h4>What Is the Difference Between One-Dimensional and Two-Dimensional Arrays?</h4>
+                <p>Arrays are fundamental structures to store collections of elements. Understanding the difference between one dimensional and 2 dimensional arrays is crucial for organizing and manipulating data. In a one dimensional array elements are accessed using a single index. In 2 dimensional arrays its more like a grid multiple rows and columns. It is essentially an array of arrays. To access an element you need 2 indices one for row and one for column. 1-d arrays are simpler and sufficient for most tasks, 2-d becomes important with complex structured.</p>
+               </li> 
+               <li>
+                <h4>What is Array Destructuring, and How Does It Work?</h4>
+                <p>Array destructuring is a feature in JS allows you to extract values from arrays or objects and assign them to variables in a concise and readable way. It provides convenient syntax for unpacking array elements. <code>let fruits = ["apple", "banana", "orange"]; let [first, second, third] = fruits; console.log(first);  // "apple" console.log(second); // "banana" console.log(third);  // "orange"</code> This an example of array destructuring. You can also skip elements by having an empty set of commas. You can also use default values in destructuring.
+                Lastly, you can use rest syntax to collect the remaining elements into a new array. The ...rest must be the last element in the destructuring pattern. </p>
+               </li>
+               <li>
+                <h4>How Can You Use String and Array Methods to Reverse a String?</h4>
+                <p>Reversing a string is a commmon programming task that can be accomplished in JS using string and array methods. This involves 3 main steps: splitting the string into an array of characters, reversing, joining the character back into a string. These steps using the split(), reverse(), and join() methods. The first step is to convert the array into individual characters, we do this using the split() method. This divides a string into an array of substrings and specifies where each split should happen based on a separator. If no separator is provided,
+                    the method returns an array containing the original string as a single element. Examples of separators an empty string "", single space " ", A dash "0". If you have a string and use varname.split(""); you can split a string into an array of characters. Once we have an array of characters, you can use reverse() to reverse the order. The final step is to put the array back into a string using join().  </p>
+               </li>
                 </ol>
   </main>
   <footer>

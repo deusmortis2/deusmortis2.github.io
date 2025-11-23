@@ -376,6 +376,33 @@ if (isOldEnoughToDrive) {
 </p>
                 </li>
                 </div></section>
+                <section id="Loops">
+                    <div id="Working_with_Loops">
+                <li>
+                    <h4>How Do Loops and Iterations Work in JavaScript?</h4>
+                    <p>Loops in programming are used to repeat a block of code multiple times. In JavaScript, there are several types of loops that you can use. The first will be the for loop. <code>for (initialization; condition; increment or decrement) { // code block to be executed}</code>. The initialization statement is executed before the loop starts, it is typically used to initialize a counter variable. A counter variable is designed to keep track of the amount the loop has been ran. The conditional statement is evaluated before
+                    the iteration of the loop. The last part is the increment/decrement statement, this is execute after each iteration. <code>for (let i = 0; i < 5; i++) {console.log(i);}</code> In the example, i is the counter, initialized at 0, the condition is i < 5, and then incremented. Be careful not to make a condition that is always true, creating an infinite loop. </p>
+                </li>
+                <li>
+                    <h4>How Does the For.. of Loop Work, and When Should You Use It?</h4>
+                    <p>A for...of loops is when you need to loop over values from an iterable. <code>for (variable of iterable) {}</code> this is the basic syntax. If you have an array of numbers the variable would be the current number of the array. <code>const numbers = [1, 2, 3, 4, 5];for (const num of numbers) {console.log(num);}</code>. For iteration 1 it will be 1, and so on.If you need to change the value of the variable it is important to use int over const despite being an array. For of loops are when you need to loop over values.</p>
+                </li>
+                <li>
+                    <h4>What Is the For...in Loop, and When Should You Use It?</h4>
+                    <p>a for...in loop is best used when you need to loop over the properties of an object. <code>const fruit = {name: 'apple',color: 'red',price: 0.99};for (const prop in fruit) {console.log(fruit[prop]);}</code> In this example apple, red, 0.99 will be logged to the console. If there are nested properties it will display the property name for the nested, unless you nest another for... in loop within the first. Use isObject() to avoid arrays and null.   </p>
+                </li>
+                <li>
+                    <h4>What is a While Loop, and How Does It Differ from the Do...while Loop?</h4>
+                    <p>A while loop will loop until the condition is true. Condition is checked to make sure it is not false, which halts the loop. While loops are important when you do not know how many times to loop.  <code>let counter = 0;while(counter < 5) {console.log(counter);counter++;}</code> </p> A do while loop is similar but it will execute the code at least once before checking. 
+                    an example of a do while loop <code>let counter = 0;do {console.log(counter);counter++;} while (counter < 5);  </code>. You will probably use while loops more often. 
+                </li>
+                <li>
+                    <h4>What Are the Break and Continue Statements Used for in Loops?</h4>
+                    <p>A break statement is used to exit a loop early. A continue loop is used to skip the current iteration of a loop and move to the next one. <code>for (let i = 0; i < 10; i++) {if (i === 5) {break;}console.log(i);}</code> In this example the loop starts and 0 and goes to 10, but due to the break check it will stop when it hits 5 resulting in 0 through 4. <code>for (let i = 0; i < 10; i++) { if (i === 5) {   continue; }console.log(i);}</code> In this example the continue will result in skipping the value of 5. Resulting in 0-9 without 5. 
+                    You can also use break and continue statements to control nested loops using the loopname and break or continue. When you use const, you must declare the variable or you will get an error. You should try to use const as a default, and let only when you need a variable that needs to change.   </p>
+                </li>
+                    </div>
+                </section>
                 </ol>
   </main>
   <footer>

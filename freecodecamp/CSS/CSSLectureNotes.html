@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+    <header>
+        <meta charset="UTF-8">
+        <link href="../../styles/style.css" rel="stylesheet">
+        <h1>CSS Lecture Notes</h1>
+        <h2>DISCLAIMER: I am not affiliated with freecodecamp and this is purely for educational purposes.</h2>
+    </header>
+    <body>
+        <main>
+            <p>This page is just an information dump for the lecture portion of codecamp courses so far for my own notetaking purposes</p>
+            <ol>
+                <li><h3>CSS</h3></li>
+ <section id="computer-basics">
+                <li><h4>What Are the Basic Parts of a Computer?</h4>
+                    <p>Discusses computer components. First, the motherboard, which holds the memory and connectors to run the computer. Second, the CPU (central processing unit), which is responsible for executing instructions and calculations.
+                        Third is the RAM, which is the short-term memory, also known as random access memory. RAM is volatile memory, which means it will be lost when the computer is turned off. When you save files, they are stored on the hard drive. Hard drives are
+                        made of spinning platters and an arm. Another key component is the power supply. This converts electricity to power the computer can use. The last are the expansion cards, which include sound cards, video cards, and network cards. 
+                    </p></li>
+                <li><h4>How Can You Effectively Work With Your Keyboard, Mouse, and Other Pointing Devices?</h4>
+                <p>Discusses proper use of peripherals. Talks about mouse grip needing to be relaxed and gentle. Next, it talks about ergonomic keyboards and mice to help with wrist comfort. Talks about posture, including sitting up straight and maintaining a natural wrist position. Suggests using keyboard shortcuts as much as possible. </p></li>
+                <li><h4>What Are the Different Types of Internet Service Providers?</h4>
+                <p>ISP, or Internet Service Providers, come in three different tiers. The first tier consists of conglomerate companies which handle their traffic independently. The second tier is nationwide companies which rent access to Tier 1 networks. The third tier consists of small companies 
+                    that primarily focus on providing internet to local markets and rely on larger ISPs. Fiber optics rely on glass or plastic fibers to transmit data via light. Cable uses the infrastructure of cable television. DSL uses the infrastructure of a phone line. 
+                    Dial-up uses the phone line directly, and finally satellite uses satellites orbiting Earth. Finally, there are 4G and 5G networks which use cell tower infrastructure.
+                </p></li>
+                <li>
+                    <h4>What Are Safe Ways to Sign Into Your Computer?</h4>
+                    <p>Make sure your computer is password protected. Choose a password that is not easily guessed or hacked. Two-factor authentication (2FA) is recommended. Windows Hello is a good feature. </p>
+                </li>
+                <li>
+                    <h4>What Are Different Types of Tools Professional Developers Use?</h4>
+                    <p>A computer is the primary development environment. Developers usually choose fast processing power and plenty of RAM. An Integrated Development Environment (IDE) is used for code editing on the computer. IDEs include Visual Studio Code (VS Code), IntelliJ IDEA, JetBrains, and PyCharm.
+                        Sublime Text, Atom, Notepad++, and Brackets are some other code editors besides VS Code. Version control is next and most people use Git. Package managers are another critical tool. They help developers by adding, updating, and removing libraries. Popular package managers are NPM, Yarn, and PNPM for JavaScript;
+                        pip for Python, Composer for PHP, and Maven for Java. Developers use frameworks and tools for testing such as Cypress, Playwright, Selenium, and others. Jest for JavaScript, pytest for Python, JUnit for Java, PHPUnit for PHP. Web browsers like Chrome, Firefox, Edge, and Safari offer tools to inspect and debug code. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="file-system">
+                <li>
+                    <h4>How Can You Use File Management Applications on Your Computer?</h4>
+                    <p>A file management application is a way to store, organize, and edit files. In Windows, the default is File Explorer; for Mac, it's Finder. You can organize files with tags and then search or click on colored tags. Smart folders are another way because they are organized by file type. </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Naming Files for Web Applications?</h4>
+                    <p>Make the names of your files descriptive. Do not use spaces; use hyphens to separate words. Try to avoid using special characters and stick to letters, numbers, and dashes. Some languages or workplaces have their own conventions—follow those. </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for File/Folder Organization in Web Applications?</h4>
+                    <p>Presents a sample of how to organize files. Create an assets folder where all images and fonts are stored and a css folder where the CSS pages are stored, leaving the HTML files in the root. Also include a README file with important details about the files. The README file uses the .md extension for Markdown which is used to write documentation. </p>
+                </li>
+                <li>
+                    <h4>How Can You Create, Move, and Delete Files and Folders Using Explorer/Finder?</h4>
+                    <p>You can create a file in File Explorer by clicking New in the top right. You can rename files by using the rename feature at the top. You can move files by dragging and dropping or cutting and pasting. To delete you click the trash bin or right-click and select delete. For Finder, you need to save files from the application of the file type you want. Cmd+S lets you save a file. </p>
+                </li>
+                <li>
+                    <h4>How Can You Search for Files and Folders on Your Computer?</h4>
+                    <p>You can search for files from the taskbar or File Explorer in Windows. You can also search in File Explorer and you can have many different depths of search. On Mac you use Spotlight (Cmd + Spacebar). You can also search within Finder on Mac. </p>
+                </li>
+                <li>
+                    <h4>What Are Some Common File Types You Will Work With in Web Applications?</h4>
+                    <p>HTML files end in .html. CSS files end in .css and JavaScript files end in .js. You will also need images which come in many types. JPEG - Joint Photographic Experts Group, known for efficient compression. PNG - Portable Network Graphics, preserves image quality but results in larger files. GIF - Graphics Interchange Format, supports animation and transparency. SVG - Scalable Vector Graphics can be scaled without ever losing quality. 
+                    Audio formats - MP3 (efficient compression but lossy). MP4 (good compression and supports audio/video codecs and metadata). MOV is common in Apple QuickTime products. WAV - lossless audio format. WebM - high-quality open source video. There are also font formats: TTF - TrueType Font is compatible with different operating systems. WOFF - modern font format designed for web development. WOFF2 offers improved compression and performance.
+                    You can also create archive files for multiple folders and files. The most widely used is ZIP. README.md contains information about how to use, install, contribute, and the project's license. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="browsing">
+                <li>
+                    <h4>What Are Some of the Common Web Browsers Available Today and How Do You Install One?</h4>
+                    <p>Web browsers are applications to view webpages on the internet. In 2024 the most popular are Edge, Firefox, Chrome, and Safari. Some browsers have unique features like Opera which comes with a built-in VPN. Brave focuses on privacy and ad-blocking. You can install a browser through your operating system's package manager such as <code>brew install --cask google-chrome</code> with macOS Homebrew. You do not have to use just one browser; many people use different browsers for different purposes. </p>
+                </li>
+                <li>
+                    <h4>What Is the Difference Between a Web Browser, a Website, and a Search Engine?</h4>
+                    <p>
+                        Web browsers are software applications that allow users to access and navigate the internet. Key features are the address bar, rendering engine, bookmarks, extensions, and privacy and security features. Popular ones are Chrome, Firefox, Edge, Safari, and Opera. 
+                        Websites are collections of web pages identified by a common domain and published to a web server. They are destinations visited in a browser. Components include the domain name, web pages, multimedia files, forms, and buttons; sites can be static or dynamic.
+                        Search engines are web-based tools designed to find information. Search engines use web crawlers (spiders/bots) that discover new content. They also use algorithms to determine the relevance and ranking of pages. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How to Use a Search Engine Effectively to Achieve Optimal Results</h4>
+                    <p>You can use Boolean search syntax to use special operators and words to find exactly what you want. Use quotation marks to find only the exact phrase. Use + to require words (in some search engines) and - to exclude words.
+                        You can use <code>site:</code> to search within a specific website. Search operators can vary so look up the specific ones for the search engine you prefer. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="css-basics">
+                <li>
+                    <h4>What is CSS, and What Is Its Role on the Web?</h4>
+                    <p>CSS, which stands for Cascading Style Sheets, is a language used to apply styles to HTML. The separation of structure and visual presentation has allowed developers to create more flexible, maintainable websites. With CSS you can control the layout, colors, fonts, and overall appearance without altering the HTML structure.
+                        CSS works by selecting HTML elements and applying styles to them. One of the more powerful components of CSS is the ability to create responsive designs. This allows web pages to adapt to different screen sizes and devices. The cascading nature is also important because it allows styles to be inherited and overridden. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Basic Anatomy of a CSS Rule?</h4>
+                    <p>CSS rules are made of two main parts: a selector and a declaration block. Example: selector { property: value; } Examples of selectors include type selectors, class selectors, and ID selectors. Curly braces {} denote a declaration block. Inside the declaration block is a series of declarations including a property and a value. A property is the CSS identifier that specifies which feature is being styled.
+                        An example of a property is background-color. After each property you should have a colon, and each value should end with a semicolon. ID selectors start with a # symbol. Class selectors must begin with a . 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Meta Viewport Element Used For?</h4>
+                    <p>The meta viewport is crucial in responsive design. It's an element used to control the page's dimensions and scaling on different devices. width=device-width tells the browser to set the width to the device. initial-scale=1.0 sets the zoom to 100% by default. You can turn off zooming with user-scalable=no but it is not recommended. </p>
+                </li>
+                <li>
+                    <h4>What Are Some Default Browser Styles Applied to HTML?</h4>
+                    <p>The default styles, or user agent styles, are the ones that come already implemented in browsers. These styles can vary slightly from one browser to another. For example, an H1 is bold and larger compared to other headers. Another element with default style is the hr element which creates a way to separate content.
+                        Blockquotes also have a default style of being indented and italicized. The anchor element is another that is stylized by default as blue and underlined. Lastly there are default styles for ul and ol elements.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Inline, Internal, and External CSS, and When Should You Use Each One?</h4>
+                    <p>
+                        The three ways to apply CSS to HTML are inline, internal, and external. Each method has advantages and disadvantages and you should know when each is suitable. Inline is written directly into the HTML element using the style attribute. Inline CSS is used for quick one-off styles or to override other styles for a specific element. It should typically be avoided because it can clutter HTML and make code harder to maintain.
+                        Internal CSS is written with a &lt;style&gt; tag inside the head section of an HTML document. It applies styles to the entire page and is useful when you need to style a specific document. It does not promote reusability and makes the code harder to maintain in larger projects. External CSS is written in a *.css document and is linked using the &lt;link&gt; element in the head section. It allows you to style many pages consistently and is the preferred method.
+                        When linking it in the head people use the rel attribute with the value "stylesheet", then href the CSS document. External CSS should be your go-to approach to CSS implementation.
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do Width and Height Work?</h4>
+                    <p>In CSS, the width and height properties are used to control dimensions of elements on the webpage. These properties can be defined in different units such as pixels (px), percentages, viewport units (vw, vh), and more. You can use min-width and min-height to set a minimum width/height.
+                        You can also use max-width and max-height for maximum width/height. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are the Different Types of CSS Combinators?</h4>
+                    <p>Combinators are used to define the relationships between selectors in CSS. A descendant combinator is used to target elements matched by the second selector if they are nested within an ancestor element that matches the first selector. You can use this with just a space, like <code>figure img {}</code> to get all images within a figure.
+                        Another combinator is the child combinator, which uses the > symbol and selects elements that are the direct children of a specified parent element. The adjacent sibling combinator (+) selects an element that immediately follows a specified sibling element. You may use something like <code>img + figcaption</code> to select the figcaption that follows an image.
+                        The general sibling combinator (~) selects all siblings that follow the specified element. You could use <code>h2 ~ p</code> to select all paragraphs that follow an h2. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is The Difference Between Inline and Block-Level Elements in CSS?</h4>
+                    <p>In HTML and CSS there are inline and block-level elements. Block-level elements take up the full width available by default. Block-level elements apply the display: block property by default. Some examples of these are div elements, paragraphs, headings, ordered lists, unordered lists, and section elements. Inline elements have the property display: inline enabled by default. Common inline elements are span, anchor, and img. Inline elements are used to style small portions of text or emphasize a word.</p>
+                </li>
+                <li>
+                    <h4>How Does Inline-Block Work, and How Does It Differ from Inline and Block Elements?</h4>
+                    <p>When working in CSS you often encounter three different types of display behaviors for elements: inline, block, and inline-block. Each one affects how they are positioned and interact with elements on the page. Block-level elements are like large containers and take up the full width of the parent. They always start on a new line and their height and width can be adjusted. 
+                        Inline elements only take up the space they need and do not break the line. The inline-block property is a hybrid of the two behaviors. It does not start a new line but you can adjust the height and width.  </p>
+                </li>
+                <li>
+                    <h4>What Are Margins and Padding, and How Do They Work?</h4>
+                    <p>Margin and padding are essential properties in CSS. Margins control the space outside of an element, separating it from other elements and defining the layout structure. Padding controls the space inside an element, improving aesthetics and readability. Margins can do things like add space to the top of a paragraph using margin-top/bottom/left/right. You can also use just margin to apply all four sides or use multiple values to set top, right, bottom, left. Padding is basically the same but applied inside the element. </p>
+                </li>
+            </section><hr>
+            <section id="specificity">
+                <li>
+                    <h4>What is CSS Specificity, and the Specificity for Inline, Internal, and External CSS?</h4>
+                    <p>
+                        CSS specificity is a fundamental concept that determines which CSS is applied when multiple rules could apply. It is based on the types of selectors used. Highest specificity is inline styles, then ID selectors like #main, then class selectors, attribute selectors, and pseudo-classes. Examples of class selectors are .container, attribute selectors like [type="text"], and pseudo-classes like :hover. Specificity is calculated as a four-part value (a,b,c,d). A is inline styles, B is ID selectors, C is class selectors, attributes, and pseudo-classes, and D is type selectors, pseudo-elements, and the universal selector.
+                        The universal selector (*) has the lowest specificity, represented by 0,0,0,0. A class selector has a specificity of 0,0,1,0. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Universal Selector, and What is Its Specificity?</h4>
+                    <p>The universal selector (*) matches any element in the document. For example, <code>* { margin: 0; }</code> removes all margins from all elements. Setting margin and padding to 0 is a common practice in CSS resets. The universal selector has a specificity value of 0,0,0,0 which means it's always overwritten by more specific selectors. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Specificity for Type Selectors?</h4>
+                    <p>Type selectors are also known as element selectors; they target elements based on tags. A type selector has a specificity of 0,0,0,1. </p>
+                </li>
+                <li>
+                    <h4>What is the Specificity for Class Selectors?</h4>
+                    <p>Class selectors are key since they allow multiple elements with the same class to receive styles. Class selectors are defined with a leading dot (.). Class selectors have a higher specificity than type selectors, but lower than ID selectors and inline styles (0,0,1,0). You can combine class selectors with other selectors to create more specific rules. 
+                        For example <code>p.highlight { }</code> targets all paragraph elements with the highlight class. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Specificity for ID Selectors?</h4>
+                    <p>ID selectors are prefixed with a # followed by the id name. IDs should be unique—no two elements should share the same ID. The specificity for an ID selector is (0,1,0,0). </p>
+                </li>
+                <li>
+                    <h4>What is the !important Keyword, and What Are the Best Practices for Using It?</h4>
+                    <p>The <code>!important</code> keyword is used after a CSS value before the semicolon and it overrides other styles. This bypasses normal specificity rules and can even override inline styles. It's best to use <code>!important</code> sparingly since it can make maintenance and debugging more difficult.  </p>
+                </li>
+                <li>
+                    <h4>How Does the Cascade Algorithm Work at a High Level?</h4>
+                    <p>The cascade algorithm is the process the browser uses to decide which CSS rules apply when there are conflicts. The cascade considers relevance, origin and importance, specificity, scope, and order of appearance. Relevance means it checks for all selectors that actually apply to a given element.
+                        Origin and importance compares the browser default styles, user styles, and author styles. Importance checks for things like <code>!important</code>. Next it checks specificity. Finally it checks the order of appearance, with later rules taking precedence when specificity and origin are equal.
+                    </p>
+                </li>
+                <li>
+                    <h4>How Does Inheritance Work with CSS at a High Level?</h4>
+                    <p>Inheritance is a key concept that determines how styles are passed down from parent elements to their children. Not all properties are inherited by default, but properties like color, font, and line-height are inherited. Properties like margin, padding, border, and background are not inherited by default.
+                        If you want a child element to inherit a property, you can set it explicitly or use the <code>inherit</code> keyword (for example, <code>padding: inherit</code>). Inheritance works from parent to child, not vice versa. 
+                    </p>
+                </li>
+            <hr></section> 
+            <section id="listsandlinks">
+                <li>
+                    <h4>How Do You Space List Items Using margin or line-height?</h4>
+                    <p>Margins and line-height are essential for spacing items to enhance readability and visual appeal. Margins can be used to create space between list items by applying margin to the li elements. This allows control over each list item. Another way to space out items is to use the line-height property.
+                        This adjusts vertical spacing between lines within a single list item. To control individual items use the margin or padding properties.
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do the Different list-style Properties Work?</h4>
+                    <p>
+                        In CSS, the list-style property is used to control the appearance of list items. This works with both ul and ol. The list-style property is a shorthand for list-style-type, list-style-position, and list-style-image. The list-style-type allows you to change bullets or numbering systems. list-style-position can be set to inside or outside, with outside being the default. list-style-image lets you use an image as the bullet point which can be useful for providing your own unique style. Make sure the image is small and simple. You can use list-style with all three properties if you want. 
+                    </p>
+                </li>
+                <li>
+                    <h4>Why are Default Link Styles Important for Usability on the Web?</h4>
+                    <p>
+                       Default link styles are important because they match user expectations. They provide clear visual cues that distinguish interactive elements. It is possible to edit link styles, but the core principles should be maintained for usability. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Style the Different Link States?</h4>
+                    <p>
+                        There are different states of a link including link, visited, hover, focus, and active. Styling the link states is crucial for usability and accessibility. These provide immediate feedback on user interactions and are essential. You can style the states using pseudo-classes. The <code>:hover</code> pseudo-class is an example, or <code>:visited</code>. Example: <code>a:link { color: red; }</code>. <code>:focus</code> changes the style when navigating with the keyboard. <code>:active</code> applies when a link is being clicked. 
+                    </p>
+                </li>
+            </section>  
+            <hr><section id="bgandborder">
+                <li>
+                    <h4>How Do Background Image Size, Repeat, Position, and Attachment Work?</h4>
+                    <p>When working with background images you have several properties to control the display. The main ones are background-size, background-repeat, background-position, and background-attachment. You can use background-size to set a size; use <code>contain</code> to make the image fit without cropping or stretching. You can use <code>background-size: cover;</code> so that the image will scale to cover the entire element while maintaining the aspect ratio.
+                        Background images repeat by default horizontally and vertically to fill the whole element. You can use the background-repeat property to stop repeating with <code>no-repeat</code>. You can use <code>repeat-x</code> for horizontal repetition only and <code>repeat-y</code> for vertical repetition. Use background-position to change where the background image is placed. Finally background-attachment determines whether the image scrolls or remains fixed, with the main values being <code>scroll</code> and <code>fixed</code>.   </p>
+                </li>
+                <li>
+                    <h4>What Is a Background Gradient, and How Does It Work?</h4>
+                    <p>A background gradient is a smooth transition between two or more colors that can be applied to a background. There are two main types of gradients: linear and radial. Basic syntax: <code>background: linear-gradient(direction, color-stop1, color-stop2, ...);</code> The direction specifies the direction of the gradient and can be a word like right, bottom, side, corner, or an angle.
+                        Color stops specify the positions where the gradient transitions occur. You can use viewport units like vh to specify when the gradient transitions. Radial gradients radiate from an origin, usually the center outward in a circular or elliptical shape. Syntax: <code>background: radial-gradient(shape size at position, color-stop1, color-stop2, ...);</code> The shape specifies circle or ellipse; size determines the ending shape. The <code>closest-side</code> keyword makes the gradient's ending shape fit the closest side of the element. Gradients can enhance designs without needing images.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Some Accessibility Considerations for Backgrounds?</h4>
+                    <p>One of the primary concerns when choosing backgrounds is ensuring sufficient contrast between background and text for readability. WCAG recommends a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text. Also avoid placing text over busy or complex backgrounds, such as images or gradients with multiple colors. If you are using a background image it is recommended to use a semi-transparent overlay.
+                        Also, when designing backgrounds, avoid using color as the sole means of conveying information. You should use symbols or text to convey the information. If you include background audio, always provide a way to mute or pause the audio. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are the Different Ways You Can Add Borders Around Images?</h4>
+                    <p>In CSS there are several ways to add borders around images. You can use the border property. This property is shorthand that allows you to set the width, style, and color of the border all at once. For example <code>img { border: 2px solid red; }</code> will add a 2-pixel-wide solid red border around all images. You can change solid to dashed, dotted, or double to suit your design needs.
+                        If you need more control over the sides you can use specific properties for each side, such as <code>border-top: 1px dashed green;</code>. This allows you to create unique borders for each side. You can also use the outline property which is similar but doesn't affect the element's dimensions or layout. Use <code>border-radius</code> to make rounded corners for your border. You can combine and customize these options to fit your needs.</p>
+                </li>
+            </section><hr> 
+            <section id="UIdesign">
+                <li>
+                    <h4>What Are Common Design Terms to Help You Communicate With Designers?</h4>
+                    <p>Developers work closely with designers so it's important to have some common vocabulary. Layout is how the visual elements are arranged on a page to convey a message. Alignment is how the elements are placed in relation to one another. Composition is related to balance with symmetrical/asymmetrical designs.
+                        Hierarchy establishes the order of importance and which elements are noticed first. Contrast helps to create distinction between elements through color, size, shape, texture, etc. White space, or negative space, is the empty space that helps create readability. UI is how humans interact with computers; UX is how users feel when they use a product. </p>
+                </li>
+                <li>
+                    <h4>How Do You Create Good Background and Foreground Contrast In Your Designs?</h4>
+                    <p>Contrast is the difference between two colors. Colors with high contrast will be more visually distinct. WCAG text contrast of 4.5:1 is considered AA standard, which is the minimum for normal text. A contrast ratio of 7:1 is considered AAA standard and ensures better accessibility. Changing hue doesn't typically change the contrast much; saturation changes it a bit, but lightness changes it dramatically.         
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Importance of Good Visual Hierarchy in Design?</h4>
+                    <p>Visual hierarchy refers to the way you lay out and display content. A strong hierarchy provides a clear path for the eye to follow, ensuring information flows in the intended order. You should apply different font sizes to different heading tiers or use a callout box. The hierarchy is important for conveying components like a navigation bar or footer. </p>
+                </li>
+                <li>
+                    <h4>How Does Scale Work in Design?</h4>
+                    <p>When scaling your web design you are looking at the size relationships between elements. For example, the spacing between a heading and a paragraph draws attention to the header but should also flow into the paragraph. Scale is also important for interactivity—buttons on mobile should be large enough to tap comfortably. </p>
+                </li>
+                <li>
+                    <h4>How Does Alignment Work in Design?</h4>
+                    <p>Alignment is the process of arranging text and images that creates a visual connection. There are lots of different types including: left, center,right, justified,vertical.</p>
+                </li>
+                <li>
+                    <h4>What Is the Importance of Whitespace in Design?</h4>
+                    <p>White space referes to any space around elements. White space helps to create balance between the elements and the page. Macro white space is between larger elements, active is intentionally created to guide the users eye. Passive is the space left over when elements have been placed. Micro is the space between the characters and lines of text. Law of proximity states that things that are close are related, far away are not. </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Working with Images in Your Designs?</h4>
+                    <p>Adding images to your site is a great way to engage users and create visual appeal. Use responsive images that scale to fit the size of user's screen. Ensure your images have a high PPI(pixels per inch) make sure that they are optimized for the web for load times etc too. Make sure that there is a good balance of text and images. Make sure that images that align better with the content are placed higher on the page. 
+                        Make sure that your images are aligned with text and other elements of the page. Make sure to use alt attributes for accessibility.
+                    </p>
+                </li>
+                <li>
+                    <h4>What is Progressive Enhancement?</h4>
+                    <p>Progressive enhancement is a design approach so that all users regardless of browser or device can access content. Core principles: all core content accessible on all browsers, advanced layouts should be provided through external CSS, all advanced should be through external JS files, browser preferences should be respected. 
+                        It can help the performance of your applications, SEO, although some feel it is not always realistic for applications. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="usercentereddesign">
+                <li>
+                    <h4>What Is User-Centered Design?</h4>
+                    <p>
+                        User centered design is an approach that prioritizes the end user. The first aspect is to consider your target demographics. Consider the goal of the end users. User behavior is a factor aswell you can leverage an analytics tool like Google Analytics to determine places the user gets stuck or leave.
+                        Provide a feedback channel where users can share input and make changes based on the input. This approach means you need to put the user at the forefront of your decision making. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are User Requirements, User Research, and Testing?</h4>
+                    <p>
+                        User research is a systematic study of people who use your product. The goal is to measure needs, behaviors, and pain points. User research comes in many ways the most common is the NPS(Net Promoter Score). The NPS measures how likely you are to recommend the product to a friend. It is measured through a survey and offered at key milestones such as 7 days, 30 days etc. Another research vector is an exit interview.
+                        This is when you give users a survey when they cancel or delete an account. User testing refers to capturing data from users as they interface with your application. Beta testing for a video game is an example. User requirements can be functional dictating how the app works, or non functional defining how the app behaves. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Designing a Dark Mode Feature?</h4>
+                    <p>
+                        Dark mode is a special feature where the user can switch between a light scheme to a dark one. This helps reduce eye strain in low lighting. When designing dark mode features it is important to make sure it is effective. The first consideration is 
+                        avoidance of saturated colors. Saturated colors are bright and intense. Another consideration is the use of pure black backgrounds with white text which can also be harsh on the eyes. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Designing Breadcrumbs?</h4>
+                    <p>
+                        When it comes to web design there are many navigational aids that you can use. Examples include top bars, side bars, and footers, but if your site is one on the more complex side you may consider using breadcrumbs. Breadcrumbs are an aid that shows you where you are in terms of the sites hierarchy. In most websites this is at the top of the page, starting from homepage, and progressively showing where you are. 
+                        The use of breadcrumbs is helpful because it can help the users to navigate to previous pages and understand what page they are on. When designing breadcrumbs the first step is to decide what the separator will be. The separator is the character that separates the different levels of the hierarchy. Common ones are the > and the angle quotes >> and / . The second consideration is the placement of breadcrumbs, users shouldnt struggle to find breadcrumbs so make them easy to locate. 
+                        Another consideration is the size of the breadcrumbs. You want to make sure they are large enough to be easy to read but not so large that they take over the page. If your site is simple and has a shallow hierarchy breadcrumbs are probably not necessary. Typically breadcrumbs are on more complex sites. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Designing Cards?</h4>
+                    <p>
+                        Card components are common in e-commerce, social media, and news sites. They are used to display information in a structured way. You should design your cards with simplicity in mind. You don't want them to cause clutter. You should consider where the user can click. Also use high quality media on your cards. Lastly consider the color hierarchy bright colors for important parts, light for less important. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Designing Infinite Scrolls?</h4>
+                    <p>
+                        Infinite scroll is a design where the user loads more content as they scroll down the page. This is used commonly on social media sites like twitter. It is used as a substitute for pagination, which is when the site is broken down into pages. As you incorporate infinite scrolling into your page you shoudl consider a few things.
+                        First to have a load more button so the user has more control over the loading. You should also have a back button so they can go back without having to scroll back or a scroll to the top. You should also have a loading indicator. Also keep the footer accessible. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Designing Modal Dialogs?</h4>
+                    <p>
+                        A modal is a popup that a website may show you on top of their content. The content behind is usually dimmed out. Its a good idea to allow users to click out of it to close it. There are often prominent buttons or CTAs(call to actions). 
+                        There should also be a close button or a way to back out of the modal. There are also accessibility concerns such as managing focus on the correct spots. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Progress Indication on Forms, Registration, and Setup</h4>
+                    <p>
+                        Progress indication is a way to shows users how far they are in a process. It can be used in forms, registrations, or setups. You can use a progress indication bar to show users what is left to do when filling out forms. Transparency is key so the user knows how much time is left. When designing a progress indication section, keep it simple. Second, make it possible to go back to other steps. Make the progress indicator easy to find.
+                        Have clear section titles, percentages or steps. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Designing Shopping Carts?</h4>
+                    <p>
+                        Make sure that the cart is visible at all times, usually in the top right corner. Provide a clear way to update and view the quantity of each item. Make sure there is a remove button that is accessible. Make an icon that is easy to understand. Provide a clear CTA button for checkout. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is Progressive Disclosure?</h4>
+                    <p>Progressive disclosure is when you show users only relevant content based on activity and hide the rest. A good example is something like amazon. Also you can choose to see more details when you are ready. It is important to keep all important information visible at all times. Provide a single access point for additional features. </p>
+                </li>
+                <li>
+                    <h4>What Is Deferred and Lazy Registration?</h4>
+                    <p>Lazy registration is a UI design pattern that allows users to browse and interact without registering. Users need to see the value before they are willing to provide information. You will need to communicate that data will be protected and secure. 
+                        You will also need to know how to secure data. You tube is an example or e-commerce. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="designTools">
+                <li>
+                    <h4>What Are Design Briefs and How Do Developers Work With Them?</h4>
+                    <p>A design brief is a document that outlines the objectives, goals, requirements of a project. It is a roadmap that guides the design process and ensures the final product meets the needs of the client. Usually the client will write the design brief and it will serve as a draft, or the designer may write one to consult with the client.
+                        The first element is the overview of the project and business. This overviews should includ details, missions, values, selling points, products/services. It should also include goals and information about the target audience. Information about competition and how the product is different, and a project scope with deliverables, timelines, and budget. 
+                        The brief should be approved by all stakeholders before work begins. Developers typically work with designers and other developers to divide up responsibilities. There is typically a project manager to keep things on track.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Some Common Tools Developers Should Know About That Are Used by Designers in the Industy?</h4>
+                    <p>Design is the foundation of every web application. Developers should be familiar with design tools to make the most of the process. Vector based design involves creating digital art using formulas. Prototyping is the process of creating interactive models or UI. Figma is one of the most common and essential design tools. This is a cloud-based tool
+                        specializing in UI/UX design. It offers built in features of: vector based design, auto layouts, commenting/feedback system, version history, real time collab, design systems and more. To get started you can us the web-based interface or desktop app. Sketch is another essential design tool that developers should be familiar with. Sketch is popular for
+                        the intuitive interface and simplicity. It is only available in macOS and it has a cloud-based interface. Adobe XD is anotehr vector based design and prototyping tool known for integration with photoshop,illustrator, aftereffects. Another tool worth mentioning is Canva. You can use canva to create a wide variety of content. Other popular design apps 
+                        are Framer, InVision, Miro, Photoshop, Illustrator. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="absoluterelativeunit">
+                <li>
+                    <h4>What Are Absolute Units in CSS, and When Should You Use Them?</h4>
+                    <p>
+                        As you design you will use properties like width, height etc and you will need to specify units you want to use. There are 2 units you can use absolute or relative. Absolute units are a fixed length and are not relative to something else, while relative is the opposite. The most common absolute unit is pixel (px). If you use pixels the object will be
+                        the same on all screen sizes. Other absolute values are: in(inches), cm(centimeters), mm(millimeters), q(quarter-millimeters), pc(picas),pt(points).
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Percentages in CSS and When Should You Use Them?</h4>
+                    <p>
+                        Percentages are relative units that allow you to define things as a proportion to the parent element. Percentages are key for fluid layouts that adjust to screen sizes. Using percentages for flexible images is common practice, max-width 100% means they will appropriately scale down while maintaining their aspect ratio. You can also use percantages to describe
+                        fonts like 120% will make the element have text 20% larger than the parent element. Be careful when nesting with % based dimensions, can lead to unexpected results. It can also get tricky if the parent doesn't have a defined dimension. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are ems and rems in CSS, and When Should You Use Them?</h4>
+                    <p>
+                        em is a unit relative to the font size of the element. For example if we use 1.5em to define something within a paragraph it will be 1.5xs the font size of that element. em units are good when working with modular components like buttons or cards. An issue with using pixels for font sizes is that if someone changes the default font size, the text will not scale 
+                        proportionally. A way to address this is by using the rem which is relative to the font size of the root element or html element. rem units are preferred over pixels for typography because they scale with the users browser settings. 
+                    </p>
+                </li>   
+                <li>
+                    <h4>What are vh and vw Units, and When Should You Use Them?</h4>
+                    <p>
+                        vh and vw units are relative to teh viewport and allow you to size relative to the browser window. 1vh is 1% of the viewports height where 2vw woudl be 2% of viewport width. An advantage is that they respond to viewport size in real time. It's important to use these judiciously since screens don't all have the same aspect ratios. It can cause unexpected shifts when things like browser bars disappear etc.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the calc() Function, and How Does It Work?</h4>
+                    <p>
+                        The calc function you can perform calculations directly within stylesheets to determine property values dynamically. calc() is a CSS function which is a block of code for a task. When calling a function you put the argument in parenthesis. An expression is a combination of values and operatiors that produce a result. Evaluated means the values are converted to a single value behind scenes. You can combine
+                        different units like pixels, percentages, and ems. All vlalues in the expression or operands must have units and you can use +,-,/,* within the expression. Using calc you can determine the value of a property dynamically. You must surround + and - with white space. This is not necessary for * and / but it is still recommended. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="pseudoElementsInCSS">
+                <li>
+                    <h4>What Are Pseudo-classes, and How Do They Work?</h4>
+                    <p>
+                        Pseudo classes are special CSS keywords that allow you to select an element based on its specific state or position. These could include: active, being hovered, (first-child)first child of parent, last child of parent, visited link, disabled. You add it to the selector by using a : and the name of the pseudoclass. 
+                        Some additional pseudoclasses- :focus, :first-of-type, :last-of-type; nth-of-type, :modal, :enabled, :checked, :required. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Examples of Element User Action Pseudo-classes?</h4>
+                    <p>
+                        User feedback is important to web design. It's important for users to be able to recognize interactable content. Pseudoclasses alow you to provide this kind of feedback without JavaScript or other programming languages. The :focus pseudoclass is when something is tabbed to or it could be when a form is being selected wiht a mouse.
+                        You can use :checked psuedoclass to change checkboxes and radio boxes when they are selected. Some otehr action pseudo classes - :focus-within for applying styles to an element when it or any of its descendants have focus; :enabled - when buttons are enabled; :disabled - when buttons are disabled; :target applying styles to an element that is hte target of a url fragment.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Examples of Input Pseudo-classes?</h4>
+                    <p>
+                        Input psuedoclasses are for input elements which are important for making web forms. :checked will let you style radio buttons or checkboxes that are selected. :required will allow you to style input elements that are required. You can use :valid to style inputs that meet validation criteria, and :invalid to style those that do not meet it.
+                        cursor: not-allowed; can be useful for telling a user that something cannot be clicked. Other inputs - :autofill - applies styles to inputs that the browser automatically fills with saved data; :optional - style inputs that are not required ; :in-range or :out-of-range style elements when their values are within or outside range cosntraints.
+                    </p>
+                </li>
+                <li>
+                    <h4>What are Examples of Location Pseudo-classes?</h4>
+                    <p>
+                        Location pseudoclasses are for styling links and elements targetted. Some examples, :link, :visited, :any-link, :local-link, :target, :target-within. :any-link combines the link and visited psueod classes and applies the style to both. :local-link is for when links point to the same document good for internal/external links but no browser supports it.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Examples of Tree-Structural Pseudo-classes?</h4>
+                    <p>
+                        Tree structural psuedo classes allow you to target and style based on their location in the document tree. A list of structural - :root ; :empty ; :nth-child(n) ; :nth-last-child(n) ; :first-child ; :last-child ; :only-child ; :nth-of-type ; :first-of-type ; :last-of-type ; :only-of-type. :root lets you target the html element and is used to help you apply
+                        styles across the whole document. :empty allows you to style elements that do not have data. :nth-child(n) can be used to pick elements based on position from parent and can also be a specific number or a keyword like even or odd. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Examples of Functional Pseudo-classes?</h4>
+                    <p>
+                        Functional psuedoclasses allow you to select elements based on complex conditions or relationships. Examples - :is() ; :where() ; :has() ; :not() . The is() pseudo class is useful when you want to style a group of elements that share some characteristics like for example when they have buttons :is(button) {}. The where() functions similar to is() but it doesn't
+                        change specificity. You could use :where() to apply zero margin and padding to heading elements like :where(h1, h2, h3) { margin: 0;}. :has() will allow you to style a parent based on the characteristics of the children. You could use it to style articles with an h2 like article:has(h2) {}. :not() is ideal for when you want to apply a style but exclude a certain element.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Pseudo-elements, and How Do They Work?</h4>
+                    <p>
+                        Pseudo elements are not real in that they do not match any actual HTML elements, but they still allow you to style an aspect of an element without adding html. To apply a pseudo element use a :: ; : represents a pseudo class. Pseudo elements can allow you to style an element or add content before or after but htey cannot exist independently. The ::before and ::after pseudo elements lets you put content before or after. 
+                        You use the content property within the css to represent the content you wish to add before the element. You can use the transition property to animate rotate, skew, scale or translate. You can use ::first-letter to style the first letter of an element. ::marker will let you change the items marker and size of a list. There are also ::placeholder, ::spelling-error, ::selection to explore. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="cssColors">
+                <li>
+                    <h4>What Is Color Theory in Design?</h4>
+                    <p>
+                        Color theory is the study of how colors interact with each other and how they affect our perception. It covers color relationships, color harmony, and the psychological impact of color. Colors can be classified as primary, secondary, or tertiary. Primary colors are yellow, blue, and red which are fundamental hues where all other colors come from. Green, Orange, Purple are secondary colors, they come from mixing 2 primary colors. 
+                        Tertiary colors are yellow green, blue green, blue violet etc but they come from mixing a primary with a secondary. Warm colors are those of comfort like red, orange, yellow. Cool colors are those of calmness such as blues, greens, purples. Colors can be represented through models such as the RGB model, HSV, and HSL model. The color wheel is a diagram that shows how colors relate to each other. It helps designers create 
+                        palettes and color schemes. Analagous colors create cohesive soothing experiences they are adjacent on the color wheel. Complementary create high contrast and visual impact. Color contrast is essential for accessibility. A triadic color scheme has vibrant colors they form an equilateral triangle. Monochromatic evokes a feeling of unity and harmony by using the same color in different ligthness, darkness and saturation. 
+                        Create a color scheme that creates branding, use colors that evoke emotions that align with your goals, choose colors with good contrast, use colors to highlight important elements, and use color consistently to create hierarchy.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Named Colors in CSS, and When to Use Them?</h4>
+                    <p>
+                        Named colors are predefined color names recognized by browsers. There are 140 standard color names like red, blue, yellow etc. Named colors are useful for quick prototyping, simple designs, and code readability. Named colors are great for quick assignments, but the limited range makes them less suited for complex designs. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the RGB Color Model, and How Does the RGB Function Work in CSS?</h4>
+                    <p>
+                        RGB stand for red, green, blue the primary colors of light. It is additive so colors are created by combining light at different intensities from 0-255. Black is rgb(0,0,0), white is rgb(255,255,255). CSS also has the rgba() which adds a fourth value of alpha that controls the transparency. rgba(0,0,255,.5) would be a blue with 50% transparency. It is especially useful for digital media because RGB is how the monitor displays.
+                        RGB is also important for dynamic designs like animations with color changing. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the HSL Color Model, and How Does the HSL Function Work in CSS?</h4>
+                    <p>
+                        HSL is the Hue, Saturation and Lightness model. You can use the hsl() function to use it in CSS. The hue is represented by an angle on the color wheel from 0-360. 0 red, 120 green, 240 blue. Saturation refers to the intensity or purity of the color. It is displayed in percentages 0% grayish to 100% vivid. Finally there is lightness whcih is how light or dark from 0 black -100% white. Ex. hsl(120, 100%, 50%) green first number,
+                        100% green will be vivid, 50% normal tone not too light or dark. The main advantage of HSL is that it is easy to adjust saturation or lightning without touching the hue. There is also a hsla() function for controlling the alpha or the opacity. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Hex Codes, and How Do They Work in CSS</h4>
+                    <p>
+                        One of the most common ways of definining color is hex color values. A hex code is a hexadecimal code its a six character string used to represent colors in the RGB color model. The hex refers to the base 16 numbering system which uses digits 0-9 and letters A-F. #000000 is black, #FFFFFF is white. #RRGGBB is hte placeholder for the actual hex code. #FF5733 is a reddish orange.. FF full saturation of red, 57 moderate green, 33 blue.
+                        Hex codes are popular because they are precise and easy to use. Most design software provides hex codes because they are easy to paste in. You can use shorthand such as #FFF for #FFFFFF which only works if each set of color values are the same. HEx codes allow for more than 16 million colors across browsers. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Linear and Radial Gradients, and How Do They Work in CSS?</h4>
+                    <p>
+                        CSS supports 2 gradients, linear and radial. Linear gradients create blends along a straight line. background: linear-gradient(to right, red, blue); is an example. Gradients can be used anywhere that you can use an image in CSS. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="bestPracticeStylingForms">
+                <li>
+                    <h4>What Are Some Best Practices for Styling Text Inputs?</h4>
+                    <p>
+                        You should make sure all text elements are accessible. Its important to remember the placeholder and make its text readable. Also make sure you have a noticeable focus indicator. Make sure there is an invalid indicator too. 
+                    </p>
+                </li>
+                <li>
+                    <h4>When Should You Use appearance: none to Deal with Issues Styling Search Inputs and Checkboxes?</h4>
+                    <p>
+                        Browsers apply a lot of default styles and with input elements your ability to style them may feel restricted. You may want to use appearance:none to remove the default and build your own. WebKit based browsers will shwo a default search icon and cancel button. Hiding these will allow you to create your own indicators. 
+                        Webkit is a software engine that helps browsers display websites. Safari uses webkit to make sure pages look and work correctly. However make sure that the user doesn't lose functionality in states like focus etc. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Common Issues When Styling Special Input Elements?</h4>
+                    <p>
+                        datetime-local and color inputs are special inputs that rely on complex pseudo elements to create the date and color pickers. The default styling is entirely browser dependent so it may look completely different on different browsers. Also the pseudo elements are complex like date selector there is a lot of moving parts. If you choose to manually style, you may lose important
+                        functionality. For these reeasons many developers rely on JavaScript libraries instead of the brwoser's built in components. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="boxmodel">
+                <li>
+                    <h4>What is Overflow in CSS, and How Does It Work?</h4>
+                    <p>
+                        Overflow refers to the way elements handle content that exceeds the size of the container. Div element text can overflow outside of the borders of the element. There are properties that can be manipulated to change this overflow-y and overflow-x. You can set this to things like hidden or scroll, where scroll will allow you to view it by scrolling.
+                        It's considered best practice to use vertical scrolling, but horizontal scrolling is not recommended. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the CSS Transform Property, and How Does It Work?</h4>
+                    <p>
+                        The CSS transform property allows to modify the visual presentation of elements. It allows you to apply transformations such as rotating, scaling, skewing, or translating. You can do this by doing something like transform: translate(50px,100px); which would move it 50 to the right and 100 pixels down. There is also rotate and scale which an example
+                        would be transform: scale(1.5,2); which would make it 1.5 times wider and 2xs taller. You can combine multiple translations in a single transform with () parameters for each. Transform does present some accessibility issues, screen readers may not properly utilize the transformations. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the CSS Box Model, and How Does It Work? </h4>
+                    <p>
+                         CSS box model is a fundamental concept. If you understand this model you will be able to control size, spacing and appearance of elements. In the CSS box model everything is surrounded by a box. This consists of 4 elements: content, padding, border, margin. Content area is the innermost space of the box. Padding outside of that, then border, then margin. 
+                        You can set a lot in shorthand border, but if you want specific you can use border-width, border-style, border-color. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is Margin Collapsing, and How Does It Work?</h4>
+                    <p>
+                        Margin collapsing is a fundamental concept of CSS but basically when 2 elements overlap they take the larger value and not add them. For example an element wiht margin bottom of 20px that is directyl above a margin top of 30 px is not 50 px of margin, its just 30px. You can use a padding sometimes to stop a parent and child from collapsing and get the full
+                    sum of the margins of both elements. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Different Between content-box and border-box?</h4>
+                    <p>
+                        Box-sizing can be set to either content-box or border-box to control how the width and height of elements are calculated. This can also be used as a universal selector *. The value of box-sizing is content-box by default. In the content box model the width and height you set for an element determines the dimensions of the content area, but they do not include
+                        padding, border, or margin. To find the actual dimensions of the element you will still have to add in your padding, orders, etc. In border-box the width and height include the content area, padding, and border but they do not include the margin. You should use border box when you need to keep a fixed element size. It is also helpful in responsive web design. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is a CSS Reset, and What Are Some Common Examples?</h4>
+                    <p>
+                        CSS reset is a stylesheet that removes all of the default formatting of web browsers for HTML elements. You may also notice that not all default styles are the same across browsers. There are 2 approaches: either define custom CSS resets, or use a third party reset. Custom CSS resets are stylesheets you create to fit the needs of the specific project. You may see
+                        something like * {margin:0} in order to take away all margins before styling. This can take time which is where third party resets come into play like Normalize.css. This takes many of the default HTML styles out and keeps some useful ones esp for accessibility. You could also use sanitize.css which is a third party library that will default behavior across all major 
+                        browsers. You should also take accessibility into account and realize the third party may not be helpful, and it also may impact peformance. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the CSS Filter Property, and What Are Common Examples?</h4>
+                    <p>
+                        The filter property allows you to apply graphical effects to elements. It can create blurring, color shifting, and contrast adjustments. example woudl be like filter: blur(5px); This CSS will apply a 5 pixel blur to elements. You can also use brightness and make something have more contrast by setting it less than 100% and more bright by going over 100%. You can use the 
+                        grayscale function to make elements grayscale. The amount is defined as a percentage where 100% is complete grayscale and 0% leaves it unscathed. You can apply the sepia property to give a vintage or old timey look, which also uses a % value. You can also use hue-rotate to change the color to another color within a set degree value on the color wheel. You can apply multiple
+                        properties with the same filter element like filter: contrast(150%) brightness(110%) sepia(30%); There are a few more in contrast, invert, and saturate.  
+                    </p>
+                </li>
+            </section><hr>
+            <section id="flexbox">
+                <li>
+                    <h4>What is CSS Flexbox, and When Should You Use It?</h4>
+                    <p>
+                        CSS flexbox is a one dimensional layout that allows you to arrange items in rows or columns within a container. You can also control the order and orientation. Web developers use it to create reponsive websites, it is one dimensional because it follows a single axis either horizontal or vertical. There are two key concepts to flexbox: the flex container and the flex item.
+                        Flex items are the direct children of the flex container. If you take 3 divs by default they will each get their own rows. If you use display:flex in the main container, the div will fit on the same row. By default the flex container will be a block level element. The flex properties are flex-direction:, justify-content:, align-items:, and flex-wrap. Every flex container has 
+                        two axes: the main axis, and the cross axis. By default the main axis is horizontal and this is the direction of the flex arrangement, the cross axis is vertical and its perpendicular to the main. flex-direction sets the direction of the main axis and the default is row. You can use row, row-reverse, column, or column-reverse.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Some Common Flex Properties, and How Do They Work?</h4>
+                    <p>
+                        Flex properties are properties that you apply to flex containers to determine the distribution of children. flex-wrap, justify-content, align-items are commonly used ones. flex-wrap determines how the items wrap within the container to fit the space, there are 3 possible values nowrap, wrap, and wrap-reverse. nowrap is the default value so the items wont distribute to a new line
+                        even if they exceed the width. The flex-flow property is shorthand for both flex-direction and flex-wrap ex. flex-flow: column wrap-reverse; justify-content aligns the children along the main acess of the flex container. If you assing flex-start to justify-content the items will be aligned to the main axis. To center them you can use justify-content: center; you can also use
+                        justify-content: space-between; which will add some space between the items. justify-content: space-around will distribute the items evenly along the main axis. Lastly we have justify-content: space-evenly which distributes them evenly along the main with no space before or after. To stretch items on the cross axis you can use align-items: stretch, align items are based on the
+                        cross axis. You can use flex-start, flex-end , stretch, and if you use stretch the items will fill the container regardless of width height being set. Lastly you can use align-self to an individual flex item. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="typography">
+                <li>
+                    <h4>What Are The Fundamentals of Typography?</h4>
+                    <p>
+                        Typography is the art of choosing the right fonts and formats to make text appealing and easy to read. Typeface is the overall design and style of characters, numbers, and symbols. It's a blueprint for a family of fonts. Two examples of typeface are Serif and Sans Serif. Serif fonts are things like times new roman, georgia, garamond. Sans serif has a more modern look like helvetica,
+                        arial, roboto.There can also be variations within a font family like times new roman bold/italic. These variations include: weight, style, width. The fundamental elements of typography are the baseline where the characters rest, the cap height (height of uppercase), x-height average height of lowercase, ascenders, descenders. Kerning is spacing between 2 specific characters to increase
+                        readability/aesthetics. Tracking is how space is adjusted between all characters. Leading is the vertical space between lines of text. Line length is also important too narrow and the reader has to refocus too frequently, too wide and they may experience fatigue. You can also use typography to create hierarchy. Large fonts for more important text. Underlining or italics for highlighting
+                        key points. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Some Best Practices for Working with Typography in Your Designs?</h4>
+                    <p>
+                        Typography is the art and technique of arranging type for communication. For readability, you should choose clear and simple fonts to make your design easy to understand. Some popular fonts for web dev are Roboto, Open Sans, Poppins, Lato, and Barlow. Text should be large enough for readability and try to keep lines short for readability. You can use font size to create hierarchy.
+                        You shouldn't use more than 3 fonts, more can make it too visually inconsistent and make load times worse. When you choose the fonts keep them consistent across different pages and elements, and use white space to create balance and readability. You should follow WCAG guidelines for contrast. Provide options for adjusting font sizes and use simple fonts when possible. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Font Families and How Do They Work?</h4>
+                    <p>
+                        A font family is a group of fonts that share a common design. They are all based on the same typeface, with some variations to style, width and height. You can set this using the font-family: property. Sometimes if a font lacks a specific character, lower priority declarations may be used to make that character. There are also generic font families which are fonts that web browsers will
+                        render when higher priority ones are not available. Common ones: serif, sans-serif, monospace, cursive, fantasy. You should try to use a generic font at the end of a font family list. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Web Safe Fonts?</h4>
+                    <p>
+                        Web-safe fonts are a subset of fonts that are very likely to be installed on a device. When a browser has to render a font and is not found it will use a fallback font which may look very different from expectations. This is where web-safe fonts come into play. Some examples of sans-serif ones: Arial, Verdana, Trebuchet MS. Some serif ones are : Times New Roman, Georgia. If you use web-safe
+                        fonts you will have better accessibility and consistency across devices. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the @font-face At-Rule, and How Does It Work?</h4>
+                    <p>
+                        At rules are statements that provide instructions to the browser. @font-face you can define a custom font by specifying the font file, format and other important properties. Within curly brackets you will need to include descriptors of the font face like @fontface {font-family: "myCustomFont";}. In order for this to be valid you will need to provide a src. This will contain the font resources.
+                        You can call the url() function to include a file in your stylesheet. For each resource you can specify a format like collection, embedded-opentype, opentype, sv, truetype, woff, woff2. @font-face {font-family: "MyCustomFont"; src: url("path/to/font.woff2") format("woff2")} Woff stands for web open font format. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Work With External Fonts Like Font Squirrel and Google Fonts?</h4>
+                    <p>
+                        An external font is a font that is not included directly within your project files. They're usually hosted on a separate server they give you flexibility to use fonts that may not be on the users device. Google fonts and Font squirrel are popular resources for finding and using free fonts for web dev. Google fonts is a service that offers a collection of fonts specifically designed for web dev. 
+                        On the left sidebar you will find a section to find and filter fonts, special section on noto, section where you cna find and download icons for your web projects, section where oyu can learn about fonts and their best practices or FAQ section. You can preview fonts on google fonts to see what it looks like with a specific text. Once you pick a font get the font, you can choose whether you want to
+                        download it or use it as an external embed code. You have two options, you can use the link element or @import. If you use the link option you can copy and paste the HTML and CSS into your project and embed them in the head element. If you choose the @import you add that rule to your CSS file. Another option is Font Squirrel, here you will ned to go to the webfont kit tab to see if its allowed to use 
+                        in your css embedding. External fonts can help make your website unique, but using multiple external fonts can make the load time of the website worse.                                               
+                    </p> 
+                </li>
+                <li>
+                    <h4>What Is the text-shadow Property, and How Does It Work?</h4>
+                    <p>
+                        CSS doesn't apply any shadows to text by default. If you need to add shadows use the text-shadow property. In CSS you describe this in a combination of X offset, y offset, blur radius, and color. First you need to specify the X, Y offset which is how far from the text the shadow should extend. text-shadow: 3px 2px; makes the x 3px and the y 2px. You can place the color before or after the offset. 
+                        The blur value is an optional value but the higher the value the bigger the blur, which results in teh shadow becoming lighter. You can also add multiple shadows to the same text-shadow property by separating them with a comma. They will be applied in layers from front to back, with the first shadow at the top. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="Accessibility">
+                <li>
+                    <h4>What Are Some Tools to Check for Good Color Contrast on Sites?</h4>
+                    <p>
+                        When designing websites ensuring good color contrast is crucial for accessibility and readability. There are many tools to help developers maintain this but one popular tool is WebAIM color contrast checker. This tool allows you to input foreground and background colors and see if they meet WCAG standards. Another valuable tool is the TPGi Colour Contrast Analyzer. This application offers more advanced
+                        features and tools. It allows you to analyze entire webpages not just individual color pairs. It also provides simulations of color vision deficiencies helping to ensure accessibility to color blindness. Both tools are invaluable for creating accessible and readable websites. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Hiding Content So it Doesn't Become Inaccessible?</h4>
+                    <p>
+                        Hiding content on webpage is a common practice, but its crucial to do it in a way that does not compromise accessibility. Different hiding techniques can have varying impacts on assistive technologies. One common method for hiding is the display: none. This hides the content visually but also removes it from the accessibility tree. This is important for assistive technologies, and thus it is important to
+                        only use display:none when you want to remove both the visual presentation and accessibility. Another approach is visibility: hidden; this hides the content but keeps the document flow meaning it still occupies space on the page. You should only use this when you want to hide the content from everyone. You can use the .sr-only CSS class to hide content while keeping it accessible for screen readers. This is 
+                        useful for providing content to a screen recorder without affecting the visual layout.  
+                    </p>
+                </li>
+            </section><hr>
+            <section id="Positioning">
+                <li>
+                    <h4>What Are Common Use Cases for Using Floats, and How Do They Work?</h4>
+                    <p>
+                        Floats in CSS are a technique originally designed  to allow text to wrap around an element. Over time, people found new ways to use floats applying them to layout designs in creative ways. Modern layout methods like flexbox and grid are now more commonly used. When an element is floated it's taken out of the normal document flow and pushed to the left or right of its container. The content will wrap around
+                        the floated element. This technique is used when articles and blogs need to put images alongside text. Floats were formerly popular for creating multi column layouts before flex/grid. By floating elements next to each other developers could create columns that aligned horizontally. The clearfix technique is a for handling collapsing parent elements when children float. ::after pseudo element that adds an invisible block of code after the container. 
+                        Content: "" ensures the element is present but doesn't display content.  Display-block, makes the element a block level element. clear:both, ensures the pseudo element clears both sides of floating element above. The clearfix technique ensures the parent element wraps properly. Clearfix forces the container to see the children after the floated content. Float is still used for wrapping images and working on legacy projects.
+                    </p>
+                </li>
+                <li>
+                    <h4>What is Relative Positioning, and How Does This Differ from the Default Static Positioning?</h4>
+                    <p>
+                        There are 2 kinds of positioning static and relative. Static is the default which mneans they follow the normal document flow one after another from top to bottom left to  right. Static positioning is the default and doesn't require declaring. When rendering the browser the element will appear in its natural position, following normal document flow. Relative positioning on the other hand allows an element  to be shifted
+                        within the flow by giving the elements new coordinates. Relative positioning is useful when you want to move an element slightly without changing the rest of the layout. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is Absolute Positioning, and How Does It Work?</h4>
+                    <p>
+                        Absolute positioning allows you to take an element out of the normal document flow, making it behave independently. When an element is absolute positioned, it has its own layer this is useful for modals, tooltips, dropdown menus, etc. Absolute elements are placed relative to the closest positioned ancestor. If none is found, the element will be positioned relative to the containing block or browser viewport. You can move
+                        the element around using the top bottom left right properties to show how far it should be from its containing element. Ex. position: absolute; top 30px; left 30px; this is 30 away from the top and 30 away from the left of its container. Absolute positioning is very useful for things that are supposed to overlap the rest of the content like a modal or overlay. It can also create gaps or cause element collapse when not proper.
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is Fixed and Sticky Positioning, and How Does It Differ From Absolute Positioning?</h4>
+                    <p>
+                        Fixed and Sticky positioning are two important CSS strategfies, each offering distinct behaviors in comparison to absolute. when something is position: fixed it is removed from the flow and placed relative to the viewport. This means it will stay in the same place even if the user scrolls. This is typically used for navigation bars and headers. The position:sticky property behaves like a hybrid ebtween relative and fixed positioning.
+                        The element will behave with the normal flow of the document until the user scrolls past a point, then it will stick to the viewport usually the top. Absolute removes an element from the document flow and positions relative to positioned ancestor. Element stays in position regardless of scrolling. Fixed position removes the element from document flow but fixes it relative to the viewport staying in place when scrolled. Sticky keeps the
+                        element in normal flow but only sticks after scrolling past a threshold. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What is the Z-Index Property, and How Does It Work to Control the Stacking of Positioned Elements?</h4>
+                    <p>
+                        Z-index is used to control the vertical stacking of positioned elements that overlap on the page. The z index determines which one is stacked on top during overlap. The higher the z index value the closer the element is to the viewer. Z index only works on elements that are positioned such as relative absolute or fixed. The default is auto which places the eleemnt in default stacking order. This is a way to create layers on the page. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="attributeselectors">
+                <li>
+                    <h4>What Is the Attribute Selector, and How Can It Be Used to Target Links with the hrf and title Attributes?</h4>
+                    <p>
+                        Attribute selector allows you to target html elements based on their attributes. This means you can apply styles to elements with certain attributes or even certain values for those attributes. You could target all links with an href value, with a[href] { color: blue}. Attribute selectors can be more specific. If you want to target only the links that have a title attribute you could use a[title]. You could also get specific like
+                        a [class~="primary"] which targets all anchors wiht class attribute primary. If you want to use the selector for a specific value you can use [attr^=value].
+                    </p>
+                </li>
+                <li>
+                    <h4>How to Use the Attribute Selector to Target Elements with the lang and data-lang Attributes?</h4>
+                    <p>
+                        When building multilingual websites or handle custom data attributes, you may need to style elements based on the language they contain. The lang and data-lang attributes are commonly used for these purposes and css allows you to apply styles based on these effectively. The lang is still used in HTML to specify the language of the content of the element. You could use something like p[lang="en"] to target paragraph elements with a language
+                        of English. You can also use data-lang attribute which is used to store information in elements such as specifying the language. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How to Use the Attribute Selector to Target Ordered List Elements with the type Attribute?</h4>
+                    <p>
+                        When workijng with ordered list the type attribute allows you to specify styles of the numbering used. The type attribute can be set to control the numbering format, 1 for numerical, A for uppercase alpha, a for lower alpha, I for Roman num, i for lowercase roman num. ol[type="A"] will target any ordered list that is specified by type="a". You can also target by type like ol[type="i"] {}. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="responsivedesign">
+                <li>
+                    <h4>What Is Responsive Web Design, and What Is Its Relationship to Tools Like CSS Grid and Flexbox?</h4>
+                    <p>
+                        Responsive web design is an approach that aims to create websites that provides optimal viewing and interaction. The core principle is adaptability ability of a website to adjust layout and content based on screen size and capabilities of the device. RWD relies on 3 main components, fluid grids, flexible images, and media queries. Fluid grids use relative units like percentages over pixels. 
+                        Flexible images are set to resize within containing elemetns. Media queries allow application of styles based on the size of the device. The relationship between RWD and CSS grid and flexbox is symbiotic. CSS grid is a 2 d layout that allows for complex arrangements. Flexbox and grid offer advantages over old layouts, they give more flexibility and control with less code. Flexbox and grid are
+                        often used together in RWD. Flexbox is for components and one dimensional layouts, grid is for overall page structure and 2 d layouts. Calc() is useful for making layouts flexible. The srcset attribute and picture element allow for serving image files based on device. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do Media Queries Work, and What Are Some Common Media Types and Features?</h4>
+                    <p>
+                        Media queries are a component of RWD, allow developers to apply styles based on the users device or browser. A media query consists of a media type and on or more expressions that check for specific conditions. If the conditions are true, the styles are applied. Media types describe the general category some common ones, all for all devices, print for paged materials, and screen for screens.
+                        Media features describe characteristics of the user agent, output device, or environment. Properties including aspect-ratio, orientation, resolution, hover, prefers-color-scheme(dark mode). Media queries can include conditions using logical operators including and, not, only, and commas are similar to or. Consider the cascade, media queries group conditional rules. Approach for mobile first is 
+                        common and adding enhancements for larger screens. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Media Breakpoints, and What Are Common Breakpoints in Media Design?</h4>
+                    <p>
+                        Media breakpoints are points in web design where the layout and content adjust to accomodate screen size. These are crucial in RWD allowing developers to make websites for all devices. In CSS media breakpoints are used for media queries, these queries apply styles based on characteristics most commonly viewport width. You can use @media to set styles based on current screen size. When it comes to 
+                        choosing breakpoints, there is no one size fits all but there are common breakpoints. Small devices up to 640 pxs, medium 641-1024(tablet), large 1025px or bigger. Some designers do extra small up to 576, small 768, medium 992, large 1200, XL 1201. XXL 1400px. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Mobile First Approach in Responsive Web Design?</h4>
+                    <p>
+                        Mobile first approach is a strategy where websites are designed first for mobile devices and has become a cornerstone in web development. This is the reverse from traditional approach where computers were designed for first. The principle is to ensure that content and functionality is for the smallest screen first. One of the primary drivers in this adoption is the dramatic shift in internet usage.
+                        Performance optimization is another crucial step, since mobile devices have less processing power and may be connected to slower networks. Designers must make critical decisions about what content is essential in order to know what is important. Start with the base style suited for mobile device, then use queries using minwidth in order to modify styles for larger screens. Mobile first also aligns well
+                        with SEO, even though it can be restrictive for large screens and complex features. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="variables">
+                <li>
+                    <h4>What Are CSS Custom Properties, and How Do They Work?</h4>
+                    <p>
+                        CSS custom properties AKA variables are entities defined by CSS that contains values to be reused throughout the document. The syntax begins with two dashes -- followed by the property name <code>:root {--main-color: #3498db;}</code> In this we are declaring a property with a value. The :root psuedo class is commonly used to declare global properties. To use a custom property you employ the var() function.
+                        You could send the previous color to an element later with var(--main-color);. Custom properties follow the CSS cascade, so you can redefine them for specific elements. You can also use fallback values with custom properties. Custom properties are useful when creating themable designs like for light/dark themes. Custom properties can also be used with media queries to create responsive designs. Custom properties
+                        make it easier to create consistent themes across the site, but they may not be recognized by older browsers. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the @property Rule, and How Does It Work with Fallbacks?</h4>
+                    <p>
+                        The @property rule is a powerful CSS feature that lets you give properties values. This will have the syntax @property --property-name { syntax: '<type>'; inherits: true | false; initial-value: <value>; }. An example would be like @property --main-color { syntax: '<color>'; inherits: false; initial-value: #3498db; } The @property rule allows animations of custom properties. You can achieve this by having something
+                        like a hover property. The @property fallbacks work on 2 levels, the rule itself and for the use of the custom property. You can define properties in the traditional way so that way browsers that don't support @property have a fallback. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="grid">
+                <li>
+                    <h4>What Is CSS Grid, and How Does It Differ from Flexbox?</h4>
+                    <p>
+                        CSS is a layout system that allows for responsive web pages. CSS grid allows you to divide your webpages into rows and columns like a grid. Flexbox is for one dimensional layouts, grid is for 2 dimensional layouts. Flexbox is content first and grid is layout first. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Can You Create Flexible Grids with the fr Unit?</h4>
+                    <p>
+                        You can create flexible grid layouts using the <code>fr</code> unit. Fr is a fractional unit which represents a fraction of the space for the grid container. Fr becoems a great way to distribute space since it is flexible and responsive. Grid template colums is used to set the size for each column. The gap property is used to create space around each column. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Can You Create Gaps Between Tracks in a Grid?</h4>
+                    <p>
+                        You can use row-gap, column-gap, and gap to create space in a grid layout. You can assign these values like the em unit, percentage, pixels, or the normal keyword. If you use normal then you will get 0 for grid layouts and 1em for multi column layouts. The gap property can be used as shorthand for rows and columns with gap: row column; 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Can You Repeat Track Listings in a Grid Layout?</h4>
+                    <p>
+                        You can use repeat() to repeat a track of rows or columns. grid-template-columns: 1fr 1fr 1fr 1fr; = grid-template-columns: repeat(4, 1fr); grid-template-columns: repeat(2, 20px 1fr); creates 4 columns in 20px 1fr 20 px 1fr specifics. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Difference Between an Implicit and Explicit Grid?</h4>
+                    <p>
+                        An implicit grid refers to rows and columns created automatically when placing items in grid, not explicitly defined using grid-template-rows or columns. The properties to use implicit is grid-auto-columns or rows. You can use a combination of the two by explicitly naming column count to 2 with more than 2 divs so it will implicitly create rows to place the items.
+                        Explicit are fully customizable by declaring, implicit are controlled by auto-rows or default to auto. Explicit doesnt adapt but implicit does. Explicit is better for performance but implicit is better for frequent changes. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the minmax() Function and How Does It Work?</h4>
+                    <p>
+                        The minmax() function is used to define the size of a grid trick, and how much space a row or column can occupy. You can use fr units with track size the syntax is minmax(min, max). grid-template-columns: minmax(150px, 300px) 1fr;  This will create 2 columns one with the min/max 150-300 and the other 1 fr, if there is extra space it will go to the fr column. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do the grid-column and grid-row Properties Work?</h4>
+                    <p>
+                        The grid-column and grid-row properties specify horizontal and vertical placement of grid items within the grid layout. <code>grid-row: &lt;start-line&gt; / &lt;end-line&gt;;</code> both start line and end line start with 1. grid-column: 1 / 3; this means the item starts at column 1 and ends at 3. You can also use the span keyword to tell which row/column to span across.
+                    </p>
+                </li>
+                <li>
+                    <h4>How Can You Position Items on the Grid Using the grid-template-areas Property?</h4>
+                    <p>
+                        grid-template-areas allows you to design a grid layout by using named labels. <code>grid-template-areas: 'header header header' 'left-sidebar main right-sidebar' 'footer footer footer';</code> In this example we have a 3x3 grid container. The values like header and main  are the names of the grid areas. After you define the template you can use grid-area and the labels to tell 
+                        the items where they belong. A popular way to demonstrate grid template areas is with the Holy Grail layout. The layout is header,footer, 2 sidebars and the main. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Can You Use the DevTools Inspection Tool and CSS Validators to Debug Your CSS?</h4>
+                    <p>
+                        Developer tools, inspection tools, and CSS validators are essential resources for debugging CSS issues and ensuring your stylesheet is error-free and optimized. DevTools come in most modern browsers, to access them you can right click on the webpage and inspect or use keyboard shortcuts like f12 or cmd+option+i. DevTools alow you to inspect and modify your CSS in real time. You can
+                        toggle individual properties on and off, edit value, and add new rules. You can see the box model of each element including the margin/padding/etc. CSS validators are important for debugging W3C CSS validator is popular. The DevTools also allows you to emulate different devices. 
+                    </p>
+                </li>
+            </section><hr>
+            <section id="animations">
+                <li>
+                    <h4>What Are CSS Animations, and How Do They Work?</h4>
+                    <p>
+                        CSS animations allow you to create dynamic engaging web pages without javascript. CSS animations contain two main components the @keyframes rule and the animation property. @keyframes also defines the stages and styles of animations. Example <code>@keyframes slide-in { 0% { transform: translateX(-100%); } 100% { transform: translateX(0); } } this moves an element from left to right. You
+                            would apply this animation like <code>.sliding-element { animation: slide-in 2s ease-out infinite;}</code> this applies slide in with a duration of 2 seconds on an ease-out timing. The animation property is shorthand for several individual properties including animation-name, animation-duration, animation-timing-function, animation-delay, animation-iteration-count, animation-direction,
+                            animation-fill-mode, animation-play-state. Overuse of animation can lead to poor performance and accessibility issues. 
+                        </code>
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Accessibility Concerns Around Using Animations, and How Can prefers-reduced-motion Help?</h4>
+                    <p>
+                        Animations can greatly enhance visual appeal and user experience. However, that can also pose accessibility challenges for users. One of the primary acessibility concerns is that they can cause discomfort or physical harm to some users. Animation can be distracting for people with cognitive disabilities, and they can trigger seizures in epileptic people. Another issueis that animations can
+                        make reading difficult. CSS provides the prefers-reduced-motion media query to address these issues. <code>@media (prefers-reduced-motion: reduce) { * {    animation-duration: 0.01ms !important;    animation-iteration-count: 1 !important;    transition-duration: 0.01ms !important;scroll-behavior: auto !important;}} </code> this snippet disables most animations and transitions for users who prefer it.
+                        The media query checks if the user prefers reduced motion, then it applies styles to a universal selector. Finally, the !important declaration makes sure it takes precedence over other styles. 
+                    </p>
+                </li>
+            </section>
+        </ol>
+        </main>
+        <a href="../freecodecamp.html">Return Home</a>
+    </body>
+
+</html>

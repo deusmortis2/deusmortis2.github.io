@@ -1,0 +1,36 @@
+body {
+  background-color: gray;
+  background-image:radial-gradient
+}
+h1 {
+  text-align: center;
+}
+.todo-list {
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+  background-color: white;
+  text-align: left;
+}
+
+a{
+  text-decoration: none;
+}
+a:link{
+color: red;
+}
+a:active{
+color: blue;
+}
+a:hover{
+  color: green;
+
+}
+a:visited{
+color: purple;
+
+}
+a:focus{
+  outline: 5px solid black;
+}
+

@@ -1,0 +1,35 @@
+*, ::before, ::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin-top: 6vh;
+  position: relative;
+
+}
+
+#navbar {
+  height: 6vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+#navbar ul {
+  list-style-type: none;
+  width: 80vw;
+  display: flex;  
+  justify-content: space-evenly;
+}
+
+#navbar li {
+  text-decoration: none;
+}
+
+@media print {
+  body {
+    font-size: 12pt;
+  }
+}

@@ -1,0 +1,159 @@
+body {
+    height: 60vh;
+    width: 75w;
+  background: #dcdcdc;
+}
+
+span {
+  display: inline-block;
+}
+
+footer {
+    font-size: 1.3vw;
+    text-align: center;
+}
+
+table {
+  margin: 0 auto;
+  text-align: center;
+  height:65vh;
+  width: 75vw;
+  font-size: 1.5vw;
+  border: 1px solid #696969;
+  border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1px solid #696969;
+}
+
+th {
+    font-size:1.7vw;
+    padding: .6em;
+}
+
+h1 {
+    font-size: 3vw;
+    font-weight: 800;
+    text-align: center;
+}
+
+
+#header {
+background: linear-gradient(
+  to top,
+  hsl(270, 80%, 65%) 5%,
+  hsl(270, 80%, 70%) 50%,
+  hsl(270, 80%, 75%) 80%,
+  hsl(270, 80%, 80%) 95%
+);
+}
+
+span[class^=rate] > span {
+  border: .5px solid darkgray;
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  margin: 0 .1em;
+  background-color: ivory;
+}
+
+span[class=status], span[class^=rate] {
+  height: auto;
+  width: auto;
+  padding: 3px;
+}
+
+span[class*=three] :nth-child(1) {
+ background: linear-gradient(45deg, yellow, orange);
+}
+
+span[class*=three] :nth-child(2) {
+  background: linear-gradient(45deg, yellow, orange);
+}
+
+span[class*=three] :nth-child(3) {
+ background: linear-gradient(45deg, yellow, orange);
+}
+
+span[class~=one] :nth-child(1) {
+  background: linear-gradient(45deg, yellow, orange);
+}
+
+span[class~=two] :nth-child(1), 
+span[class~=two] :nth-child(2) {
+  background: linear-gradient(45deg, yellow, orange);
+}
+
+span[class~=three] > span {
+ background: linear-gradient(45deg, yellow, orange);
+}
+
+tr[class=read] {
+background: linear-gradient(
+  to top,
+  hsl(155 80% 65%) 5%,
+  hsl(155 80% 70%) 50%,
+  hsl(155 80% 75%) 80%,
+  hsl(155 80% 80%) 90%
+);
+}
+
+tr[class=read] span[class=status] {
+  border: 1px solid hsl(155,80%,40%);
+  background: linear-gradient(
+    to right,
+  hsl(155 90% 49%),
+  hsl(155 90% 55%)
+  );
+  border-radius: 1.2vw;
+  background-size: contain;
+  background-position: center;
+  padding: .4em 1.6em;
+}
+
+tr[class=in-progress] {
+background: linear-gradient(
+  to top,
+  hsl(41 80% 60%) 5%,
+  hsl(41 80% 65%) 50%,
+  hsl(41 80% 75%) 80%,
+  hsl(41 80% 80%) 95%
+);
+}
+
+tr[class=in-progress] span[class=status] {
+  border: 1px solid hsl(41,80%,40%);
+  background: linear-gradient(
+    to right,
+  hsl(41 90% 49%),
+  hsl(41 90% 55%)
+  );
+  border-radius: 1.2vw;
+  background-size: contain;
+  background-position: center;
+  padding: .4em;
+}
+
+tr[class=to-read] span[class=status] {
+  border: 1px solid hsl(200,80%,40%);
+  background: linear-gradient(
+    to right,
+  hsl(200 90% 49%),
+  hsl(200 90% 55%)
+  );
+  border-radius: 1.2vw;
+  background-size: contain;
+  background-position: center;
+  padding: .4em 1em;
+}
+
+tr[class=to-read] {
+background: linear-gradient(
+  to top,
+  hsl(200 80% 60%) 5%,
+  hsl(200 80% 65%) 50%,
+  hsl(200 80% 75%) 80%,
+  hsl(200 80% 80%) 95%
+);
+}

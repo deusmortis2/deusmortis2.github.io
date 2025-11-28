@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../../styles/htmlnotesStyles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <title>Technical Documentation Page</title>
+  </head>
+
+  <body>
+  <header>
+    <nav id="navbar">
+      <header><h1>HTML</h1></header>
+      <ul>
+        <li><a class="nav-link" href="#Introduction">Introduction</a></li>
+        <li><a class="nav-link" href="#Basic_HTML">Basic HTML</a></li>
+        <li><a class="nav-link" href="#Semantic_HTML">Semantic HTML</a></li>
+        <li><a class="nav-link" href="#Forms_and_Tables">Forms and Tables</a></li>
+        <li><a class="nav-link" href="#Accessibility">Accessibility</a></li>
+      </ul>
+      <a id="home" href="../freecodecamp.html">Return Home</a>
+    </nav>
+  </header>
+<main id="main-doc">
+  <h2>HTML Lecture Notes</h2>
+  <section class="main-section" id ="Introduction">
+  <header><h3>Introduction</h3></header>
+        <p>This is also a rebuild of my HTML notes section from freeCodeCamp.
+            DISCLAIMER: I am not affiliated with freecodecamp and this is purely for educational purposes.</p></section>
+            <ol>
+  <section class="main-section" id="Basic_HTML">
+    <header><h3>Basic HTML</h3></header>
+                    <li><h4>What role does HTML play on the WEB?</h4>
+                    <p>In this section we learn about the elements<pre><code>&lt;p&gt;&lt;/p&gt;;&lt;img&gt; or &lt;img &gt;; and &lt;img src="" alt=""&gt;</code></pre></p>
+                </li>
+                <li><h4>What are attributes and how do they work?</h4>
+                    <p>In this section we learn about some new elements including:
+                        <pre><code>&lt;element attribute="value"&gt; ; &lt;a href="website.com"&gt;Visit our website&lt;/a&gt; ; &lt;input type="checkbox" checked /&gt;</code></pre>
+                    </p>
+                </li>
+                <li><h4>What is the Role of the Link Element in HTML, and How Can It Be Used to Link to External StyleSheets? </h4>
+                <p>In this section we learn about the link element ( <code>&lt;link rel="stylesheet" href="./styles.css" /&gt;</code> ) and many various attributes for it such as rel and href. We learn that functionally it links to external resources like stylesheets and site icons. </p>
+                </li>
+                <li>
+                <h4>What is an HTML Boilerplate, and Why Is It Important?</h4>
+                <p>In this section we learn about the ready made template called a boilerplate. It stresses the important of meta commands doctype and basic html structure that you can use as a foundation for all your websites and pages</p>
+                </li>
+                <li>
+                <h4>What is UTF-8 Character Encoding, and Why is it Needed?</h4>
+                    <p>In this section we learn about the command <code>&lt;meta charset="UTF-8" /&gt;</code> and how it is important for making sure all characters from all writing systems are included in your page.</p>
+                </li>
+                <li>
+                    <h4>What are Div Elements and When Should You Use Them?</h4>
+                    <p>In this section we look at a couple different elements used to group elements. The first one that is learned about is the <code>&lt;div&gt;</code> element that you can use to group things together without having a semantic meaning. They compare it to the <code>&lt;section&gt;</code> element which can be used to add in semantic meaning.</p>
+                </li>
+                <li>
+                    <h4>What are IDs and Classes, and When Should You Use Them? </h4>
+                    <p>This section talks about the id attribute. It talks about how it can be used to reference CSS things and how it should not contain spaces and needs to be unique. It then moves on to contrast that with the class attribute which doesn't need to be unique.</p>
+                </li>
+                <li>
+                    <h4>What Are HTML Entities, and What Are Some Common Examples?</h4>
+                    <p>In this section it describes entities which can be used to display characters that are reserved by html. This usually starts with & and ends with ;. You can surround lt and gt with those symbols to get HTML element looking text. You can also use these to make copyright/trademark symbols.</p>
+                </li>
+                <li>
+                    <h4>What is the Role of the Script Element in HTML, and How Can It Be Used to Link to External JavaScript Files?</h4>
+                    <p>In this section they talk a bit about the script element, discuss how you can put a javascript alert in the path, but best practice is to include a .js file that you put all your javascript code in.</p>
+                </li>
+                <li>
+                    <h4>What is the Role of the Meta Description, and How Does It Affect SEO?</h4>
+                    <p> This section discusses search engine optimization(SEO) and how to use the meta element to get better search optimization. You can set the name attribute to description, and then make sure that you have a short description after content attribute for SEO.</p>
+                </li>
+                <li>
+                    <h4>What is the Role of Open Graph Tags, and How Do They Affect SEO?</h4>
+                    <p> In this section they talk about how to optimized website appearance across social media. You can change the title displayed using meta properties and you can change the image that represents your page on social media platforms.</p>
+                </li>
+                <li>
+                    <h4>What Are the Roles of the HTML Audio and Video Elements, and How Do They Work?</h4>
+                    <p>They introduce &lt;audio&gt; element and how you can use the src attribute to play audio on your website. If you add the controls attribute the user can choose to play the music. Loop attribute loops the music, and muted means the user will have to choose to play it using controls. Following this they introduce the &lt;video&gt; element and how you can use the poster attribute to have a chosen picture while the video loads.</p>
+                </li>
+                <li>
+                    <h4>What Are Common Ways to Optimize Media Assets?</h4>
+                    <p>In this section they talk about optimizing medias by size,format, and compression. It is a brief intro to each and some of the file types of images</p>
+                </li>
+                <li>
+                    <h4>What Are the Different Types of Image Licenses, and How Do They Work?</h4>
+                    <p>In this section talks about how images are all rights reserved by default. It discussses permissive licenses, and public domain and how to find images of certain licenses</p>
+                </li>
+                <li>
+                    <h4>What Are SVGs, and When Should You Use Them?</h4>
+                    <p>This section talks about Scalable vector graphics and how they are stored within XML and are perfect for icons and essential logos. They also talk about raster images like PNG/JPG and how they do not scale well because they are based on pixels. </p>
+                </li>
+                <li>
+                    <h4>What Are Replaced Elements, and What Are Some Examples?</h4>
+                    <p>These elements are decided by an external resource rather than CSS. Common examples are image, iframe, and video elements. Iframe element is introduced and how it is good for embedding videos onto the page. They also discuss the input element and the type attribute.</p>
+                </li>
+                <li>
+                    <h4>How Do You Embed Videos onto Your Page Using the iframe Element</h4>
+                    <p>The inframe "iframe" element is discussed in much greater depth. Including the attributes for width, height, allowfullscreen, title, and srcdoc for embed directly into the HTML. </p>
+                </li>
+                <li>
+                    <h4>What Are the Different Target Attribute Types, and How Do They Work?</h4>
+                    <p>This section is about adding target attribute to anchor elements for links. Such as _self, _blank, _parent, _top, _unfencedTop. These are important to consider when adding links.</p>
+                </li>
+                <li>
+                    <h4>What is the Difference Between Absolute and Relative Paths?</h4>
+                    <p>This differentiate between absolute paths which go to somewhere on the web, and relative paths which is a path in relation to the current file. Absolute for external, relative for internal. </p>
+                </li>
+                <li>
+                    <h4>What is the Difference Between Slashes, a Single Dot, and Double Dot in Path Syntax?</h4>
+                    <p> The / is for a break between folder or file names. A single dot points to the current directory. Double dots are able to access files outside of the current working directory. </p>
+                </li>
+                <li>
+                    <h4>What Are the Different Link States, and Why Are They Important?</h4>
+                    <p>Discusses :link state which is the default for a link before clicks. The :visited state which is the default when a link has been clicked. The third is :hover which is when the cursor is over the link. The :focus is when you focus on a link. Then :active is when it is being clicked actively. In CSS the order has to go link,visited,hover,focus, then active.</p>
+                </li></section>
+  <section class="main-section" id="Semantic_HTML">
+    <header><h3>Semantic HTML</h3></header>
+                <li>
+                    <h4>When Should You Use the Emphasis Element Over the Idiomatic Text Element?</h4>
+                    <p>Discusses an old element of i which would be used for italics. It also compares it to the em element which is a sematic element for emphasis. Also if the text doesnt have a purpose just use CSS for italics.</p>
+                </li>
+                <li>
+                    <h4>When Should You Use the Strong Element Over the Bring Attention To Element?</h4>
+                    <p>Dicusses the old element b which is used to bring attention to specific words. It also compares it to the strong element which is used to emphasize something that is critical or important. Visually they are both pretty similar, but their meaning differs</p>
+                </li>
+                <li>
+                    <h4>What Are Description Lists, and When Should You Use Them?</h4>
+                    <p>Talks about description lists and how they are perfect for presenting terms and definitions in an organized way. You will end up using 3 elements for a description list the dl element to start, dt for the term, and dd for the definition or description. They can be used for some other things that have two related pieces of information.</p>
+                </li>
+                <li>
+                    <h4>How Do Block and Inline Quotes Work in HTML?</h4>
+                    <p>Talks about blockquote element for extendeded quotations. You should use the cite attribute to specify the source materials. If you are citing a smaller quote you should use the q element for inline quotation and it will add quotation marks automatically.</p>
+                </li>
+                <li>
+                    <h4>How Do You Display Abbreviations and Acronyms in HTML?</h4>
+                    <p>Talks about using the abbr or abbreviation element and how you can use title to show the expanded form. Good for acronyms/abbreviations that may be unclear and need additional context.</p>
+                </li>
+                <li>
+                    <h4>How Do You Display Addresses in HTML?</h4>
+                    <p>Talks about the address element and how the br element is used to add line breaks for division between street name and city etc. For phone numbers use the anchor element with "tel:+" at the start of the number. It also talks about using the "mailto:" in front of emails but that it will typically get flagged as spam this way.</p>
+                </li>
+                <li>
+                    <h4>How Do You Display Times and Dates in HTML?</h4>
+                    <p>Talks about the time element and the attribute datetime that has to be in the format of year,month,local date, global date. Good for representing events or appointments.</p>
+                </li>
+                <li>
+                    <h4>How Do You Display Mathematical Equations and Chemical Formulas in HTML?</h4>
+                    <p>Talks about using the sup element for exponents. Also talks about using the sub element to represent subscript for formulas, footnotes, etc. </p>
+                </li>
+                <li>
+                    <h4>How Do You Represent Computer Code in HTML?</h4>
+                    <p> Talks about the code element which can be used to represent only a single line of code. You can also use the pre element before it and it is important to be mindful of spacing because it will display.</p>
+                </li>
+                <li>
+                    <h4>What Are the U, S, and Ruby Elements Used For, and How Do They Work?</h4>
+                    <p> Talks about u element for underlining for inline text, spelling errors. The s element for strikethrough when a text is no longer accurate or relevant. The ruby element for pronunciation of East Asian characters. The rp element as a fallback for browsers that do not support it. The rt element for text used for ruby annotation. </p>
+                </li></section>
+  <section class="main-section" id="Forms_and_Tables">
+  <header><h3>Forms and Tables</h3></header>
+                <li>
+                    <h4>How Do Forms, Labels, and Inputs Work in HTML?</h4>
+                    <p>In this section they discuss the form element and how it can be used to gather user information like names or addresses. The action attribute tells where the data is sent and the input element can be used to define the data type. You can use the label element in order to establish an implicit association or you can use the for attribute with the input label to explicitly associate. The placeholder attribute can be used with input to give the user hints about the expected input.</p>
+                </li>
+                <li>
+                    <h4>What Are the Different Types of Buttons, and When Should You Use Them?</h4>
+                    <p>This section talks about the button element and how the type attribute controls the behavior when activated. You can use the button type but by default the button will not do anything unless you use JavaScript code. You can also  use the submit type which will submit data to be processed. The third type is reset which resets the data inputted. You can also use input element for buttons and the same types but input is a void element.</p>
+                </li>
+                <li>
+                    <h4>What is Client-Side Form Validation in HTML Forms, and What are Some Examples?</h4>
+                    <p>Talks about client side vs server side. Also talks about the required attribute for input which makes a section required in order for a form to be submitted. Also talks about the type email and how it comes with some built in requirements. You can use the minlength/maxlength attributes for more validation. </p>
+                </li>
+                <li>
+                    <h4>What Are the Different Form States, and Why Are They Important? </h4>
+                    <p>Talks about different form controls like focused,readonly, disabled, or default. Default is before any information, focused is when it is clicked or tabbed to. Disabled shows when the input cannot be focused or activated. Readonly is when the user cannot edit the area it can be focused.</p>
+                </li>
+                <li>
+                    <h4>What are HTML Tables Used For, and What Should They Not Be Used For?</h4>
+                    <p>This section talks about how tables should only be used for tabular data, and not for positioning things on a webpage anymore. Also talks about the many elements of a table including table, thead, tbody, tfoot. These are then broken down into table rows or tr element, each tr can have a header or th, and can contain cells of data with the element td.</p>
+                </li>
+                <li>
+                    <h4>What Is an HTML Validator, and How Can It Help You Debug Your Code?</h4>
+                    <p>This introduces you to some various HTML validator tools. The most widely accept w3.org, and jsonformatter.org and how to validate on those websites. </p>
+                </li>
+                <li>
+                    <h4>How to Use the DOM Inspector and DevTools to Debug and Build Your Projects</h4>
+                    <p>This talks about how to debug code using DOM inspector and developer tools. </p>
+                </li></section>
+  <section class="main-section" id="Accessibility">
+  <header><h3>Accessibility</h3></header>
+                <li>
+                    <h4>What is Accessibility</h4>
+                    <p>Explains that accessibility is making websites inclusive to all disabilities. The 4 design principles of POUR - perceivable, operable, understandable, robust.</p>
+                </li>
+                <li>
+                    <h4>What Are Screen Readers, and Who Uses Them?</h4>
+                    <p>Talks about screen readers and that they do text to braille and speech. Gives shortcuts for accessing voiceover built in for mac/ios/linux/android. Talks about the importance of acessibility</p>
+                </li>
+                <li>
+                    <h4>What Are Large Text or Braille Keyboards, and Who Uses Them?</h4>
+                    <p>Talks about keyboard features for being more accessible</p>
+                </li>
+                <li>
+                    <h4>What Are Alternative Pointing Devices Such as Trackballs, Joysticks, and Touchpads Used For?</h4>
+                    <p>Talks about alternatives to mice. Trackballs, joysticks, and touchpads specifically.</p>
+                </li>
+                <li>
+                    <h4>What Are Screen Magnifiers Used For?</h4>
+                    <p>Talks about how screen magnifiers can enhance scale by more than 200%. Importance of using scalable fonts, adapting to screensizes, high contrast color schemes, non sticky and tiny navbar, using html text over images, feedback next to elements. Built in magnifiers in OS, and third party ones.</p>
+                </li>
+                <li>
+                    <h4>What is Voice Recognition Software Used For?</h4>
+                    <p>Allows users to use voice to pass commands instead of inputs like keyboard/mice. Lists disabilities helped by voice recognition. Gives examples, Voice Control, Voice Access, Windows Speech Recognition, Dragon by Nuance.</p>
+                </li>
+                <li>
+                    <h4>What Are Some Common Accessibility Auditing Tools to Use?</h4>
+                    <p> Accessibility auditing tools like google lighthouse can be used to find ways to improve accessibility, but should not be depended upon solely. You can use it by pressing F12 in your devtools. You can also use pagespeed.web.dev as a web source, WAVE, IBM equal accessibility checker.</p>
+                </li>
+                <li>
+                    <h4>How Does Proper Heading Level Structure Affect Accessibility?</h4>
+                    <p>Proper headings give structure as far as how to navigate a website. They should present a logical flow from 1-6. Use clear descriptive text</p>
+                </li>
+                <li>
+                    <h4>What Are Best Practices for Tables and Accessibility?</h4>
+                    <p>Talks about how tables may be harder to navigate for people with disabilities. Talks about how you need to use a caption items so users can understand purpose and content. Talks about how using the scope attribute to distinguish between row headers or column headers. </p>
+                </li>
+                <li>
+                    <h4>Why Is It Important for Inputs to Have an Associated Label?</h4>
+                    <p>Talks about importance of labels to input fields. Proper labels also benefits SEO. </p>
+                </li>
+                <li>
+                    <h4>What Is the Purpose of WAI-ARIA, and How Does It Work?</h4>
+                    <p>WAI-ARIA = Web Accessibility Initiatve - Accessible Rich Internet Applications. It works by a set of attributes you can add to elements to provide semantic information. Aria-labelledby attribute lets you connectan element to a specific label.</p>
+                </li>
+                <li>
+                    <h4>What Are ARIA Roles?</h4>
+                    <p> ARIA Accessible Rich Internet Applications. They specify the semantic meaning of html elements. To specify the ARIA role of an element use the role attribute like role="aria role". 6 categories - Document Structure Roles, Widget Roles, LandMark Roles, Live Region Roles, Window Roles, Abstract Roles. </p>
+                    <p>Document Structure Roles - define structure of a webpage. Specify roles that dont have semantic elements such as toolbar, tooltip, feed, math, presentation, note. Widget roles are scrollbar, searchbox, separator, slider, spinbutton, switch, tab, tabpanel,treeitem. Landmarks classify and label primary sections ex. banner, complementary, contentinfo, form, main, navigation, region, search. Live Regions define elements that change dynamically including alert, log, maruqee, status, timer. Window Roles - alertdialog and dialog it is considered best practice to use dialog and the JavaScript methods. Abstract roles help organize a document.  </p>
+                </li>
+                <li>
+                    <h4>What Are the Roles of the area-label and aria-labelledby Attributes?</h4>
+                    <p>Aria-label is for interactive elements it adds a text label that screen readers can read. Aria Labeledby does the same thing but you use texst that already exists on the page. Dangers of labeledby over label - sometimes its not translated. It can provide a mismatch between the label text and the invisible label. It can create complex invisible labels. Never use both together.</p>
+                </li>
+                <li>
+                    <h4>What is the aria-hidden Attribute, and How Does It Work?</h4>
+                    <p>Aria hidden is good for when you want to display content but keep it hidden from screen readers. Good for icons and images for decoration, and duplicated content. Never use hidden on something that is focusable with a keyboard. Hidden is not necessary when already using a hidden attribute, if it is display none or visibility hidden. </p>
+                </li>
+                <li>
+                    <h4>What is the aria-describedby Attribute, and How Does It Work? </h4>
+                    <p>Provides additional information about an element by referencing content on the page. Most common uses associating instructions or error messages with form inputs. Such as password requirements or warnings about deletion. </p>
+                </li>
+                <li>
+                    <h4>When Is the alt Attribute Needed, and What Are Some Examples of Good Alt Text?</h4>
+                    <p>Stresses that alt texts are the only way that people with disabilities will understand an image. alt texts need to be extra descriptive to give a visual of important images. Alt text needs to be short but detailed enough to understand the image. Don't describe all details, if there is similar text don't write it twice, end alt text with period. If its just for decoration you can have a null alt. </p>
+                </li>
+                <li>
+                    <h4>What Are the Accessibility Benefits for Good Link Text, and What are Examples of Good Link Text?</h4>
+                    <p>Helps users to know how to find information quickly. Make sure links are visually distinct, avoid generic links, aim for concise descriptive links, don't repeat the same link text for different places,  make it make sense. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Good Ways to Make Audio and Video Content Accessible?</h4>
+                    <p>You can add captions or subtitles to content by using the track element inside your video or audio elements. Kind attribute is used to tell how the track element shoudl be used valid values include captions, subtitles, chapters, and metadata. Providing a transcript is also important you can add these below the content. Some places have automatic captions like youtube or vimeo, but you can also use veed, rev, amara, descript. </p>
+                </li>
+                <li>
+                    <h4>What Are Some Ways to Make Web Applications Keyboard Accessible?</h4>
+                    <p>Tab index can help to change focus order.  Accesskey will make activation easier. </p>
+                </li></section>
+                </ul>
+            </ol>
+        </main>
+        <footer>
+        
+        </footer>
+  </body>
+</html>

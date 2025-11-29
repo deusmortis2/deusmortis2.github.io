@@ -354,8 +354,10 @@ if (isOldEnoughToDrive) {
                 <div id="Working_with_JSON">
                 <li>
                     <h4>What Is JSON, and How Do You Access Values Using Bracket and Dot Notation?</h4>
-                    <p>JSON stands for JavaScript Object Notation. It is a lightweight, text-based format that is commonly used to exchange data between a server and web app. It is machine parseable and human readable. It is language independent so you can use it in python or a C# application. <code>{"name": "Alice","age": 30,"isStudent": false,"list of courses": ["Mathematics", "Physics", "Computer Science"}. JSON key values are store info and each pair is separated by commas. Each key must be wrapped in "" or
-                         it will result in an error. You can access JSON objects with dot or bracket notation. <code>import data from "./example.json" with { type: "json" };</code> This example is using an import statement to bring the object file to be accessed.
+                    <p>JSON stands for JavaScript Object Notation. It is a lightweight, text-based format that is commonly used to exchange data between a server and web app. It is machine parseable and human readable. It is language independent so you can use it in python or a C# application. 
+                        <code>{"name": "Alice","age": 30,"isStudent": false,"list of courses": ["Mathematics", "Physics", "Computer Science"}</code>
+                    .JSON key values are store info and each pair is separated by commas. Each key must be wrapped in "" or
+                    it will result in an error. You can access JSON objects with dot or bracket notation. <code>import data from "./example.json" with { type: "json" };</code> This example is using an import statement to bring the object file to be accessed.
                     </p>
                 </li>
                 <li>
@@ -449,13 +451,13 @@ if (isOldEnoughToDrive) {
                 <li>
                     <h4>What Is Memory Management, and How Does It Work in JavaScript?</h4>
                     <p>
-
+                        Memory management is the proces of controlling memory allocation. When you run programs, it needs memory to store information. In some languages developers have to manually manage memory. JS uses automatic memory management, this process is called garbage collection. First allocation happens when you create variables, objects or functions to store them. The engine has ways to figure out when it isn't needed, then it is freed up. Sometimes you can accidentally keep things and prevent the garbage collection. Avoid global variables, and be careful what your functions are closing over. 
                     </p>
                 </li>
                 <li>
                     <h4>What Are Closures, and How Do They Work?</h4>
                     <p>
-
+                        Closures is a function that has access to variables in its outer scope even after return. <code>function outerFunction(x) { let y = 10; function innerFunction(){ console.log(x + y); } return innerFunction; } let closure = outerFunction(5); console.log(closure()); // 15</code> In this we call outer function with x, the inner function uses x and y and returns it. Later when we call closure() it has access to outerfunction even though its done executing. Closures are useful for creating private variables and functions. Closures capture variables by reference not by value. 
                     </p>
                 </li>            
                     </div>

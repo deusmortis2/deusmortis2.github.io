@@ -1,0 +1,21 @@
+/* Write your code below. Good luck! 🙂 */
+let massMark = 78;
+let heightMark = 1.69;
+let massJohn = 92;
+let heightJohn = 1.95;
+let BMIMark = massMark / (heightMark * heightMark);
+let BMIJohn = massJohn / (heightJohn * heightJohn);
+console.log(`Mark's BMI is ${BMIMark}`);
+console.log(`John's BMI is ${BMIJohn}`);
+let markHigherBMI = BMIMark > BMIJohn;
+console.log(`Does Mark have a higher BMI than John? ${markHigherBMI}`);
+massMark = 95;
+heightMark = 1.88;
+massJohn = 85;
+heightJohn = 1.76;
+BMIJohn = massJohn / (heightJohn * heightJohn);
+BMIMark = massMark / (heightMark * heightMark);
+console.log(`Mark's BMI is ${BMIMark}`);
+console.log(`John's BMI is ${BMIJohn}`);
+markHigherBMI = BMIMark > BMIJohn;
+console.log(`Does Mark have a higher BMI than John? ${markHigherBMI}`);

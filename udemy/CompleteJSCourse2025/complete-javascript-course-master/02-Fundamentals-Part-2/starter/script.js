@@ -311,3 +311,16 @@ for (let rep = 1; rep <= 30; rep++) {
 }
 */
 // 48. Looping Arrays, Breaking and Continuing
+const jonas = ["Jonas", "Schmedtmann", 2037 - 1991, "teacher", ["Michael", "Peter", "Steven"], true];
+
+//console.log(jonas[0])
+//..
+//console.log(jonas[4]
+//jonas[5] does not exist)
+const types = [];
+for (let i = 0; i < jonas.length; i++) {
+  console.log(jonas[i], typeof jonas[i]);
+  types[i] = typeof jonas[i];
+}
+
+console.log(types);

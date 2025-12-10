@@ -1,0 +1,31 @@
+body {
+  background-image: url("../../../images/jusa_yx7i.jpg"); /* Replace with your image path */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: 80vw 100vh;
+}
+
+#log-display {
+  position: absolute;
+  font-size: 2vh;
+  font-family: "Courier New", Courier, monospace;
+  color: lightgreen;
+  width: 45vw;
+  height: 42vh;
+  top: 8.5vh;
+  left: 23.5vw;
+  scrollbar-gutter: stable both-edges;
+  overflow-y: scroll;
+  overflow-x: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+footer {
+  position: absolute;
+  bottom: 20vh;
+  right: 2vw;
+}

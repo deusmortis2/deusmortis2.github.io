@@ -1,9 +1,0 @@
-<li>
-  <h4>Using Google, StackOverflow and MDN</h4>
-  <p>
-    This talks about how to use stack overflow first to find examples and learn
-    from them to get syntax. Also explores MDN libraries for learning. MDN will
-    have information about the desired element and related methods. The video
-    uses mdn to get an example of how to use array concat method.
-  </p>
-</li>

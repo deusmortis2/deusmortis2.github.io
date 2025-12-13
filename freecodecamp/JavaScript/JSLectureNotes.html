@@ -354,8 +354,12 @@ if (isOldEnoughToDrive) {
                 <div id="Working_with_JSON">
                 <li>
                     <h4>What Is JSON, and How Do You Access Values Using Bracket and Dot Notation?</h4>
-                    <p>JSON stands for JavaScript Object Notation. It is a lightweight, text-based format that is commonly used to exchange data between a server and web app. It is machine parseable and human readable. It is language independent so you can use it in python or a C# application. <code>{"name": "Alice","age": 30,"isStudent": false,"list of courses": ["Mathematics", "Physics", "Computer Science"}. JSON key values are store info and each pair is separated by commas. Each key must be wrapped in "" or
-                         it will result in an error. You can access JSON objects with dot or bracket notation. <code>import data from "./example.json" with { type: "json" };</code> This example is using an import statement to bring the object file to be accessed.
+                    <p>JSON stands for JavaScript Object Notation. It is a lightweight, text-based format that is commonly used to exchange data between a server and web app. It is machine parseable and human readable. It is language independent so you can use it in python or a C# application. 
+                    <code>{"name": "Alice","age": 30,"isStudent": false,"list of courses": ["Mathematics", "Physics", "Computer Science"}</code>
+                    .JSON key values are store info and each pair is separated by commas. Each key must be wrapped in "" or
+                    it will result in an error. You can access JSON objects with dot or bracket notation. 
+                    <code>import data from "./example.json" with { type: "json" };</code>
+                     This example is using an import statement to bring the object file to be accessed. 
                     </p>
                 </li>
                 <li>
@@ -393,14 +397,107 @@ if (isOldEnoughToDrive) {
                 </li>
                 <li>
                     <h4>What is a While Loop, and How Does It Differ from the Do...while Loop?</h4>
-                    <p>A while loop will loop until the condition is true. Condition is checked to make sure it is not false, which halts the loop. While loops are important when you do not know how many times to loop.  <code>let counter = 0;while(counter < 5) {console.log(counter);counter++;}</code> </p> A do while loop is similar but it will execute the code at least once before checking. 
-                    an example of a do while loop <code>let counter = 0;do {console.log(counter);counter++;} while (counter < 5);  </code>. You will probably use while loops more often. 
+                    <p>A while loop will loop until the condition is true. Condition is checked to make sure it is not false, which halts the loop. While loops are important when you do not know how many times to loop.  <code>let counter = 0;while(counter < 5) {console.log(counter);counter++;}</code> A do while loop is similar but it will execute the code at least once before checking. 
+                    an example of a do while loop <code>let counter = 0;do {console.log(counter);counter++;} while (counter < 5);  </code>. You will probably use while loops more often. </p> 
                 </li>
                 <li>
                     <h4>What Are the Break and Continue Statements Used for in Loops?</h4>
                     <p>A break statement is used to exit a loop early. A continue loop is used to skip the current iteration of a loop and move to the next one. <code>for (let i = 0; i < 10; i++) {if (i === 5) {break;}console.log(i);}</code> In this example the loop starts and 0 and goes to 10, but due to the break check it will stop when it hits 5 resulting in 0 through 4. <code>for (let i = 0; i < 10; i++) { if (i === 5) {   continue; }console.log(i);}</code> In this example the continue will result in skipping the value of 5. Resulting in 0-9 without 5. 
                     You can also use break and continue statements to control nested loops using the loopname and break or continue. When you use const, you must declare the variable or you will get an error. You should try to use const as a default, and let only when you need a variable that needs to change.   </p>
                 </li>
+                    </div>
+                </section>
+                <section id="JavaScript_Fundamental_Review">
+                    <div id="Working with Types and Objects">
+                <li>
+                    <h4>What Is a String Object, and How Does It Differ from String Primitive?</h4>
+                    <p>
+                        In JS there are string objects and string primitives. A string object is created using the string constructor function like this <code>const greetingObject = new String("Hello, World!"); console.log(typeof greetingObject); // "object"</code> If you do a typeOf test you will get back that a type object is a string. When you use length on a string primitive JS wraps the string primitive in a string object. This is why you can use methods like repeat(), concat() and slice(). String primitives are more memory efficient and faster than objects. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the toString() Method, and How Does It Work?</h4>
+                    <p>
+                        toString() is a feature that converts a value to its string representation. You can use this method for numbers, booleans, arrays, and objects. The method accepts an optional radix which represents the base. <code>console.log(num.toString(2));</code> returns "1010" because of base 2, where an empty radix would be "10". You can also convert arrays and objects to strings. Arrays convert each element to a string and joins them with commas. With objects, it returns a default string which is [object Object]. To get a stringified version you need to use JSON.stringify() . 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Number Constructor, and How Does It Work for Type Coercion?</h4>
+                    <p>
+                        Number() constructor is used to create a number object. It contains methods like the isNaN and toFixed.<code> const myNum = new Num("34");
+                        console.log(typeof myNum); // "object" </code> Most of the time, the Number() will convert a string to a number. This is helpful when you get inputs from a user but need to make a number to calculate. If you number an empty string you will get 0. If it has random characters the result will be NaN. Booleans will be 1 for true, and 0 for false. null returns 0, undefined NaN. Empty array returns 0, 1 number array returns the number, multiple numbers gives NaN. Array with strings also NaN. Objects is always NaN. 
+                    </p>
+                </li>        
+                    </div>
+                    <div id="Working with Arrays, Variables, and Naming Practices">
+                <li>
+                    <h4>What Are Some Common Practices for Naming Variables and Functions?</h4>
+                    <p>
+                        Naming variables is important to clean readable code. Use camelcase, and boolean start with prefixes like is, has, can. Functions should clearly indicate what it does. For functions that return booleans, you can use is, has, can. If the function retrieves data start with the word get. Functions that set data start with set. For event handler functions the prefix handle or suffix handler. An event handler is an event after a button click. It is common to use i, j, k for iterator variables in loops. For arrays use plural nouns. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Get the Length for an Array, and How Can You Create an Empty Array of Fixed Length?</h4>
+                    <p>
+                        Length returns the number of elements in an array. It is possible to have an array with empty slots which will be reported by length. To create an empty array of fixed length use the Array(). <code>const emptyArray = new Array(5);</code> creates a new array with 5 length and all undefined values. You can also use Array.from() with a length argument. By default it creates undefined values, but you can use fill() to set it to 0. 
+                    </p>
+                </li>        
+                    </div>
+                    <div id="Working with Code Quality and Execution Concepts">
+                <li>
+                    <h4>What Are Linters and Formatters, and How Can They Help You with Code Consistency?</h4>
+                    <p>
+                        A linter is a static code analysis tool that flags bugs. The term lint comes from a unix utility that examines C. ESLint is popular for JavaScript. Formatters automatically format code to adhere to a style guide. Formatters ensure consistent code style. A popular JS one is Prettier. Using linters and formatters can improve code quality and consistency. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is Memory Management, and How Does It Work in JavaScript?</h4>
+                    <p>
+                        Memory management is the proces of controlling memory allocation. When you run programs, it needs memory to store information. In some languages developers have to manually manage memory. JS uses automatic memory management, this process is called garbage collection. First allocation happens when you create variables, objects or functions to store them. The engine has ways to figure out when it isn't needed, then it is freed up. Sometimes you can accidentally keep things and prevent the garbage collection. Avoid global variables, and be careful what your functions are closing over. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Closures, and How Do They Work?</h4>
+                    <p>
+                        Closures is a function that has access to variables in its outer scope even after return. <code>function outerFunction(x) { let y = 10; function innerFunction(){ console.log(x + y); } return innerFunction; } let closure = outerFunction(5); console.log(closure()); // 15</code> In this we call outer function with x, the inner function uses x and y and returns it. Later when we call closure() it has access to outerfunction even though its done executing. Closures are useful for creating private variables and functions. Closures capture variables by reference not by value. 
+                    </p>
+                </li>            
+                    </div>
+                    <div id="The var Keyword and Hoisting">
+                <li>
+                    <h4>What Is the var Keyword, and Why Is It No Longer Suggested to Use It?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What is Hoisting?</h4>
+                    <p>
+
+                    </p>
+                </li>        
+                    </div>
+                    <div id="Understanding Modules, Imports, and Exports">
+                <li>
+                    <h4>What Is a Module in JavaScript, and How Can You Import and Export Modules in Your Program?</h4>
+                    <p>
+
+                    </p>
+                </li>        
+                    </div>
+                    <div id="Working With the Arguments Object and Rest Parameters">
+                <li>
+                    <h4>What is the arguments Objects?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What are Reset Parameters and How Do They Differ from the arguments Object?</h4>
+                    <p>
+
+                    </p>
+                </li>        
                     </div>
                 </section>
                 </ol>

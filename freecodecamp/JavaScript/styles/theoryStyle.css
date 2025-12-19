@@ -1,0 +1,43 @@
+body {
+background:linear-gradient(midnightblue,black);
+  background-image: url("../../../images/brain.png"); /* Replace with your image path */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: 80vw 100vh;
+  
+}
+
+#log-display {
+border: 1px solid #d65b4c;
+scrollbar-width: thin;
+scrollbar-color:#d65b4c #fdd5cb;
+position: absolute;
+font-size: 2vh;
+border-top-left-radius: 2%;
+border-bottom-left-radius: 2%;
+font-family: "Courier New", Courier, monospace;
+background-color:#f9b0a1;
+  color: black;
+  width: 60vw;
+  height: 62vh;
+  top: 8.5vh;
+  left: 18.5vw;
+  overflow-y: scroll;
+  overflow-x: auto;
+}
+
+h1 {
+  text-align: center;
+  background-color:#f9b0a1;
+  width: 22vw;
+  margin: auto;
+  margin-top:3vh;
+  border-radius:12%;
+}
+
+footer {
+  position: absolute;
+  bottom: 20vh;
+  right: 2vw;
+}

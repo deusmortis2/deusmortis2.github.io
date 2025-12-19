@@ -467,13 +467,13 @@ if (isOldEnoughToDrive) {
                 <li>
                     <h4>What Is the var Keyword, and Why Is It No Longer Suggested to Use It?</h4>
                     <p>
-
+                        The var keyword is the original way to declare a variable. let and const were introduced on 2015. When you declare a variable with var it becoems function scoped or globally scoped. var allows you to declare the same variable multiple times without throwing errors. The most significant issue with var is the lack of block scoping variables declared inside a block are still accessible outside of the block. 
                     </p>
                 </li>
                 <li>
                     <h4>What is Hoisting?</h4>
                     <p>
-
+                        Hoisting is a JS default behavior of moving declarations to the top of their scopes during the compilation phase before execution. JS runs in two phases, the compilation phase and the execution phase. Compilation - JS engine goes through code and sets up memory for variables and functions. If you use the var keyword, JS hoists the declaration to the top of its scope. This does not include a value though so if you call the variable before its given a value it will be undefined. Functions can be called before the declaration because the entire thing is hoisted to the top of its scope. let and const are hoisted but they cannot be accessed referred to as a temporal dead zone. It is recommended to avoid hoisting and declare variables at the top of their scope. 
                     </p>
                 </li>        
                     </div>
@@ -481,7 +481,7 @@ if (isOldEnoughToDrive) {
                 <li>
                     <h4>What Is a Module in JavaScript, and How Can You Import and Export Modules in Your Program?</h4>
                     <p>
-
+                        In JavaScript a module is a self contained unit of code that has related functions/classes/variables. To create a module you write your JS code in a different file. Variables/functions/classes you want to make available need to be exported. You will need to first create a .js file that will have the function with export in front. Then in your websites source link you will need to add type="module" attribute to the script link. Then at the beginning of the file you will need to import the functions/variables you want. 
                     </p>
                 </li>        
                     </div>
@@ -489,13 +489,13 @@ if (isOldEnoughToDrive) {
                 <li>
                     <h4>What is the arguments Objects?</h4>
                     <p>
-
+                        You create functions with parameters and call functions with arguments. If you call a function with more arguments than 2, JS will not throw an error. Functions that accept a variable number of arguments are called variadic functions. Since the arguments object is array like you can access an argument at a specific index. Even though arguments acts like an array, it does not utilize array methods like includes or push. While variadic functions are possible, you will normally use rest parameter syntax.
                     </p>
                 </li>
                 <li>
                     <h4>What are Reset Parameters and How Do They Differ from the arguments Object?</h4>
                     <p>
-
+                        Arguments is an array like structure passed into a function. Modern JS uses the rest parameter like with logArgs(1,2,3) you should use a parameter like (...args). This will cause the paramter to be placed within an Array object. You can name this rest parameter whatever you like but make sure it is the last parameter listed. You may only have one rest parameter. You cannot use trailing commas after a rest parameter. Lastly, you cannot have a default value. A big difference between a rest parameter and the arguments object is the rest parameter is a real array and can use array methods like push.  
                     </p>
                 </li>        
                     </div>

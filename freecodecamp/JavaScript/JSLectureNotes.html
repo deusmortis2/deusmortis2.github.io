@@ -500,6 +500,57 @@ if (isOldEnoughToDrive) {
                 </li>        
                     </div>
                 </section>
+                <section id="Higher_Order_Function_and_Callbacks">
+                <div id="Working_with_Higher_Order_Functions_and_Callbacks">
+                <li>
+                    <h4>What Is a Callback Function, and How Does It Work with teh forEach Method?</h4>
+                    <p>
+                        A callback function is passed as an argument to another function, so that the outer function can invoke it at a specific point. This is essential for understanding many including the forEach method. forEach allows you to iterate after each element in an array. <code>numbers.forEach(function(number) {console.log(number * 2);})</code> in this example we use the forEach method with a callback function. forEach can take 3 arguments, the current element(callback function), index of current element, and array called upon. 
+                </li>
+                <li>
+                    <h4>What Are Higher-Order Functions?</h4>
+                    <p>
+                        Higher order function is a function that takes one or more functions as arguments or returns a function. A common use is to abstract away complex operations. Higher order function can return functions, this is useful for creating more general ones. Many built in methods for JS are higher order function such as map(), filter(), and reduce(). Higher order functions allow you to describe what you want to accomplish(declarative) instead of step by step (imperative). 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Map Method, and How Does It Work?</h4>
+                    <p>
+                        map is afunction that operates on arrays. This does not alter the original array and creates a copy, map accepts a callback function that will be called on every single element of an array. Callbacks acccept 3 arguments as stated earlier. A key difference between map and forEach is that map returns a new array. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Filter Method, and How Does It Work?</h4>
+                    <p>
+                        filter is used to create a new array with elements that pass a test. The callback function for filter accepts 3 arguments, the current element, the index, and the array. If no elements pass the test, it returns an empty array. You can use it to remove null and undefined from an array. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Reduce Method, and How Does It Work?</h4>
+                    <p>
+                        The reduce method is a function that allows you to process an array and condense it into a single value. This value can be a number,string,object, or another array. It applies a function to each element in an array, passing the result of each calculation on to the next. It takes two parameters an accumulator and the current value. If you do not provide an accumulator reduce will start from the second element. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is Method Chaining, and How Does It Work?</h4>
+                    <p>
+                        Method chaining is a technique where you call several methods one after another. You can use it on many different values strings/arrays/objects. <code>const result = "  Hello, World!  "    .trim()     .toLowerCase()     .replace("world", "JavaScript");</code>  In this example .trim,.toLowerCase(),.replace are chained together. It's often good practice to break long chains into multiple steps. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Does the Sort Method Work?</h4>
+                    <p>
+                        The sort method is used to arrange the elements of an array and returns a reference to the sorted array. No copy is made. The sort method takes a function parameter to decide on how to sort. The sort method converts the elements to strings, then compares the sequences of their UTF-16 unit values. In order to bypass this, you can use a function like a - b to do the sorting.  
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do the every() and some() Methods Work?</h4>
+                    <p>
+                        The every() and some() methods will allow you to check all elements for a condition. The every() method returns true if every element returns true. The some() method returns true if at least one element passes the test. These methods are very good at making your code cleaner and more expressive. 
+                    </p>
+                </li>
+                </div>
+                </section>
                 </ol>
   </main>
   <footer>

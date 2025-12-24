@@ -37,7 +37,7 @@ htmlHeader.appendChild(greeting);
 //     // Set your final state here. For example:
 //    "transform: scale(1.5) translateX(-100px);"
 // }, { once: true });
-setTimeout(func, 15000);
+setTimeout(func, 10000);
 function func() {
        document.body.style.backgroundImage = 'url(https://media.istockphoto.com/id/92893866/photo/space-stars-texture.jpg?s=2048x2048&w=is&k=20&c=UOSf7eVT8ZHc_1XGA8CWZ8agZSVkqhEPeyXUbCxFpPU=)';
     header.innerHTML = "<h1>All Your Base Are Belong To Us</h1>";

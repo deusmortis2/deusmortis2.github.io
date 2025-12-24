@@ -29,7 +29,7 @@ h1 {
     right: 8.7vw;
     top: 10vh;
     z-index: -1;
-    animation: fade-in 5s 25s linear forwards;
+    animation: fade-in 3s 10s linear forwards;
 }
 
 #beamImg {
@@ -41,7 +41,7 @@ h1 {
     position: fixed;
     width: 200px;
     
-    animation: slow-grow-move 25s linear forwards;
+    animation: slow-grow-move 10s linear forwards;
 }
 
 #aImg {
@@ -49,7 +49,7 @@ h1 {
     width: 150px;
     height: auto;
     opacity: 0;
-    animation: slow-grow 5s 30s linear forwards;
+    animation: slow-grow 3s 13s linear forwards;
 }
 
 header {

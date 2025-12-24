@@ -551,6 +551,136 @@ if (isOldEnoughToDrive) {
                 </li>
                 </div>
                 </section>
+                <section id="DOM_Manipulation_and_Events">
+                <div id="Working_with_the_DOM,Click_Events,and_Web_APIs">
+                <li>
+                    <h4>What Is an API, and What Are Web APIs?</h4>
+                    <p>
+                        API stands for Application Programming Interface. APIs establish rules that allow applications to communicate and exchange data. APIs allow developers to create more complex functionality. Web APIs are often divided into two categories, browser APIs and third-party APIs. Browser APIs expose data from the browser, examples include : DOM API, Storage API. Browser APIs are built into browsers. You can also use third party APIs that are not defaulted into teh browser. An example would be the Google Maps API, weather APIs, social media APIs, payment APis, etc.
+                    </p>
+                </li>  
+                <li>
+                    <h4>What Is the DOM, and How Do You Access Elements?</h4>
+                    <p>
+                        DOM - Document Object Model, its a programming interface that lets you interact with HTML documents. The HTML document is represented as a tree of nodes. The document is the root of the hierarchy, it has one child the HTML element. The HTML element has two children: head/body. The head contains the meta data, the body contains the visible content. You can use getElementByID() to get an HTML element with a specific id. <code> const container = document.getElementById("container");</code> In this example you are grabbing a div element with the set id of container and assigning it to a JS variable container. You can use a querySelector() to get a CSS selector. <code>const highlightEl = document.querySelector(".highlight");</code> In this example you are setting a JS constant for an element's class selector. 
+                    </p>
+                </li>  
+                <li>
+                    <h4>How Do DOM Nodes Exist Relative to Each Other in the DOM Tree?</h4>
+                    <p>
+                        DOM nodes have direct and indirect relationships with one another. The root of the document is the html element, all other nodes are descendants of this node. Below the root node, there are parent nodes that contain other elements. A child is an element contained within another element. the body element may be the parnet of a paragraph element which is a child. Sibling nodes are elements that share the same parent, list elements are often siblings of each other. Indirect relationships also exist across levels. An element is considered a descendant if it can be reached going downwards from its ancestor. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the querySelectorAll() Method, and When Should You Use It?</h4>
+                    <p>
+                        You can use the querySelectorAll in order to get all elements that match a CSS selector. The document object and pass it a string with the CSS selector as an argument. If the string isn't valid a SyntaxError will be thrown. querySelectorAll returns a Nodelist object that match the CSS selector.  You can use it to select all elements, a class, id, all elements with an attribute, you can even use a complicated css selector like "ul.ingredients li".                 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Create New Nodes Using innerHTML and createElement()?</h4>
+                    <p>
+                        innerHTML is a property of Element objects that you can use to set their HTML markup. You can select an element like a div and then add elements within that container. <code> container.innerHTML = "<ul><li>Cheese</li><li>Tomato</li></ul>";</code> In this example we take a selector assigned to a container variable and add an unordered list. innerHTML can be very helpful, but it does have some security risks. You should not use innerHTML if the user can enter data into it, in these cases use textContent instead. You can also use the createElement()  to create a new element. <code>const img = document.createElement("img");</code> createElement creates an HTML element if the document is an HTML document. Once you create the element you can attach it using the appendChild() method and some others. <code>container.appendChild(img);</code> is an example of appendchild of an img to a div named container selected earlier. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Difference Between innerText, textContent, and innerHTML?</h4>
+                    <p>
+                        innerText, textContent, innerHTML are used to change the content of HTML elements. innerText represents the visible content of an html element <code>container.innerText = "JavaScript is awesome!";</code> in this you are replacing the text and adding a line break. This can create problems by triggering reflow which calculates positions of certain elements and can be intensive. 
+
+                        textContent returns the plain text of an element, including text within its descendants. The main difference between innerText and textContent is that textContent reveals all content hidden or not. <code> container.textContent = "New content";</code> if you replace the value of textContent it will remove all children and replace them with a single text node. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Add and Remove Nodes from the DOM with appendChild() and removeChild()?</h4>
+                    <p>
+                        When you need to add or remove nodes from the DOM you can use appendChild() and removeChild(). appendChild adds a note to the end of list of children of a parent. To remove a node from the DOM you can use removeChild() method <code>parentNode.removeChild(childNode);</code>
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do the Navigator, Window, and Document Work?</h4>
+                    <p>
+                        You will come across Navigator, Window and Document interfaces. An interface is a collection of methods and properties that define an object. Navigator interface provides information about the browser environment. Things like the user agent string, platform, and version of browser. <code> console.log(navigator.userAgent);</code> in this you will get information about the users browser which can be useful if you want to have content based on browser.  
+
+                        The Window interface is a browser window that contains the DOM document. It provides methods and properties for interacting with the browser window such as resizing, opening new, and navigating to URLs. <code>console.log(window.innerWidth);</code> this will display the inner width of the browser window to console. Most of the time you don't need to access Window since it exists in the global scope of your JS. 
+
+                        The Document interface is where the DOM document is displayed. <code>console.log(document.children);</code> this will display an HTMLCollection object that has all the children of the document. 
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Add Attributes with setAttribute()?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Event Object?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>How Does the addEventListener Method Work?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>How Does the removeEventListener Method Work?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Inline Event Handlers, and Why Is It Best Practice to Use addEventListener Instead?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do You Manipulate Styles Using Element.style and Element.classList?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the DOMContentLoaded Event, and How Does It Work?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>How Do the setTimeout and setInterval Methods Work?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the requestAnimationFrame() API, and How Can It Be Used to Set Up an Animation Loop?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Web Animations API, and How Does It Relate to CSS Animation Properties?</h4>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the Canvas API, and How Does It Work?</h4>
+                    <p>
+
+                    </p>
+                </li>   
+                <li>
+                    <h4>How Do You Open and Close Dialog Elements Using JavaScript?</h4>
+                    <p>
+
+                    </p>
+                </li> 
+                </div>    
+                </section>
                 </ol>
   </main>
   <footer>

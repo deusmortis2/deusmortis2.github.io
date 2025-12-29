@@ -1,0 +1,102 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#gallery {       
+    height: 100vh;
+    background-color: #f0f0f0;
+    color: #333;
+    display: grid;
+    grid-template-columns: 1fr 25% 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+    grid-template-areas:
+    "header header header"
+    "img1 img2 img3"
+    "footer footer footer";
+    overflow:hidden;
+    gap: 8px;
+}
+
+#thumb1 {
+    overflow: hidden;
+    grid-area: img1;
+    width: 25vw;
+    height: 41vh;
+    align-self: center;
+    justify-self: flex-end;
+}
+
+#thumb2 {
+    overflow: hidden;
+    width: 25vw;
+    height: 41vh;
+    grid-area: img2;
+    align-self: center;
+    justify-self: center;
+}
+
+#thumb3 {
+    overflow: hidden;
+    width: 25vw;
+    height: 41vh;
+    grid-area: img3;
+    align-self: center;
+    justify-self: left;
+}
+
+#title {
+    text-align: center;
+    margin: 20vh 0 0 0;
+    font-size: 5vh;
+    height: 25%;
+    width: 100%;
+    background-color: rgb(211,221,224);
+    grid-area: header;
+}
+
+.gallery-item {
+   width: 32vw;
+   height: 40vh;
+   object-fit: cover;
+   cursor: pointer;
+}
+
+.lightbox {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.8);
+    width: 100vw;
+    height: 100vh;
+}
+
+#lightbox-image {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    margin: 0 auto 0 auto;
+    height: 90%;
+    border: solid white;
+    border-radius: 10px;
+
+}
+
+button {
+    cursor: pointer;
+    width: 1.8vw;
+    height: 3.8vh;
+    font-size: 1.5em;
+    border-radius: 1.9vh;
+    font-weight: bold;
+    border:#333;
+    margin: 2vh 1vw 0 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: white;
+    background-color: #333;
+}
+

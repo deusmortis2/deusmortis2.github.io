@@ -11,3 +11,5 @@ console.log(codingFact);
 codingFact = "In " + favoriteLanguage + " if you want to create a string you just add single or double quotes.";
 console.log(codingFact);
 console.log("It was fun sharing these facts with you. Goodbye! - " + botName + " from " + botLocation + ".");
+const rawInput = "   Admin_User_2024   ";
+console.log(typeof rawInput.trim().toLowerCase())

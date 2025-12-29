@@ -1,0 +1,52 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial;
+}
+main {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas:
+    "h1 h2 h3"
+    "b1 b2 b3"
+    "f1 f2 f3";
+        min-block-size: 100vb;
+}
+
+h2 {
+    padding: 0 0 1em 0;
+    margin-left: 40vb;
+}
+
+#content {
+    grid-area: b2;
+}
+
+ul {
+    list-style-type: none;
+    margin-left: 40vb;
+}
+
+li {
+    padding-top: 2px;
+    padding-bottom: 3px;
+    border-bottom: dotted 1px gray; 
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    border: 0;
+    background: none;
+    font-size: 1.2em;
+}
+
+.filled {
+padding: 0;
+}
+

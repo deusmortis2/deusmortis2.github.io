@@ -610,76 +610,93 @@ if (isOldEnoughToDrive) {
                 <li>
                     <h4>How Do You Add Attributes with setAttribute()?</h4>
                     <p>
-
+                        setAttribute is used to add attributes to HTML elements. <code>para.setAttribute("class", "my-class");</code> When using set attribute you first name the attribute, then the value. outerHTML is a way to get a display of the HTML elements and the code within. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the Event Object?</h4>
                     <p>
-
+                        The Event object is a payload that triggers when a user interacts with your page in some way. The Event object has a number of properties that are helpful. All Events have a type property, this reveals the type of event like "keydown" or "click". These are some values you may pass to addEventListener(). Event objects will also always have a target property. The target is usually to some HTMLElement. Events also have methods, a commonly used one is preventDefault(). Which can be used to prevent default behavior like form submit POST. The stopPropagation() prevents an even from propogating parent elements. 
                     </p>
                 </li>
                 <li>
                     <h4>How Does the addEventListener Method Work?</h4>
                     <p>
-
+                        The addEventListener() is used to listen for events, it takes two arguments: the event you want to listen for and a function that occurs on the event. The element monitors for events and monitors for them such as "click". <code>element.addEventListener("click", handleClick);</code> In this example you have a function created outside called handleClick to run when the element is clicked. The EventListener automatically calls the method handleEvent(). There are many events to listen for including mouseover, mouseout, keydown, keyup, submit. 
                     </p>
                 </li>
                 <li>
                     <h4>How Does the removeEventListener Method Work?</h4>
                     <p>
-
+                        The removeEventListener() method is used to remove an event listener previously added. This takes two arguments the event you want to remove, and the listener function. There is an optional third argument of options or useCapture. The options argument specifies the options for the listener such as passive or once. The useCapture specifies whether the event be captured in the propagation phase. removeEventListener is often used when closing a modal in a web app or when logging out of an application. 
                     </p>
                 </li>
                 <li>
                     <h4>What Are Inline Event Handlers, and Why Is It Best Practice to Use addEventListener Instead?</h4>
                     <p>
-
+                        It is not recommended but inline event handlers are attributes of html elements that are used to execute code on the event. <code><button onclick="alert('Hello World!')">Show alert</button></code> this is an example of an inline event. You can also define a function in a script element and then call it from the inline click. You can only attach one inline event handler to an element. 
                     </p>
                 </li>
                 <li>
                     <h4>How Do You Manipulate Styles Using Element.style and Element.classList?</h4>
                     <p>
-
+                        There will be times when you need to manipulate HTML inside your .js file. Element.style is a read only property that represents the inline style of an element you can use it to get or set styles. <code>paraEl.style.color = "red";</code> example where paraEl was retrieved earlier. You can also manipulate styles using the classList property. It can be used to add, remove, or toggle classes on an element. <code>paraEl.classList.add("highlight");</code> in this we have added the class of highlight to the p element. If you need to remove a class from an element you can use classList.remove(). You can use classList.toggle() method to toggle class to an element. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the DOMContentLoaded Event, and How Does It Work?</h4>
                     <p>
-
+                        The DOMContentLoaded event is fired when everything has been loaded and parsed. These events will not wait for styles/iomages etc to be loaded. This differs from the load event which waits for everything to be loaded. <code>document.addEventListener("DOMContentLoaded", function () { console.log("DOM is loaded.");});</code> This example displays a cl when the event has been met.
                     </p>
                 </li>
                 <li>
                     <h4>How Do the setTimeout and setInterval Methods Work?</h4>
                     <p>
-
+                        To have things happen at a delay or repeat you can use setTimeOut() or setInterval() which accept a function and a delay as parameters. setTimeOut() lets you delay an action. <code>setTimeout(function () {console.log("This runs after 3 seconds");}, 3000);</code> in this example the function will run after 3 seconds, since the delay is in milliseconds. <code>setTimeout(() => {console.log("This runs after 3 seconds"); }, 3000);</code> You can also use arrow functions like this example. You can also use clearInterval() to stop the interval from repeating. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the requestAnimationFrame() API, and How Can It Be Used to Set Up an Animation Loop?</h4>
                     <p>
-
+                        requestAnimationFrame() is a method that alows you to schedule the next step of your animation before the next screen repaint. The next screen repaint is when the browser refreshes the visual display typically around 60 times or 60 fps. To use requestAnimationFrame() you just call it and pass a callback function to it. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the Web Animations API, and How Does It Relate to CSS Animation Properties?</h4>
                     <p>
-
+                        The Web Animations API allow you to create and control animations within JS. At the core of the WAAPI is the Animation constructor which has a significant method of animate(). This allows you to create animation by specifying keyframes and options like duration, direction, easing, and iterations. <code>const animation = square.animate([{ transform: "translateX(0px)" }, { transform: "translateX(100px)" }], { duration: 2000, // makes animation lasts 2 seconds iterations: Infinity, // loops indefinitely direction: "alternate", // moves back and forth easing: "ease-in-out" // smooth easing});</code>.
+                        Instance Methods: play(), pause(), reverse(), finish(), cancel()
+                        Properties: playbackRate, currentTime, startTime, effect, timeline, playState, finished, onfinish, oncancel
+                        WAAPI extends the capabiliteis of CSS animations by providing dynamic control over them inside JavaScript. CSS animation is ideal for simple declarative animations, but if your animation needs to respond to user interaction clicks/scroll or you want the user to be able to pause/reverse/change speed WAAPI is better. 
                     </p>
                 </li>
                 <li>
                     <h4>What Is the Canvas API, and How Does It Work?</h4>
                     <p>
-
+                        The Canvas API is a tool that lets you manipulate graphics right inside JS. The canvas element in HTML allows you to draw using instance methods and properties. The Canvas API provides everything you need to create amazing visuals, including shapes, text, animations, and even games. It has interfaces like HTMLCanvasElement, CanvasRenderingContext2D, CanvasGradient, CanvasPattern, TextMetrics. First you need to create a canvas element in html like <code>&lt;canvas id="my-canvas"&gt; &lt;/canvas&gt;</code>. You can give width and height to your canvas as html attributes or within the HTMLCanvasElement interface. IF you use the getContext() method of the HTMLCanvasElement you can get the drawing elements for 2d by using '2d'. <code>const ctx = canvas.getContext('2d');</code> if you CL the variable created you will get 
                     </p>
                 </li>   
                 <li>
                     <h4>How Do You Open and Close Dialog Elements Using JavaScript?</h4>
                     <p>
-
+                        Dialogs let you display important information or actions to users. You can do this with both modal and non modal dialogs. A modal dialog is a type of dialog that forces the user to interact with it before they can access the rest of the application or webpage. It blocks interaction with other content until the user completes an action. A non modal allows the user to continue interacting with parts of the page or application when the dialog is open. You will learn about showModal() and close() methods. When you want to make sure the user focuses on the materials use the showModal() method. 
                     </p>
                 </li> 
                 </div>    
+                <div id="Understanding the Event Object and Event Delegation">
+                <li>
+                    <h4>What Is the Change Event, and How Does It Work?</h4>
+                    <p>
+                        The change event is a special event fired when the user modifies the value of input elements. Including: checkbox tick/untick, radio button ticked, making a selection in a picker or dropdown, when input loses focus after user changed value, when the value is confirmed. <code>selectMenu.addEventListener("change", (event) => {console.log(`You selected: ${event.target.value}`);});</code> in this example, evertyime the user selects an option the selected value with be logged. The change event generates an Event object, but it does not generate custom implementation. This is different than the input event which generates a dedicated object. input events also trigger when the user types into a field. 
+                    </p>
+                </li>    
+                <li>
+                    <h4>How Do Event Bubbling, and Event Delegation Work?</h4>
+                    <p>
+                        Event bubbling or propagation refers to how an event bubbles up to parent objects when triggered. If you have  a span inside of a paragraph, when the span is clicked this also goes to the p element it is nested in. You could even have a response from both elements for an event. If you add a stopPropagation() to the span element, then the paragraph element would no longer receive the event data. You can also delegate from a parent to the children elements where the elements being clicked are apart of the parent. 
+                    </p>
+                </li>
+                </div>
                 </section>
                 </ol>
   </main>

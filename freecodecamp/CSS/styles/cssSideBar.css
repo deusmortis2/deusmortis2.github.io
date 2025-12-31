@@ -28,9 +28,8 @@ box-sizing: border-box;
     padding: 5px 1em;
     position: sticky;
     top: 0;
-    align-self: start;
+    align-self: flex-start;
     transition: 300ms ease-in-out;
-    overflow: hidden;
     text-wrap: nowrap;
     border-right: 3px solid var(--line-clr);
 }
@@ -76,13 +75,35 @@ box-sizing: border-box;
     background-color: var(--hover-clr);
 }
 
-#sidebar ul li.active a {
+#sidebar ul li.active a, button.active {
+    border-radius: .5em;
     color: var(--accent-clr);
     border: 1px solid var(--accent-clr);
 
     svg {
         fill: var(--accent-clr);
     }
+}
+
+#sidebar span.active {
+     color: var(--accent-clr);
+}
+
+#sidebar .sub-menu {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: 300ms ease-in-out;
+    > div{
+        overflow: hidden;
+    }
+}
+
+#sidebar .sub-menu.show{
+    grid-template-rows: 1fr;
+}
+
+#sidebar .sub-menu {
+    padding-left: 2em;
 }
 
 #toggle-btn {
@@ -94,6 +115,15 @@ box-sizing: border-box;
     cursor: pointer;
 }
 
+.dropdown-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+}
+
 .dropdown-btn svg{
     transition: 200ms ease;
 }
@@ -101,9 +131,15 @@ box-sizing: border-box;
 .rotate svg:last-child{
     rotate: 180deg;
 }
+
+
+main section, header {
+    border-radius: 10px;
+}
 ol {
-            list-style-type: none;
-        }
+list-style-type: none;
+}
+
 main a {
 /* color: hsl(192, 99%, 84%); */
 color: var(--link-text-clr);
@@ -115,14 +151,15 @@ main a:visited {
 }
 
 main li:hover, main a:hover {
-    width: 12vw;
+    width: auto;
     background-color: var(--hover-clr);
     border-radius: 2px;
 
 }
 
 body {
-margin: 0 0 0 0;
+min-height: 100vh;
+min-height: 100dvh;
 line-height: 1.5rem;
 background-color: var(--base-clr);
 color: var(--text-clr);
@@ -131,6 +168,7 @@ display: grid;
 grid-template-areas: 
 "sidebar main";
 grid-template-columns: auto 1fr;
+
 }
 
 nav {
@@ -138,8 +176,8 @@ nav {
 }
 
 main {
-    height: 100vh;
-    width: 100%;
+    margin-top: 2vh;
+    min-height: 100vh;
     grid-area: main;
     display: flex;
     flex-direction: column;
@@ -171,6 +209,9 @@ padding-left: 50px; /* Optional: remove default padding for better centering */
     body{
         grid-template-columns: 1fr;
     }
+    ol {
+    list-style-type: none;
+    }
     main{
         padding: 2em 1em 60px 1em;
     }
@@ -178,6 +219,7 @@ padding-left: 50px; /* Optional: remove default padding for better centering */
         border: none;
         padding: 0;
     }
+
     #sidebar {
         height: 60px;
         width: 100%;

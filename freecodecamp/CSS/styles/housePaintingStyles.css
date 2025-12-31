@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  margin-top:150px;
+  background-color: lightblue;
+}
+
+#house {
+  position: relative;
+  width: 500px;
+  height: 400px;
+  background-color: beige;
+  border: 5px solid black; 
+  margin: 0 auto 0;
+}
+
+#house div {
+  position: absolute;
+}
+
+#roof {
+  top: 0px;
+  left: -4.5px;
+  height: 100px;
+  width: 100%;
+  background-color: brown;
+  border: 5px solid black;
+  transform: translate(0px, -5px);
+}
+
+#door {
+  border: 5px solid black;
+  height: 150px;
+  width:100px;
+  background-color: darkgray;
+  bottom: 0;
+  right: 200px;
+  transform: translate(0px, 4.5px);
+}
+
+#window-1 {
+  border: 3px solid black;
+  height: 50px;
+  width: 50px;
+  background-color: white;
+  bottom: 100px;
+  left: 50px;
+}
+
+#window-2 {
+  border: 3px solid black;
+  height: 50px;
+  width: 50px;
+  background-color: white;
+  bottom: 100px;
+  left: 375px;
+}
+
+#chimney {
+  background-color: gray;
+  height: 100px;
+  width: 150px;
+  top:-100px;
+  left: -4.5px;
+  border: 5px solid black;
+  z-index: -1;
+
+}

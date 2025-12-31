@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  padding-top:50px;
+  padding-bottom:50px;
+  margin-top:0;
+  margin-bottom:0;
+  margin-left: auto;
+  margin-right: auto;
+  width:80vw;
+  min-height: calc(100vh - 100px);
+  background-color: black;
+  justify-content: center;
+}
+img {
+  margin-top: 10px;
+  width: 500px;
+  margin-left: 30%;
+  margin-right: 25%;
+  border: 2px solid black;
+}
+
+hr {
+  height: 2px;
+  color: black;
+  background-color: black;
+}
+section {
+  width: 90%;
+}
+hr, #haunted, #games{
+  width: 90%;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top: 0;
+}
+main, header {
+  background-color: #FDD3A6;
+}
+header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+main {
+margin-top: 0;
+padding-top: 0;
+}
+h1, h2 {
+  text-align : center;
+  margin: 0;
+  padding: 0;
+}
+h1 {
+  padding-bottom: 10px;
+}

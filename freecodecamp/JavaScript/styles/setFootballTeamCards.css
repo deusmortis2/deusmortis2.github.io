@@ -62,3 +62,7 @@ footer {
     flex-direction: column;
   }
 }
+
+#hideout {
+    display: none;
+}

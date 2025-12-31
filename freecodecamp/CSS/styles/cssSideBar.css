@@ -101,7 +101,9 @@ box-sizing: border-box;
 .rotate svg:last-child{
     rotate: 180deg;
 }
-
+ol {
+            list-style-type: none;
+        }
 main a {
 /* color: hsl(192, 99%, 84%); */
 color: var(--link-text-clr);
@@ -113,6 +115,7 @@ main a:visited {
 }
 
 main li:hover, main a:hover {
+    width: 12vw;
     background-color: var(--hover-clr);
     border-radius: 2px;
 
@@ -203,9 +206,7 @@ padding-left: 50px; /* Optional: remove default padding for better centering */
             border-radius: 0;
             justify-content: center;
         }
-        ol {
-            list-style-type: none;
-        }
+        
         ul li .sub-menu.show {
             position: fixed;
             bottom; 60px;

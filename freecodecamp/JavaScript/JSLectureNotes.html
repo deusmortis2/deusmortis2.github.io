@@ -698,6 +698,40 @@ if (isOldEnoughToDrive) {
                 </li>
                 </div>
                 </section>
+                <section id="JavaScript_and_Accessibility">
+                <div id="Understanding_aria-expanded,aria-live,and_Common_ARIA_States">
+                <li>
+                    <h4>How Do You Make Dynamic and Interactive Content Accessible?</h4>
+                    <p>
+                        You learned how semantic markup and ARIA attributes make content accessible. Since pages update dynamically through JavaScript, its important to make sure these changes are also in the HTML. It is important to update teh associated ARIA attributes when changing elements with JavaScript including aria-expanded and aria-controls. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the aria-expanded Attribute, and How Does It Work?</h4>
+                    <p>
+                        The aria-expanded attribute is used to indicate if something is expanded or collapsed. It's used with menus it's set to true when exapnded, false when collapsed.  The aria-expanded attribute is applied to the interactive element like a button that controls the expansion. If the menu is expanded by default aria-expanded should be set to true. aria-owns can be used with aria-control to establish a programmatic control between the trigger and element. <code>button.addEventListener('click', () => { const expanded = button.getAttribute('aria-expanded') === 'true';  button.setAttribute('aria-expanded', String(!expanded));  menu.hidden = expanded;  });</code> In this example the list for expansion immediately follows the interaction making it easier for screen readers to navigate the controls. You can use aria owns when you aren't able to place the code immediately after but it has drawbacks. It creates verbosity since the screen reader reads out all the contents when expanded. Ideally the expanded content should be placed after the control element and the aria-owns should be a worst-case scenario. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the aria-live Attribute, and How Does It Work?</h4>
+                    <p>
+                        The aria-live attribute creates a region which you can use to notify screen readers of dymamic content. Common uses of live regions include messages after actions are tqaken, content that updates periodically(ticker, countdown) or general status messages. Screen readers can only focus on one place at a time which means users won't notice changes on a different part of the page. Live regions notify the user of changes in real time. 3 values for the attribute: assertive - update is important, highest priority. This means any change in the live region will interrupt the user and can be disruptive so it should only be used for time sensitive materials or critical conditions. The next option is polite: this means the update is not urgent this will wait for the screen reader makes the current announcement or when the user finishes typing. This one is most frequently used. The lowest priority is off which means that the update will not be announced unless the content is an element that currently is keyboard focused. This is not commonly used. aria-live is not required if the updated information is within an element with ARIA roles alert, log, marquee, status, or timer. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Are Some Common ARIA States Used on Custom Control Elements?</h4>
+                    <p>
+                        Semantic form control elements like input, select, textarea, button, fielset have built in states that are conveyed to assistive technologies. You could use disabled attribute to disable a button or the checked attribute to indicate that a checkbox is checked. If you are using a custom control you need to use ARIA attributes to convey states to assistive technologies. The first ARIA attribute is aria-selected this is used to indicate if an element is selected. aria-disabled is used to indicate an element is disabled only to screen readers. aria-disabled does not actually disable the element, it is up to you the developer to make the element behave and look disabled. aria-haspop  this is used to indicate interactive element will trigger a popup when activated. You can use aria-popup  when the popup has one of the roles: menu, listbox, tree, grid, dialog. The aria-haspopup must be one of these roles or true which default to menu. The aria-haspopup is used to indicate a File will open when popup menus are activated. You will need to use JS to show and hide the popup menu and to implement proper keyboard shortcuts. ARIA menu refers to a specific type of menu, a list of actions the user can invoke, similar to a menu in a desktop app. aria-required is used to indicate a field needs to be filled for a form to be submitted. If you use the form element required attribute you do not need to use aria required, but if you use a custom form control. aria-required can be used on native form inputs and someitmes preferred over native required. aria-checked is used to indicate checked state commonly used on custom checkboxes. Native checkboxes have a built in checked state, but custom ones will need this attribute. You will need to set aria checked to true when selected, false when unchecked. 
+                    </p>
+                </li>
+                <li>
+                    <h4>What Is the aria-controls Attribute, and How Does It Work?</h4>
+                    <p>
+                        The aria-controls is used to create a programmatic relationship between an element that controls the presence of another and the element controlled. <code><button role="tab" id="tab1" aria-controls="section1" aria-selected="true"></button></code> is an example of how aria-controls can be used on a button. In most tabbed interfaces the first tab panel is visible by default, so the first one will have aria-selected set to true. The aria-controls attribute is used to associate the button with the section that it controls.aria-labelledby is used to point to corresponding tab to give an accessible name. You will need to use JS to update which button is currently visible and the arias-selected set to true.  
+                    </p>
+                </li>
+                </div>
+                </section>
                 </ol>
   </main>
   <footer>

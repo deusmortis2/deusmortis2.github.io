@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Responsive Navigation Bar</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="./styles/responsiveNavBar.css">
+    </head>
+<body>
+    <header>
+        <nav>
+            <h1 class="logo-text">Brand Name</h1>
+            <button class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+      
+        <h1>Responsive Web Bar From Tutorial</h1>
+        <h2><a href="https://www.youtube.com/watch?v=C2Qim8mPAeA">Learn Web Responsive Navbar Tutorial</a></h2>
+        <p> This page is just me copying code from a tutorial video I found in youtube. Nothing special but just looking for some ways to improve my own navbars and create mobile versions.</p>
+    </main>
+
+    <script type="text/javascript">
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('show-menu')
+        })
+    </script>
+</body>
+</html>

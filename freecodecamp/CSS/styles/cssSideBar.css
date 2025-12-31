@@ -204,7 +204,7 @@ padding-left: 50px; /* Optional: remove default padding for better centering */
             justify-content: center;
         }
         ol {
-            list-style: none;
+            list-style-type: none;
         }
         ul li .sub-menu.show {
             position: fixed;

@@ -732,6 +732,78 @@ if (isOldEnoughToDrive) {
                 </li>
                 </div>
                 </section>
+                <section id="Debugging">
+                <div id="Debugging_Techniques">
+                    <h4>What Are Some Examples of Common JavaScript Errors?</h4>
+                    <p>There are four types of errors, SyntaxError, ReferenceError, TypeError,RangeError. SyntaxError - incorrectly written code forgetting , or (). ReferenceError - different types either a variable that is used but not defined, or variable that is accessed before definition. TypeError - performing an operation on not the right type. Like using an object when you need a function. RangeError - using a variable outside of what JavaScript can handle, a negative index etc. 
+                    </p>
+                    <h4>How Does the Throw Statement Work?</h4>
+                    <p>
+                        throw in JS is used to throw a user defined exception. Unexpected event happens and disrupts the flow. <code>throw expression;</code> the expression is the object or value representing the exception. Examples are error, typeError, rangeError. <code>function validateNumber (input) { if (type of input !== "number" { throw new TypeError("Expect a number but received " + typeof input)} return input * x;}</code>
+                    </p>
+                    <h4>How Does try...catch...finally Work?</h4>
+                    <p>
+                        The try...catch...finally block can help you to manage errors. The try block is used to wrap code that might throw an error. The catch block captures and handles errors that occur in the try block. The finally block runs after try and catch regardless of if there was an error or not. <code>try {console.log("Starting to process input...");const result = processInput(9); console.log("Processed result:", result); } catch (error) { console.error("Error occurred:", error.message); } </code>. We call the function in the try block, and this will be caught in the catch block. The error will be passed with information about that error. We use console.error to log error messages. Then the finally code block will happen regardless. 
+                    </p>
+                    <h4>How Does the Debugger Statement Work?</h4>
+                    <p>
+                        The debugger statement is a tool that lets you pause code at a specific line to investigate. JS executes code from top to bottom. When it hits a debugger statement, it pauses execution at that line. This gives you the chance to inspect variables and check functions. This only happens if the browser tools are open. Otherwise, the debugger statement is ignored. The browser  will pause the code the page will not reload unless manually triggered. Place a debugger; statement at the line you want to pause at. 
+                    </p>
+                    <h4>What Are Some Examples of Using Advanced JavaScript Debugging Techniques?</h4>
+                    <p>
+                        Debugging should go beyond console.log() statements. First you can use breakpoints.  These let you pause your code at a line of choice. You can do this in the developer tools in the sources tab, and click on the line you want to put the breakpoint at. You can also right click on a line and add a conditional breakpoint. Watch expressions allow you to monitor values even if they are out of scope. To add one go to sources tab of dev tools, look for watch and press + to add it. Profiling helps identify performance bottlenecks. Go to performance tab, click record and perform the actions you want to profile. Inspecting network requests can help debug issues such as parameter errors, address errors or server errorrs. You can find this in the network table of the dev tools. console.table() provides a table in the console. It takes one mandatory argument (array/object) and an option argument to specify properties or columns. console.dir() lets you display an interactive list of properties of an object. 
+                    </p>
+</div>
+</section>
+<section id="Basic_Regex">
+<div id="Working_with_Regular_Expressions">
+                    <h4>What Are Regular Expressions, and What Are Some Common Methods?</h4>
+                    <p>
+                        Regular expressions(regex) are a feature of many programming languages. It is a special syntax to create a pattern to be used against a string, extract text, etc. <code>const regex = /freeCodeCamp/;</code> in JavaScript you define regex between forward slashes. The test() method is present on RegExp objects. If you use regex.text("e"); it will return false even though freeCodeCamp has an 'e'. It will return true if all the text is included within. If you use the match() method on the above cove it will display the text and also the groups property which shows any captured groups(undefined here). It will display the index which is where the string is (in this case 0). Finally, it will display the input it was displayed on. Strings have the replace() method which can take a regular expression to match and the string to replace it with. 
+                    </p>
+                    <h4>What Are Some Common Regular Expression Modifiers Used for Searching?</h4>
+                    <p>
+                        Modifiers or flags modify the behavior of a regex. For example const regex = /freeCodeCamp/i; will ignore the case. There are many other flags including the g flag or global modifier which allows your regex to match a pattern more than once. <code>const regex = /freeCodeCamp/gi;</code> in this case we are using both lower case and global. Which can lead to unexpected results when chaining together logs since it uses the lastIndex to track previous matches. The $ sign anchor(before last slash) says to match the end of the string. The ^(after first slash) says to match the start of a string. These do not work if the string starts to enter new lines, unless you use the m flag at the end of the regex this is for multi-line modifier. The d flag is for indices which expands what you get in the match object. There is also the u flag which is the unicode modifier to allow matching special unicode characters. the v flag expands  the unicode matching. The y flag is for sticky which will return null if there is not a match at lastIndex. The s flag which is a single line modifier. The single line allows a . to be used to match linebreaks making a string a single line of text. i and g flags are the most commonly used. 
+                     <h4>How Can You Match and Replace All Occurrences in a String?</h4>
+                    <p>
+                        If you have multiple occurrences to match, match() and replace() will only replace the first one. You can replace both using the g flag like this <code> const regex = /freecodecamp/g; const replaced = str.replace(regex, "freeCodeCamp"); </code> 
+                        Although, you can also use the methods matchAll() and replaceAll(). MatchAll() returns an object called an iterator. The iterator has a next() method which can get the next value. You can extract all matches by converting to an array with the iterator using Array.from() .
+                    </p>
+                    <h4>What Are Character Classes, and What Are Some Common Examples?</h4>
+                    <p>
+                        The wildcard is represented by a period (.) and matches any single character except line breaks. To use the wildcard to match line breaks you would need the s flag. You can use character classes to narrow down searches, instead of searching for /0|1|2 for numerical values(0-9) you could also use the \d character class to find 0-9. If you want any letter you can use \w. A word character is any letter a-z or number 0-9 or _. The \s will match any white space. You can negate using uppercase <code>const regex = /\D/;</code> for example would match any character that is not 0-9. If you want your own characters you can use the square brackets /[abcdf]/ would allow you to find just those characters. If you have a range you can use a hyphen /[a-g]/ which all regex is case sensitive by default. If you want uppercase you should include them like /[a-zA-z]/. If you want a hyphen you have to put it at the beginning like /[-a-z]/. 
+                    </p>
+                    <h4>What Are Lookahead and Lookbehind Assertions, and How Do They Work?</h4>
+                    <p>
+                        The lookahead will match a pattern followed by a pattern. First you will start with the pattern to match, then (?=) before the second slash. const regex = /free(?=code)/i for example will only match free if it is followed by code. For free that is not followed by code: /free(?!code)/i. Lookbehind matches preceding the pattern,  /(?<=free)code/i would look for code with free before it. Regex.prototype.test only confirms if a string matches. Lookaheads and lookbehinds are useful for matching text without impacting the returned value. 
+                    </p>
+                    <h4>What Are Regex Quantifiers, and How Do They Work?</h4>
+                    <p>
+                        If you want to match a 4 digit identification code you may use something like const regex = /^\d\d\d\d$/;. However you can use a quantifier to accomplish the same thing like /^\d{4}$/ to allow four or more digits you can use a comma /^\d{4,}$/ . If you want a range you can use /^\d{4,6}$/ which would give 4-6 digits. Special shorthand for a single optional character is ?. The match previous character zero or more times is the asterisk *. The + symbol means use the quantifier as a min with no max. 
+                    </p>
+                    <h4>What Are Capturing Groups and Backreferences, and How Do They Work?</h4>
+                    <p>
+                        A capturing group allows you to capture a matched string. To capture code : /free(code)camp/i. You can use match to capture the element desired. You can also use this with replace in order to replace the code with a string. If you add a + like (co+de) you can get more os or an undetermined number, but in order to do this you must also add a backreference. <code>const regex = /free(co+de)camp/i; console.log("freecoooooooodecamp".replace(regex, "paid$1world"));</code> In this code we add the backreference where the capture is and 1 is because the capture is in the first group. To get both copies to be the same you need to reference the first capture with the second like this /free(co+de)camp.*free\1camp/i;. If you wish to define a capture group you can do it as follows with a ? and <> const regex = /free(?<code>co+de)camp.*free\1camp/i;. 
+                    </p>
+</div>    
+</section>
+<section id="Form_Validation">
+<div id="Understanding_Form_Validation">
+                    <h4>What Are Some Ways to Validate Forms Using JavaScript?</h4>
+                    <p>
+                    In HTML you can restrict values that a user can submit, but if you want to get more complex you need JavaScript. textarea and input elements expose constraint validation API. This allows you to set validation like minimum length and pattern matching. If you set the required type to email you can restrict data to require an @. However, users can still bypass this very easily by using something like @email.com We can use the pattern attribute to specify the email address must end in a company email address. This would look like: <code><input required placeholder="username@sampleCompany.com" type="email" pattern=".+@sampleCompany\.com" /> </code>. If you try to submit something different it will display a message saying "Please match the requested format." You can use the checkValidity() method <code>input.addEventListener("input", (e) => { console.log (e.target.checkValidity())\})</code> This returns a boolean based on the HTML validation. However, the message will still be "Please match the requested format." Using the setCustomValidity method <code>  if (!e.target.checkValidity()) {    e.target.setCustomValidity(      "You must use a company email address that ends in @sampleCompany.com"  );</code>
+                    You can use a console.log(e.target.validity); to see the validity property. Some other useful properties are valueMissing and patternMismatch. 
+                    </p>
+                    <h4>What Is the Purpose of the preventDefault() Method?</h4>
+                    <p>
+                    preventDefault() prevents default behavior like click toggle of a checkbox. We need to hook into the keydown event like this <code> const input = document.querySelector("input");input.addEventListener("keydown", (e) => {}) </code> By default this will show the value of the key pressed such as e, if you change the code to include {  e.preventDefault();  output.innerText = `You pressed the ${e.key} key`;} within the code block you can set your own event handling. You can also use the preventDefault() method to stop a page reload on form submission. 
+                    </p>
+                    <h4>How Does the Submit Event Work With Forms?</h4>
+                    <p>
+                    The first way to submit a form is when the user clicks a button with type submit. The second is when the user presses the Enter key on any editable input field in the form. The third is through a JavaScript requestSubmit() or submit() methods. The first attribute to look at is the action attribute. This should contain the URL or path for the domain. This determines where the data is sent. If there is no action attribute it will send to the current page. To set the action attribute use the form element like this <form action="https://freecodecamp.org">. You can also use a relative path. The second important attribute is the method attribute. This accepts a HTTP method like GET or POST. HTTP stands for Hypertext Transfer Protocol and is used to transfer data. HTTP methods are used to define actions that can be performed on resources such as GET POST PUT DELETE etc. The default is GET which is a request to retrieve data without making any changes to it. The data in the form will be encoded with a number entered into the input field. When you use the POST request a body can be included that contains data for the request. URL encoded data is when the form data is converted into a string of key value pairs like name=John+Doe&email=john$40example.com. The form also accepts the enctype attribute which represents an encoding type. It accepts 3 values, application/x-www-form-url-encoded(default), text/plain (sends data in plaintext), multipart/form-data for file uploads.
+                    </p>
+</div>
+</section>
                 </ol>
   </main>
   <footer>

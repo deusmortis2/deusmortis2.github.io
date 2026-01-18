@@ -1,0 +1,90 @@
+body {
+  font-family: Arial;
+}
+
+input[type='checkbox'] {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  appearance: none;
+  border: 2px solid #e2a60d;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 5px;
+}
+
+input[type='checkbox']:checked {
+  background-color: #f1be32;border-color:#e2b60d;
+}
+
+input[type='checkbox']:checked::after {
+
+content: "✓";
+display: block;
+ text-align: center;
+font-weight: bold;
+color: white;
+line-height: 20px;
+border-color:#e2b60d;
+}
+h1 {
+  text-align: center;
+}
+.feature-card-container{
+display: grid;
+grid-template-columns: 25vw 25vw;
+flex-wrap: wrap;
+justify-content: center;
+gap: 10px;
+}
+
+.card {
+  position: relative;
+  padding-top: 2vh;
+  border-radius: 12px;
+  width: 25vw;
+  height: 10vh;
+  border: 1px solid slategray;
+  text-align: center;
+  vertical-align: middle;
+}
+
+label {
+font-weight: bold;
+vertical-align: bottom;
+}
+
+h2 p {
+  border: 0;
+}
+
+.card:hover {
+  border-color: #f1be32;
+  box-shadow: 0 4px 12px rgba(255,201,53,0.6);
+}
+
+
+@media (max-width: 600px) {
+    body {
+        width: 100vw;
+        font-size: 15px;
+        
+    }
+
+    .feature.card-container {
+        width: 100vw;
+        height: 80vh;
+        position: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        justify-content: flex-start;
+    }
+
+    .card {
+        padding: 5px;
+        height: auto;
+        width: 70vw;
+        margin: 5vh 5px;
+    }
+}

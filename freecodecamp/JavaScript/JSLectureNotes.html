@@ -804,6 +804,200 @@ if (isOldEnoughToDrive) {
                     </p>
 </div>
 </section>
+<section id="Dates">
+<div id="Working_with_Dates">
+                    <h4>How Does the JavaScript Date Object Work, and What Are Some Common Methods?</h4>
+                    <p>
+                        Dates and times are typically handled by a library. There will be times when you need to work with the built in Date object. The date object is a built in javascript object that works like <code> const now = new Date();</code>. If you log now you will see the current date and time in the console. The time is using military time. You can also use it to pass an exact time like <code>const specificDate = new Date("July 4, 1776 12:00:00");</code>. The input always needs to be a string. To get the current date and time you can use Date.now()  which returns the number of milliseconds since January 1, 1970 00:00:00 UTC. This is Unix epoch time. 
+                        
+                        Unix epoch time is a common way to represent dates and times in computer systems becasue it is an integer that is easy to store and manipulate. UTC stands for Universal Time Coordinated which is a primary time standard by the world. If you need to get tha day of the month based on the current date you can use the getDate method. getDate will return an integer between 1-31 dpeending on the day of the month. If the date is invalid it will return NaN. To get the month you can use getMonth(). The month is zero based so january is 0, february 1 etc. If you need a full year you need to use the getFullYear method. There is also getHours, getMinutes, getSeconds. 
+                    </p>
+                    <h4>What Are the Different Ways to Format Dates?</h4>
+                    <p>
+                        We can use toISOString(), toString(), toLocaleDateString(). Here is an output of the date Sun Sep 29 2024 19:45:37 GMT-0700 (Pacific Daylight Time). If you use toString you would get the same output. If you use toISOString() to change it to ISO 8601 you would get this 2024-09-30T02:47:20.292Z. The format is YYYY-MM-DDTHH:mm:ss.sssZ. You can also use toLocaleDateString() this allows formatting based on the locale 9/29/2024 this is an example. It accepts two parameters locales and options. The locales parameter is a string representing the locale. You can pass en-US for English (US) or fr-Fr for french. The second parameter is the options parameter. This lets you specify the format of the date string. <code>const date = new Date(); const options = { weekday: "long", year: "numeric", month: "long", day: "numeric", }; console.log(date.toLocaleDateString("en-GB", options));</code>
+                    </p>
+</div>
+</section>
+<section id ="Audio_and_Video_Events">
+<div id="Working_with_Audio_and_Video"></div>
+                    <h4>How Does the Audio COnstructor Work, and What Are Some Common Methods?</h4>
+                    <p>
+                    Audio constructor is a special function with the new keyword. HTMLAudioElement is returned by the Audio constructor, can play audio or append the DOM for the user.When you call the constructor you can pass a URL as an argument. This should point to the source audio you can also use this dynamically to assign the URL to the src. The returned audio element offers methods to control audio. You use the play() method which begins audio playback. The pause() method which pauses. There isn't a stop() method so you have to pause and set the currentTime directly. canPlayType() can determine if the browser is likely to be able to play the audio format. 
+                    </p>
+                    <h4>What Are the Different Types of Video and Audio Formats?</h4>
+                    <p>
+                    MP3, MP4, MOV, WebM are formats of video and audio. MIME type is a Multipurpose Internet Mail Extension a standardized way to indicate a file type. the MIME type for an html is text/html. Json is application/json, .exe is application/vnd.microsoft.portable-executable. An mp3 is audio/mp3 and an mp4 audio/mp4 or video/mp4 which tells the browser how to handle the file. There is the waveform format WAV, multipurpose OGG, WMV for Windows media player, open source MKV. The differences between file formats ensure users get the best experience, but you can't know what the user's computer will support. The source element you can specify the file type and source and include multiple types by using the source elements. Which will allow the browser to choose which format. 
+                    </p>
+                    <h4>What Are Codecs and How Do They Work?</h4>
+                    <p>
+                    A codec is an encoder/decoder is algorithm/software that can convert audio and video between analogue and digital formats. Codecs can be part of the MIME type add a semicolon after the media type then codecs=. An OGG example with Vorbis would be audio/ogg; codecs=vorbis. You can also use multiple codecs like video/webm; codecs="vp8,vorbis". An mp4 may have a codec of codec="avc1.4d002a" indicating it was encoded with H.264. You can include these in the type attribute for a source element. This allows you to specify different codecs for the same format giving the browser more options. You can use MIME type to pass global MediaSource.isTypeSupported() method. This method accepts a MIME type and returns true if the environment supports it. It returns false to instantiate a buffer to that file type. 
+                    </p>
+                    <h4>What Is the HTMLMediaElement API and How Does It Work?</h4>
+                    <p>
+                    HTMLMediaElement API is a powerful tool to control audio/video it extends the HTMLElement interface so you can access the base properties. play() and pause are available for video as well. addTextTrack will allow you to specify a text track to associate with the media element which is helpful for subtitles. fastSeek() method which allows you to move playback to a specific time in the media. HTMLMediaElement APialso provides access to new events that a standard element doesn't have. Play and pause fire on stop start, but the ended event fires when the media is over. The waiting event fires when the playback is automatically paused due to buffering. canplay and canplaythrough events fire when the media can be partially played or played in totality. HTMLMediaElement has a lot more to it that can be explored.
+                    </p>
+                    <h4>How Can You Work with the Media Streams to Capture Video and Audio from a Local Device?</h4>
+                    <p>
+                    If you want to capture audio or video Media Capture and Streams API or MediaStream API allows you to do this. To use the API you need to create a MediaStream object. If you want it to be tied to the hardware, use mediaDevices property of the navigator has a getUserMedia() method. This method accepts a single constraints object which defines the type of media you want to receive, these can be audio and video properties. <code>window.navigator.mediaDevices.getUserMedia({ audio: true,  video: {
+                    width: {  min: 1280,  ideal: 1920,  max: 3840 },  height: {  min: 720,  ideal: 1080,  max: 2160   }  }});</code> this object specifies minimum and maximum resolutions for the video feed.The ideal property specifies what you'd like to have and the stream provides as close to the ideal as possible. The getUserMedia() returns a Promise which you will need a callback function to consume the stream or use async/await. Rendering user webcam to the page : </p> <code> const video = document.querySelector("video"); const stream =  await window.navigator.mediaDevices.getUserMedia({ video: true });  video.srcObject = stream;   await video.play(); </code> 
+                    </p>
+                    <h4>What Are Some Other Examples of Video and Audio APIs?</h4>
+                    <p>
+                    HTMLMediaElement and MediaStreams API there are more APIs. The first is Screen Capture API which allows you to record the user's screen. This can be called using getDisplayMedia() method of the mediaDevices object. MediaStream Recording API in tandem with MediaStreams APIs allows you to record a MediaStream directly. dataavailable fires you can write to local file storage. Under all the tech is Media Source Extensions API allowing you to directly pass a webcam feed to a video element with srcObject property. The Web Audio API powers everything audible it includes objects like AudioBuffer or the AudioContext. 
+                    </p>
+</section>
+<section id="Maps_and_Sets">
+<div id="Working_with_Maps_and_Sets">
+                    <h4>What Are Sets in JavaScript, and How Does It Differ from WeakSets?</h4>
+                    <p>
+                    Set is a built in object for managing data collections. It lets you store values whether primitive or object. Set ensures that each value appears only once, making it useful for eliminating duplicates or handling distinct values. A weakset is a special type of set that allows you to store objects and removes objects not used to free memory. You can manipulate a set using delete(), clear(), has(), entries(), forEach(), keys(), values(). <code>const myFirstSet = new Set();</code> to declare a new set. <code>const treeWeakSet = new WeakSet();</code> to declare a weak set, which also has the add(), delete() and has() methods. Weak sets are not iterable and do not expose their contents directly. Also only symbols and objects with well defined keys and vaslues are supported. 
+                    </p>
+                    <h4>What Is the Map Object, and How Does It Differ from WeakMaps?</h4>
+                    <p>
+                    Map is a built in object that stores key-value pairs, similar to an object. It allows keys of any type incluidng objects and functions. A weakmap is a collection of key value pairs but with weak references and theyu must be objects. <code>const myFirstMap = new Map();</code> to create a new map, <code>const myFirstWeakMap = new WeakMap();</code> for a weak map. Other methods to use with map are get(key), has(key), delete(key), clear(), entries(), forEach() and size. Weak Map has set() get() has() delete() . 
+                    </p>
+</div>
+</section>
+<section id="localStorage_and_CRUD_Operations">
+<div id="Working_with_Client-Side_Storage_and_CRUD_Operations">
+                    <h4>What Does CRUD Stand For, and How Do the Basic Operations Work?</h4>
+                    <p>
+                    CRUD stands for Create, Read, Update, Delete. These are four operations of persistent storage. Persistent storage saving  data in a way that makes it available after power is turned off or device restarted. Understanding CRUD is essential to web dev because it forms the foundatrion for databases and applications. Create refers to the process of creating new data, this could be like adding a post to a blog. Read is where data is retrieved from a database, like viewing your profile on a website. Update involves modifying existing data like updating your profile. Delete is when you remove data. CRUD is useful for working in databases and RESTful APIs. RESTful APIs are conventions for building web services that allow client to interact with a data base or backend system by CRUD through standard HTTP methods. HTTP standards for Hypertext Transfer Protocal and it is the foundation for data communication on the web. Common methods are GET, POST, PUT, PATCH,DELETE. POST is used to create a new resource, GET is used to retrieve or read data, PUT is used to update a resource by replacing it, PATCH, is used to particially update a resource, DELETE to remove. 
+                    </p>
+                    <h4>What Is localStorage, and What Are Some Common Methods?</h4>
+                    <p>
+                    Web Storage API provides a mechanism for browsers to store key-value pairs within the browser, allowing devs to store information that can be used across different pages reloads/sessions. Two main components of Web Storage API are localStorage and sessionStorage. localStorage allows data to persist even after the window is closed. sessionStorage is only there until the window is closed. localStorage is commonly used for user settings like themes or languages, caching small pieces of information. Caching refers to storing frequently accessed data to a temporary storage location, to make requests for that data quicker. Common localStorage methods are setItem, getItem, removeItem, clear. <code>let username = localStorage.getItem('username');</code>. 
+                    </p>
+                    <h4>What Is sessionStorage, and What are Some Common Methods?</h4>
+                    <p>
+                    sessionStorage is when data is cleared as soon as the user closes the tab/window. sessionStorage uses key-value pairs to store and retrieve data. sessionStorage.setItem() stores a key value pair. sessionStorage.getItem() retrieves the value of a given key. sessionStorage.removeItem() removes an item using its key. sessionStorage.clear() clears all data in sessionStorage. sessionStorage is useful for storing data from form entries in a multi page form process, storing temporary selections or preferences, maintain a state on a single page application. 
+                    </p>
+                    <h4>What Are Cookies, and How Do They Work?</h4>
+                    <p>
+                    Cookies are pieces of data that a server sends to a user's web browser. These are stored on the user's device and sent back to the server with subsequent requests. Cookies are essential in web applications to maintain state and rememebr user info. since HTTP is a stateless protocol. Cookies can store a varietry of information such as user preferences, session data, or tracking information. Cookies are stored in name-value pairs. Each cookie has a name(key) and an associated value. A cookie may store a session id like sessionId=abcd123. When the user visits the website one or more cookies are sent to the browser by included a set-cookie header in the HTTP response. Once the cookies are set the browser stores them and automatically includes them in the cookie header. Different types of cookies : Session cookies only last for the duration of the user's session on the website. These are used for tasks like keeping a user logged in during their visit. Persistent cookies have an expiration date used to remember preferences and login details. Secure Cookies are sent to HTTPS ensuring they cannot be intercepted by attackers in transit. 
+                    
+                    HTTPOnly cookies cannot be accessed or modified by JavaScript making them more secure against cross-site scripting XSS attacks. XSS attacks happen when malicious scripts are input into a webpage that is viewed by users. HttpOnly cookies are protected from being accessed by javascript. You can create cookies using Set-Cookie header or through document.cookie in javascript. You can remove cookies by setting expiration date to the past. 
+                    </p>
+                    <h4>What Is the Cache API, and How Does It Work?</h4>
+                    <p>
+                    The cache API is used to store network requests making web application work more efficiently and function offline. It is apart of the Service Worker API and is critical for creating Progressive WEb Apps that can work under reliable or slow network conditions. A network request is a request made by a browser or application to a server to retrieve data or resources over the internet. When you visit a site, your browser sends a request to the web server for the files HTML/images/videos etc to display the page. A service worker is a special type of JavaScript file that runs in the background of a web app acting as a middle man between the web page and the network. PWA(progressive web apps) is a type of app that uses web technologies to provide native app like experience on the web. PWAs are designed to work reliably on any device and can be accessed or installed like a traditional app. 
+                    
+                    The cache API is a storage mechanism that stores Request and Response objects. When a request is made to the server, the app can store the response and later retrieve it from the cache instead of making a new network request. This reduces load times, saves bandwitch and improves user experience. The browser provides a storage area known as CacheStorage where developers save key-value pairs of network request and their responses. The Cache-Control header allows developers to specify how long a resource would remain stored as well as whether it should be revalidated or served from the cache. 
+                    </p>
+                    <h4>What Are Some Negative Patterns Associated with Client-Side Storage?</h4>
+                    <p>
+                    Client side storage allows sites to store data on a device. However it can be misued, like cookies can be used for excessive tracking. Sites use cookies to track user interactions with a web app for targeted advertising but can raise privacy concerns. Cookies can provide a detailed picture of your online life and choices. Browser-fingerprinting is a technique using client-side information to create a unique "fingerprint" of a browser. Real methods can be complex and highly accurate in identifying users. localStorage can be misused by storing sensitive information insecurely such as unencrypted passwords. 
+                    </p>
+                    <h4>How Can You Use Cookies to Store Arbitrary Data, Normally Controlled by HTTP Headers?</h4>
+                    <p>
+                    Cookies are simple data site can store on a user device. You can use more complex data in cookies, one common method is to use JSON to store objects or arrays. We can use a cookie to store an object with user data converting it to a JSOn string and then storing it in the cookie. When we want to retrieve the data we can parse the JSON string using JSON.parse(). Typically cookies are set by the server using HTTP headers, but they can also be set directly using JavaScript. This is for storing data taht doesn't need to be setn to the server immediately. Cookies have a size limit of around 4 KB, storing data may slow down your web app. Storing large amounts of data can increase network traffic sent with every HTTP request. 
+                    </p>
+                    <h4>What Is IndexedDB, and How Does It Work?</h4>
+                    <p>
+                    IndexedDB is a tool for storing structured data in the browser. IndexedDB can store JavaScript objects, files, and pretty much any other type of data. This makes it easy for web apps that need to work with large and complex data structures. <code>let request = indexedDB.open("Sample DB", 1);</code> you can use this in order to open a database. We're opening a database named Sample DB with version 1. We provide two callback functions: one for handling errors, and anotehr for when the data is opened. Once you have your database open you can start working with object stores. <code>request.onupgradeneeded = function(event) {let db = event.target.result;let objectStore = db.createObjectStore("customers", { keyPath: "id" });};</code> You can use this to create an object named customers with id as its keypath. We can add new customer information to our object store. We can start a transaction, get a reference, then add our data. We can use things like get to retrieve data. IndexedDB is asynchronous this means that when you interact operations don't block the main thread of a web app. IndexedDB provides powerful capabilities it has a steeper learning curve than other storage API options. For handling large amounts of client side data IndexedDB offers high capabilities. 
+                    </p>
+                    <h4>What Are Cache and Service Workers, and How Do They Work?</h4>
+                    <p>
+                    Caching is the process of storing opies of files in a temporary storage location so they can be accessed quickly. When you visit a site your browser saves certain files locally. This helps to load the site faster. A service worker is a script that runs in the background that can intercept network requests access the cache, and enable web apps to work offline. PWAs are web apps that can offer an app-like experience they can work offline send push notifications and be installed on the home screen of a mobile device or computer. When a user visits a PWA the service worker can cache important files. 
+                    </p>
+</div>
+</section>
+<section id="Classes">
+<div id="Understanding_How_to_Work_with_Classes_in_JavaScript">
+                    <h4>What Are Classes, and How Do They Work in JavaScript?</h4>
+                    <p>
+                    Classes are like blueprints that can you can define in code for creating multiple objects of the same kind. If you are creating an inventory system you will need to create multiple objects per type of product. Classes can be defined with an expression or a declaration. Declaration: <code>class MyClassName { constructor() { ... }method1() { ... }</code> Start by writing the class keyword followed byt the name. Use the PascalCase instead of camelCase for naming classes. The content in the curly braces is the class body. This is where the constructor and the methods go. The constructor is a special method that is called when a new object is created from a class. It is used to initialize the properties of the object. the this keyword is used to refer to the current instance allowing you to assign a property to the object being created. Below the constructor you can have methods these are functions that perform actions or operations. <code>class Dog { constructor(name) { this.name = name; } bark() { console.log(`${this.name} says woof!`); } } </code> with this code if you create a dog instance with the name buddy it will say buddy says woof. You can create new dogs like this <code>const dog = new Dog("Gino");</code>. 
+                    </p>
+                    <h4>How Does the This Keyword Work?</h4>
+                    <p>
+                    the this keyword refers to the context where the code is supposed to run. It will be a reference to the object associated with that method. It gives a general way to refer to the current object. It also allows you to reuse the method on different objects. In arrow functions this is defined based on where the arrow function is defined. 
+                    </p>
+                    <h4>What Is Class Inheritance, and How Does It Work?</h4>
+                    <p>
+                    Inheritance allows you to define classes that inherit properties and methods from other classes. To start working with inheritance you need to know parent class and child class. Parent classes acts like a blueprint for other classes. It defines the properties and methods inherited by other classes. A child class is a class that ineherits the properties and methods of another class. We use the extends keyword to implement inheritance. <code>class Vehicle { constructor(brand, year) { this.brand = brand; this.year = year; } } bclass Car extends Vehicle { constructor(brand, year, numDoors) { super(brand, year); this.numDoors = numDoors; } } let myCar = new Car("freeCodeCamp Motors", 2019, 4); console.log(myCar.brand);</code> is an example of using inheritance. The main advantages being code reusability, modularity, extensibility, and structure. By implementing hierarchy, you can reuse code for the parent in the children, avoiding repetition. Breaking it down to increase modularity by simplifying the systems. 
+                    </p>
+                    <h4>What Are Static Properties and Methods in Classes?</h4>
+                    <p>
+                    Static properties and methods belong to the class itself not the individual instances of the class. You can access them without creating an instance of the class. You can define a static method by writing the static keyword before the name of a method. <code> class MyClass {  static staticMethod() { ... } }</code> You can call the static method using dot not notation and passing any necessary arguments like <code>MyClass.staticMethod();</code>. Notice you can create and call the method without creating an instance. We could use this to compare movies base don their rating, and we could create these methods withhout making it specific to any one movie. <code>if (movieA.rating < movieB.rating) { console.log(`${movieB.title} has a higher rating.`); } </code> its like a general method related to the Movie class. In this case we can build logic before we actually even create objects to be compared. Then we can call the method <code>Movie.compareMovies(movieA,movieB);</code>. In this case we needed the two movie instances to perform the necessary comparisons. Static methods are helpful for implementing factory methods that let you define in addition to the constructor to create objects based on the criteria. You can also define properties with the static keyowrd like this <code>class Pizza { static numberOfPizzasSold = 0; constructor(type) {  this.type = type;  Pizza.numberOfPizzasSold++; }</code>
+                    </p>
+</div>
+</section>
+<section id="Recursion">
+<div id="Understanding_Recursion _and_the_Call_Stack">
+                    <h4>What Is Recursion, and How Does It Work?</h4>
+<p>
+Recursion is a complicated feature that allows you to call a function repeatedly until  a base case is reached. Recursion allows you to handle something with unknown depth such as deeply nested arrays or objects. You can also perform base tasks like counting down or counting up. The base case code example: 
+<code>
+const recursiveCountdown = (number) => { if (number < 1) {
+return; }
+console.log(number);
+};
+recursiveCountdown(5); </code>
+This is the base case, and if we want it to count down we need to make each one less
+<code>
+const recursiveCountdown = (number) => {
+if (number < 1) {
+return;
+}
+console.log(number);
+recursiveCountdown(number - 1);
+};
+recursiveCountdown(5); </code>
+To get it to count up, you can just swap the console log and recursive call. 
+<code>
+const recursiveCountdown = (number) => {
+if (number < 1) {
+return;
+}
+recursiveCountdown(number - 1);
+console.log(number);
+};
+recursiveCountdown(5); </code>
+This happens because of the callstack and how the prints are resolved. 
+                    </p>
+</div>
+</section>
+<section id="Functional_Programming">
+<div id="Understanding_Functional_Programming">
+                    <h4>What Is Functional Programming?</h4>
+                    <p>
+                    Functional programming is about writing code that is clean, predictable, and easier to test and debug. Pure functions are functions that given an input will always return the same output and it does not modify anything outside of itself. Impure functions are unpredictable and are the result of using variables outside of its own scope. A side effect is any change that occurs in the program state when a function is called. Including modifying global variables, writing to a file, or making an API call. Avoiding side effects is a key principle of functional programming. This can also be included with console logging within a function instead of using the return value to console log outside of the function. 
+                    </p>
+                    <h4>What Is Currying, and How Does It Work?</h4>
+                    <p>
+                    Currying is a technique that transforms a function that takes multiple arguments into a sequence of functions that each take a single argument. Changing this code <code>function add(a, b) { return a + b; } console.log(add(3, 4));</code> into this code <code>function curriedAdd(a) { return function(b) { return a + b; } }console.log(curriedAdd(3)(4));</code> Is an example of curryin since it reduces the function down to a single argument. This allows us to create special function easily, and can be applied to any number of arguments. 
+                    </p>
+</div>
+</section>
+<section id="Asynchronous_JavaScript">
+<div id="Understanding_Asynchronous_Programming">
+                    <h4>What Is Asynchronous JavaScript, and How Does It Differe from Synchronous JavaScript?</h4>
+                    <p>
+                    </p>
+                    <h4>How Does the Async Attribute Work Inside Script Elements, and How Does It Differ from the Defer Attribute?</h4>
+                    <p>
+                    </p>
+                    <h4>What Is the Fetch API, and What Are Common Types of Resources That Are Fetched from the Network?</h4>
+                    <p>
+                    </p>
+                    <h4>How Does the Fetch API Work with Common HTTP Methods and res.json()?</h4>
+                    <p>
+                    </p>
+                    <h4>What Are Promises, and How Does Promise Chaining Work?</h4>
+                    <p>
+                    </p>
+                    <h4>What is Async/Await, and How Does It Work?</h4>
+                    <p>
+                    </p>
+                    <h4>How Does the JavaScript Engine Work, and What Is a JavaScript Runtime?</h4>
+                    <p>
+                    </p>
+                    <h4>What Is the Geolocation API, and How Does the getCurrentPosition Work?</h4>
+                    <p>
+                    </p>
+</div>                    
+</section>
+
                 </ol>
   </main>
   <footer>

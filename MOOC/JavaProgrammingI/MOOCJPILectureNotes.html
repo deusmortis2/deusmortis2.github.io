@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>MOOC Java Programming I Lecture Notes</title>
+
+/* this was my best attempt at creating a way to learn these things while simulataneously implementing them */
+</head>
+<body>
+  <header>
+    <h1>MOOC Java Programming I Lecture Notes</h1>
+        <h2>DISCLAIMER: I am not affiliated with the odin project and this is purely for educational purposes.</h2>
+  </header>
+    <main>
+            <p>This page is just an information dump for the lecture portion of the MOOC Java Programmign I so far, for my own notetaking purposes</p>
+            <ol>
+                <li><h3>Part 1</h3></li>
+        <section id="Part1">
+                 <li>
+                    <h4>Getting started with programming</h4>
+                    <p>
+                        MOOC uses NetBeans with Test My Code plugin. In java the print command code is <code>System.out.println("Hello World")</code>. 
+                    </p>
+                 </li>
+                 <li>
+                    <h4>Printing</h4>
+                    <p>
+                      Java code often includes a boiler plate that looks like <code>public class Example {
+                      public static void main(String[] args) {System.out.println("Hello World");}}</code> Java uses // and /* */ comments for single and multi respectively. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Reading Input</h4>
+                    <p>
+                    In order to read input from a user you have to first start by importing the tool <code>import java.util.Scanner;</code>. Then you have to create the tool  the main program frame with <code>Scanner scanner = new Scanner(System.in);</code> Then you can read in the next line and assign it to program memory. The string was given as input <code>String message = scanner.nextLine();</code> assigns the scan of the next line to a string called message. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Variables</h4>
+                    <p>
+                    There are more variable types than just the String previously used. Including whole numbers(int), floating point numbers (double), and true/false(boolean). These variables are assigned using = . <code>int months = 12;</code> is an example of an integer assigned to 12. Variable names need to be unique. A variable can change its value through name = newvalue but the type will persist. Some exceptions exist, integer can convert to double but not vise versa. Variables cant include certain special symbols like !, no spaces, and usually follow camelCase. Variables can't begin with a number can't be predefined terms or other variable names. Integer.valueOf(); is used to convert string to integer. Double.valueOf(); converts a string to a double. Boolean.valueOf(); converts to a boolean.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Calculating with Numbers</h4>
+                    <p>
+                    Basic operations are familiar and straight forward +,-,*,/. Operations are performed left to right taking parenthesis into account. */ are evaluated before +-. An expression is a combination of values turned into another value through calculations. The evaluation of an expression is always performed before it is assigned. In order to get a result that is a double, one of the operators will need to also be a double. You can convert an integer to double by putting a (double) before it. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Conditional Statements and Conditional Operations</h4>
+                    <p>
+                    If statements same as JS. IDE may require indentation within if block.Code blocks refer to sections enclosed by {}. Programs in java start with public class Program {} block and then inside that the public static void main(String[] args) {} block.  Java Comparison operators >, >=, <, <=, ==, !=. Once a comparison is true the block is executed and comparison stops. Also covers modulo for remainder. In Java the == comparison can not accurately compare strings. To compare two strings we use the equals command like <code>input.equals("stringtest");</code>. Java logical operators: and &, or ||, not !.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Programming in Our Society</h4>
+                    <p>
+                    Talks about the impact of programming on society. Including Margaret Hamilton who wrote the program that took man to the moon. 
+                    </p>
+                  </li>
+        </section>
+        <li><h3>Part 2</h3></li>
+        <section id="Part2">
+                  <li>
+                    <h4>Recurring problems and patterns to solve them</h4>
+                    <p>
+                    Introduced Math.sqrt for finding square root of numbers. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Repeating functionality</h4>
+                    <p>
+                    Introduces loops. First it goes over while loops <code>while (_expression_){}</code>. The loop can be broken with break;. while loops can also use continue;. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>More loops</h4>
+                    <p>
+                    Introduces new ways to increment += ++. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Methods and dividing the program into smaller parts</h4>
+                    <p>
+                    A method is a named set of statements. A method can be called from elsewhere in the program. Methods are placed below the main in java. The first line of a definition includes the name of the method. On the left side is often the keyword public static void. Calls are just like javascript greet();. Methods cannot be defined inside of other methods. The names of methods are in camelCase. The code inside methods is indented by four characters. Parameters are cvalues given to a method in its execution. They are inside the parenthesis in the function name. Arguments can give parameters values during method calls. In order to return a value the method name needs to have the variable type to be returned, and the return; command needs to be used. The call stack contains frames, which include information about method's variables and values. To print without a line break use System.out.print. 
+                    </p>
+                  </li>
+        </section>
+        <section id="Part3">
+                  <li>
+                    <h4>Discovering errors</h4>  
+                    <p>
+                    Talks about perceptual blindness at first. This is basically when tunnel visioning something that the other events start to get filtered out of our brain. You can disrupt this by actively focusing. Comments can be used for debugging and for communicating purposes and identifying logic errors. You can use print statements in order to find errors. 
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Lists</h4>  
+                    <p>
+                    A tool for storing large quantities of values with the same type is an Array list. It provides tools for removing, adding, retrieving and storing values. The tool for an arraylist to be used is that it needs to be imported into the program. You do this using <code>import java.util.ArrayList;</code> at the top of the program. Creating a new list is done with <code>ArrayList<type> list = new ArrayList<>(),</code> type is the type of array list stored such as string. The first letter of the type needs to be capitalized. In Java primitive values are often referred to as value-type variables. Array lists are reference type variables. It goes over using array methods for add and get. If you try to access an inaccessible value an error is thrown. You can use the size method with an array to see the number of elements it contains.  If you don't need to keep track of the index you can use a for-each loop. A for each loop has a syntax like <code> for (String teacher: teachers) { System.out.println(teacher) } </code>. The lists remove method removes from a specifix index like list.remove(0); removes the first value. You can remove a specific number by using list.remove(Integer.valueOf(number)); A list can be used as a parameter for a method. 
+                    </p>
+                  </li> 
+                  <li>
+                    <h4>Arrays</h4>  
+                    <p>
+                    An Array is the ancestor of the ArrayList. An Array contains a limited numbered spots(indices) for values. The length of an array (or size) is the amount of these spots, the values are called elements. To create an array to hold 3 integers you do something like this <code> int[] numbers = new int[3];</code>. You can assign a value in an array like numbers[0] = 2; You can use the length variable to find the size of an array. Each variable is saved in memory as a number of bits. The size of an int variable in java is 32 bits, one bit is for the sign so the max size is 2^31 - 1. You can initialize an array with variables like this <code>int[] numbers = {100, 1, 42, 23, 1, 1, 3200, 3201};</code>
+                    </p>
+                  </li> 
+                  <li>
+                    <h4>Using strings</h4>  
+                    <p>
+                    Starts by talking about concatenating strings with the + operator. Strings can't be compared with == they must be compared by string.equals(anotherstring); If you try to use equals on an empty string it will throw an error "NullPOinterException". You can split a string with the split method. The split method returns an array of the resulting sub parts. You can split around a space like this <code>String[] pieces = text.split(" ");</code>. Strings have a contains method which tells if a string has the part. Some data will be in a fixed format like comma separated values or .csv in this case you can split by comma and get each value into an array. You can find a character at a specific index using string.charAt(index);.  You can find the length of the string using the .length() method. 
+                    </p>
+                  </li>
+        </section>
+        <section id="Part4">
+                  <li>
+                  <h4>Introduction to object-oriented programming</h4>
+                  <p>
+                  Object oriented programming is concerned with isolating concepts of a problem domain into separate entities and then using those entities to solve problems. WE can form abstractions from problems to make them easier to approach. A class defines attributes of an object. A method is part of a class and is used to modify the internal state of an object. An object is always instantiated by calling a method that creates an object called a constructor using the new keyword. The objects variables specify the internal state of the object. The objects methods specify what the object does. Netbeans class can be done going to the projects section right click new java class. When creating this file it will automatically create the line public class ClassName {}.  Variables defined for classes are called instance variables. They go after the public class line. Each variable is preceded by private which menas that they are hidden inside an object known as encapsulation. When initializing a constructor use the same name as the Class. If the constructor is not defined for a class you can still initialize objects through the className with the default constructor like new Person();. However, if you have a constructor the object must have the appropriate parameters in the call. Objects also need methods in order to do things. Method is a named section of source code that can be invoked. These are written inside of a class below a constructor. Method name is often preceded by public void so it's visible to the outside world and does not return a value. The static modifier indicates the method does not belong to an object and cannot be used to access any variables that belongs to objects. A method can return a value, void means that the method does not return a value. 
+                  </p>
+                  </li>
+                  <li>
+                  <h4>Objects in a list</h4>
+                  <p>
+                  The types in a list are usually defined with the list like ArrayList<Integer>, which can also be a class name like ArrayList <Person> persons = new ArrayList<>();. If the constructor demands more than one parameter, you can query the user for more information. If the constructor needs more than one parameter you can query the user for more information. 
+                  </p>
+                  </li>
+                  <li>
+                  <h4>Files and reading data</h4>
+                  <p>
+                  Applications that run on internet/mobile devices Facebook, WhatsApp, Telegram use files from file-based databases. We've been using the Scanner class to read user input. Files are a collection of data that live on computers. Netbeans allows you to see the files within a project. Files exist on the harddrive of a computer which is a large set of bits. The computer's filesystem keeps track of the location of the files on the hard drive. The file system's main responsibility is abstracting the true structure of a hard drive. Reading a file is done with the scanner class. The path to a file can be acquired using Paths.get("filename.extension");. 
+                  </p>
+                  </li>
+        </section>
+        <section id="Part5">
+                  <li>
+                  <h4>Learn object-oriented programming</h4>
+                  <p>
+                  Object oriented programming is primarily about isolating concepts into their own entities or, in other words, creating abstractions. Creating classes can help deepen abstraction. This also makes it easier to make changes since the details are hidden from the user. Great idea behind object-oriented programming: a program is built from small and distinct objects that work together. An object refers to an independent entity that contains both data (instance variables) and behaviors(methods). Objects are made by Classes which hold the blueprints for the object.  
+                  </p>
+                  </li>
+                  <li>
+                  <h4>Removing repetitive code (overloading methods and constructors)</h4>
+                  <p>
+                  A class can have multiple constructors. You could for example have a Person constructor with just name, and another with name and age. The technique of having more than one constructor is known as constructor overloading. The constructors must have different parameters based on the number/type. Methods can also be overloaded, meaning there can be more than one of the same method. The parameters must also be different. 
+                  </p>
+                  </li>
+                  <li>
+                  <h4>Primitive and reference variables</h4>
+                  <p>
+                  Variables in Java are classified into primitive and reference variables. Primitive means the information is stored as the value of the variable, where reference is a reference to the information in that variable. A reference variable may give an output like Name@4aa298b7 which tells us its the type name and the identifier. Java has eight primitive vairables, boolean, byte, char, short, int, logn, float, double. Creating a primitive variable causes the computer to reserve some memory where the value assigned can be stored. Primitives are immutable. Concrete details about memory are dealt with on a level that is suitable for learning coding. 
+                  
+                  </p>
+                  </li>
+                  <li>
+                  <h4>Objects and references</h4>
+                  <p>
+                  When you call a constructor space is reserved in the computers memory for storing object variables. Then default or initial values are set to the object variables. Lastly, the source code is executed. A reference is returned by a constructor call which is information about the location of object data. Assigning a reference type variable copies the reference. Null can be set as the value of any reference type variable. If an object becomes garbage Java will clean up the objects with automatic garbage collection. If you call a method on an object that refers to nothing, Java will throw a NullPointerException error. If you go inside a code block of a class, but outside of all the methods and press ctrl + space netbeans will offer ways to generate a getter and setter. On some Linux machines this is ctrl alt space. 
+                  </p>
+                  </li>
+        </section>
+            </ol>
+
+  </main>
+  <footer>
+      <a href="../MOOC.html">Return Home</a>
+  </footer>
+</body>
+</html>lines.get();

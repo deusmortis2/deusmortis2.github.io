@@ -5,7 +5,36 @@
     <title>Weather App</title>
     <link rel="stylesheet" href="./styles/weatherApp.css">
   </head>
+ <body>
+<header><h1>Weather App</h1></header>
+<main>
+<div class="weather-display">
+<img id="weather-icon" src="https://cdn.freecodecamp.org/weather-icons/01n.png">
+<p id="main-temperature">Main Temperature</p>
+<p id="feels-like">Feels Like</p>
+<p id="humidity">Humidity</p>
+<p id="wind">Wind</p>
+<p id="wind-gust">Wind Gust</p>
+<p id="weather-main">Weather Main</p>
+<p id="location">Location</p>
 
-  <body></body>
+</div>
+<div class="weather-input">
+<h2>Weather for: </h2>
+<select name="city">
+   <option value="" disabled selected>Select an option</option>
+  <option value="new york">New York</option>
+  <option value="los angeles">Los Angeles</option>
+  <option value="chicago">Chicago</option>
+  <option value="paris">Paris</option>
+  <option value="tokyo">Tokyo</option>
+  <option value="london">London</option>
+</select>
+<button id="get-weather-btn">Get Weather</button>
+</div>  
+
+</main>
+
+  </body>
   <script src="./scripts/weatherApp.js"></script>
 </html>

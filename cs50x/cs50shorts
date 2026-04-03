@@ -1,0 +1,31 @@
+<h3>Week 1</h3>
+<h4>Data Types and Variables</h4>
+<p>
+    C requires that you state the data type of a variable on declaration. int is the first data type that stores integers. Integers always take up 4 bytes of memory (32 bits) which limits how much it can store. The range is -2^31 to 2^31-1(cause zero needs a place). unsigned int can be used to double the range of positive. char short for character they always take up 1 byte of memory (8 bits). float are real numbers, these are 4 bytes of memory for each. 
+double addresses float shortfall in that hteyh have 8 bytes of memory or 64 bits. They are able to display more precision for real numbers. void - type not a data type this is more like a placeholder used for functions without returns. Those are the 5 main types that will be in C, there are two data types with cs50 library which is bool or boolean which includes true or false not a default in C. string is also provided by the library but not a default
+data type for C. This is to store a series of characters. Later we will encounter structures and typedefs that can allow you to create types or combine types. To declare a variable you need to give a data type and a name (ex. int number;) You can also name multiple variables in one declaration like int height, width; to declare both height and width. You can declare a variable like int number; number = 17; this declares/assigns. You can also initialize int number = 17;. 
+</p>
+<h4>Operators</h4>
+<p>
+    We can use +, -, *, / as expected. We can also use the modulos % which gives the remainder. In assignment the one on the right goes to the one on the left. Modulos is useful for random number generators to limit the range of values. x = x * 5; and x *= 5; also x--; x++;. Boolean expressions used for comparing values typically for conditional or a loop. Every nonzero is true, zero is false. Logical expression && is only true if both are true. Logical || is true if at 
+    least one operand is true. The last logical operator is ! or NOT. Relational operators <,>,<=,>=. Equality == and Inequality !=. 
+</p>
+<h4>Conditionals</h4>
+<p>
+    Also known as a conditional branch. if is a common conditional that will have a boolean expression the code will execute, otherwise that code is skipped. You can also add an else block after the if, in order to have something execute when the condition is false. You can also put an else if statement after the if statement to have it test for another if conditional before going to the next branch/else. Also talks about the switch statement, which can be used to decide a
+    group of conditionals at once. <code>switch(x) { case 1: printf("One!\n"); break; case 2: printf("Two!\n"); break; }</code> You can also use a ternary operator for conditionals <code>int x = (expr) ? 5 : 6; </code> this will make the value of x 5 if the expression is true, 6 if false. 
+    </code> 
+</p>
+<h4>Loops</h4>
+<p>
+The while (true) {} block is similar to the forever block from scratch. You can break out of the loop with a break command ctrl + c will kill the program if infinite loop is taking over. You can also replace the condition of a while loop with a real boolean expression. There is also the do {} while loop which always executes the code one time, then it is pretty much the same as a while loop. The last kind of loop is the for loop <code>for (int i = 0; i < 10; i++)
+ { printf("Counting to 10 from %i", i); }</code> While loop is often good in a game since you may never know when a certain condition like the user dying will occur. The do while loop is great when asking for input since its always going to gain input and then it may or may not accept that input. The for loop is great when you know how many times to run it or have a specific condition that can set that easily. You can also use all loops interchangeably. 
+</p>
+<h4>Command Line</h4>
+<p>
+
+</p>
+<h4>Magic Numbers</h4>
+<p>
+
+</p>

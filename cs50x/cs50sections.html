@@ -1,0 +1,14 @@
+<h4>Week 1 Section</h4>
+<p>
+    First introduction to the cs50 IDE. Goes over the duck, style50, design50 (grades the performance/quality of code), explain highlighted code which uses ai to explain a piece of code. 
+    Introduction to C such as the hello word program <code>#include <stdio.h>   int main (void) { printf("hello, world\n"); }</code> the include keyword is used to import libraries such as 
+    printf command. You can see some of the functions/libraries of cs50 at manual.cs50.io. There is also #include <cs50.h> for libraries. You can also use string name = "David"; to create a 
+    string that stores David in a variable called name. Why are data types important? Data types are important so that the computer reads the bytes in the way we intend. You can also make
+    things like int balance = 20; for integers. Important to realize that = is an assignment operator for variables. In this case it would probably make more sense to use the data type float
+    since the decimal values would matter. Increment this value is balance = balance + 1; or balance++;. Balance = balance / 4 or balance /= 4;. If you use division that could create a decimal
+    with an integer value then it is done with division floor, which means even 6.7 would be 6. The % gives remainder 20 % 6 is 2. get_int will take a string will take a value from a user to make
+    into an integer value. You could use code like this <code>int balance = 20; printf("Current Balance: $%i\n", balance);</code> in this case the %i will be a placeholder that substitutes with
+    the value of balance. %i %f %c %s different format codes. Conditionals <code>if (balance < 0 ) { printf("Insufficient funds."); } </code>. For loops <code> for (int i = 1; i <= 30; i++) {
+    printf("I can count to %i!", i); }</code>. while loop: <code>int i = 1; while (i <= 30) { printf("I can count to %i!", i); i++; }</code>. Do while loop <code>int n; do { n = get_int("N: "); }
+    while (n <= 0);</code>. Mario problem set: talks about function and prototyping function so functions can be below main function.
+</p>

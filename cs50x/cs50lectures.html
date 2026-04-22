@@ -1,0 +1,130 @@
+<h4>Week 2</h4>
+<p>
+    Opening with talk about different reading levels. Cryptography the art of encrypting/securing information. Debugging techniques are also going to be discussed. 
+    Debugs some issues like finding missing ;, not including libraries for functions that are run. Next gave a variable a value without giving it a type on 
+    initialization. Following this he was trying to use string which isn't a C variable so the include cs50 functions. Next talks about logical problems in code
+    like not printing the right variable. One way to solve logical errors is to use printf in order to see the values of errors. Then talks about putting a function
+    below main but not prototyping to generate an error. Then it talks about using debug50 which is a debugger allowing slowed down execution of code so errors can
+    be found. You can click to the left of the line number in order to add a break point. Garbage value is a value stored in a variable until it is given a value. 
+    
+    The value of a debugger is that it allows you to pause and break down code so you can understand the problem causes. The compiler used by VS code is clang even
+    though we use make we could use clang to make files. If you use clang, it will make the program into an assembly out file like a.out. If using clang hello.c you
+    may need to clarify the library with compiler like clang hello.c -lcs50. Command line arguments are the words after the command in CLI. You could use clang -o 
+    buggy in order to name the program at compilation. The make command is really doing clang -o hello hello.c -lcs50. 
+    
+    When you compile code it is doing 4 processes preprocessing, compiling, assembling, linking. Preprocessing - compiler goes inside the library included and gets
+    the code and gets the necessary information and puts it into the code. Compiling takes the preprocessed code and converts it into assembly code, then it will go
+    and copy paste the relevant things into your program at compiling. Assembling is when the file is converted from assembly into binary or machine language. Then 
+    there is linking which combines all the necessary library codes and program code in their machine version forms. The computer knows which represents which based
+    on the location in the file of the binary as to what function it corresponds to. 
+
+    Decompiling - which is when someone takes the machine code and reverse engineers the binary into code to make a program. This process is much more difficult than 
+    it sounds, since some of the binary will still be really ambiguous. It is often more complex to read and interpret the machine code than just recreating the program
+    that you wish to recreate. 
+
+    bool - 1 byte, int 4 bytes, long 8 bytes, float 4 bytes, double 8 bytes, char 1 byte, string ? bytes varies heavily based on the string length. In a stick of memory or
+    a DIMM. On the memory there is black chips that store all the zeros and ones. You can imagine this chip as a grid where each cell allows the storage of data types
+    like your variables. 
+
+    Consider a program in which we are trying to find the average of hardcoded variable scores. If you originally do the calculation with integers you would get a 
+    truncated average. If you use %f you can use both double or float. You can also convert a value to a float at computation by adding a decimal like / 3.0 or you
+    can specify the variable in the computation like <code> printf("Average: %f\n", (score1 + score2 + score3) / (float) 3); Now consider in this chip on the memory
+    we can consider that each score has 4 bytes for each of the variables for score. When considering a problem try to consider additional complexity like what happens
+    if you want to do it 100xs more etc. How does it handle those more extreme scales? 
+    
+    Consider that you could gather 3 scores like this int scores [3]; which would give you 12 bytes of variable space. You could assign the scores like 
+    scores[0] = 72; scores[1] = 73; scores[2] = 33. An arrays values will be in a continuous sequence of the bytes since arrays have a reference to the start of
+    the memory storage. You could use a get_int for each of these scores to make the code more dynamic than the hard coding. However, that would still be a little
+    clunky and would be a better design to choose to use a loop where each score was assigned using scores[i] = get_int("Score: ");. However instead of using i < 3
+    as a condition. You could use a const int N = 3; and then i < N so the constant can be used. It could also improve the code to instead put this average code in
+    a function. Prototype it with float average(int numbers[]); which can be further improved by also passing in a length variable so the length can vary like this:
+    float average(int length, int numbers[]).
+
+    Remember that chars are in single quotes like 'A' and strings are in double "apple". Consider a program that prints 3 characters, 'H' 'I' '!', if you assign a
+    printf("%i%i%i\n", c1,c2,c3); print command you will get back 727333.This is because the ASCII value of each of these is 72, 73, 33 respectively. The compiler is 
+    smart enough to convert the char values into integers for the sake of outputting these values. (What would be the detriment of naming all integers in a similar way?)
+    If you do the same thing with string s = "HI!"; this would be stored as an array of characters in the memory with the same amount of bytes but just connected together
+    in assignment to s. You could also print the values by assigning them like printf("%i %i %i \n", s[0], s[1], s[2]); in order to print the 72 73 33 output. If we try 
+    to access a 4th letter from this same array it will print out the number 0. When storing a string of 3 characters, it will actually store 4 bytes. This final character
+    is the null character which is the end of the string. If I have a string like string t = "BYE!"; there would be 5 bytes since at the end of BYE! there is a null in
+    order to signify the end of the string. If I create an array of strings then in actuality I am creating an array of nested arrays. You could print these characters
+    like H with words[0][0] or E from BYE! with words[1][2]; You could initialize the array like int scores[3] = {72, 73, 33};. 
+
+    Consider a program you have a loop like <code>int n = 0; while(name[n] != '\0') { n++; } printf("%i\n", n);</code> which is a way to find the length of a string
+    or an array through a loop. For C you can also use #include <string.h> which will give you a library that will give you many of the string functions. This includes
+    the length loop listed just before for finding length with just a simple length command. <code>printf("%i\n", strlen(name));</code> which would give you the same
+    output through the function strlen() which would give you the length of a string. This library just includes a set of code similar to the while loop that gives us
+    this functionality in this simple function. It can be very awkward to use a function as a condition check like i < strlen(s); since each time it will have to run the
+    code of the function. When you initialize an array you need to use all of the same data types. 
+
+    Consider a new program like this <code>#include <cs50.h>   #include <stdio.h>    #include <string.h>  int main(void) { string s = get_string("Before: "); 
+    printf("After:  "); for (int i = 0, n = strlen(s); i < n; i++) { if (s[i] >= 'a' && s[i] <= 'z') { printf("%c", s[i] - 32); } else { printf("%c", s[i]); } } }</code> 
+    this program uses the number 32 because that is the exact value between the characters lowercase version and uppercase versions. You can also include a different
+    library for the ctype.h to help you to raise cases for upper to lower. You can make the whole loop print with printf("%c", toupper(s[i]));. This is demonstrative
+    of the fact that usually if there is a common problem there is a library function that has that function in some kind of library. 
+
+    Main is a special function and there is a reason for the int main(void). void just means that the function does not take command line arguments. You could also
+    make main like this int main(int argc, string argv[]) {}. <code>int main(void) { string answer = get_string("What's your name? "); printf("hello, %s\n", answer); }</code>
+    You could also take away the include statements at the start besides stdio.h, cs50.h and use int main(int argc, string argv[]) { printf("hello, %s\n", argv[1]);}
+    Now when you make greet you can do ./greet David you will get hello, David. You can make the program a little smarter like this <code>int main(int argc, string argv[])
+    { if (argc == 2) { printf("hello, %s\n", argv[1]); } else { printf("hello, world\n"); }  }</code> which is a bit smarter so that way if the user doesn't specify
+    a name on the program initialization that it still prints a default. 
+    
+    The value that main returns is the exit status. This is similar to error messages like the 404 file not found error message from browsers. Consider a program:
+    <code>int main(int argc, string argv[]) { if (argc != 2) { printf("Missing command-line argument\n"); return 1; } printf("hello, %s\n", argv[1]); return 0; }
+    </code>  You could use echo $? the command line which will print out the return value of the program which in this case would be zero. One of the ways check50
+    works is through using these command line checks which are sort of secret to everyone except the developers. You could use cowsay moo in which it will print
+    a ascii cow. You could also use cowsay -f duck quack which will make a little duck. cowsay -f dragon RAWR which will make a dragon with ascii arts. This is due 
+    to the original developer creating code that enables the functionality of these commands. 
+
+    Cryptography - the art of scrambling information for the security of that information. We will explore different ways in which we can use encryption in order to 
+    scramble the messages and secure it. Which would be like plaintext -> cipher -> ciphertext. In order for this to actually work then you will need to have a secret
+    which is known as a key. A special number in computer circles is 13 like rot13 which just be using letters 13 letters away from the intended character. If you use
+    26 as the key it will just bring the letters full circle and print the same letters. This form of encryption is known as the Caesar cipher which is a cipher allegedly
+    used by Caesar to communicate with his generals. 
+</p>
+<h4>Week 3</h4>
+<p>
+    Opener contains some artists renditions of various sorts in sorting. Starting with an algorithm for taking attendance, all attendees stand up and think of the number
+    1. Pair off with a person standing, add their number to yours and remember the sum. One person sits, then repeat this process until all attendees are accounted for. 
+    Count by 1s would be a straight line on time to solve/size of problem can be thought of as n. Then n/2 would be like counting by 2s which would be faster but still
+    linear. The algorithm above would be something more like log2n and more logarithmic function. 
+
+    Consider an array and the chunks of memory storing values like 1,5,10,20,50,100,500. These arrays are kind of closed doors from a bird eye view, which means that a
+    computer needs to access each value one at a time. Each value needs to be visited in say a locker of 0,1,2,3,4,5,6(indexes). In each locker there is an amount of money.
+    First algorithm used to just go one at a time left to right. Kaitlyn used an algorithm where the lockers were sorted she went to the middle then decided which direction
+    would lead to the 50. 
+
+    Introduce pseudo code like For each door from left to right | If 50 is behind door return true | return false. Which would be wrong since it would only execute once. 
+    Then transitioned into a loop pseudo code like For i from 0 to n-1 | If 50 is behind doors[i] Return true | Return false. Binary search If 50 is behind middle door |
+    return true | else if 50 < middle door| search left half | else if 50 > middle door | search right half. Go back and add if no doors left return false to the beginning
+    to eliminate an edge case where it doesn't have more doors to open. Finding middle pretty easy just divide by 2 round down (for index value). 
+
+    Running time we can use a graph with different functions graphed. Introducing big O notation, first algorithm O(n), O(n/2), O(log2n). Some algorithm times O(n^2), O(n log n),
+    O(n), O(log n), O(1). Linear search big o O(n), binary search O(log n). Also compared omega value which is teh best case, so in teh search it would be potentially one try and 
+    get the locker. Binary search is also omega 1. Lastly is theta which is when big O and omega are the same. There is no examples so far of a theta algorithm. These are all ways
+    of doing asymptotic notation. 
+
+    Going through coding a few points were brought up. When initializing an array that we plan to assign all values on initialization we do not need to add an array length and it
+    may in fact be better to not do this. Second, you cannot compare two strings using ==. You will need to use the string.h library and use strcmp to compare the strings. strcmp
+    returns 0, -1, 2 which helps to sort the values in ASCII order when they are not the same. Also brings up that a lot of programming is about making sure that the systems you 
+    implement kind of help to prevent future mistakes like two arrays that don't actually link values but just are supposed to be ordered to match. 
+
+    Person data type desired, we can do this by creating our own data types to make a person data type. typedef struct { string name; string number} person; 
+
+    Selection sort runs by searching all values and finding the lowest, swapping to the front searching the values finding the lowest, moving to the next spot etc. The next sort
+    was the bubble sort where the bigger values kind of bubble up by swapping with the next repeatedly until it reaches the appropriate destination. Selection sort pseudo code
+    for i from 0 to n-1 | Find smallest number between numbers[i] and numbers[n-1] | Swap smallest number with numbers[i]. O(n^2) and omega(n^2) and theta notation is (n^2) is 
+    the value of selection sort. Repeat n times | For i from 0 to n - 2 | If numbers[i] and numbers[i+1] out of order | Swap them. O(n^2) and omega(n). Bubble sort can be improved
+    unlike selection sort by saying if no swaps | quit. Because it is possible to abort early and still have all the sorted values, unlike selection which has to check all to make
+    sure they are the lowest value or 2nd lowest, etc. The omega of bubble sort is n, because it only has to pass through once and then it can terminate so it doesnt give us a theta.
+
+    recursion function is a function in terms of itself, or a function that calls itself. If no doors left | return false | If number behind middle door | return true | else if number < 
+    middle door | search left half | else if number > middle door | search right half | else quit. When building a recursive function you are calling itself over and over and creating
+    progressively smaller versions of the same thing. 
+
+    the merge sort utilizes recursion to sort quickly. If only one number | Quit | Else | Sort left half of numbers | sort right half of numbers | merge sorted halves. So david takes a
+    set of 8 numbers and throws half on one side half on the other sorts them. Then the sort basically just asks which ones bigger and merges into the 3rd list based on the rest based
+    on that one condition. Big o of merge sort is n log2 n. Merge sort also has omega n log2 n, therefore theta of n log2 n. 
+
+</p>

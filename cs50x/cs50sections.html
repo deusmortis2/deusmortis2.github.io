@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>CS50x Sectionals</title>
+
+<!-- this was my best attempt at creating a way to learn these things while simultaneously implementing them -->
+</head>
+<body>
+  <header>
+    <h1>CS50x: Sectionals</h1>
+        <h2>DISCLAIMER: I am not affiliated with CS50 and this is purely for educational purposes.</h2>
+  </header>
+    <main>
 <h4>Week 1 Section</h4>
 <p>
     First introduction to the cs50 IDE. Goes over the duck, style50, design50 (grades the performance/quality of code), explain highlighted code which uses ai to explain a piece of code. 
@@ -12,3 +27,58 @@
     printf("I can count to %i!", i); }</code>. while loop: <code>int i = 1; while (i <= 30) { printf("I can count to %i!", i); i++; }</code>. Do while loop <code>int n; do { n = get_int("N: "); }
     while (n <= 0);</code>. Mario problem set: talks about function and prototyping function so functions can be below main function.
 </p>
+<h4>Week 2 Section</h4>
+<p>
+    <ul><li>When should we use arrays?<br>
+
+    If we were making a video game of our own and we wanted to store top player scores. Instead of storing each score in a variable, we could use an array for topscores. You can assign a value to
+    an array after initializing like int scores[5]; we can use the index like scores[0] = 120; if you know all 5 ahead of time you can do int scores[5] = {120, 86, 56, 42, 33}; In C an array does
+    not have a dynamic length it's static from initialization. 
+</li>
+    <li>What are strings, really?<br>
+
+    Not native to C, it is a part of the CS50 library. A string is basically just an array of characters. Strings always end in a null value or \0 which is the marker for the ending of the string.
+    Exercise of taking a string and printing it character by character. Then extended the exercise by reversing the string. Next an exercise on making letters in alphabetical order.
+</li>
+    <li>What's the point of command-line arguments?<br>
+
+    Arguments are used to tell the command more details like what to do the command on or where to go to. It can also just gather inputs by using the int main(int argc, string argv[]) main start.
+    Command line arguments may save time in comparison to using get inputs. make mario is gonna assign argv "make" and "mario" with argc = 2. 
+    </li>
+    <li>What makes for good design?<br>
+
+    Is your code efficient? Avoid unnecessary repetition and redundant operatios. Avoid copy/paste, if something keeps being repeated find a better way. Is your code easy to maintain? Such as using
+    prototyping, and avoiding magic numbers. </li></ul>
+</p>
+<h4>Week 3 Section</h4>
+<p>
+<ul>
+    <h4>Week 3 Sections</h4>
+    <li>What are structs?<br>
+        How can we group different types of related data into a single unit? Code example would be <code>typedef struct { string name; int votes } candidate;</code> which would be a way to group a 
+        candidate with their number of votes. You can create an array of structs like candidates or whatever data type you are creating. 
+    </li>
+    <li>How does recursion work?<br>
+        Recursion works by solving a problem by solving smaller versions of the same problem. Every recursive function should have: base case - when to stop running the function, and a recursive case - 
+        a call to teh function to solve a smaller version of the problem. In a factorial program the base case is 1, and the recursive case its calling the number times the function called with the num - 1.
+
+    </li>
+    <li>How can we search and sort efficiently and What is Big O Notation?<br>
+        If we search linearly for a specific value, it would take n number of times to check each one potentially. It could also be as little as 1 time. O(n) = "scaling" definition for every item that gets
+        added to the input the algorithm will need to do that many searchs. Selection sort works like : Repeat for every element in our list, except last: | Assume the element at this position is the smallest
+        for every element to teh right: | if less than our current smallest: | update the current smallest | swap the current smallest with the current element. Pseudocode like : For i from 0 to n - 2 | Set 
+        min = i | for j from i + 1 to n - 1 | if array[j] < array[min] | update min = j | swap array[i] with array[min]. O(n^2) is the upper bound definition. The best case is still n^2 there is no way to 
+        make the search shorter.
+
+        Bubble sort - move through each set of 2 and swap if they are out of place. After each pass the last digit will be in the right place. Repeat n - 1 times | set swaps to none | for j from 0 to n - 2 |
+        if jth and j + 1th element out of order | swap them | if swaps = none | quit. Upper bound is still O(n^2) but the lower bound is just n. 
+
+        Merge sort - basically splits the lists until there is only one value in the list, and then progressively merges the lists together to create a sorted list comparing values to each other value. Merge
+        pseudocode - Split the list into two halves | Sort the left half using merge sort | Sort the right half using merge sort | Merge the two halves into a single sorted list: | take the smaller first element
+        from either half. Upper bound is O (n log n), the omega is n log n, making it have a theta too. 
+    </li>
+</ul>
+</p>
+</main>
+</body>
+</html>

@@ -18,14 +18,76 @@ data type for C. This is to store a series of characters. Later we will encounte
 </p>
 <h4>Loops</h4>
 <p>
-The while (true) {} block is similar to the forever block from scratch. You can break out of the loop with a break command ctrl + c will kill the program if infinite loop is taking over. You can also replace the condition of a while loop with a real boolean expression. There is also the do {} while loop which always executes the code one time, then it is pretty much the same as a while loop. The last kind of loop is the for loop <code>for (int i = 0; i < 10; i++)
- { printf("Counting to 10 from %i", i); }</code> While loop is often good in a game since you may never know when a certain condition like the user dying will occur. The do while loop is great when asking for input since its always going to gain input and then it may or may not accept that input. The for loop is great when you know how many times to run it or have a specific condition that can set that easily. You can also use all loops interchangeably. 
+    The while (true) {} block is similar to the forever block from scratch. You can break out of the loop with a break command ctrl + c will kill the program if infinite loop is taking over. You can also replace the condition of a while loop with a real boolean expression. There is also the do {} while loop which always executes the code one time, then it is pretty much the same as a while loop. The last kind of loop is the for loop <code>for (int i = 0; i < 10; i++)
+    { printf("Counting to 10 from %i", i); }</code> While loop is often good in a game since you may never know when a certain condition like the user dying will occur. The do while loop is great when asking for input since its always going to gain input and then it may or may not accept that input. The for loop is great when you know how many times to run it or have a specific condition that can set that easily. You can also use all loops interchangeably. 
 </p>
 <h4>Command Line</h4>
 <p>
-
+    Linux commands work within the IDE and on any UNIX based system (linux, mac). Windows has command prompt but some commands are different because it is not unix based. The first command used a lot is the ls command which gives a readout of all files in the directory. The next command used a lot is cd which allows navigation between directories. pwd gives the present working directory. You can press ctrl L to clear the screen in a command prompt. If you want to get
+    back to the home directory just type cd. There is also the mkdir which is make directory. cp source destination - copies a file to a new location, if you try to copy a directory with stuff inside of it it will throw an error. If you want to copy the folder with all the files recursively you need to use cp -r source destination. the rm command removes a file. If you want to get rid of the confirmation you can use -f. if you want to delete a whole directory you need
+    to do it recursively with -r. You can also combine the two flags together. The last command that is useful is mv which is move command. This can also be used to rename files. Other interesting commands chmod, ln, touch, rmdir, man, diff, sudo, clear, telnet. 
 </p>
 <h4>Magic Numbers</h4>
 <p>
-
+    The first number mentioned is 23 which is used as the potential max height of the mario pyramid. This was set because it's the maximum height of the command line and it will look awkward outside of that. Magic numbers are numbers that aren't fully explained that are hardcoded. You can fix this problem by using a variable that gives it a name to describe the purpose of the number. C provides a preprocessor directive for creating symbolic constants. At the time your
+    program is compiled you can use #define to go through the code and find and replace but it does not require a semicolon. #define is often used with caps. The better solution to decksize would be to use #define DECKSIZE 52 at the top so that you can use DECKSIZE. This can't be easily manipulated like a variable and is often in caps so it is not confused with a variable. 
+</p>
+<h3>Week 2</h3>
+<h4>Functions</h4>
+<p>
+    Most programming languages allow you to make functions. These are sometimes called procedures, methods, or subroutines. Function is a blackbox (if we did not write the function ourselves, we do not need to know about the underlying implementation) that has 0+ inputs and 1 output. Black box really just means you don't really care how it's written,just that the output is expected. We use functions for various reasons: organization - break into subparts, simplification 
+    - smaller components, reusability - functions are easily recycled. Function declarations - the first step gives a compiler a heads-up that a user is writing a function. Declarations should go at the top of your code. The declarations follow the same format : return-type name(argument-list); return-type is the kind of variable that will be outputted. Example int add_two_ints(int a, int b); this gives a good explantion of the function. Function definition is almost the 
+    same as declaration, with a ; ex. float mult_two_reals(float x, float y); To call a function you just need to pass it the appropriate arguments and assign its return value to an appropriate place. 
+</p>
+<h4>Variables and Scope</h4>
+<p>
+    Scope defines where a variable can be used. Local means it is only available from where it was accessed. Global means it can be accessed from anywhere. Local variables are passed by value which means that when it is passed its a copy. This is so that the original variable isn't replaced. If we had something like <code>int foo = 4; foo = triple(foo);</code> this would actually replace the variable foo wiht 12 instead of just triple(foo) which would give us 12 but in a 
+    one time location.
+</p>
+<h4>Debugging("Step through")</h4>
+<p>
+    Using the debug50 using the step over button after adding a red breakpoint spot to see the values.
+</p>
+<h4>Debugging("Step into")</h4>
+<p>
+    When using debug50 its away to step into a function. Which is the down arrow button. 
+</p>
+<h4>Arrays</h4>
+<p>
+    Arrays are a fundamental data structure they can hold many values of the same type in consecutive memory locations. The values in an array have to be the same size and can be accessed by index from 0. C will not prevent you from going out of bounds of your array this will result in a segmentation fault typically. To initialize an array with values you can do bool truthtable[3] = {false, true, true} . Arrays can have more than one dimension like bool battleship[10][10] which 
+    is technically still just a 100 space one dimensional array.  You can not assign an array to an array you have to loop over each element. Arrays are passed by reference ratherthan value. This means the actual array is passed when it is called. 
+</p>
+<h4>Command Line Arguments</h4>
+<p>
+    Most of the time the program starts with int main(void). If we want to collect data at the command line we have to declary int main(int argc, string argv[]). argc stands for argument count integer type that stores the number of command line arguments passed. argv is the argument vector, which stores each word the user input as a string in the array.  These are always stored as strings. 
+</p>
+<h3>Week 3</h3>
+<h4>Linear Search</h4>
+<p>
+    Algorithm is step by step instructions to complete a task. Linear search iterates over the entire area searching for a specified element. When you find what you want you stop, otherwise keep going. Worst case scenario is you look through the array of n elements. Best case is that what we are searching for is in the first value searched. So O(n)-omega(1). 
+</p>
+<h4>Binary Search</h4>
+<p>
+    Divide and conquer, reducing the search by half each time trying to find the target. An essential part of this is to sort the array first. In pseudocode: Repeat until sub(array) is the size 0: | calculate the middle of current array | if target at the middle stop | if target is less go to the left of middle | if target is more go to the right. Worst case log n, omega 1. 
+</p>
+<h4>Bubble Sort</h4>
+<p>
+    Bubble sort moves higher values to the right, lower values to the left. Set swap counter to a non zero value | repaet until swap counter is 0 | reset swap counter to 0 | look at adjacent pair | if elements out of order swap them. Bubble sort Big O of n^2, but omega of n. 
+</p>
+<h4>Selection Sort</h4>
+<p>
+    Finds the smallest unsorted element and adds it to the end of the sorted list. Repeat until no unsorted elements remain | search the unsorted part of the data to find the smallest value | swap the smallest found value with the first element of the unsorted part. Big O of n^2, omega is also n^2. 
+</p>
+<h4>Call Stacks</h4>
+<p>
+    When you call a function memory is set aside to execute the function. We call these chunks of memory stack frames or function frames. More than one functions stack frame may exist in memory at one time. These frames are arranged in a stack, the most recently called function is at the top of the stack. When a new function is called, that frame is pushed to the top of the stack. 
+    When afunction finishes it is popped off the stack.  
+</p>
+<h4>Recursion</h4>
+<p>
+    Function that calls itself until it reaches base case. Consists of a base case which terminates, and a recursive case which recalls the function. Fibonacci requires multiple base cases. The collatz conjecture requires multiple recursive cases.
+</p>
+<h4>Merge Sort</h4>
+<p>
+    In merge sort to sort the array it is sorted into a smaller arrays, then merged in order leveraging recursion. Sort the left half of the array | Sort the right half | merge together. 
 </p>

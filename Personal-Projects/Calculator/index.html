@@ -6,14 +6,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vosburgh Calculator</title>
-  <link rel="stylesheet" href="./styles/todoAppUsingLocalStorage.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <main>
     <div id="Full"><div id="outer">
         <div id="top">
-            <div id="header"></div>
+            <div id="header">
+                <h1>Mr. V Calculator</h1>
+            </div>
             <div id="screen"></div>
         </div>
         <div id="dpad-area">
@@ -25,6 +27,7 @@
             <div id="dmiddle">
                 <div id="dpad">
                     <!-- d pad image up down left right hotspots -->
+                    <div id="dpadholder"></div>
                 </div>
             </div>
             <div id="dright">
@@ -55,7 +58,9 @@
                 <button id="add" class="side">+</button><button id="minus" class="side">-</button>
                 <button id="enter">enter</button>
             </div>
-            <div id="alpha">
+            
+        </div>
+        <div id="alpha">
                 <div id="aleft">
                     <button id="EE" class="smlside">EE</button>
                     <button id="pi" class="smlside">pi</button>
@@ -82,8 +87,6 @@
                     <button id="return" class="smlside">rtn</button>
                 </div>
             </div>
-        </div>
-
 
 
     </div> 

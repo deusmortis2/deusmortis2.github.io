@@ -1,0 +1,150 @@
+main {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+div {
+width: 100%;
+border-radius: 15px;
+}
+
+button {
+border-radius: 5px;
+}
+
+#header {
+    text-align: center;
+}
+
+#screen {
+height: 30vh;
+width: 95%;
+background: black;
+align-self: center;
+justify-self: center;
+}
+
+#dpad-area {
+    padding-right: 15px;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+#dpadholder {
+background: darkgray;
+width: 45%;
+justify-self: center;
+height: 15vh;
+}
+
+#dleft {
+    padding-left: 15px;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-evenly;
+}
+
+#dright {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-evenly; 
+}
+
+
+#Full {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-items: center;
+background-color: darkgray;
+width: 50%;
+height: 90vh;
+align-self: center;
+}
+
+#outer {
+background-color: lightgray;
+width: 95%;
+height: 98%;
+display: grid;
+grid-template-rows: 1fr 2.5fr 2fr 2fr 2fr;
+flex-direction: column;
+align-items: center;
+justify-items: center;
+}
+
+#top {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+#numpad {
+display: grid;
+height: 100%;
+grid-template-columns: 1fr 3fr 1fr;
+align-items: space-between;
+}
+
+#nleft {
+display: grid;
+grid-template-columns: 1fr 3fr 3fr;
+grid-template-areas:
+". ctrl ."
+". equal trig"
+". power square"
+". invnat invlog"
+". lpar rpar";
+}
+
+#ctrl {
+    grid-area: ctrl;
+}
+
+#equal {
+    grid-area: equal;
+}
+
+#trig {
+    grid-area: trig;
+}
+
+#power {
+    grid-area: power;
+}
+
+#square {
+    grid-area: square;
+}
+
+#invnatlog {
+    grid-area: invnat;
+}
+
+#invlog {
+    grid-area: invlog;
+}
+
+#leftparen {
+    grid-area: lpar;
+}
+
+#rightparen {
+    grid-area: rpar;
+}
+
+
+#alpha {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    height: 100%;
+}
+

@@ -1,19 +1,11 @@
-main {
-    overflow: hidden;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+/* element selectors */
 span {
-height: .7em;
 display: block;
 color: darkred;
 align-self: center;
 justify-self: center;
-font-size: .5em;
-padding: 0 0 2px 0;
+font-size: .45em;
+padding: 0 0 1px 0;
 margin: 0 0 1px 0;
 }
 
@@ -23,126 +15,144 @@ color: white;
 border-radius: 5px;
 }
 
-#Full {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-items: center;
-    background-color: darkgray;
-    width: 50vw;
-    height: 98vh;
-    align-self: center;
-    @media (min-width: 900px) {
-        width: 650px;
-    }
-    @media (max-width: 600px) {
-        width: 98vw;
-    }
-
-}
-
-#outer {
-    background-color: lightgray;
-    width: 95%;
-    height: 98%;
-    display: grid;
-    grid-template-rows: 1fr 2.5fr 2fr 3fr 2fr;
-    align-items: center;
-    justify-items: center;
-}
-
 div {
-    width: 100%;
     border-radius: 15px;
 }
 
-
-#header {
-    position: relative;
-    padding: 0;
-    margin: 0;
-    text-align: center;
-    height: 10%;
+/* core div content */
+body {
+    max-height: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
-h1 {
-    margin: 0;
+main {
+    overflow: hidden;
+    min-height: 100%;
+    max-width: 100%;
+    display: grid;
+    grid-template-rows: 3fr 2fr 2fr 2fr;
+    justify-content: center;
+}
+
+/* calculator start */
+#Full {
+    display: grid;
+    grid-template-rows: 3fr 2fr 2fr;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    background-color: darkgray;
+    min-width: 45cqw;
+    height: 97cqh;
+}
+
+
+#outer {
+    display: grid;
+    min-width: 43cqw;
+    height: 95cqh;
+    background-color: lightgray;
+    grid-template-rows: 4fr 2fr 4fr 3fr;
+
+}
+
+#top {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#header {
     padding: 0;
-    position: absolute;
+    margin: 0;
     text-align: center;
-    top: 5;
-    left: 15%;
+    min-height: 1cqh;
 }
 
 #screen {
     padding: 0;
-    margin: 7vh auto 0 auto;
-    height: 30vh;
-    width: 85%;
+    margin: 1.5cqh auto 2px auto;
+    height: 100%;
+    min-width: 90%;
     background: black;
-    align-self: center;
-    justify-self: center;
 }
 
 #dpad-area {
-    padding-top: 5px;
-    height: fit-content;
-    padding-right: 15px;
+    overflow: hidden;
+    height: 100%;
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
 }
 
-#dpadholder {
-    margin: 5px 0 5px 0;
-    background: darkgray;
-    width: 15vw;
-    justify-self: center;
-    height: 15vh;
-}
-
-#dleft {
-    padding-left: 15px;
+#numpad {
+    padding: 0;
     display: grid;
     height: 100%;
-    width: 100%;
-    grid-template-rows: 1fr 2fr 1fr 2fr 1fr 2fr;
-    grid-template-areas:
-    "goback"
-    "esc"
-    "save"
-    "calc"
-    "."
-    "tab";
-    align-items: center;
-    justify-content: space-evenly;
+    grid-template-columns: 1fr 2fr 1fr;
 }
 
-#dleft span {
-margin-left: 1vw;
+
+#dpadholder {
+    background: darkgray;
+    width: 50%;
+    justify-self: center;
+    min-height: 25%;
+}
+
+#alpha {
+    margin-top: 1cqh;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+/* header extras */
+h1 {
+    min-height: .8cqh;
+    font-size: 1.2em;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* dpad divs and extras */
+
+#dleft {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
 }
 
 #dleft button {
-width: 5vw !important;
+    margin: 0;
+    padding: 0;
+    width: 5cqw !important;
+    font-size: .6em;
 }
 
-#goback {
-grid-area: goback;
+#dpadholder {
+display: grid;
+padding: 0;
+grid-template-columns: 1fr 1fr 1fr;
+grid-template-rows: 1fr 1fr 1fr;
+grid-template-areas: /* 3 x 3 */
+". up ."
+"left center right"
+". down .";
 }
 
-#esc {
-grid-area: esc;
-}
-
-#save {
-grid-area: save;
-}
-
-#calc {
-grid-area: calc;
-}
-
-#tab {
-grid-area: tab;
+#dcenter {
+margin-left: 1px;
+margin-top: 1px;
+background: black;
+grid-area: center;
+border-radius: 0;
 }
 
 #dright {
@@ -151,61 +161,22 @@ grid-area: tab;
     width: 100%;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly; 
 }
 
 #dright button {
     margin: 0;
     padding: 0;
     width: 50%;
-    font-size: .6em;
+    font-size: .5em;
 }
 
-#dleft button {
-    margin: 0;
-    padding: 0;
-    width: 50%;
-    font-size: .6em;
-}
-
-#top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-#numpad {
-    padding: 0;
-    margin-bottom: 5px;
-    gap: 5px;
-    display: grid;
-    height: fit-content;
-    grid-template-columns: 1fr 2fr 1fr;
-    align-items: center;
-    justify-items: center;
-}
-
-#nleft button {
-    margin: 0;
-    padding: 0;
-    width: 4vw;
-    align-items: flex-start;
-    font-size: .6em;
-}
-
-#nright button {
-    margin: 0;
-    padding: 0;
-    width: 4vw;
-    font-size: .6em;
-}
+/* Numpad divs and extras*/
 
 #nleft {
     display: grid;
     gap: 2px;
     grid-template-columns: 1fr 3fr 3fr;
-    grid-template-rows: 2fr .4fr 2fr .4fr 2fr .4fr 2fr .4fr 2fr;
+    grid-template-rows: .6fr .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr;
     grid-template-areas:
     ". ctrl ."
     ". ineq help"
@@ -218,98 +189,10 @@ grid-area: tab;
     ". lpar rpar";
 }
 
-#ineq {
-grid-area: ineq;
-}
-
-#help {
-grid-area: help;
-}
-
-#nthroot {
-grid-area: nthroot;
-}
-
-#sqrt {
-grid-area: sqrt;
-}
-
-#natlog {
-grid-area: natlog;
-}
-
-#log {
-grid-area: log;
-}
-
-#brackets{
-grid-area: brackets;
-}
-
-#curly {
-grid-area: curly;
-}
-
-#ctrl {
-    grid-area: ctrl;
-}
-
-#ctrl {
-    background: yellow;
-    color: black;
-}
-
-button#nine, button#eight, button#seven, button#six, button#five, button#four, button#three, button#two, button#one, button#zero, button#decimal, button#neg, button#x, button#y, button#z {
-background: white;
-color: black;
-}
-
-
-#equal {
-    grid-area: equal;
-}
-
-#trig {
-    grid-area: trig;
-}
-
-#power {
-    grid-area: power;
-}
-
-#square {
-    grid-area: square;
-}
-
-#invnatlog {
-    grid-area: invnat;
-}
-
-#invlog {
-    grid-area: invlog;
-}
-
-#leftparen {
-    grid-area: lpar;
-}
-
-#rightparen {
-    grid-area: rpar;
-}
-
-
-#alpha {
-    padding: 3px 0 3px 0;
-    display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
-    height: 8vh;
-}
-
 #nmiddle {
     display: grid;
-    gap: 2px;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: .35fr 1fr 1fr 1fr 1fr .35fr 1fr;
+    grid-template-rows: .4fr .5fr .5fr .5fr .5fr .3fr .5fr;
     align-items: center;
     justify-items: center;
     grid-template-areas:
@@ -322,105 +205,10 @@ color: black;
     "zero decimal neg";
 }
 
-#nmiddle span {
-padding: 0;
-margin: 0;
-height: .6em;
-}
-
-#caps {
-grid-area: caps;
-}
-
-#sto {
-grid-area: sto;
-}
-
-#capt {
-grid-area: capture;
-}
-
-#ans {
-grid-area: ans;
-}
-
-.num {
-    width: 6vw;
-}
-
-#shift {
-    justify-self: flex-end;
-    grid-area: shift;
-    width: 6vw;
-}
-
-#var {
-    justify-self: flex-start;
-    grid-area: var;
-    width: 6vw;
-}
-
-#seven {
-    justify-self: flex-end;
-    grid-area: seven;
-}
-
-#eight {
-    grid-area: eight;
-}
-
-#nine {
-    justify-self: flex-start;
-    grid-area: nine;
-}
-
-#four {
-    justify-self: flex-end; 
-    grid-area: four;
-}
-
-#five {
-    grid-area: five;
-}
-
-#six {
-    justify-self: flex-start;
-    grid-area: six;
-}
-
-#three {
-    justify-self: flex-start;
-    grid-area: three;
-}
-
-#two {
-    grid-area: two;
-}
-
-#one {
-    grid-area: one;
-    justify-self: flex-end; 
-}
-
-#zero {
-    justify-self: flex-end; 
-    grid-area: zero;
-}
-
-#decimal {
-    grid-area: decimal;
-}
-
-#neg {
-    justify-self: flex-start;
-    grid-area: neg;
-}
-
 #nright {
     display: grid;
     grid-template-columns: 3fr 3fr 1fr;
-    gap: 2px;
-    grid-template-rows: .4fr 2fr .4fr 2fr .4fr 2fr .4fr 2fr .4fr 2fr;
+    grid-template-rows: .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr;
     grid-template-areas:
     ". clear ." 
     ". del ."
@@ -434,116 +222,48 @@ grid-area: ans;
     "enter enter .";
 }
 
-#clear {
-grid-area: clear;
+#nleft button {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    align-items: flex-start;
+    font-size: .4em;
 }
 
-#catalog {
-grid-area: cata;
+#ctrl {
+    grid-area: ctrl;
+    background: yellow;
+    color: black;
 }
 
-#lib {
-grid-area: lib;
+#nmiddle span {
+padding-bottom: 1px;
+margin: 0;
+max-height: .6em;
+font-size: .5em;
 }
 
-#dotx {
-grid-area: dotx;
+#nright button {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: .4em;
 }
 
-#vrtfrac {
-grid-area: vrt;
+#nmiddle button {
+    padding: 0;
+    margin: 0;
+    font-size: .6em;
 }
 
-#bridown {
-grid-area: bridown;
+.num { width: 6cqw;
+font-size: .7em; }
+
+/* alpha area divs and extra */
+
+#alpha button {
+    font-size: .5em;
 }
-
-#briup {
-grid-area: briup;
-}
-
-#approx {
-grid-area: approx;
-}
-
-
-
-#del {
-    grid-area: del;
-}
-
-#fraction {
-    grid-area: fraction;
-}
-
-#book {
-    grid-area: book;
-}
-
-#multiply {
-    grid-area: multiply;
-}
-
-#divide {
-    grid-area: divide;
-}
-
-#add {
-    grid-area: add;
-}
-
-#minus {
-    grid-area: minus;
-}
-
-#dpadholder {
-display: grid;
-padding: 0;
-grid-template-columns: 1fr 1fr 1fr;
-grid-template-rows: 1fr 1fr 1fr;
-grid-template-areas:
-". up ."
-"left center right"
-". down .";
-}
-
-#larr {
-grid-area: left;
-}
-
-#rarr {
-grid-area: right;
-}
-
-#darr {
-grid-area: down;
-}
-
-#uarr {
-grid-area: up;
-}
-
-#dcenter {
-margin-left: 1px;
-margin-top: 1px;
-background: black;
-grid-area: center;
-border-radius: 0;
-}
-
-#enter {
-    grid-area: enter;
-    width: 7vw !important;
-    align-self: center;
-    justify-self: center;
-}
-
-#alpha {
-    padding-top: 5px;
-    margin-top: 5px;
-    height: fit-content;
-}
-
 
 #aleft {
     display: grid;
@@ -564,9 +284,113 @@ border-radius: 0;
     gap: 5px;
 }
 
+
 .smlside {
-    width: 5vw;
     align-self: center;
     justify-self: center;
 }
 
+/* make numpad and alpha x y z black on white */
+button#nine, button#eight, button#seven, button#six, button#five, button#four, button#three, button#two, button#one, button#zero, button#decimal, button#neg, button#x, button#y, button#z {
+background: white;
+color: black;
+}
+
+/* GRID AREAS ONLY */
+
+/* dleft grid-areas */
+#goback { grid-area: goback; }
+#esc { grid-area: esc; }
+#save { grid-area: save; }
+#calc { grid-area: calc; }
+#tab { grid-area: tab; }
+/* dpad areas */
+#larr { grid-area: left; }
+#rarr { grid-area: right; }
+#darr { grid-area: down; }
+#uarr { grid-area: up; }
+
+/*npad left areas */
+/* spans */
+#ineq { grid-area: ineq; }
+#help { grid-area: help; }
+#nthroot { grid-area: nthroot; }
+#sqrt { grid-area: sqrt; }
+#natlog { grid-area: natlog; }
+#log { grid-area: log; }
+#brackets{ grid-area: brackets; }
+#curly { grid-area: curly; }
+/* buttons */
+#equal {    grid-area: equal; }
+#trig {    grid-area: trig; }
+#power {    grid-area: power; }
+#square {    grid-area: square; }
+#invnatlog {    grid-area: invnat; }
+#invlog { grid-area: invlog; }
+#leftparen { grid-area: lpar; }
+#rightparen { grid-area: rpar; }
+
+/* npad spans */
+#caps { grid-area: caps; }
+#sto { grid-area: sto; }
+#capt { grid-area: capture; }
+#ans { grid-area: ans; }
+
+/* numpad middle buttons */
+#shift {
+    justify-self: flex-end;
+    grid-area: shift;
+    width: 6cqw;
+
+}
+#var {
+    justify-self: flex-start;
+    grid-area: var;
+    width: 6cqw;
+}
+#seven {    justify-self: flex-end;
+    grid-area: seven; }
+#eight { grid-area: eight; }
+#nine {    justify-self: flex-start;
+    grid-area: nine; }
+#four { justify-self: flex-end; 
+    grid-area: four; }
+#five { grid-area: five; }
+#six { justify-self: flex-start;
+    grid-area: six; }
+#three { justify-self: flex-start;
+    grid-area: three; }
+#two { grid-area: two; }
+#one { grid-area: one;
+    justify-self: flex-end; }
+#zero { justify-self: flex-end; 
+    grid-area: zero; }
+#decimal { grid-area: decimal; }
+#neg { justify-self: flex-start;
+    grid-area: neg; }
+
+/* numpad right spans */
+#clear { grid-area: clear; }
+#catalog { grid-area: cata; }
+#lib { grid-area: lib; }
+#dotx { grid-area: dotx; }
+#vrtfrac { grid-area: vrt; }
+#bridown { grid-area: bridown; }
+#briup { grid-area: briup; }
+#approx { grid-area: approx; }
+/*numpad right buttons */
+#enter {
+    grid-area: enter;
+    width: 7cqw !important;
+    align-self: center;
+    justify-self: center;
+}
+#del { grid-area: del; }
+#fraction { grid-area: fraction; }
+#book { grid-area: book; }
+#multiply { grid-area: multiply; }
+#divide { grid-area: divide; }
+#add { grid-area: add; }
+#minus { grid-area: minus; }
+
+/* alpha grid areas */

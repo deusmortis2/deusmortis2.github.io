@@ -1,51 +1,148 @@
 main {
-display: flex;
-align-items: center;
-justify-content: center;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-div {
-width: 100%;
-border-radius: 15px;
+span {
+height: .7em;
+display: block;
+color: darkred;
+align-self: center;
+justify-self: center;
+font-size: .5em;
+padding: 0 0 2px 0;
+margin: 0 0 1px 0;
 }
 
 button {
+background: black;
+color: white;
 border-radius: 5px;
 }
 
+#Full {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    background-color: darkgray;
+    width: 50vw;
+    height: 98vh;
+    align-self: center;
+    @media (min-width: 900px) {
+        width: 650px;
+    }
+    @media (max-width: 600px) {
+        width: 98vw;
+    }
+
+}
+
+#outer {
+    background-color: lightgray;
+    width: 95%;
+    height: 98%;
+    display: grid;
+    grid-template-rows: 1fr 2.5fr 2fr 3fr 2fr;
+    align-items: center;
+    justify-items: center;
+}
+
+div {
+    width: 100%;
+    border-radius: 15px;
+}
+
+
 #header {
+    position: relative;
+    padding: 0;
+    margin: 0;
     text-align: center;
+    height: 10%;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    top: 5;
+    left: 15%;
 }
 
 #screen {
-height: 30vh;
-width: 95%;
-background: black;
-align-self: center;
-justify-self: center;
+    padding: 0;
+    margin: 7vh auto 0 auto;
+    height: 30vh;
+    width: 85%;
+    background: black;
+    align-self: center;
+    justify-self: center;
 }
 
 #dpad-area {
+    padding-top: 5px;
+    height: fit-content;
     padding-right: 15px;
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
 }
 
 #dpadholder {
-background: darkgray;
-width: 45%;
-justify-self: center;
-height: 15vh;
+    margin: 5px 0 5px 0;
+    background: darkgray;
+    width: 15vw;
+    justify-self: center;
+    height: 15vh;
 }
 
 #dleft {
     padding-left: 15px;
-    display: flex;
+    display: grid;
     height: 100%;
     width: 100%;
-    flex-direction: column;
-    align-items: start;
+    grid-template-rows: 1fr 2fr 1fr 2fr 1fr 2fr;
+    grid-template-areas:
+    "goback"
+    "esc"
+    "save"
+    "calc"
+    "."
+    "tab";
+    align-items: center;
     justify-content: space-evenly;
+}
+
+#dleft span {
+margin-left: 1vw;
+}
+
+#dleft button {
+width: 5vw !important;
+}
+
+#goback {
+grid-area: goback;
+}
+
+#esc {
+grid-area: esc;
+}
+
+#save {
+grid-area: save;
+}
+
+#calc {
+grid-area: calc;
+}
+
+#tab {
+grid-area: tab;
 }
 
 #dright {
@@ -53,61 +150,120 @@ height: 15vh;
     height: 100%;
     width: 100%;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-evenly; 
 }
 
-
-#Full {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-items: center;
-background-color: darkgray;
-width: 50%;
-height: 90vh;
-align-self: center;
+#dright button {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+    font-size: .6em;
 }
 
-#outer {
-background-color: lightgray;
-width: 95%;
-height: 98%;
-display: grid;
-grid-template-rows: 1fr 2.5fr 2fr 2fr 2fr;
-flex-direction: column;
-align-items: center;
-justify-items: center;
+#dleft button {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+    font-size: .6em;
 }
 
 #top {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #numpad {
-display: grid;
-height: 100%;
-grid-template-columns: 1fr 3fr 1fr;
-align-items: space-between;
+    padding: 0;
+    margin-bottom: 5px;
+    gap: 5px;
+    display: grid;
+    height: fit-content;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+#nleft button {
+    margin: 0;
+    padding: 0;
+    width: 4vw;
+    align-items: flex-start;
+    font-size: .6em;
+}
+
+#nright button {
+    margin: 0;
+    padding: 0;
+    width: 4vw;
+    font-size: .6em;
 }
 
 #nleft {
-display: grid;
-grid-template-columns: 1fr 3fr 3fr;
-grid-template-areas:
-". ctrl ."
-". equal trig"
-". power square"
-". invnat invlog"
-". lpar rpar";
+    display: grid;
+    gap: 2px;
+    grid-template-columns: 1fr 3fr 3fr;
+    grid-template-rows: 2fr .4fr 2fr .4fr 2fr .4fr 2fr .4fr 2fr;
+    grid-template-areas:
+    ". ctrl ."
+    ". ineq help"
+    ". equal trig"
+    ". nthroot sqrt"
+    ". power square"
+    ". natlog log"
+    ". invnat invlog"
+    ". brackets curly"
+    ". lpar rpar";
+}
+
+#ineq {
+grid-area: ineq;
+}
+
+#help {
+grid-area: help;
+}
+
+#nthroot {
+grid-area: nthroot;
+}
+
+#sqrt {
+grid-area: sqrt;
+}
+
+#natlog {
+grid-area: natlog;
+}
+
+#log {
+grid-area: log;
+}
+
+#brackets{
+grid-area: brackets;
+}
+
+#curly {
+grid-area: curly;
 }
 
 #ctrl {
     grid-area: ctrl;
 }
+
+#ctrl {
+    background: yellow;
+    color: black;
+}
+
+button#nine, button#eight, button#seven, button#six, button#five, button#four, button#three, button#two, button#one, button#zero, button#decimal, button#neg, button#x, button#y, button#z {
+background: white;
+color: black;
+}
+
 
 #equal {
     grid-area: equal;
@@ -143,8 +299,274 @@ grid-template-areas:
 
 
 #alpha {
+    padding: 3px 0 3px 0;
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
-    height: 100%;
+    height: 8vh;
+}
+
+#nmiddle {
+    display: grid;
+    gap: 2px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: .35fr 1fr 1fr 1fr 1fr .35fr 1fr;
+    align-items: center;
+    justify-items: center;
+    grid-template-areas:
+    "caps . sto"
+    "shift . var" 
+    "seven eight nine"
+    "four five six"
+    "one two three"
+    ". capture ans"
+    "zero decimal neg";
+}
+
+#nmiddle span {
+padding: 0;
+margin: 0;
+height: .6em;
+}
+
+#caps {
+grid-area: caps;
+}
+
+#sto {
+grid-area: sto;
+}
+
+#capt {
+grid-area: capture;
+}
+
+#ans {
+grid-area: ans;
+}
+
+.num {
+    width: 6vw;
+}
+
+#shift {
+    justify-self: flex-end;
+    grid-area: shift;
+    width: 6vw;
+}
+
+#var {
+    justify-self: flex-start;
+    grid-area: var;
+    width: 6vw;
+}
+
+#seven {
+    justify-self: flex-end;
+    grid-area: seven;
+}
+
+#eight {
+    grid-area: eight;
+}
+
+#nine {
+    justify-self: flex-start;
+    grid-area: nine;
+}
+
+#four {
+    justify-self: flex-end; 
+    grid-area: four;
+}
+
+#five {
+    grid-area: five;
+}
+
+#six {
+    justify-self: flex-start;
+    grid-area: six;
+}
+
+#three {
+    justify-self: flex-start;
+    grid-area: three;
+}
+
+#two {
+    grid-area: two;
+}
+
+#one {
+    grid-area: one;
+    justify-self: flex-end; 
+}
+
+#zero {
+    justify-self: flex-end; 
+    grid-area: zero;
+}
+
+#decimal {
+    grid-area: decimal;
+}
+
+#neg {
+    justify-self: flex-start;
+    grid-area: neg;
+}
+
+#nright {
+    display: grid;
+    grid-template-columns: 3fr 3fr 1fr;
+    gap: 2px;
+    grid-template-rows: .4fr 2fr .4fr 2fr .4fr 2fr .4fr 2fr .4fr 2fr;
+    grid-template-areas:
+    ". clear ." 
+    ". del ."
+    "cata lib ." 
+    "fraction book ."
+    "dotx vrt ."
+    "multiply divide ."
+    "bridown briup ."
+    "add minus ."
+    ". approx ."
+    "enter enter .";
+}
+
+#clear {
+grid-area: clear;
+}
+
+#catalog {
+grid-area: cata;
+}
+
+#lib {
+grid-area: lib;
+}
+
+#dotx {
+grid-area: dotx;
+}
+
+#vrtfrac {
+grid-area: vrt;
+}
+
+#bridown {
+grid-area: bridown;
+}
+
+#briup {
+grid-area: briup;
+}
+
+#approx {
+grid-area: approx;
+}
+
+
+
+#del {
+    grid-area: del;
+}
+
+#fraction {
+    grid-area: fraction;
+}
+
+#book {
+    grid-area: book;
+}
+
+#multiply {
+    grid-area: multiply;
+}
+
+#divide {
+    grid-area: divide;
+}
+
+#add {
+    grid-area: add;
+}
+
+#minus {
+    grid-area: minus;
+}
+
+#dpadholder {
+display: grid;
+padding: 0;
+grid-template-columns: 1fr 1fr 1fr;
+grid-template-rows: 1fr 1fr 1fr;
+grid-template-areas:
+". up ."
+"left center right"
+". down .";
+}
+
+#larr {
+grid-area: left;
+}
+
+#rarr {
+grid-area: right;
+}
+
+#darr {
+grid-area: down;
+}
+
+#uarr {
+grid-area: up;
+}
+
+#dcenter {
+margin-left: 1px;
+margin-top: 1px;
+background: black;
+grid-area: center;
+border-radius: 0;
+}
+
+#enter {
+    grid-area: enter;
+    width: 7vw !important;
+    align-self: center;
+    justify-self: center;
+}
+
+#alpha {
+    padding-top: 5px;
+    margin-top: 5px;
+    height: fit-content;
+}
+
+
+#aleft {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 5px;
+}
+
+#amiddle {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 3px;
+}
+
+#aright {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 5px;
+}
+
+.smlside {
+    width: 5vw;
+    align-self: center;
+    justify-self: center;
 }
 

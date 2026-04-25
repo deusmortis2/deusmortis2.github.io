@@ -1,363 +1,315 @@
 * {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+/* centering */
+span, #outer, #enter, #nmiddle span, .smlside {
+  align-self: center;
+  justify-self: center;
+}
+
+#Full, #top, #dleft, #dright, #nmiddle {
+  align-items: center;
+  justify-items: center;
+}
+/* max out width/height */
+body, main, #top, #alpha, #dleft, #dmiddle, #dright {
+  min-height: 100%;
+}
+
+body, main, #alpha, #dleft, #dmiddle, #dright, #dpad-area, #dcenter {
+  max-width: 100%;
 }
 
 /* element selectors */
+h1 {
+  min-height: 2.6cqh;
+  font-size: 2.6cqh;
+  text-align: center;
+}
+
 span {
-height: 90%;
-color: darkred;
-align-self: center;
-justify-self: center;
-font-size: 1.5cqh;
+  height: 90%;
+  color: darkred;
+  font-size: 1.5cqh;
 }
 
 button {
-background: black;
-color: white;
-border-radius: 2cqw;
-font-size: 1.8cqh;
+  background: black;
+  color: white;
+  border-radius: 2cqw;
+  font-size: 1.8cqh;
 }
 
 #capt button, #minus button, #decimal button, #comma button, #underscore button {
-    font-size: 10rem !important;
-    font-weight: 900;
+  font-size: 10rem !important;
+  font-weight: 900;
 }
 
 
 div {
-    border-radius: 1em;
+  border-radius: 1em;
 }
 
 /* core div content */
 body {
-    min-height: 100%;
-    max-width: 100%;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 main {
-    display: flex;
-    overflow: hidden;
-    min-height: 100%;
-    max-width: 100%;
-    justify-content: center;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
 }
 
 /* calculator start */
 #Full {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
-    background-color: darkgray;
-    width: clamp(310px, 45dvw, 365px);
-    height: min(97dvh, 883px);
+  display: flex;
+  flex-direction: column;
+  background-color: darkgray;
+  width: clamp(310px, 45dvw, 365px);
+  height: min(97dvh, 883px);
 }
 
 
 #outer {
-    align-self: center;
-    justify-self: center;
-    display: grid;
-    width: clamp(295px, 43dvw, 350px);
-    height: min(95dvh, 860px);
-    background-color: lightgray;
-    grid-template-rows: 3.5fr 2.5fr 2fr 2fr;
-
+  display: grid;
+  width: clamp(295px, 43dvw, 350px);
+  height: min(95dvh, 860px);
+  background-color: lightgray;
+  grid-template-rows: 3.5fr 2.5fr 2fr 2fr;
 }
 
 #top {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
 #header {
-    text-align: center;
-    min-height: 2.7cqh;
+  text-align: center;
+  min-height: 2.7cqh;
 }
 
 #screen {
-    margin: 1.1cqh auto 2px auto;
-    height: 100%;
-    min-width: 90%;
-    background: black;
+  margin: 1.1cqh auto 2px auto;
+  height: 100%;
+  min-width: 90%;
+  background: black;
 }
 
 #dpad-area {
-    overflow: hidden;
-    height: 97%;
-    width: 100%;
-    display: grid;
-    overflow: hidden;
-    grid-template-columns: 1fr 3fr 1fr;
+  overflow: hidden;
+  height: 97%;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
 }
 
 #numpad {
     display: grid;
-    height: 100%;
     grid-template-columns: 1fr 2fr 1fr;
 }
 
-
 #dpadholder {
-    display: grid;
-    background: darkgray;
-    width: 20dvw;
-    align-items: center;
-    justify-items: center;
-    height: 100%;
-    display: grid;
-    gap: 0;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    grid-template-areas: /* 3 x 3 */
-    ". up ."
-    "left center right"
-    ". down .";
+  display: grid;
+  background: darkgray;
+  width: 100%;
+  height: 95%;
+  gap: 0;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-areas: /* 3 x 3 */
+  ". up ."
+  "left center right"
+  ". down .";
 }
 
 #alpha {
-    margin-top: .5cqh;
-    display: grid;
-    grid-template-columns: 1fr 4fr 1fr;
-    max-height: 100%;
-    max-width: 100%;
-}
-
-/* header extras */
-h1 {
-    min-height: 2.6cqh;
-    font-size: 2.6cqh;
-    text-align: center;
+  display: grid;
+  margin-top: .5cqh;
+  grid-template-columns: 1fr 4fr 1fr;
 }
 
 /* dpad divs and extras */
 #dleft {
-display: grid;
-grid-template-rows: .25fr .6fr .25fr .6fr .25fr .6fr;
-justify-items: center;
-align-items: center;
-grid-template-areas:
-"goback"
-"esc"
-"save"
-"calc"
-"."
-"tab";
+  display: grid;
+  grid-template-rows: .25fr .6fr .25fr .6fr .25fr .6fr;
+  grid-template-areas:
+  "goback"
+  "esc"
+  "save"
+  "calc"
+  "."
+  "tab";
 }
 
 #dright {
-    display: grid;
-    justify-items: center;
-    align-items: center;
-    grid-template-rows: .25fr .6fr .25fr .6fr .25fr .6fr;
-}
-
-#dleft, #dright {
-    height: 100%;
-    width: 100%;
-    align-items: center;
-}
-
-#dmiddle {
-height: 100%;
-width: 100%;
-}
-
-#dpadholder {
-width: 100%;
-height: 95%;
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-grid-template-rows: 1fr 1fr 1fr;
-grid-template-areas: /* 3 x 3 */
-". up ."
-"left center right"
-". down .";
+  display: grid;
+  grid-template-rows: .25fr .6fr .25fr .6fr .25fr .6fr;
 }
 
 #dcenter {
-height: 95%;
-width: 100%;
-justify-self: center;
-align-self: center;
-margin: .05em;
-background: black;
-grid-area: center;
+  height: 95%;
+  margin: .05em;
+  background: black;
 }
 
 #dright button, #dleft button {
-    width: max(48px, 80%);
-    height: 70%;
-    border-radius: .5cqw;
+  width: max(48px, 80%);
+  height: 70%;
+  border-radius: .5cqw;
 }
 
 #capt, #ans {
-padding-bottom: 1cqh;
+  padding-bottom: 1cqh;
 }
 
 #dmiddle button {
-height: 90%;
-width: 95%;
-border-radius: 1cqh;
+  height: 90%;
+  width: 95%;
+  border-radius: 1cqh;
 }
 /* Numpad divs and extras*/
 
 #nleft {
-    padding-left: .5dvw;
-    display: grid;
-    grid-template-columns: 3fr 3fr;
-    grid-template-rows: .6fr .25fr .6fr .6fr .6fr .25fr .6fr .25fr .6fr;
-    grid-template-areas:
-    "ctrl ."
-    "ineq help"
-    "equal trig"
-    "nthroot sqrt"
-    "power square"
-    "natlog log"
-    "invnat invlog"
-    "brackets curly"
-    "lpar rpar";
+  display: grid;
+  padding-left: .5dvw;
+  grid-template-columns: 3fr 3fr;
+  grid-template-rows: .6fr .25fr .6fr .6fr .6fr .25fr .6fr .25fr .6fr;
+  grid-template-areas:
+  "ctrl ."
+  "ineq help"
+  "equal trig"
+  "nthroot sqrt"
+  "power square"
+  "natlog log"
+  "invnat invlog"
+  "brackets curly"
+  "lpar rpar";
 }
 
 #nmiddle {
-    margin-top: .05cqh;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: .1fr .5fr .5fr .5fr .5fr .1fr .5fr;
-    align-items: center;
-    justify-items: center;
-    grid-template-areas:
-    "caps . sto"
-    "shift . var" 
-    "seven eight nine"
-    "four five six"
-    "one two three"
-    ". capture ans"
-    "zero decimal neg";
+  display: grid;
+  margin-top: .05cqh;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: .1fr .5fr .5fr .5fr .5fr .1fr .5fr;
+  grid-template-areas:
+  "caps . sto"
+  "shift . var" 
+  "seven eight nine"
+  "four five six"
+  "one two three"
+  ". capture ans"
+  "zero decimal neg";
 }
 
 #nright {
-    display: grid;
-    padding-right: .5dvw;
-    grid-template-columns: 3fr 3fr;
-    grid-template-rows: .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr;
-    grid-template-areas:
-    ". clear" 
-    ". del"
-    "cata lib" 
-    "fraction book"
-    "dotx vrt"
-    "multiply divide"
-    "bridown briup"
-    "add minus"
-    "approx approx"
-    "enter enter";
+  display: grid;
+  padding-right: .5dvw;
+  grid-template-columns: 3fr 3fr;
+  grid-template-rows: .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr;
+  grid-template-areas:
+  ". clear" 
+  ". del"
+  "cata lib" 
+  "fraction book"
+  "dotx vrt"
+  "multiply divide"
+  "bridown briup"
+  "add minus"
+  "approx approx"
+  "enter enter";
 }
 
 #nleft button, #nright button {
-    width: max(30px, 75%);
-    border-radius: .6dvw;
-    align-items: flex-start;
+  width: max(30px, 75%);
+  border-radius: .6dvw;
+  align-items: flex-start;
 }
 
 #ctrl {
-    background: yellow;
-    color: black;
-    width: 95%;
+  background: yellow;
+  color: black;
+  width: 95%;
 }
 
 
 #nmiddle span {
-height: 2cqh;
-justify-self: center;
-align-self: center;
+  height: 2cqh;
 }
 
 #var {
-justify-self: flex-start !important;
+  justify-self: flex-start !important;
 }
 
 #underscore {
-    transform: translateY(-.5cqh);
-    width: 80% !important;
-    height: 70% !important;
-    border-radius: .3cqh !important;
+  width: 80% !important;
+  height: 70% !important;
+  border-radius: .3cqh !important;
 }
 
-#underscore button {
-    padding-top: 3px;
-}
 #enter {
-    height: 90% !important;
-    width: 80% !important;
-    align-self: center;
-    justify-self: center;
+  height: 90% !important;
+  width: 80% !important;
 }
 #menu button {
-    padding-right: 1em;
+  padding-right: 1em;
 }
 
 .num, #var, #shift {
-    border-radius: 5px;
-    height: 70%;
-    width: 75%;
+  border-radius: 5px;
+  height: 70%;
+  width: 75%;
 }
 
 #seven, #four, #one, #zero, #var, #shift {
-    justify-self: flex-end;
+  justify-self: flex-end;
 }
 
 #neg, #three, #six, #nine {
-    justify-self: flex-start;
+  justify-self: flex-start;
 }
 
 /* alpha area divs and extra */
 
 #alpha button {
-    height: 60%;
-    width: max (20px, 60%);
-    border: .05cqh solid black;
+  height: 60%;
+  width: max (20px, 60%);
+  border: .05cqh solid black;
 }
 
 #amiddle {
-    justify-self: center;
-    width: 90%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    gap: .07em;
+  display: grid;
+  justify-self: center;
+  width: 90%; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  gap: .07em;
 }
 
 #aright, #aleft {
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
 }
 
 .smlside {
-    font-size: 1.5cqh !important;
-    width: max(25px, 45%) !important;
-    border-radius: 3cqh !important;
-    align-self: center;
-    justify-self: center;
+  font-size: 1.5cqh !important;
+  width: max(25px, 45%) !important;
+  border-radius: 3cqh !important;
 }
 
 /* make numpad and alpha x y z black on white */
 button#nine, button#eight, button#seven, button#six, button#five, button#four, button#three, button#two, button#one, button#zero, button#decimal, button#neg, button#x, button#y, button#z {
-background: white;
-color: black;
+  background: white;
+  color: black;
 }
 
 /* GRID AREAS ONLY */
 /* dleft grid-areas */
 #goback { grid-area: goback; } #esc { grid-area: esc; } #save { grid-area: save; } #calc { grid-area: calc; } #tab { grid-area: tab; }
 /* dpad areas */
-#larr { grid-area: left; } #rarr { grid-area: right; } #darr { grid-area: down; } #uarr { grid-area: up; }
+#larr { grid-area: left; } #rarr { grid-area: right; } #darr { grid-area: down; } 
+#uarr { grid-area: up; } #dcenter { grid-area: center; }
 /*npad left areas */
 /* spans */
 #ineq { grid-area: ineq; } #help { grid-area: help; } #nthroot { grid-area: nthroot; } #sqrt { grid-area: sqrt; }
@@ -379,7 +331,3 @@ color: black;
 /*numpad right buttons */
 #enter { grid-area: enter; } #del { grid-area: del; } #fraction { grid-area: fraction; } #book { grid-area: book; }
 #multiply { grid-area: multiply; } #divide { grid-area: divide; } #add { grid-area: add; } #minus { grid-area: minus; }
-
-#outer, #Full, #top, #dpad-area, #numpad, #alpha {
-    transition: all 0.2s ease-out;
-}

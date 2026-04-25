@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vosburgh Calculator</title>
+  <title>Longhorn Calculator</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -15,20 +15,19 @@
         <div id="outer">
         <div id="top">
             <div id="header">
-                <h1>Mr. V Calculator</h1>
+                <h1>Longhorn Calculator</h1>
             </div>
             <div id="screen"></div>
         </div>
         <div id="dpad-area">
             <div id="dleft">
-                <span id="goback">goback</span>
+                <span id="goback">↶</span>
                 <button id="esc" class="top">esc</button>
                 <span id="save">save</span>
-                <button id="calc" class="top">calc</button>
+                <button id="calc" class="top">🖩</button>
                 <button id="tab" class="top">tab</button>
             </div>
             <div id="dmiddle">
-                <div id="dpad">
                     <!-- d pad image up down left right hotspots -->
                     <div id="dpadholder">
                     <button id="larr">◄</button>
@@ -37,49 +36,48 @@
                     <button id="rarr">►</button>
                     <button id="darr">▼</button>
                     </div>
-                </div>
             </div>
             <div id="dright">
                 <span id="off">off</span>
                 <button id="on" class="top">on</button>
-                <span id="addpage">add pg</span>
+                <span id="addpage">+page</span>
                 <button id="doc" class="top">doc</button>
-                <span id="doccl">doc slt</span>
+                <span id="doccl">🗎 </span>
                 <button id="menu" class="top">menu</button>
             </div>
         </div>
         <div id="numpad">
             <div id="nleft">
                 <button id="ctrl" class="top">ctrl</button>
-                <span id="ineq">>,<</span><span id="help">help</span>
-                <button id="equal" class="side">=</button><button id="trig" class="side">trig</button>
-                <span id="nthroot">nthroot</span><span id="sqrt">sqrt</span>
-                <button id="power" class="side">^</button><button id="square" class="side">x^2</button>
+                <span id="ineq">≠≥</span><span id="help">⍰</span>
+                <button id="equal" class="side">=</button><button id="trig" class="side">trig‣</button>
+                <span id="nthroot">ˣ√</span><span id="sqrt">√</span>
+                <button id="power" class="side">∧</button><button id="square" class="side">x²</button>
                 <span id="natlog">ln</span><span id="log">log</span>                  
-                <button id="invnatlog" class="side">e^x</button><button id="invlog" class="side">10^x</button>
-                <span id="brackets">[]</span><span id="curly">{}</span>
+                <button id="invnatlog" class="side">eˣ</button><button id="invlog" class="side">10ˣ</button>
+                <span id="brackets">[ ]</span><span id="curly">{ }</span>
                 <button id="leftparen" class="side">(</button><button id="rightparen" class="side">)</button>
             </div>
             <div id="nmiddle">
-                <span id="caps">CAPS</span><span id="sto">sto</span>
+                <span id="caps">CAPS</span><span id="sto">sto→</span>
                 <button id="shift" class="top">shift</button><button id="var" class="top">var</button>
                 <button id="seven" class="num">7</button><button id="eight" class="num">8</button><button id="nine" class="num">9</button>
                 <button id="four" class="num">4</button><button id="five" class="num">5</button><button id="six" class="num">6</button>
                 <button id="one" class="num">1</button><button id="two" class="num">2</button><button id="three" class="num">3</button>
                 
                 <span id="capt">capture</span><span id="ans">ans</span>
-                <button id="zero" class="num">0</button><button id="decimal" class="num">.</button><button id="neg" class="num">(-)</button>
+                <button id="zero" class="num">0</button><button id="decimal" class="num">•</button><button id="neg" class="num">[-]</button>
             </div>
             <div id="nright">
                 <span id="clear">clear</span>
                 <button id="del" class="top">del</button>
-                <span id="catalog">cata</span><span id="lib">lib</span>
-                <button id="fraction" class="side">frac</button><button id="book" class="side">book</button>
-                <span id="dotx">dotx</span><span id="vrtfrac">vrt</span>
-                <button id="multiply" class="side">x</button><button id="divide" class="side">/</button>
-                <span id="bridown">bridown</span><span id="briup">briup</span>
-                <button id="add" class="side">+</button><button id="minus" class="side">-</button>
-                <span id="approx">approx</span>
+                <span id="catalog">≔</span><span id="lib">∞𝞫∘</span>
+                <button id="fraction" class="side">|⌑|</button><button id="book" class="side">🕮</button>
+                <span id="dotx">"⌑"</span><span id="vrtfrac">frac⊟</span>
+                <button id="multiply" class="side">✖</button><button id="divide" class="side">÷</button>
+                <span id="bridown">◐</span><span id="briup">◑</span>
+                <button id="add" class="side">✚</button><button id="minus" class="side">–</button>
+                <span id="approx">≈</span>
                 <button id="enter">enter</button>
             </div>
             
@@ -87,8 +85,8 @@
         <div id="alpha">
                 <div id="aleft">
                     <button id="EE" class="smlside">EE</button>
-                    <button id="pi" class="smlside">pi</button>
-                    <button id="," class="smlside">,</button>
+                    <button id="pi" class="smlside">π‣</button>
+                    <button id="comma" class="smlside">,</button>
                 </div>
                 <div id="amiddle">
                     <button id="a" class="ltr">A</button><button id="b" class="ltr">B</button><button id="c" class="ltr">C</button><button id="d" class="ltr">D</button>
@@ -102,13 +100,13 @@
 
                     <button id="v" class="ltr">V</button><button id="w" class="ltr">W</button>
                     <button id="x" class="ltr">X</button><button id="y" class="ltr">Y</button><button id="z">Z</button>
-                    <button id="underscore">_</button>
+                    <button id="underscore"> ⎵</button>
                     
                 </div>
                 <div id="aright">
-                    <button id="question" class="smlside">?!</button>
-                    <button id="flag" class="smlside">flag</button>
-                    <button id="return" class="smlside">rtn</button>
+                    <button id="question" class="smlside">?!‣</button>
+                    <button id="flag" class="smlside">⚑</button>
+                    <button id="return" class="smlside">➥</button>
                 </div>
             </div>
 
@@ -116,7 +114,6 @@
     </div> 
     </div> 
   </main>
-  <script src="./scripts/todoAppUsingLocalStorage.js"></script>
 </body>
 
 </html>>

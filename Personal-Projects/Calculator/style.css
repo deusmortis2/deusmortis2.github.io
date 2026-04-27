@@ -14,7 +14,7 @@ span, #outer, #enter, #nmiddle span, .smlside {
   justify-items: center;
 }
 /* max out width/height */
-body, main, #top, #alpha, #dleft, #dmiddle, #dright {
+body, main, #alpha, #dleft, #dmiddle, #dright {
   min-height: 100%;
 }
 
@@ -31,6 +31,7 @@ h1 {
 
 span {
   height: 90%;
+  text-align: center;
   color: darkred;
   font-size: 1.5cqh;
 }
@@ -65,13 +66,13 @@ main {
 
 /* calculator start */
 #Full {
+  margin-top: 1dvh;
   display: flex;
   flex-direction: column;
   background-color: darkgray;
   width: clamp(310px, 45dvw, 365px);
   height: min(97dvh, 883px);
 }
-
 
 #outer {
   display: grid;
@@ -82,8 +83,11 @@ main {
 }
 
 #top {
+  width: 95%;
+  justify-self: center;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 #header {
@@ -91,11 +95,28 @@ main {
   min-height: 2.7cqh;
 }
 
+#output {
+  width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  color: lightblue;
+  font-size: 2cqh;
+}
+
 #screen {
+  border-radius: 0;
   margin: 1.1cqh auto 2px auto;
   height: 100%;
   min-width: 90%;
   background: black;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 #dpad-area {
@@ -150,7 +171,8 @@ main {
 
 #dcenter {
   height: 95%;
-  margin: .05em;
+  width: 95%;
+  border-radius: 50%;
   background: black;
 }
 
@@ -160,15 +182,19 @@ main {
   border-radius: .5cqw;
 }
 
-#capt, #ans {
-  padding-bottom: 1cqh;
-}
-
 #dmiddle button {
   height: 90%;
   width: 95%;
   border-radius: 1cqh;
 }
+
+
+#calcwrapper {
+    line-height: 1;
+    font-size: 3.8cqh;
+    transform: translateY(-.5cqh);
+}
+
 /* Numpad divs and extras*/
 
 #nleft {
@@ -207,7 +233,7 @@ main {
   display: grid;
   padding-right: .5dvw;
   grid-template-columns: 3fr 3fr;
-  grid-template-rows: .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr;
+  grid-template-rows: .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr .05fr .6fr;
   grid-template-areas:
   ". clear" 
   ". del"
@@ -235,7 +261,7 @@ main {
 
 
 #nmiddle span {
-  height: 2cqh;
+  height: 1cqh;
 }
 
 #var {
@@ -243,8 +269,8 @@ main {
 }
 
 #underscore {
-  width: 80% !important;
-  height: 70% !important;
+  width: 90% !important;
+  height: 65% !important;
   border-radius: .3cqh !important;
 }
 
@@ -274,7 +300,7 @@ main {
 
 #alpha button {
   height: 60%;
-  width: max (20px, 60%);
+  width: max(20px, 90%);
   border: .05cqh solid black;
 }
 

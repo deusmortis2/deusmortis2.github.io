@@ -6,7 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Longhorn Calculator</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.js"></script>
+  <script async src="script.js"></script>
 </head>
 
 <body>
@@ -17,14 +19,14 @@
             <div id="header">
                 <h1>Longhorn Calculator</h1>
             </div>
-            <div id="screen"></div>
+            <div id="screen"><textarea id="output"></textarea></div>
         </div>
         <div id="dpad-area">
             <div id="dleft">
                 <span id="goback">↶</span>
                 <button id="esc" class="top">esc</button>
                 <span id="save">save</span>
-                <button id="calc" class="top">🖩</button>
+                <button id="calc" class="top"><pre><p id="calcwrapper">🖩</p></pre></button>
                 <button id="tab" class="top">tab</button>
             </div>
             <div id="dmiddle">
@@ -116,4 +118,4 @@
   </main>
 </body>
 
-</html>>
+</html>

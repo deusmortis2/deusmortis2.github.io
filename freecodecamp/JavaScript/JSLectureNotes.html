@@ -957,6 +957,46 @@ This happens because of the callstack and how the prints are resolved.
                     </p>
 </div>
 </section>
+<section id="Data Structures">
+<div id="Working-with-Common-Data-Structures">
+    <h4>What Is an Algorithm and How Does Big O Notation Work?</h4>
+    <p>
+        Algorithm is a set of unambiguous instructions for carrying out a task or solving a problem. You can think of these as recipes to prepare a dish. Algorithms have two characteristics: 1. Cannot continue indefinitely. 2. Each step must be precise. They may have zero, one, or more inputs and generate one or more outputs. The steps are independent of any programming language but must be implemented into a programming language to run on a computer. If the algorithm is correct the output should reflect this, but algorithms should also be efficient. Efficiency is measured by how long the program runs and how much space in memory is required. This can change based on the size of the input. The big O notation is a way
+        to describe worse case scenarios as input size increases. Input size is usuallyt denoted with the letter n. The term that dominates the behavior will always be the leading term or the highest exponent. 0(1) is known as "Constant Time Complexity" which means it has the same run time regardless of input size. 0(log n) is "Logarithmic Time Complexity" this means that the time required by the algorithm increases slowly as the input grows. This is common when the size of the problem is reduced by a constant fraction. An example would be a binary search since it halves the data each iteration. There is 0(n) "Linear Time Commplexity" which increases proportionally with the increase in input size.  A for loop is an 
+        easy example of this because it will iterate over each element in a list so it will grow proportionally with the size of the list. 0 (n log n) is Log-Linear Time Complexity which is common with efficient sorting like merge sort or quick sort. O(n^2) is known as "Quadratic Time Complexity" the running time of these increases quadratically with input sizes which is not efficient for real world problems. Nested loops are common exmaples of quadratic time complexity, the inner loop will perform n iterations for each of the n of the outer loop resulting in n squared. Other time complexities include "Exponential Time Complexity" O(2^n) "Factorial Time Complexity" O(n!) which are both inefficient. You can compare 
+        different models with a graph where x is the input size, and y is the running time. Big O can also be used to describe space requirements. It can be used to describe the memory required as input size grows. "Constant Space Complexity" 0(1) always required a constant amount of memory space as the input gets larger. An example would be one that only creates a few variables in memory. In contrast the space required by "Linear Space Complexity" O(n) which increases proportionally with the input size. Creating and storing a copy of a list would be an example. "Quadratic Space Complexity" O(n^2) increases quadratically as the input grows. Example would be a 2d matrix. 
+    </p>
+    <h4>What Are Good Problem-Solving Techniques and Ways to Approach Algorithmic Challenges?</h4>
+    <p>
+        Solving algorithmic challenges is a good way to practice, such as reversing strings in javascript. The string is the input because "given a string.." the output is "a new string in reversed order.". You can use pseudocode to describe a solution independent of the programming language. It usually includes common language with programming constructs like if, else, for, while. Example pseudocode may look like GET original_string    SET reversed_string = ""     FOR EACH character IN original_string:   ADD character TO THE BEGINNING OF reversed_string    DISPLAY reversed_string. It's important to pick the right algorithm for the job, bubble sort is bad for large lists, quick sort is very efficient. For reversing a
+        string you may consider .split("").reverse().join(""), looping from left to right, converting to an array and manually shifting letters. Edge cases are inputs or conditions that test the boundaries. 
+    </p>
+    <h4>How Do Dynamic Arrays Differ From Static Arrays?</h4>
+    <p>
+        Static arrays have a fixed size, and they are stored in elements in adjacent memory locations. The size of a static array is determined when initialized and cannot be changed while the program is running. Storing elements in adjacent locations makes data retrieval efficient. Accessing teh values of static array takes a constant time of O(1) which is very efficient. You can use a static array when you know how many elemennts are to be stored in advance. It is also more performant. This value can't grow or shrink so the array needs to be fixed in size. JavaScript does not have traditional static arrays like C or Java but you can use the Array object with a size value. JavaScript will still allow resizing but it 
+        will behave like a fixed length array. Accessing the element of a dynamic array takes a time of O(1). Inserting an element in the middle of the array takes a linear time O(n). If the array does not need to be resized it takes O(1) complexity if it does require resizing its O(n). The .push() method to insert at a specific element use .splice(). 
+    </p>
+    <h4>How Do Stacks and Queues Work?</h4>
+    <p>
+        Stacks and queues are common data structures. A stack is a last in first out data structure. Adding an element to the stack is known as a push operation. Removing an element is a pop operation. The push/pop are both O(1). A queue is a first in first out meaning the first one to be added is the first one to be removed. Queues have two ends a front and a back, elements are added to the back of the queue and they are removed from the front of hte queue. Adding an element to the back of the queue is known as "enqueue" operation. Removing an element is known as a "dequeue" operation. 
+    </p>
+    <h4>How Do Singly Linked Lists Work and How Do They Differ from Doubly Linked Lists?</h4>
+    <p>
+        A linked list is a linear data structure where each node is connected to the next node. This creates a chain of nodes. Linked lists are commonly used for stacks, queues, and dequeues. They can be used to implement graph algorithms such as depth first search or breadth first search. A singly linked list is a type of linked list where each node is connected to the next by storing a reference to it. This allows you to travel from end to end in one direction.  The search can only move forward but not backward starting from the headnode and going to the tail node. Linked lists do not have a fixed size so they can be expanded or shrunk depending on needs. You can insert a node at the start,middle, end of a linked list. 
+        Linked lists don't necessary need to store the nodes in an order. You can howeever have the logic of an order in your code when creating the linked list. To make a node at teh start, you should replace the head node with that node and make it into the head node. Inserting a node at the start has a complexity of O(1). To add to the end you need to first reach the end in order to create a new tail node this has a complexity of O(n). To remove a node from the start you jneed to update the reference to teh head node which has a complexity of O(1). To remove a node from teh end you need to reach the end so it will have a complexity of O(n). A doubly linked node is linked to the previous and the next node. This allows 
+        the data to be traveled easily in either direction. Doubly linked lists require more memory since there is 2 references for each node. 
+    </p>
+</div>
+</section>
+<section id="Algorithms">
+
+</section>
+<section id="Graphs and Trees">
+
+</section>
+<section id="Dynamic Programming">
+
+</section>
 <section id="Functional_Programming">
 <div id="Understanding_Functional_Programming">
                     <h4>What Is Functional Programming?</h4>

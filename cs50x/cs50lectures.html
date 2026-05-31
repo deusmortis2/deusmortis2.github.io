@@ -128,3 +128,121 @@
     on that one condition. Big o of merge sort is n log2 n. Merge sort also has omega n log2 n, therefore theta of n log2 n. 
 
 </p>
+    <h4>Week 4</h4>
+<p>
+    Opens with students creating pixel art using two different colors of sticky notes. This is to represent pixels and introduces students to the concept of pixel art. Showing an image
+    at a close zoom also demonstrates the pixelation used. Shows a 1 bit image where there is a smilie face created by just using zeros and 1s in an ascii art sort of form. Taking it to
+    the next level by showing a grid or graph with the smilie. 255 is the biggest number 8 bits can represent as we start talking about RGB and how each color is represented with values
+    for red green blue between 0-255. 
+    
+    When CS want more than 10 digits they start to add letters so 0-9a-f is for hexadecimal for a base 16 system used to name colors. This of course means that each value is 16^a number
+    the same way as the other bases. In hexadecimal you go to a new place value when going above the letter f. If you want to represent 255 using hexadecimal you would just need to use FF.
+    In binary this would be 1111 1111. This is because base 2 is very similar since 2^4 is just 16 meaning 1 hex is 4 digits.
+    
+    In memory, it is common that people use hexadecimal because its easy to think of 0-f for the first 2 rows. Then after that it would be 10-1F, since there is a bit of ambiguity there is
+    often 0x in front of it to represent that 0x10 is 16 not 10 when it is represented as 10. Created a program that just makes a single variable n = 50 and printing it. The n=0 variable is
+    using 4 bytes aka 32 bits. This variable may be at location 0x123 which just means hexadecimal 123. If you use $n you are asking for the address in the memory and %p for the print statement.
+
+    Starts on the topic of pointers. Pointer is a variable that can store an address of a value in memory. A pointer can look like int *p = &n; * means that this stores the variables address.
+    You can put the asterisk anywhere between int and the variable name to create the pointer.  A pointer is 8 bytes large by convention inside the memory. p is a variable that points to the 
+    location 0x123 in memory. If you have a print statement for an integer, and you dereference the pointer variable by saying *p(p is the pointer variable name) then it will print out the value
+    of the integer that the pointer is pointing to. 
+
+    In strings,  a string of HI! would take up 4 bytes. This is for H, I, !, and the null operator. The addresses are stored in 0x123, 0x124, 0x125, 0x126 since they all have to be stored in sequence.
+    In the variable of s the actual value stored is a reference to 0x123 because the array is a reference to the start of the array. The s string has always been a pointer that points to the beginning
+    of the array. If we modify our program to display all 4 characters pointers to their address the program will display 4 numbers in sequence of each other incrementing by 1. The string just includes
+    the reference since with the beginning and the end you can find everything in between with a loop easily. String has really meant char *s since the beginning, in the library string is really
+    typedef char * string;.
+    
+    If I want to print out characters I can use the pointer reference to the string. For example we could use *s and *(s+1) to get the first 2 characters. When comparing 2 strings we include the string
+    library to make the comparisons. In the memory the variable s is just the reference of 8bytes 64 bits that includes the starting address of the characters H I ! null. When I create the second variable
+    it's made the same way with a new set of characters that are H I ! null where t stores the start of that set of characters. So the strcmp will loop through these 2 pointer references from the start to
+    the null values to see if each character is the same. If the program is recreated and we print the pointer, we would see that even if the strings are the same the pointer references are not the same. 
+
+    Start copy program, set two strings = to each other and change one to upper but both are made into capitol upper. This is because the two strings are copied and they are both pointing to the same String.
+    This means that when they are printed they are both going to the same location. Memory allocation or malloc is a function used to help this problem. Also introduce strcpy from stdlib.h where you pass the 
+    intended copy and then the original. Null memory address that 0x0 that isn't used unless something is wrong. If the user types in too long of an input or other user errors for the input value which will 
+    result in NULL. To prevent memory leaks end the program with free(t); where t is the variable name. If you malloc you need to free it at the end to prevent leaks. 
+
+    valgrind - good to specifically chase down memory related errors. Starts with a program where x is pointing to a malloc of 3 * sizeofint or 12. Valgrind is a program that helps us to find memory errors in 
+    our program. Run valgrind with your program to see the memory errors related. One error was invalid write of size 4 which means that there was an attempt to access an element of an array that was larger than 
+    the array. In leak summary tehre was a definitely lost of 12 bytes because there was no freeing. When we use valgrind and all heaps are freed its a good thing and recognizes no memory leaks in the program. 
+
+    Pointer fun, in this section there are 2 integer pointers. When you use dereference and an invalid value is assigned it can result in errors or program crashes. Pointers do not initially point to anything, and
+    the pointee needs to be created on its own. You can allocate memory for a pointee using malloc(). You can dereference *x = 42; so that the pointer points to 42. If you try to skip over to just *y = 13 the 
+    dereference will not work. You can instead point it to the same place as another pointer and then assign it to the value which would switch both pointers value they are pointing to. This illustrates some of the 
+    potential power of c where you can really have performant programs. 
+    
+    Swapping, student goes up and is given 2 glasses one with blue water one with orange. They are asked to swap the liquid colors but they are hestitant becasue htey need a third glass. The third glass is given to them. 
+    The student put the red water in a temporary cup, filled the blue into the red, temp into blue. Create a swap program where it does this exact process with a variable  a and b integer values but it doesn't actually
+    swap. This is due to an error in scope. Any time you pass arguments to a function you are passing copies to the functions you are calling. Memory is assigned in a deliberate fashion, machine code is loaded in the 
+    top. Globals are below the machine code. The heap is chunk of memory that malloc uses to allocate memory for you. The stack is the area of memory that is used when you create local variables or for functions. 
+    Analyze the stack main <- int x(1) and y(2) <- a b tmp. 
+    
+    Passing by reference, or using pointer values. This is how we will fix our swap function instead of passing by value. We can do this by assigning addresses for a and b as *a and *b. This will change hte program so that
+    the values get the address of x and y. This will create a potential problem since you are basically adding to the heap and to the stack which will eventually collide. It's important to only use malloc and equivalents
+    exactly as much as needed so that they do not end in a heap overflow or stack overflow. A buffer overflow is when an array is trying to receive too many values. 
+
+    Scanf is the c version of the cs50 training wheel of get_int etc. Create a get program where we declare n and then we scanf with the reference n so that it can be assigned the value to the variable. Then to change the 
+    program to get a string starting with char*. When running valgrind it produced a ton of errors despite seemingly working with lots of inputs. This is difficult because the string needs to be assigned a value. This is 
+    part of the reason why when you are typing in values in an input there is often a character limit. 
+
+    File I/O or input output. Starts by talking about volatile memory or ram and hard drive or persistent memory. Some commands that allow you to do stuff with files in c: fopen, fclose, fprintf, fscanf, fread, fwrite, fseek. 
+    In the first iteration of the program for this step as we type in an input it goes into the csv and rerun the program the values are lost. The fix for this problem is to change the opening fopen command to instead of "w"
+    to a "a" for append. Where it will append to the end of the file. Also important that any time that you start to use pointers that you check for null values. Pointers are required for file i/o in C. 
+
+    Moving to a segment about buffering.. A buffer is a chunk of memory. In order to declare bytes we use a typedef so we can have a place to store it, and we use an unsigned char which does not allow negative values. You can
+    also use for the file command "r" for read "w" and "rb" "wb" to make sure that it is in raw data or bytes only. 
+
+    In the next problem set we will experiment with BMP which is bit map photos which is like a grid of pixels which is each represented by a color. You will also be able to create your own filters so that the pictures can 
+    look different. Implement sepia or black and white photo filters. You can also apply a blur filter and do edge detections. 
+
+</p>
+<h4>Week 5 Lecture</h4>
+<p>
+    Last week of C and more data structures. Then we watch a video about jack and stacks and queues. Jack needs to change his style so he recruits help. Lou learns that Jack keeps things in a stack and cleans things and puts
+    them on the stack. So he is constantly picking up the same clothes. Lou recommends that Jack needs a queue. He hangs all the clothes on a hangar so he can get clothes one at a time from the rihgt side and put new things In
+    on the left. 
+
+    Queues is typically what you experience when you get in a line. Queues have a FIFO, first person in line, first person out of the line. A queue has two operations enqueue - getting in line and dequeue getting out of the line.
+    You could create a queue in c like this : <code> const int CAPACITY = 50;    typedef struct   {    person people[CAPACITY];    int size;    } queue;</code> the catch or limitation of this implementation is.. that it's only for 
+    50 students. 
+
+    Stacks have a LIFO property which is last in first out. This is pretty much the way laundry works since the last one you take out is the first one you take off the stack. To use a stack you need to implement push - push something
+    on top of the stack and pop take something off the top of the stack. Stack code could look like: <code> const int CAPACITY = 50;  typedef struct   {    person people[CAPACITY];     int size;     } stack;</code> .
+    
+    Dictionaries abstract data type which is really a 2 column table containing the words and definition. You can also see this data structure like a phone book. A computer scientist would associate this with a key and a value. There 
+    may be lots of design choices when creating a dictionary. 
+
+    Arrays chunk of memory where datas of the same type are stored back to back. In order to give a new value to an array you would typically need to copy all the array to a new place in order to add the new value. We can use realloc
+    to reassign the values from a malloc into a new place. Realloc does two things which is allocate the bytes to a new place that has teh space or check to see if it can be added to the current array. 
+
+    First alternative to arrays is the linked list. Moving away from just making the values contiguous and instead make each element linked to the others. Arrays are statically allocated. Two chunks of memory for every value where each
+    second value is a pointer to the next value.  A node is just data with meta data which is just a pointer to the next value or information to another variable. To keep track of the values you will need one additional value which stores
+    the address of the first node. The last value would have a pointer to null to have the typical array ending. The integer is 4 bytes, pointer is 8 bytes so each node is technically around 12 bytes. 
+
+    In code this may look like <code>typedef struct node  {   int number;   struct node *next;    }   node;</code> have to make some of these extra node names similar to prototyping so that the compiler knows that we are using the struct 
+    earlier.  A list is a referenced variable since it uses the pointer node that points to the first element or head as the initial value and core data value. node * list = NULL; which this line basically makes it to where the nexts value
+    is not a garbage value. n points to the next number after this line, then the next meta data is going to point to null. Then in the next value we get a new value and get a new memory value for a node clear out the garbage and set the int
+    to the user input, but the problem is that the original arrow is no longer pointing at the first one. This needs to be changed to n->next = list; this will give a continuous change like a sewing needle after the n value is removed. 
+    Inevitably this will result in the whole list going backward. Big O notation of prepending each element to the front of the list is 1 or O(1). If appending at the end the O notation would be O(n). The problem here is that even though we 
+    now have a way to create an array that is more dynamic and can take up a lot of different spaces it is not faster for many different things than arrays. 
+
+    A common alternative to linked list is a double linked list. This basically attaches the linked list to the next and the previous for easier travel. This simplifies the code writing but it does not solve the issues the data structure's 
+    performance difficulties. A proposed alternative is a mixed data structure which is a tree. The roots are at the top but its also a 2 dimensional data structure. This will have binary search trees which will enable binary searches again 
+    for the performance. The leaves(leaf nodes) are the bottom because they are children without children. Nodes in trees have 2 nodes a left and right pointer. Data in a tree are in order so that the left pointer is less the right pointer 
+    is more so they can use binary searches. Most tasks with a tree are big o O(log n) and a key part to remember about what determines this is that the data is repeatedly halved. The issue with a tree structure is that there is a lot of memory 
+    usage is high because there is 2 pointers. The node struct only need to have the one extra pointer in code writing. To traverse the tree <code>bool search (node * tree, int number)    {     if(tree == NULL)       {    return false   
+    }   else if( number < tree->number)    {      return search (tree->left, number);   }     else if ( number > tree->number)       {    return search(tree->left, number)      }      else     {    return true     }     }</code>. The onyl bad 
+    part of trees is that if the information is entered in a certain way you can end up with a linked list. 
+
+    Hashing infinite domain into a finite range. First example is a deck of cards being put into different buckets to separate the problem into 4 problems instead of just one. So for contacts.. mario as input would give back the output of how 
+    many ms contacts there are. A hash function may look like <code> #include <ctype.h>    int hash(char *name)     {      return toupper(name[0]) - 'A';     }   </code> . If you are passing in a value by reference use const so that way we can 
+    avoid accidentally change the value at the reference. Hash tables are how you would implement keys and values, a hash table is an array with linked lists. One of the issues with hashmaps is called collisions which is when there is some 
+    difficulties which is when there is say too many people with the same starting letter. A potential solution is to use more letters like spacing out all things with the first 3 letters. Big O will end up being O(n\k)which still ends up being 
+    just O(n) even though it is technically faster than a linked list. 
+
+    Tries is the real way to get to O(n). Goes to the first letter of the name and makes a pointer to their name. Changes each letter into the letter from a pointer from null. The last letter would keep null so that it marks the end of a string. 
+    Each letter you need to hash to find the letter when searching in order to find whether a value is there or not. The O run time will end up being the length of the names in order to find them. The issue with tries is  that its a huge amount 
+    of memory being 26 nodes for each character. 
+</p>

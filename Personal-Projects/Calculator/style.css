@@ -10,11 +10,11 @@ span, #outer, #enter, #nmiddle span, .smlside {
 }
 
 #Full, #top, #dleft, #dright, #nmiddle {
-  align-items: center;
+  align-items: center;     
   justify-items: center;
 }
 /* max out width/height */
-body, main, #alpha, #dleft, #dmiddle, #dright {
+body, #alpha, #dleft, #dmiddle, #dright {
   min-height: 100%;
 }
 
@@ -30,24 +30,18 @@ h1 {
 }
 
 span {
-  height: 90%;
+  height: 1.4cqh;
   text-align: center;
   color: darkred;
-  font-size: 1.5cqh;
+  font-size: 1.2cqh;
 }
 
 button {
   background: black;
   color: white;
   border-radius: 2cqw;
-  font-size: 1.8cqh;
+  font-size: clamp(0.65rem, 2.2cqi, 1rem);
 }
-
-#capt button, #minus button, #decimal button, #comma button, #underscore button {
-  font-size: 10rem !important;
-  font-weight: 900;
-}
-
 
 div {
   border-radius: 1em;
@@ -66,6 +60,7 @@ main {
 
 /* calculator start */
 #Full {
+  container-type: size;
   margin-top: 1dvh;
   display: flex;
   flex-direction: column;
@@ -192,7 +187,7 @@ main {
 #calcwrapper {
     line-height: 1;
     font-size: 3.8cqh;
-    transform: translateY(-.5cqh);
+    transform: translateY(-.5cqi);
 }
 
 /* Numpad divs and extras*/
@@ -231,7 +226,6 @@ main {
 
 #nright {
   display: grid;
-  padding-right: .5dvw;
   grid-template-columns: 3fr 3fr;
   grid-template-rows: .3fr .6fr .3fr .6fr .3fr .6fr .3fr .6fr .05fr .6fr;
   grid-template-areas:
@@ -319,7 +313,6 @@ main {
 }
 
 .smlside {
-  font-size: 1.5cqh !important;
   width: max(25px, 45%) !important;
   border-radius: 3cqh !important;
 }

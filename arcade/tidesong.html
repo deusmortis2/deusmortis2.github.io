@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/retro.css">
+<link rel="stylesheet" href="css/tidesong.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Tidesong</title>
+</head>
+<body class="no-scanlines">
+<header class="topbar">
+  <a class="brand" href="index.html">&lt; ARCADE</a>
+  <nav>
+    <button class="btn small ghost" type="button" data-mute>Sound: on</button>
+  </nav>
+</header>
+<main class="screen">
+  <h1 class="heading">TIDESONG</h1>
+  <div id="game-frame" class="game-frame wide ts-frame">
+    <canvas id="game" class="game-canvas wide" width="960" height="540" aria-label="Tidesong. Swim through an underwater world and befriend sea creatures with songs."></canvas>
+    <div class="ts-hudbtns">
+      <button type="button" data-open="menu">Menu</button>
+      <button type="button" data-open="codex">Codex</button>
+      <button type="button" data-open="bag">Bag</button>
+      <button type="button" data-open="map">Map</button>
+    </div>
+    <div class="ts-stick" aria-hidden="true"><div class="ts-knob"></div></div>
+    <div class="ts-lanes" hidden>
+      <button type="button" data-lane="0" aria-label="Left note">◀</button>
+      <button type="button" data-lane="1" aria-label="Down note">▼</button>
+      <button type="button" data-lane="2" aria-label="Up note">▲</button>
+      <button type="button" data-lane="3" aria-label="Right note">▶</button>
+    </div>
+    <div class="ts-battle" hidden>
+      <p class="ts-msg" aria-live="polite"></p>
+      <div class="ts-actions"></div>
+    </div>
+    <div class="ts-overlay" hidden></div>
+    <p class="ts-toast" role="status" hidden></p>
+  </div>
+  <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+  <p id="load-error" class="status" role="status"></p>
+  <p class="controls wide">
+    <strong>Swim:</strong> arrow keys or WASD (or the joystick on a touch screen) &nbsp;
+    <strong>Menu:</strong> Esc &nbsp; <strong>Codex:</strong> C &nbsp;
+    <strong>Bag:</strong> B &nbsp; <strong>Map:</strong> M &nbsp;
+    <strong>Fullscreen:</strong> F &nbsp;
+    <strong>Sing / Dance:</strong> arrow keys or WASD<br>
+    Swim out of town into the wild to meet creatures, and off the edge of a
+    region to reach the next one (the Map shows how the ocean fits together).
+    Weaken them by fighting yourself or with a companion, then pick
+    <em>Sing / Dance</em> and play the notes in time. Every creature has a
+    heart song that makes it far easier to befriend, and legendaries listen to
+    nothing else. Its Codex page has a clue. Sing as often as you like. If you black out,
+    you wake up safe in town. Towns have a Healer (rest for free), a
+    Shop, a Song Hall and a Tide Pool. Some regions need special gear from
+    shops before the currents will let you in.
+  </p>
+</main>
+<script type="module" src="js/tidesong/game.js"></script>
+</body>
+</html>

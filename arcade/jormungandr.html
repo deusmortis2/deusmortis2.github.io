@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/retro.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Jörmungandr</title>
+<style>
+  /* A wooden arcade cabinet round the screen, like the concept art. */
+  .game-canvas.wood {
+    border: 12px solid #5a3417;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 2px #2a1708, 0 0 0 3px #2a1708, 6px 6px 0 #000;
+    cursor: default;
+  }
+  .touch-buttons {
+    display: none;
+    gap: 12px;
+  }
+  @media (pointer: coarse) {
+    .touch-buttons {
+      display: flex;
+    }
+  }
+</style>
+</head>
+<body class="no-scanlines">
+<header class="topbar">
+  <a class="brand" href="index.html">&lt; ARCADE</a>
+  <nav>
+    <button class="btn small ghost" type="button" data-mute>Sound: on</button>
+  </nav>
+</header>
+<main class="screen">
+  <h1 class="heading">JÖRMUNGANDR</h1>
+  <div id="game-frame" class="game-frame wide">
+    <canvas id="game" class="game-canvas wide wood" width="960" height="540" aria-label="Jörmungandr game. Steer the world serpent round the board, eat food to grow, and catch Thor when he appears."></canvas>
+  </div>
+  <div class="touch-buttons">
+    <button id="boost-btn" class="btn" type="button">BOOST</button>
+    <button id="power-btn" class="btn alt" type="button">POWER</button>
+  </div>
+  <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+  <p id="load-error" class="status" role="status"></p>
+  <p class="controls wide">
+    <strong>Move:</strong> arrow keys, WASD, or swipe &nbsp;
+    <strong>Boost:</strong> hold space &nbsp;
+    <strong>Power-up:</strong> B &nbsp;
+    <strong>Fullscreen:</strong> F<br>
+    You are Jörmungandr, the world serpent. Eat to grow, and don't hit the
+    walls or your own tail. Apples are 10 points, runes 50, boars
+    100, and golden eggs make you grow by 2. Power-ups turn up now and then:
+    the star is a speed boost with double points, the potion is a shield that
+    saves you from one crash, and the lightning bolt stuns Thor. Thor runs
+    away from you, so corner him for 300 points. To clear a realm, eat enough
+    food and catch Thor at least once, then travel on through the nine realms. Every 30 seconds
+    you get a boost. Lose all three lives and you can start again,
+    or continue where you fell.
+  </p>
+</main>
+<script type="module" src="js/jormungandr/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,741 @@
+/* Tidesong: panels and controls laid over the game canvas. Sizes use cqw
+   (1% of the frame's width) so everything scales with the game. */
+
+.ts-frame {
+  position: relative;
+  container-type: inline-size;
+  --ts-ink: #f4f8ff;
+  --ts-panel: rgba(8, 20, 46, 0.94);
+  --ts-edge: rgba(150, 220, 255, 0.55);
+  --ts-accent: #ffe14d;
+  --ts-sea: #2bb3c9;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ts-ink);
+}
+
+.ts-frame .game-canvas {
+  cursor: default;
+  image-rendering: auto;
+}
+
+.ts-frame button {
+  font: inherit;
+  color: inherit;
+}
+
+/* Battle message box and choices. */
+.ts-battle {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  min-height: 22%;
+  padding: 1cqw 1.4cqw;
+  background: var(--ts-panel);
+  border-top: 3px solid var(--ts-edge);
+  font-size: clamp(11px, 1.6cqw, 20px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.75fr);
+  align-items: center;
+  gap: 1.2cqw;
+  cursor: pointer;
+}
+
+.ts-msg {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ts-battle:has(.ts-actions:empty) .ts-msg {
+  grid-column: 1 / -1;
+}
+
+.ts-actions:empty {
+  display: none;
+}
+
+.ts-actions {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+  gap: 0.6cqw;
+  cursor: default;
+}
+
+.ts-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.45cqw 0.9cqw;
+  border: 2px solid var(--tone, var(--ts-edge));
+  border-radius: 0.8cqw;
+  background: rgba(30, 60, 110, 0.85);
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.ts-choice span {
+  font-weight: 700;
+}
+
+.ts-choice small {
+  opacity: 0.8;
+  font-size: 0.7em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.ts-choice:hover:not(:disabled),
+.ts-choice:focus-visible {
+  background: rgba(60, 110, 180, 0.95);
+  outline: 2px solid var(--ts-accent);
+}
+
+.ts-choice:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ts-choice.fight { --tone: #ff7a7a; }
+.ts-choice.sing { --tone: #ff8fcf; }
+.ts-choice.good { --tone: #39d98a; }
+.ts-choice.ghost { background: transparent; }
+
+/* Full-screen overlays: title, creator, towns, menus. */
+.ts-overlay {
+  position: absolute;
+  inset: 4px;
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  background: rgba(4, 12, 30, 0.55);
+  font-size: clamp(11px, 1.55cqw, 19px);
+  overflow: hidden;
+}
+
+.ts-overlay[hidden],
+.ts-battle[hidden],
+.ts-toast[hidden],
+.ts-lanes[hidden] {
+  display: none;
+}
+
+.ts-btn {
+  padding: 0.7cqw 1.6cqw;
+  border: 2px solid var(--ts-edge);
+  border-radius: 0.8cqw;
+  background: rgba(30, 70, 130, 0.9);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.ts-btn:hover:not(:disabled),
+.ts-btn:focus-visible {
+  outline: 2px solid var(--ts-accent);
+  background: rgba(50, 100, 170, 0.95);
+}
+
+.ts-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ts-btn.go {
+  background: #ff5f9e;
+  border-color: #ffd0e4;
+  color: #fff;
+}
+
+.ts-btn.ghost {
+  background: transparent;
+}
+
+.ts-btn.small {
+  padding: 0.45cqw 1.1cqw;
+  font-size: 0.9em;
+}
+
+.ts-title-card {
+  width: min(70cqw, 640px);
+  padding: 3cqw;
+  text-align: center;
+  background: var(--ts-panel);
+  border: 3px solid var(--ts-edge);
+  border-radius: 1.6cqw;
+}
+
+.ts-title-card h2 {
+  margin: 0 0 1.4cqw;
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(20px, 4.4cqw, 48px);
+  color: #7ff0ff;
+  text-shadow: 0.4cqw 0.4cqw 0 #ff2e88;
+}
+
+.ts-title-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.4cqw;
+  margin-top: 2cqw;
+}
+
+/* Character creator. */
+.ts-creator {
+  display: grid;
+  grid-template-columns: 34% 1fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 1cqw 1.4cqw;
+  width: 100%;
+  height: 100%;
+  padding: 1.2cqw;
+  background: var(--ts-panel);
+}
+
+.ts-preview {
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8cqw;
+  min-height: 0;
+}
+
+.ts-preview canvas {
+  flex: 1 1 0;
+  min-height: 0;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 1cqw;
+  border: 2px solid var(--ts-edge);
+}
+
+.ts-name input {
+  width: 12em;
+  padding: 0.3em 0.5em;
+  border-radius: 0.5em;
+  border: 2px solid var(--ts-edge);
+  background: #0b1a33;
+  color: inherit;
+  font: inherit;
+}
+
+.ts-options {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.6cqw;
+}
+
+.ts-options h2 {
+  margin: 0 0 0.8cqw;
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(11px, 1.7cqw, 18px);
+  color: var(--ts-accent);
+}
+
+.ts-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7cqw 1.4cqw;
+}
+
+.ts-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3cqw;
+}
+
+.ts-field-label {
+  font-weight: 700;
+  font-size: 0.9em;
+}
+
+.ts-field-label em {
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 0.5em;
+}
+
+.ts-stepper {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  background: rgba(20, 50, 95, 0.8);
+  border-radius: 0.6cqw;
+}
+
+.ts-stepper button {
+  border: 0;
+  background: transparent;
+  padding: 0.3cqw 0.9cqw;
+  cursor: pointer;
+}
+
+.ts-stepper button:focus-visible {
+  outline: 2px solid var(--ts-accent);
+}
+
+.ts-stepper output {
+  text-align: center;
+  font-size: 0.92em;
+}
+
+.ts-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35cqw;
+}
+
+.ts-swatch {
+  width: 1.9cqw;
+  height: 1.9cqw;
+  min-width: 16px;
+  min-height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: var(--c);
+  cursor: pointer;
+  padding: 0;
+}
+
+.ts-swatch.on {
+  border-color: var(--ts-accent);
+  box-shadow: 0 0 0 2px #0a0f24, 0 0 0 4px var(--ts-accent);
+}
+
+.ts-creator-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.2cqw;
+}
+
+/* Character choice: mermaid / merman tabs and a grid of the cast. */
+.ts-body-tabs {
+  display: flex;
+  gap: 0.8cqw;
+  margin-bottom: 0.6cqw;
+}
+
+.ts-unlock-note {
+  margin: 0 0 0.8cqw;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+.ts-cast {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.7cqw;
+}
+
+.ts-cast-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2cqw;
+  padding: 0.4cqw;
+  border: 2px solid rgba(127, 216, 255, 0.25);
+  border-radius: 0.8cqw;
+  background: rgba(20, 50, 95, 0.75);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.ts-cast-card canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 100 / 146;
+}
+
+.ts-cast-card.on {
+  border-color: var(--ts-accent);
+  box-shadow: 0 0 0 2px var(--ts-accent);
+}
+
+.ts-cast-card:focus-visible {
+  outline: 2px solid var(--ts-accent);
+  outline-offset: 2px;
+}
+
+.ts-cast-card.locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ts-cast-card.locked canvas {
+  filter: grayscale(1) brightness(0.45);
+}
+
+.ts-cast-card.locked span::before {
+  content: "\1F512 ";
+}
+
+/* Sheets: towns and menus. */
+.ts-sheet {
+  display: flex;
+  flex-direction: column;
+  width: min(74cqw, 820px);
+  max-height: 94%;
+  background: var(--ts-panel);
+  border: 3px solid var(--ts-edge);
+  border-radius: 1.4cqw;
+  overflow: hidden;
+}
+
+.ts-wide .ts-sheet {
+  width: 94%;
+  height: 94%;
+}
+
+.ts-sheet header,
+.ts-sheet footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1cqw;
+  padding: 1cqw 1.6cqw;
+  background: rgba(20, 50, 95, 0.7);
+}
+
+.ts-sheet h2 {
+  margin: 0;
+  font-size: 1.15em;
+  color: var(--ts-accent);
+}
+
+.ts-sheet h3 {
+  margin: 1cqw 0 0.5cqw;
+  font-size: 1em;
+  color: #9fe8ff;
+}
+
+.ts-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.2cqw 1.6cqw;
+}
+
+.ts-sheet p {
+  margin: 0.4cqw 0;
+  line-height: 1.4;
+}
+
+.ts-lead {
+  font-style: italic;
+}
+
+.ts-note {
+  opacity: 0.8;
+  font-size: 0.88em;
+}
+
+.ts-pearls {
+  color: #fff2c4;
+}
+
+.ts-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1cqw;
+  padding: 0.7cqw 0;
+  border-bottom: 1px solid rgba(150, 220, 255, 0.18);
+}
+
+.ts-row > div {
+  flex: 1;
+  min-width: 12em;
+}
+
+.ts-row p {
+  opacity: 0.85;
+  font-size: 0.9em;
+}
+
+.ts-picker {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6cqw;
+}
+
+.ts-songs {
+  margin: 0;
+  padding-left: 1.4em;
+}
+
+.ts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
+  gap: 0.8cqw;
+}
+
+.ts-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15cqw;
+  padding: 0.6cqw;
+  border: 2px solid var(--ts-edge);
+  border-radius: 0.8cqw;
+  background: rgba(20, 50, 95, 0.75);
+  cursor: pointer;
+}
+
+.ts-card:focus-visible,
+.ts-card:hover:not(:disabled) {
+  outline: 2px solid var(--ts-accent);
+}
+
+.ts-card em {
+  font-size: 0.8em;
+  color: var(--ts-accent);
+}
+
+.ts-card small {
+  font-size: 0.78em;
+}
+
+.ts-you {
+  display: flex;
+  gap: 1.4cqw;
+  align-items: center;
+}
+
+.ts-you-art canvas {
+  border-radius: 50%;
+  border: 3px solid var(--ts-accent);
+  background: #2a6f99;
+}
+
+.ts-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1cqw;
+}
+
+/* Codex. */
+.ts-codex {
+  display: grid;
+  grid-template-columns: 1fr 34%;
+  gap: 1.4cqw;
+  height: 100%;
+}
+
+.ts-codex-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8cqw;
+  min-height: 0;
+}
+
+.ts-codex-list select {
+  margin-left: 0.5em;
+  padding: 0.25em;
+  font: inherit;
+  background: #0b1a33;
+  color: inherit;
+  border: 2px solid var(--ts-edge);
+  border-radius: 0.4em;
+}
+
+.ts-codex-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.6cqw;
+  overflow-y: auto;
+}
+
+.ts-codex-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.4cqw;
+  border: 2px solid rgba(150, 220, 255, 0.3);
+  border-radius: 0.8cqw;
+  background: rgba(20, 50, 95, 0.6);
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.ts-codex-cell.caught {
+  border-color: var(--ts-accent);
+}
+
+.ts-codex-cell:focus-visible,
+.ts-codex-cell:hover {
+  outline: 2px solid var(--ts-accent);
+}
+
+.ts-codex-panel {
+  overflow-y: auto;
+  padding: 0.8cqw;
+  border-radius: 1cqw;
+  background: rgba(20, 50, 95, 0.55);
+}
+
+.ts-codex-detail {
+  text-align: center;
+}
+
+.ts-codex-detail h3 {
+  margin-top: 0.4cqw;
+}
+
+.ts-tag {
+  display: inline-block;
+  margin: 0.15cqw;
+  padding: 0.1em 0.6em;
+  border-radius: 1em;
+  background: var(--c);
+  color: #0a0f24;
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+.ts-hint {
+  color: #ffd6ef;
+  font-style: italic;
+}
+
+.ts-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 78%;
+  object-fit: contain;
+  border-radius: 0.8cqw;
+}
+
+/* The painted town across the top of every building's panel. */
+.ts-banner {
+  flex: none;
+  height: clamp(70px, 16cqw, 150px);
+  background-size: cover;
+  background-position: center 40%;
+  border-bottom: 3px solid var(--ts-edge);
+}
+
+.ts-lair-art {
+  display: block;
+  max-width: 100%;
+  max-height: 22cqw;
+  margin: 0 auto 1cqw;
+  border-radius: 0.8cqw;
+  border: 2px solid var(--ts-edge);
+}
+
+/* Toasts, HUD buttons, joystick and rhythm lanes. */
+.ts-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 11%;
+  transform: translateX(-50%);
+  max-width: 70%;
+  margin: 0;
+  padding: 0.8cqw 1.6cqw;
+  background: rgba(6, 14, 34, 0.9);
+  border: 2px solid var(--ts-accent);
+  border-radius: 1cqw;
+  font-size: clamp(11px, 1.5cqw, 18px);
+  text-align: center;
+  pointer-events: none;
+}
+
+.ts-hudbtns {
+  position: absolute;
+  right: 1.4cqw;
+  bottom: 1.2cqw;
+  display: flex;
+  gap: 0.6cqw;
+}
+
+.ts-hudbtns button {
+  padding: 0.5cqw 1cqw;
+  font-size: clamp(10px, 1.3cqw, 16px);
+  font-weight: 700;
+  border: 2px solid var(--ts-edge);
+  border-radius: 0.8cqw;
+  background: rgba(6, 14, 34, 0.75);
+  cursor: pointer;
+}
+
+.ts-stick {
+  display: none;
+  position: absolute;
+  left: 2.5cqw;
+  bottom: 9cqw;
+  width: 15cqw;
+  height: 15cqw;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  touch-action: none;
+}
+
+.ts-knob {
+  position: absolute;
+  inset: 30%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.ts-touch .ts-stick {
+  display: block;
+}
+
+.ts-lanes {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5cqw;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(4, 8cqw);
+  gap: 0.6cqw;
+}
+
+.ts-lanes button {
+  height: 6cqw;
+  border-radius: 1cqw;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 2.4cqw;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* Hide the HUD buttons while a panel covers the game. */
+.ts-frame:has(.ts-overlay:not([hidden])) .ts-hudbtns,
+.ts-frame:has(.ts-battle:not([hidden])) .ts-hudbtns,
+.ts-frame:has(.ts-battle:not([hidden])) .ts-stick,
+.ts-frame:has(.ts-lanes:not([hidden])) .ts-hudbtns {
+  display: none;
+}
+
+@container (max-width: 640px) {
+  .ts-creator {
+    grid-template-columns: 1fr;
+    grid-template-rows: 40% 1fr auto;
+  }
+
+  .ts-preview {
+    grid-row: auto;
+  }
+
+  .ts-fields,
+  .ts-codex {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-cast {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

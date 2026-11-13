@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/retro.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Deus Draconis</title>
+</head>
+<body class="no-scanlines">
+<header class="topbar">
+  <a class="brand" href="index.html">&lt; ARCADE</a>
+  <nav>
+    <button class="btn small ghost" type="button" data-mute>Sound: on</button>
+  </nav>
+</header>
+<main class="screen">
+  <h1 class="heading">DEUS DRACONIS</h1>
+  <div id="game-frame" class="game-frame">
+    <canvas id="game" class="game-canvas" width="480" height="360" aria-label="Deus Draconis game. Fly the dragon through three stages, dodge monsters and their attacks, and breathe fire."></canvas>
+  </div>
+  <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+  <p id="load-error" class="status" role="status"></p>
+  <p class="controls">
+    <strong>Move:</strong> arrow keys, WASD, or drag &nbsp;
+    <strong>Fire:</strong> space or tap &nbsp;
+    <strong>Power-ups:</strong> click a card or press 1 to 3 &nbsp;
+    <strong>Fullscreen:</strong> F<br>
+    Survive three 60-second stages: the blue sky, the night sky, then low over the
+    countryside. Each stage ends with a wyrm boss. Every monster attacks in its own
+    way, so watch for warning lines and flashes. Kills level your dragon up for
+    faster fireball recharge, and from level 5 you pick a new power every few
+    levels. You get 3 lives for the whole flight. Halfway through each stage,
+    you get a power boost: a short shield, +10 points and full fire.
+  </p>
+</main>
+<script type="module" src="js/draconis/game.js"></script>
+</body>
+</html>

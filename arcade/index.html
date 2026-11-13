@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/retro.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>DeusMortis Arcade</title>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">&lt; SITE</a>
+  <nav>
+    <button class="btn small ghost" type="button" data-mute>Sound: on</button>
+  </nav>
+</header>
+<main class="screen">
+  <h1 class="heading">SELECT YOUR GAME</h1>
+  <div class="games">
+    <a class="game-card" href="tictactoe.html">
+      <img class="card-shot" src="img/previews/tictactoe.png" width="480" height="360" alt="">
+      <h2>TIC-TAC-TOE</h2>
+      <p>Beat the CPU. Best of as many rounds as you like.</p>
+    </a>
+    <a class="game-card" href="draconis.html">
+      <img class="card-shot" src="img/previews/draconis.jpg" width="480" height="360" alt="">
+      <h2>DEUS DRACONIS</h2>
+      <p>Fly a dragon through three stages of monsters and wyrm bosses.</p>
+    </a>
+    <a class="game-card" href="astro.html">
+      <img class="card-shot" src="img/previews/astro.jpg" width="480" height="360" alt="">
+      <h2>ASTRO STOMP</h2>
+      <p>Smash aliens across three planets. Keep an eye on your oxygen.</p>
+    </a>
+    <a class="game-card" href="spireclash/index.html">
+      <img class="card-shot" src="img/previews/spireclash.jpg" width="480" height="360" alt="">
+      <h2>SPIRECLASH</h2>
+      <p>Build stone walls and stairs to win the high ground against an AI rival.</p>
+    </a>
+    <a class="game-card" href="tidesong.html">
+      <div class="card-shot-wrap">
+        <img class="card-shot" src="img/previews/tidesong.jpg" width="480" height="360" alt="">
+        <span class="card-sticker">NEW!</span>
+      </div>
+      <h2>TIDESONG</h2>
+      <p>Early testing! Could be many bugs. Explore an underwater world and befriend sea creatures!</p>
+    </a>
+    <a class="game-card" href="jormungandr.html">
+      <img class="card-shot" src="img/previews/jormungandr.jpg" width="480" height="360" alt="">
+      <h2>JÖRMUNGANDR</h2>
+      <p>Grow the world serpent and catch Thor to cross each of the nine realms.</p>
+    </a>
+  </div>
+</main>
+<script type="module">
+  import { initPage } from "./js/ui.js";
+  initPage();
+</script>
+</body>
+</html>

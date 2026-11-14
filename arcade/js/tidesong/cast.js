@@ -1,21 +1,21 @@
-// The 24 playable merfolk, cut from FantasyCreatures/Mermaidgrid.jpeg and
-// mermengrid.jpeg (see castAtlas.js). Names are generic sea names. Each
+// The 24 playable merfolk: mermaids cut from FantasyCreatures/mermaidsheets,
+// mermen from mermengrid.jpeg (see castAtlas.js). Names are generic sea names. Each
 // entry also has rough colours for the small swimming sprite, and `long`
 // for long hair that streams behind it.
 import { castAtlas } from "./castAtlas.js";
 
 export const mermaids = [
   { hair: "#2a1a12", long: false, name: "Cowrie", skin: "#5a3426", tail: "#c8902a", top: "#3c9a3a" },
-  { hair: "#2a1a14", long: true, name: "Feather", skin: "#b0704a", tail: "#b8743a", top: "#c87a3a" },
-  { hair: "#2a1c18", long: true, name: "Violet", skin: "#c48a62", tail: "#9a6ab0", top: "#a08ac0" },
+  { hair: "#2a1a14", long: true, name: "Feather", skin: "#b0704a", tail: "#b02a30", top: "#c08a50" },
+  { hair: "#2a1c18", long: true, name: "Violet", skin: "#c48a62", tail: "#8a5ad0", top: "#9a90b0" },
   { hair: "#2a1a12", long: true, name: "Rainbow", skin: "#b07850", tail: "#e05a6a", top: "#e8703a" },
   { hair: "#1e1614", long: true, name: "Lotus", skin: "#b07a52", tail: "#8a4aa8", top: "#8a4aa8" },
   { hair: "#1e1614", long: true, name: "Orchid", skin: "#d09a70", tail: "#2fa070", top: "#b06a5a" },
-  { hair: "#3a2418", long: true, name: "Hibiscus", skin: "#b8805a", tail: "#2a7ac8", top: "#f0e0c8" },
-  { hair: "#3a2a1e", long: true, name: "Sunfin", skin: "#6a3e2a", tail: "#8a7ac0", top: "#d0782a" },
+  { hair: "#3a2418", long: true, name: "Hibiscus", skin: "#b8805a", tail: "#3a90d8", top: "#3a8ad8" },
+  { hair: "#3a2a1e", long: true, name: "Sunfin", skin: "#6a3e2a", tail: "#2a80c8", top: "#d0782a" },
   { hair: "#1a1418", long: false, name: "Blossom", skin: "#f6dcc8", tail: "#f08ab0", top: "#f08ab0" },
-  { hair: "#2a1c18", long: true, name: "Lagoon", skin: "#b8805a", tail: "#2aa8a8", top: "#9aa0a8" },
-  { hair: "#2a1a14", long: true, name: "Ember", skin: "#b0704a", tail: "#b85a2a", top: "#c87a3a" },
+  { hair: "#2a1c18", long: true, name: "Lagoon", skin: "#b8805a", tail: "#2ab0b0", top: "#a0603a" },
+  { hair: "#2a1a14", long: true, name: "Ember", skin: "#b0704a", tail: "#e8803a", top: "#3a6ac8" },
   { hair: "#e8cc88", long: true, name: "Pearl", skin: "#f8dcc8", tail: "#8ac8e8", top: "#b8a0e0" },
 ];
 
@@ -87,10 +87,10 @@ export function drawCast(ctx, group, index, x, y, w, h) {
 }
 
 // The face centre, as fractions of the box: heads sit at the top middle of
-// every figure, mermaids' a little larger.
+// every figure; the mermaids' pictures leave more room above the face.
 export function castFace(group, index, w, h) {
   const f = castFit(group, index, w, h);
-  const down = group === "mermen" ? 0.085 : 0.12;
+  const down = group === "mermen" ? 0.085 : 0.19;
   // A finished fin makes some images wider on one side; the fifth number
   // in the atlas is then where the figure's middle really is.
   const middle = f.r[4] ?? f.r[2] / 2;

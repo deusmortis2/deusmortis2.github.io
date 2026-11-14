@@ -1,5 +1,6 @@
 // The player's whole adventure, plus saving and loading it. Saves live in
-// this browser's localStorage, one per arcade login.
+// this browser's localStorage: each arcade login has a few save slots, so
+// you can keep several characters and switch between them.
 import { sanitiseAvatar } from "./avatar.js";
 import { creatureById, makeCreature, statsFor } from "./creatures.js";
 import { items, startingSongs } from "./data.js";
@@ -11,8 +12,13 @@ const saveVersion = 2;
 export const partyLimit = 4;
 export const startLevel = 5;
 
-export function saveKey(username) {
-  return `tidesong:save:${username || "guest"}`;
+export const saveSlots = 3;
+
+// Slot 0 keeps the key from before there were slots, so older saves turn
+// up in the first slot without being moved.
+export function saveKey(username, slot = 0) {
+  const base = `tidesong:save:${username || "guest"}`;
+  return slot ? `${base}:${slot + 1}` : base;
 }
 
 export function newState(avatar, start) {
@@ -21,6 +27,8 @@ export function newState(avatar, start) {
     calmSteps: 0,
     caught: [],
     charm: 1,
+    // Wild battles since you last met a creature you hadn't befriended.
+    discovery: 0,
     items: { echoShell: 2, salve: 4 },
     keys: [],
     lastTown: "coralhaven",
@@ -119,9 +127,9 @@ export function knownHeart(state, species) {
   }) ?? null;
 }
 
-export function saveGame(state, username) {
+export function saveGame(state, username, slot = 0) {
   try {
-    localStorage.setItem(saveKey(username), JSON.stringify(state));
+    localStorage.setItem(saveKey(username, slot), JSON.stringify(state));
     return true;
   } catch {
     return false;
@@ -132,10 +140,10 @@ function validCreature(c) {
   return c && Number.isInteger(c.species) && creatureById(c.species) && Number.isFinite(c.level);
 }
 
-export function loadGame(username) {
+export function loadGame(username, slot = 0) {
   let raw = null;
   try {
-    raw = JSON.parse(localStorage.getItem(saveKey(username)));
+    raw = JSON.parse(localStorage.getItem(saveKey(username, slot)));
   } catch {
     return null;
   }
@@ -176,9 +184,16 @@ export function loadGame(username) {
   return state;
 }
 
-export function deleteSave(username) {
+// Every slot in order, with null for an empty one.
+export function listSaves(username) {
+  return Array.from({ length: saveSlots }, (_, slot) => {
+    return loadGame(username, slot);
+  });
+}
+
+export function deleteSave(username, slot = 0) {
   try {
-    localStorage.removeItem(saveKey(username));
+    localStorage.removeItem(saveKey(username, slot));
   } catch {
     // Storage blocked: nothing to delete.
   }

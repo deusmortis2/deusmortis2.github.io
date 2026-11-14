@@ -9,9 +9,17 @@ export const tileSize = 32;
 
 // How far in from the edge you appear after crossing into a region.
 const arriveInset = 48;
-// Doors trigger when you swim into the spot just in front of them.
-const doorHalfWidth = 24;
-const doorDepth = 30;
+// Each shopkeeper stands centred in front of their door, under the sign:
+// their feet `keeperDrop` below the bottom of the doorway (a building can
+// set its own in zones.js, where its sign hangs low). Touching the keeper, anywhere from the
+// door down to just past their tail, opens the building.
+export const keeperHeight = 112;
+const keeperDrop = 30;
+const doorHalfWidth = 42;
+const doorBelowFeet = 30;
+// Where you wake up or arrive in town: this far below the Healer's keeper,
+// clear of the door so it doesn't open straight away.
+const squareGap = 36;
 // Wild creatures keep away from towns and lairs.
 const townMargin = 140;
 const lairCalm = 150;
@@ -39,11 +47,13 @@ export function createWorld() {
     const z = zones[id];
     const buildings = z.town.buildings.map((b) => {
       const door = scaled(id, ...b.door);
+      const feet = door.y + (b.keeperDrop ?? keeperDrop);
       return {
         door,
         doorRect: {
-          x0: door.x - doorHalfWidth, x1: door.x + doorHalfWidth, y0: door.y - 4, y1: door.y + doorDepth,
+          x0: door.x - doorHalfWidth, x1: door.x + doorHalfWidth, y0: door.y - 4, y1: feet + doorBelowFeet,
         },
+        keeper: { feet, x: door.x },
         kind: b.kind,
         label: buildingLabels[b.kind],
         rect: scaledRect(id, b.rect),
@@ -72,8 +82,7 @@ export function createWorld() {
       buildings,
       lair: { ...lairAt, name: z.lair.name, species: legend.id, zone: id },
       solids,
-      // Where you wake up or arrive in town: just below the Healer's door.
-      square: { x: healer.door.x, y: healer.door.y + 46 },
+      square: { x: healer.door.x, y: healer.doorRect.y1 + squareGap },
     }];
   }));
 
@@ -168,18 +177,32 @@ export function createWorld() {
   };
 }
 
-// Picks a wild creature for a region: commons are far more likely.
-export function rollEncounter(zone, rng = Math.random) {
+// Each battle against a creature you've already befriended makes the ones
+// you haven't befriended a little more likely (15% per battle, up to 4 times as likely).
+const discoveryStep = 0.15;
+const discoveryCap = 4;
+
+export function discoveryMultiplier(streak = 0) {
+  return Math.min(discoveryCap, 1 + streak * discoveryStep);
+}
+
+// Picks a wild creature for a region: commons are far more likely, and
+// creatures you haven't befriended yet get a boost that grows with `streak`.
+export function rollEncounter(zone, { caught = [], streak = 0 } = {}, rng = Math.random) {
   const pool = creaturesInZone(zone).filter((s) => {
     return s.rarity !== "legendary";
   });
-  const weight = { common: 10, rare: 1.2, uncommon: 4 };
+  const rarityWeight = { common: 10, rare: 1.2, uncommon: 4 };
+  const boost = discoveryMultiplier(streak);
+  const weight = (s) => {
+    return rarityWeight[s.rarity] * (caught.includes(s.id) ? 1 : boost);
+  };
   const total = pool.reduce((sum, s) => {
-    return sum + weight[s.rarity];
+    return sum + weight(s);
   }, 0);
   let roll = rng() * total;
   const species = pool.find((s) => {
-    roll -= weight[s.rarity];
+    roll -= weight(s);
     return roll <= 0;
   }) ?? pool[0];
   const [low, high] = zones[zone].levels;

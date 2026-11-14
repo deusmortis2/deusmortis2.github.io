@@ -1,6 +1,8 @@
-// Draws a battle: the region's water, the wild creature on the right, your
-// fighter (you or a companion) on the left, and both health boxes.
+// Draws a battle: the region's water, the wild creature on the right facing
+// left, your fighter (you or a companion) on the left facing right, and both
+// health boxes.
 import { battleImage } from "./art.js";
+import { castMember } from "./avatar.js";
 import { creatureCanvas } from "./creatureArt.js";
 import { creatureById, statsFor } from "./creatures.js";
 import { elementInfo, songById } from "./data.js";
@@ -102,7 +104,7 @@ function shakeOffset(scene, who, now) {
 
 function drawWild(ctx, scene, state, now, time) {
   const wild = scene.wild;
-  const art = creatureCanvas(wild.species.id, 230);
+  const art = creatureCanvas(wild.species.id, 230, "left");
   let scale = 1;
   let fade = 1;
   if (scene.capture) {
@@ -147,7 +149,18 @@ function drawAlly(ctx, scene, state, now, time) {
   const bob = Math.sin(time * 1.8 + 1) * 4;
   if (fighter === "you") {
     const art = fullCanvas(state.avatar, 290);
-    ctx.drawImage(art, 220 - art.width / 2 + dx, 110 + bob);
+    const x = 220 - art.width / 2 + dx;
+    // Pictures drawn turned to the left are mirrored so the player always
+    // faces the wild creature on the right.
+    if (castMember(state.avatar).turned === "left") {
+      ctx.save();
+      ctx.translate(x + art.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(art, 0, 110 + bob);
+      ctx.restore();
+    } else {
+      ctx.drawImage(art, x, 110 + bob);
+    }
     const stats = playerStats(state);
     infoBox(ctx, 636, 252, {
       hp: state.player.hp,
@@ -162,7 +175,7 @@ function drawAlly(ctx, scene, state, now, time) {
   });
   if (!c) return;
   const species = creatureById(c.species);
-  const art = creatureCanvas(species.id, 210);
+  const art = creatureCanvas(species.id, 210, "right");
   ctx.drawImage(art, 220 - 105 + dx, 235 - 105 + bob);
   const info = elementInfo[species.element];
   infoBox(ctx, 636, 252, {

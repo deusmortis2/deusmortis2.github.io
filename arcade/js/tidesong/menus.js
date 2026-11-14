@@ -185,7 +185,8 @@ function useOutside(env, id, refresh) {
   const picker = html(`<div class="ts-picker"><p>Use ${escapeHtml(item.name)} on:</p></div>`);
   targets.forEach((t) => {
     const b = html(`<button type="button" class="ts-btn small">${escapeHtml(t.label)}</button>`);
-    b.addEventListener("click", () => {
+    b.addEventListener("click", async () => {
+      await env.ask(`Answer to use your ${item.name}`);
       useUpItem(state, id);
       if (t.who === "you") {
         state.player.hp = Math.min(playerStats(state).hp, state.player.hp + item.value);
@@ -288,9 +289,10 @@ export function openMainMenu(env) {
       const options = [
         ["resume", "Resume"], ["team", "Team (P)"], ["bag", "Bag (B)"], ["codex", "Codex (C)"],
         ["map", "Map (M)"], ["graphics", `Graphics: ${env.state.lowGraphics ? "Low (faster)" : "Full"}`],
-        ["save", "Save now"], ["restart", "New character"],
+        ["save", "Save now"], ["title", "Save & switch character"],
+        ["quit", "Quit without saving"],
       ];
-      body.innerHTML = "<div class=\"ts-menu-grid\"></div><p class=\"ts-note\">Your adventure saves automatically in this browser.</p>";
+      body.innerHTML = "<div class=\"ts-menu-grid\"></div><p class=\"ts-note\">Your adventure saves automatically in this browser. Switch character to play another save slot or start someone new. This adventure stays saved. Quit without saving goes back to the main menu and loses anything since the last save.</p>";
       const grid = body.querySelector(".ts-menu-grid");
       options.forEach(([value, label]) => {
         const b = html(`<button type="button" class="ts-btn">${escapeHtml(label)}</button>`);

@@ -4,6 +4,7 @@
 // frame.
 import { creatureAtlas } from "./creatureAtlas.js";
 import { creatureById } from "./creatures.js";
+import { needsFlip } from "./creatureFacing.js";
 import { makeCanvas } from "./util.js";
 import { zoneOrder } from "./zones.js";
 
@@ -37,8 +38,9 @@ export function loadCreatureArt() {
 
 // A cached image of the creature, fitted into a size x size square and
 // standing on its bottom edge. mode: "full", "silhouette" (not yet seen, in
-// the Codex) or "flip" (mirrored). While its picture is still loading this
-// returns a blank canvas, which isn't cached.
+// the Codex), "left" or "right" (turned to face that way, for battles).
+// While its picture is still loading this returns a blank canvas, which
+// isn't cached.
 export function creatureCanvas(id, size, mode = "full") {
   const key = `${id}:${size}:${mode}`;
   if (cache.has(key)) return cache.get(key);
@@ -52,7 +54,7 @@ export function creatureCanvas(id, size, mode = "full") {
   const h = sh * scale;
   const ctx = canvas.getContext("2d");
   ctx.imageSmoothingQuality = "high";
-  if (mode === "flip") {
+  if ((mode === "left" || mode === "right") && needsFlip(species.zone, species.slot, mode)) {
     ctx.translate(size, 0);
     ctx.scale(-1, 1);
   }

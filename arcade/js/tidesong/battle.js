@@ -4,7 +4,7 @@
 // every other song. Resolves "caught", "won", "fled" or "blackout".
 import { catchRates, creatureById, movesFor, statsFor, xpForLevel, xpReward } from "./creatures.js";
 import { elementInfo, items, moves, songById, typeMultiplier } from "./data.js";
-import { addCaptured, learnReaction, markSeen, playerMoves, playerStats, useUpItem } from "./state.js";
+import { addCaptured, hasCaught, learnReaction, markSeen, playerMoves, playerStats, useUpItem } from "./state.js";
 import { clamp } from "./util.js";
 
 const maxLevel = 60;
@@ -262,6 +262,7 @@ async function useOnTarget(b, id) {
   targets.push({ label: "Back", tone: "ghost", value: null });
   const who = await b.choose(`Use ${item.name} on...`, targets);
   if (!who) return false;
+  await b.ask(`Answer to use your ${item.name}`);
   useUpItem(state, id);
   if (who === "you") {
     const max = playerStats(state).hp;
@@ -374,6 +375,8 @@ export async function runBattle(env, species, level) {
   scene.wild = { hp: stats.hp, level, species, stats };
   scene.hit = null;
   scene.capture = null;
+  const firstSighting = !state.seen.includes(species.id);
+  const befriended = hasCaught(state, species.id);
   markSeen(state, species.id);
   const lead = state.party.find((c) => {
     return c.hp > 0;
@@ -388,6 +391,11 @@ export async function runBattle(env, species, level) {
   };
   const legendary = species.rarity === "legendary";
   await b.say(legendary ? `${species.name}, guardian of these waters, rises to meet you!` : `A wild ${species.name} (Lv ${level}) swims up!`);
+  if (!befriended) {
+    await b.say(firstSighting
+      ? `New creature! You've never met a ${species.name} before. Befriend it to add it to your team!`
+      : `You haven't befriended a ${species.name} yet. Sing to it to win it over!`);
+  }
   if (lead) await b.say(`Go, ${creatureById(lead.species).name}!`);
   for (;;) {
     const outcome = await playerTurn(b);

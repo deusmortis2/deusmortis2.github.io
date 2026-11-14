@@ -57,6 +57,11 @@ export function preloadBattle(zone) {
   load(`battles/${zone}.jpg`);
 }
 
+// The shopkeepers who stand outside each town's buildings.
+export function keeperSheet() {
+  return ready("shopkeepers.webp");
+}
+
 export function oceanMap() {
   return ready("ocean-map.jpg");
 }

@@ -105,9 +105,23 @@ function shop(env, town) {
   return shell(env, town, "shop", (body, refreshPearls) => {
     const refresh = () => {
       refreshPearls();
+      // Rebuilding the rows drops keyboard focus, so put it back on the same
+      // row (or the next one you can still afford) to keep WASD working.
+      const rows = [...body.children];
+      const was = rows.findIndex((row) => {
+        return row.contains(document.activeElement);
+      });
       body.replaceChildren(...town.sells.map((id) => {
         return shopRow(env, id, refresh);
       }));
+      if (was < 0) return;
+      const buttons = [...body.querySelectorAll("button")];
+      const next = buttons.slice(was).find((b) => {
+        return !b.disabled;
+      }) ?? [...buttons].reverse().find((b) => {
+        return !b.disabled;
+      }) ?? body.closest(".ts-sheet")?.querySelector("[data-leave]");
+      next?.focus();
     };
     refresh();
   });

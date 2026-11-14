@@ -2,10 +2,13 @@
 // (building names when you're close, the glow of a legendary's lair, signs
 // at the edges saying where they lead, strong currents into sealed regions)
 // and the moving ambience (light rays, bubbles, darkness).
-import { sceneImage } from "./art.js";
+import { keeperSheet, sceneImage } from "./art.js";
+import { keeperAtlas } from "./keeperAtlas.js";
+import { keeperHeight } from "./world.js";
 import { zones } from "./zones.js";
 
 const signRange = 240;
+
 const edgeRange = 150;
 
 // Keeps the camera inside the region, or centres a region smaller than the
@@ -55,10 +58,28 @@ function drawScene(ctx, view, zone) {
   ctx.imageSmoothingEnabled = true;
 }
 
+function drawKeepers(ctx, view, zone, region, time) {
+  const sheet = keeperSheet();
+  if (!sheet) return;
+  const set = keeperAtlas[zones[zone].keepers ?? "regular"];
+  region.buildings.forEach((b, i) => {
+    const r = set[b.kind];
+    if (!r) return;
+    const w = r[2] * (keeperHeight / r[3]);
+    // A slow bob, out of step from one keeper to the next.
+    const bob = Math.sin(time * 1.6 + i * 1.3) * 2;
+    const x = b.keeper.x - w / 2 - view.camX;
+    const y = b.keeper.feet - keeperHeight + bob - view.camY;
+    if (x > view.width || y > view.height || x + w < 0 || y + keeperHeight < 0) return;
+    ctx.drawImage(sheet, r[0], r[1], r[2], r[3], Math.round(x), Math.round(y), w, keeperHeight);
+  });
+}
+
 function drawSigns(ctx, view, region, player) {
   region.buildings.forEach((b) => {
     if (Math.hypot(b.door.x - player.x, b.door.y - player.y) > signRange) return;
-    pill(ctx, b.label, b.door.x - view.camX, b.door.y - view.camY - 14, "#fff2c4");
+    // Below the shopkeeper, so it hides neither them nor the sign.
+    pill(ctx, b.label, b.keeper.x - view.camX, b.keeper.feet - view.camY + 12, "#fff2c4");
   });
 }
 
@@ -141,6 +162,7 @@ export function createWorldRenderer(world) {
   const draw = (ctx, view, state) => {
     const region = world.region(state.zone);
     drawScene(ctx, view, state.zone);
+    drawKeepers(ctx, view, state.zone, region, state.time);
     drawLair(ctx, view, region, state);
     drawSigns(ctx, view, region, state.player);
     drawEdges(ctx, view, state.zone, state);

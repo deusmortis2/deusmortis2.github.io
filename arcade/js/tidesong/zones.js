@@ -10,7 +10,9 @@
 // levels: wild creature levels. requires: key item needed to swim in.
 // dark: how dark it is without a lantern (0 to 1). water: the region's colour
 // for menus and loading screens. map: the region's box on the ocean map, and
-// lair.mapX / mapY the lair's own dot there.
+// lair.mapX / mapY the lair's own dot there. keepers: which set of
+// shopkeepers stands outside the buildings (see keeperAtlas.js); regular
+// when left out.
 
 // Building kinds, in the order they stand in every painted town: the tower
 // with the lyre sign, the wave sign, the mortar sign and the sword sign.
@@ -19,12 +21,14 @@ export const buildingLabels = {
   healer: "Healer", pool: "Tide Pool", shop: "Shop", songs: "Song Hall",
 };
 
-// [left, top, right, doorX, doorY]: the solid footprint runs from top to the
-// bottom of the doorway, and the door is the spot in front of it.
+// [left, top, right, doorX, doorY, keeperDrop?]: the solid footprint runs
+// from top to the bottom of the doorway, and the door is the spot in front of
+// it. keeperDrop (world pixels) lowers that building's shopkeeper where the
+// sign hangs low, so their head stays under the sign.
 function town(id, name, buildings, extraSolids = []) {
   return {
-    buildings: buildings.map(([x0, y0, x1, doorX, doorY], i) => {
-      return { door: [doorX, doorY], kind: buildingOrder[i], rect: [x0, y0, x1, doorY] };
+    buildings: buildings.map(([x0, y0, x1, doorX, doorY, keeperDrop], i) => {
+      return { door: [doorX, doorY], keeperDrop, kind: buildingOrder[i], rect: [x0, y0, x1, doorY] };
     }),
     id,
     name,
@@ -35,23 +39,24 @@ function town(id, name, buildings, extraSolids = []) {
 export const zones = {
   abyssal: {
     dark: 0.2, levels: [25, 31], name: "Abyssal Anchor", requires: "heatWard", tier: 8, water: "#3a1f24",
-    image: { h: 2144, scale: 1.25, w: 1984 },
-    lair: { name: "The Hydrothermal Furnace", x: 1555, y: 1965, mapX: 1155, mapY: 735 },
+    keepers: "deep",
+    image: { h: 896, scale: 1.5, w: 1200 },
+    lair: { name: "The Hydrothermal Furnace", x: 947, y: 825, mapX: 1155, mapY: 735 },
     map: [850, 610, 1264, 843],
     town: town("lastLight", "Last Light Station", [
-      [152, 150, 287, 217, 535], [334, 368, 493, 408, 535],
-      [532, 293, 651, 592, 514], [699, 302, 866, 776, 527],
+      [100, 109, 172, 138, 270], [208, 190, 327, 255, 265],
+      [331, 153, 408, 367, 247], [437, 149, 533, 487, 270],
     ]),
     exits: { north: [[0, 0.5, "pelagia"], [0.5, 1, "cragspire"]], west: [[0, 1, "gloomveil"]] },
   },
   brinewallow: {
     dark: 0, levels: [12, 17], name: "Brinewallow Fen", requires: "ruinKey", tier: 4, water: "#3b4a35",
-    image: { h: 976, scale: 1.6, w: 1089 },
-    lair: { name: "Crocodile Grotto", x: 885, y: 830, mapX: 752, mapY: 93 },
+    image: { h: 2528, scale: 1, w: 1696 },
+    lair: { name: "Crocodile Grotto", x: 1378, y: 2125, mapX: 752, mapY: 93 },
     map: [430, 0, 850, 200],
     town: town("mudskipper", "Mudskipper Haven", [
-      [63, 70, 132, 98, 172], [154, 97, 231, 195, 160],
-      [256, 55, 319, 287, 143], [341, 51, 422, 381, 160],
+      [128, 172, 265, 197, 419], [296, 234, 486, 390, 400],
+      [514, 128, 649, 580, 352], [692, 122, 864, 777, 419],
     ]),
     exits: {
       east: [[0, 1, "fangshore"]], south: [[0, 1, "verdant"]], west: [[0, 1, "frostveil"]],
@@ -63,8 +68,8 @@ export const zones = {
     lair: { name: "The Sea Lion Nest", x: 1810, y: 1440, mapX: 1190, mapY: 498 },
     map: [880, 200, 1264, 600],
     town: town("barnacleBay", "Barnacle Bay", [
-      [176, 80, 348, 255, 447], [453, 147, 625, 545, 343],
-      [672, 61, 825, 738, 343], [882, 52, 1102, 970, 347],
+      [176, 80, 348, 252, 447], [453, 147, 625, 545, 343],
+      [672, 61, 825, 748, 343], [882, 52, 1102, 970, 347],
     ]),
     exits: {
       north: [[0, 1, "fangshore"]], south: [[0, 0.5, "pelagia"], [0.5, 1, "abyssal"]],
@@ -73,23 +78,23 @@ export const zones = {
   },
   fangshore: {
     dark: 0, levels: [30, 40], name: "Fangshore Coast", requires: "pressurePearl", tier: 9, water: "#2b4a3a",
-    image: { h: 992, scale: 1.4, w: 1069 },
-    lair: { name: "The Jaguar's Den", x: 875, y: 800, mapX: 1190, mapY: 77 },
+    image: { h: 2528, scale: 0.75, w: 1696 },
+    lair: { name: "The Jaguar's Den", x: 1530, y: 1860, mapX: 1190, mapY: 77 },
     map: [850, 0, 1264, 210],
     town: town("grizzlyWatch", "Grizzly Watch", [
-      [76, 152, 156, 115, 261], [183, 182, 272, 248, 257],
-      [301, 132, 376, 338, 239], [401, 132, 515, 449, 259],
+      [189, 391, 389, 296, 700], [437, 469, 707, 570, 678],
+      [750, 343, 937, 842, 617], [1006, 347, 1289, 1126, 691],
     ]),
     exits: { south: [[0, 1, "cragspire"]], west: [[0, 1, "brinewallow"]] },
   },
   fluvius: {
     dark: 0, levels: [6, 10], name: "Fluvius Basin", requires: null, tier: 2, water: "#2a6a5f",
-    image: { h: 992, scale: 1.4, w: 1069 },
-    lair: { name: "Axolotl Hollow", x: 865, y: 860, mapX: 347, mapY: 288 },
+    image: { h: 2528, scale: 0.85, w: 1696 },
+    lair: { name: "Axolotl Hollow", x: 1380, y: 2240, mapX: 347, mapY: 288 },
     map: [0, 215, 430, 420],
     town: town("capybara", "Capybara Crossing", [
-      [76, 152, 156, 115, 261], [183, 182, 272, 248, 257],
-      [301, 132, 376, 338, 239], [401, 132, 515, 449, 259],
+      [172, 376, 356, 266, 684], [416, 452, 624, 520, 676],
+      [680, 328, 848, 766, 600], [912, 324, 1124, 1020, 676],
     ]),
     exits: {
       east: [[0, 1, "verdant"]], north: [[0, 1, "frostveil"]], south: [[0, 1, "prismreef"]],
@@ -97,23 +102,25 @@ export const zones = {
   },
   frostveil: {
     dark: 0, levels: [15, 20], name: "Frostveil Reach", requires: "thermalCloak", tier: 5, water: "#4f9fc2",
-    image: { h: 1024, scale: 2, w: 572 },
-    lair: { name: "The Leviathan's Ice Cave", x: 487, y: 792, mapX: 352, mapY: 132 },
+    keepers: "arctic",
+    image: { h: 2528, scale: 1, w: 1696 },
+    lair: { name: "The Leviathan's Ice Cave", x: 1205, y: 2190, mapX: 352, mapY: 132 },
     map: [0, 0, 430, 215],
     town: town("winterport", "Winterport Keep", [
-      [45, 50, 92, 66, 125], [102, 70, 168, 134, 118],
-      [178, 38, 223, 198, 112], [239, 37, 307, 265, 118],
+      [131, 143, 274, 203, 360], [320, 197, 500, 403, 346],
+      [529, 109, 663, 591, 303], [711, 100, 862, 788, 360],
     ]),
     exits: { east: [[0, 1, "brinewallow"]], south: [[0, 1, "fluvius"]] },
   },
   gloomveil: {
     dark: 0.35, levels: [18, 24], name: "Gloomveil Depths", requires: "lanternJelly", tier: 6, water: "#1b1f3a",
+    keepers: "deep",
     image: { h: 2048, scale: 0.9, w: 2048 },
     lair: { name: "The Vampire Squid Crypt", x: 1530, y: 1590, mapX: 347, mapY: 711 },
     map: [0, 600, 520, 843],
     town: town("lanternfall", "Lanternfall Sanctuary", [
-      [170, 150, 302, 245, 508], [358, 343, 506, 425, 500],
-      [558, 266, 694, 622, 484], [730, 258, 926, 818, 504],
+      [170, 150, 302, 248, 508], [358, 343, 506, 447, 500],
+      [558, 266, 694, 635, 484], [730, 258, 926, 836, 504],
     ], [[302, 160, 900, 340]]),
     exits: { east: [[0, 1, "abyssal"]], north: [[0, 0.6, "prismreef"], [0.6, 1, "pelagia"]] },
   },
@@ -123,7 +130,8 @@ export const zones = {
     lair: { name: "The Orca Vault", x: 2772, y: 1112, mapX: 979, mapY: 499 },
     map: [620, 440, 1100, 650],
     town: town("stormwatch", "Stormwatch Spire", [
-      [286, 20, 433, 367, 495], [486, 357, 648, 562, 490],
+      // The tower starts below its green crystal, so you can swim through it.
+      [286, 100, 433, 367, 495], [486, 357, 648, 568, 490],
       [695, 276, 829, 765, 486], [881, 271, 1057, 973, 500],
     ], [[433, 152, 1033, 340]]),
     exits: {
@@ -138,8 +146,8 @@ export const zones = {
     lair: { name: "The Wobbegong Cavern", x: 2000, y: 1072, mapX: 557, mapY: 499 },
     map: [200, 420, 620, 650],
     town: town("coralhaven", "Coralhaven Market", [
-      [315, 215, 458, 395, 430], [497, 280, 648, 548, 430],
-      [685, 205, 840, 720, 430], [840, 180, 1030, 918, 430],
+      [315, 215, 458, 395, 430, 56], [497, 280, 648, 585, 430, 50],
+      [685, 205, 840, 765, 430], [840, 180, 1030, 930, 430, 48],
     ]),
     exits: {
       east: [[0, 1, "pelagia"]], north: [[0, 0.5, "fluvius"], [0.5, 1, "verdant"]],
@@ -152,8 +160,8 @@ export const zones = {
     lair: { name: "The Swell Shark Trench", x: 2693, y: 1110, mapX: 806, mapY: 289 },
     map: [430, 200, 880, 440],
     town: town("otterholm", "Otterholm", [
-      [223, 77, 408, 325, 290], [415, 135, 573, 490, 282],
-      [592, 65, 727, 658, 235], [742, 70, 938, 828, 282],
+      [223, 77, 408, 344, 300, 72], [415, 135, 573, 524, 296, 68],
+      [592, 65, 727, 693, 255, 48], [742, 70, 938, 862, 302, 36],
     ]),
     exits: {
       east: [[0, 1, "cragspire"]], north: [[0, 1, "brinewallow"]],

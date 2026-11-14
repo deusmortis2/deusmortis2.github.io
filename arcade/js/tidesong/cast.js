@@ -1,8 +1,10 @@
 // The 24 playable merfolk: mermaids cut from FantasyCreatures/mermaidsheets,
 // mermen from mermengrid.jpeg (see castAtlas.js). Names are generic sea names. Each
 // entry also has rough colours for the small swimming sprite, and `long`
-// for long hair that streams behind it.
+// for long hair that streams behind it. `turned: "left"` marks the pictures
+// drawn turned to the left, which battles mirror so the player faces right.
 import { castAtlas } from "./castAtlas.js";
+import { artVersion } from "./util.js";
 
 export const mermaids = [
   { hair: "#2a1a12", long: false, name: "Cowrie", skin: "#5a3426", tail: "#c8902a", top: "#3c9a3a" },
@@ -10,13 +12,13 @@ export const mermaids = [
   { hair: "#2a1c18", long: true, name: "Violet", skin: "#c48a62", tail: "#8a5ad0", top: "#9a90b0" },
   { hair: "#2a1a12", long: true, name: "Rainbow", skin: "#b07850", tail: "#e05a6a", top: "#e8703a" },
   { hair: "#1e1614", long: true, name: "Lotus", skin: "#b07a52", tail: "#8a4aa8", top: "#8a4aa8" },
-  { hair: "#1e1614", long: true, name: "Orchid", skin: "#d09a70", tail: "#2fa070", top: "#b06a5a" },
+  { hair: "#1e1614", long: true, name: "Orchid", skin: "#d09a70", tail: "#2fa070", top: "#b06a5a", turned: "left" },
   { hair: "#3a2418", long: true, name: "Hibiscus", skin: "#b8805a", tail: "#3a90d8", top: "#3a8ad8" },
-  { hair: "#3a2a1e", long: true, name: "Sunfin", skin: "#6a3e2a", tail: "#2a80c8", top: "#d0782a" },
+  { hair: "#3a2a1e", long: true, name: "Sunfin", skin: "#6a3e2a", tail: "#2a80c8", top: "#d0782a", turned: "left" },
   { hair: "#1a1418", long: false, name: "Blossom", skin: "#f6dcc8", tail: "#f08ab0", top: "#f08ab0" },
   { hair: "#2a1c18", long: true, name: "Lagoon", skin: "#b8805a", tail: "#2ab0b0", top: "#a0603a" },
   { hair: "#2a1a14", long: true, name: "Ember", skin: "#b0704a", tail: "#e8803a", top: "#3a6ac8" },
-  { hair: "#e8cc88", long: true, name: "Pearl", skin: "#f8dcc8", tail: "#8ac8e8", top: "#b8a0e0" },
+  { hair: "#e8cc88", long: true, name: "Pearl", skin: "#f8dcc8", tail: "#8ac8e8", top: "#b8a0e0", turned: "left" },
 ];
 
 export const mermen = [
@@ -57,7 +59,7 @@ export async function loadCastArt(base = "img/tidesong/") {
         resolve(img);
       };
       img.onerror = reject;
-      img.src = `${base}merfolk-cast.webp`;
+      img.src = `${base}merfolk-cast.webp?v=${artVersion(castAtlas)}`;
     });
     return true;
   } catch {

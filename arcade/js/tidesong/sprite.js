@@ -6,7 +6,7 @@
 import { avatarColors, castMember, groupOf } from "./avatar.js";
 import { modelAtlas } from "./modelAtlas.js";
 import { swimAtlas } from "./swimAtlas.js";
-import { alpha, makeCanvas, shade } from "./util.js";
+import { alpha, artVersion, makeCanvas, shade } from "./util.js";
 
 export const spriteWidth = 72;
 export const spriteHeight = 40;
@@ -172,8 +172,37 @@ export function clearSpriteCache() {
 // On-screen height of the front-facing model, in canvas pixels.
 export const modelHeight = 112;
 
+function middle(values) {
+  const sorted = [...values].sort((a, b) => {
+    return a - b;
+  });
+  return sorted[Math.floor(sorted.length / 2)];
+}
+
+// Every model in a group is drawn at one scale, so each keeps the size she
+// was drawn at: big hair or a long tail no longer shrinks her to fit a set
+// height. The group's middle-height model comes out `modelHeight` tall,
+// except mermaids, who are drawn `curledBoost` bigger: their tails curl up
+// beside them, so at the same height they look smaller than the mermen.
+const curledBoost = 1.21;
+
+export const modelScale = {
+  mermaids: curledBoost * modelHeight / middle(modelAtlas.mermaids.map((r) => {
+    return r[3];
+  })),
+  mermen: modelHeight / middle(modelAtlas.mermen.map((r) => {
+    return r[3];
+  })),
+};
+
 let models = null;
 let swimmers = null;
+
+// The loaded model and side-profile pictures (null until loaded), for the
+// mermaid poses in pose.js.
+export function loadedArt() {
+  return { models, swimmers };
+}
 
 function loadImage(src) {
   return new Promise((resolve, reject) => {
@@ -193,8 +222,8 @@ export async function loadModelArt(base = "img/tidesong/") {
   if (models) return true;
   try {
     [models, swimmers] = await Promise.all([
-      loadImage(`${base}merfolk-models.webp`),
-      loadImage(`${base}merfolk-swim.webp`).catch(() => {
+      loadImage(`${base}merfolk-models.webp?v=${artVersion(modelAtlas)}`),
+      loadImage(`${base}merfolk-swim.webp?v=${artVersion(swimAtlas)}`).catch(() => {
         return null;
       }),
     ]);
@@ -211,18 +240,29 @@ export function drawModel(ctx, avatar) {
   if (!models) return false;
   const list = modelAtlas[groupOf(avatar)];
   const r = list[avatar.look] ?? list[0];
-  const scale = modelHeight / r[3];
+  const scale = modelScale[groupOf(avatar)];
   const w = r[2] * scale;
-  ctx.drawImage(models, r[0], r[1], r[2], r[3], -w / 2, -modelHeight / 2, w, modelHeight);
+  const h = r[3] * scale;
+  ctx.drawImage(models, r[0], r[1], r[2], r[3], -w / 2, -h / 2, w, h);
   return true;
 }
 
-// On-screen size of the longer side of a swimming picture.
-const swimSize = 116;
+// On-screen size of the longer side of a middle-sized swimming picture.
+// cutswim.py cuts each group at one scale with that side 250 pixels, so
+// every swimmer is drawn at the same scale and keeps her drawn size.
+export const swimSize = 116;
+// Mermaid side profiles are drawn with bigger heads than their front
+// models, so they are shrunk by `sideShrink` to keep the head the same size
+// when she turns from facing the viewer to swimming side-on.
+const sideShrink = 0.86;
+export const swimScale = {
+  mermaids: sideShrink * swimSize / 250,
+  mermen: swimSize / 250,
+};
 
 // How far each group's side profile is tipped forward when swimming level,
 // in radians. The merman pictures stand more upright than the mermaids.
-const swimLean = { mermaids: 0.3, mermen: 0.6 };
+export const swimLean = { mermaids: 0.3, mermen: 0.6 };
 
 // Merman tails hang straight down in their pictures, so the tail (with its
 // fin) is swung back from the hips by this much, in radians, to trail
@@ -241,7 +281,7 @@ const bendRings = 10;
 // `pivot`. Rings near the pivot barely turn and those at `reach` turn the
 // full `flap`, so the tail curves smoothly instead of hinging, and its
 // base never pulls away from the body to leave a gap.
-function drawBent(ctx, pieces, size, pivot, reach, rest, flap) {
+export function drawBent(ctx, pieces, size, pivot, reach, rest, flap) {
   const [bw, bh] = size;
   const [px, py] = pivot;
   for (let k = 0; k <= bendRings; k += 1) {
@@ -276,7 +316,7 @@ export function drawSwimmer(ctx, avatar, heading, flap) {
   const list = swimAtlas[group];
   const s = list[avatar.look] ?? list[0];
   const [bx, by, bw, bh] = s.body;
-  const scale = swimSize / Math.max(bw, bh);
+  const scale = swimScale[group];
   ctx.save();
   ctx.rotate(heading + swimLean[group]);
   ctx.scale(scale, scale);

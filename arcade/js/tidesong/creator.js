@@ -1,7 +1,7 @@
 // Choosing your character: a mermaid or merman from the cast, shown exactly
 // as drawn, plus a name. Three of each are open at first; the rest show as
 // locked until playthroughs unlock them (unlocks.js). Resolves with the
-// finished avatar.
+// finished avatar, or null if the player backs out to the main menu.
 import { bodies } from "./avatar.js";
 import { castList, drawCast, unlockOrder } from "./cast.js";
 import { html } from "./panels.js";
@@ -59,6 +59,7 @@ export function runCreator(panels, username) {
             <div class="ts-cast"></div>
           </div>
           <div class="ts-creator-actions">
+            <button type="button" class="ts-btn ghost" data-back>Back</button>
             <button type="button" class="ts-btn ghost" data-random>Surprise me</button>
             <button type="button" class="ts-btn go" data-begin>Dive in!</button>
           </div>
@@ -125,6 +126,10 @@ export function runCreator(panels, username) {
         const open = unlockedLooks(username, bodies[avatar.body].group);
         pick(open[Math.floor(Math.random() * open.length)]);
         refresh();
+      });
+      view.querySelector("[data-back]").addEventListener("click", () => {
+        panels.close();
+        resolve(null);
       });
       view.querySelector("[data-begin]").addEventListener("click", () => {
         const fallback = castList(bodies[avatar.body].group)[avatar.look].name;

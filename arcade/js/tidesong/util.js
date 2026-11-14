@@ -129,3 +129,15 @@ export function escapeHtml(text) {
     }[c];
   });
 }
+
+// A short tag that changes whenever an atlas changes. Added to the picture's
+// address, so a browser never pairs a fresh atlas with an old cached picture
+// (which shows the wrong character).
+export function artVersion(atlas) {
+  const text = JSON.stringify(atlas);
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = (Math.imul(hash, 31) + text.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0).toString(36);
+}

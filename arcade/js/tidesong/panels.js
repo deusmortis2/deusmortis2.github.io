@@ -12,20 +12,71 @@ export function createPanels(frame) {
   const toastEl = frame.querySelector(".ts-toast");
   let toastTimer = 0;
 
-  // Arrow keys move focus between buttons in a button group.
+  // Arrow keys or WASD move focus between buttons in a button group. Focus
+  // goes to the nearest button in that direction on screen, so up and down
+  // move between rows of a grid. With nothing that way, it wraps in order.
+  const navKeys = {
+    a: [-1, 0], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0],
+    arrowup: [0, -1], d: [1, 0], s: [0, 1], w: [0, -1],
+  };
+  const centre = (el) => {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  };
   const arrowFocus = (container) => {
     container.onkeydown = (event) => {
-      const keys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
-      if (!keys.includes(event.key)) return;
-      const buttons = [...container.querySelectorAll("button:not([disabled])")];
+      const dir = navKeys[event.key.toLowerCase()];
+      if (!dir || event.ctrlKey || event.metaKey || event.altKey) return;
+      const target = event.target;
+      if (target instanceof HTMLElement && (target.isContentEditable
+        || ["INPUT", "SELECT", "TEXTAREA"].includes(target.tagName))) return;
+      const buttons = [...container.querySelectorAll("button:not([disabled])")].filter((b) => {
+        return b.offsetParent !== null;
+      });
       const at = buttons.indexOf(document.activeElement);
       if (at < 0) return;
       event.preventDefault();
       event.stopPropagation();
-      const step = event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1;
+      const from = centre(buttons[at]);
+      let best = null;
+      let bestScore = Infinity;
+      buttons.forEach((b, i) => {
+        if (i === at) return;
+        const to = centre(b);
+        const along = (to.x - from.x) * dir[0] + (to.y - from.y) * dir[1];
+        if (along < 4) return;
+        const across = Math.abs((to.x - from.x) * dir[1] + (to.y - from.y) * dir[0]);
+        // Favour buttons straight ahead over ones off to the side.
+        const score = along + across * 2;
+        if (score < bestScore) {
+          bestScore = score;
+          best = b;
+        }
+      });
+      if (best) {
+        best.focus({ preventScroll: false });
+        return;
+      }
+      const step = dir[0] + dir[1];
       buttons[(at + step + buttons.length) % buttons.length].focus();
     };
   };
+
+  // If a menu is up but focus fell off it (a button you pressed got disabled
+  // or rebuilt), the first WASD or arrow press lands on its first button.
+  window.addEventListener("keydown", (event) => {
+    if (!navKeys[event.key.toLowerCase()] || document.querySelector("dialog[open]")) return;
+    const active = document.activeElement;
+    if (active && active !== document.body) return;
+    const group = !overlay.hidden ? overlay : !battle.hidden ? actions : null;
+    const first = group && [...group.querySelectorAll("button:not([disabled])")].find((b) => {
+      return b.offsetParent !== null;
+    });
+    if (!first) return;
+    event.preventDefault();
+    event.stopPropagation();
+    first.focus();
+  }, true);
 
   const say = (text, { hold = false } = {}) => {
     battle.hidden = false;

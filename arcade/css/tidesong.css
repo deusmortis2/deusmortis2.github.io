@@ -175,6 +175,45 @@
   text-shadow: 0.4cqw 0.4cqw 0 #ff2e88;
 }
 
+/* Save slots on the title screen. */
+.ts-slots {
+  display: grid;
+  gap: 1cqw;
+  margin: 2cqw 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.ts-slot {
+  display: flex;
+  align-items: center;
+  gap: 1cqw;
+  padding: 1cqw 1.4cqw;
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px solid var(--ts-edge);
+  border-radius: 1cqw;
+}
+
+.ts-slot.empty {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.ts-slot-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.3cqw;
+  min-width: 0;
+}
+
+.ts-slot-info b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ts-title-actions {
   display: flex;
   justify-content: center;
@@ -310,6 +349,11 @@
   display: flex;
   justify-content: flex-end;
   gap: 1.2cqw;
+}
+
+/* Back sits on its own at the left, away from the start button. */
+.ts-creator-actions [data-back] {
+  margin-right: auto;
 }
 
 /* Character choice: mermaid / merman tabs and a grid of the cast. */

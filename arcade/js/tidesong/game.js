@@ -1,8 +1,8 @@
 // Tidesong: an underwater open-world adventure. Create a mermaid, explore
 // ten ocean regions, and befriend 150 sea creatures by weakening them in
-// battle and then singing their heart song. Math: a question comes up every
-// 30 seconds of play, and resting at a Healer or waking up after blacking out
-// each need one answered right too.
+// battle and then singing their heart song. Math: a question comes up after
+// every battle, and resting at a Healer, using a healing item, or waking up
+// after blacking out each need one answered right too.
 import { askQuestion, loadQuestions } from "../questions.js";
 import { assignedSource } from "../question-sets.js";
 import { play } from "../sound.js";
@@ -23,12 +23,14 @@ import { createPanels, html } from "./panels.js";
 import { clearPortraitCache } from "./portrait.js";
 import { createRhythm, rhythmScore, updateRhythm } from "./rhythm.js";
 import { clearSpriteCache, drawModel, drawSwimmer, loadModelArt, spriteFrame, spriteFrames, spriteHeight, spriteWidth } from "./sprite.js";
-import { deleteSave, healAll, loadGame, newState, saveGame } from "./state.js";
+import { deleteSave, healAll, listSaves, newState, saveGame } from "./state.js";
 import { enterBuilding, visitLair } from "./town.js";
 import { escapeHtml } from "./util.js";
 import { preloadBattle, preloadScene, whenLoaded } from "./art.js";
 import { createWorld, legendaryLevel, rollEncounter, tileSize } from "./world.js";
 import { cameraFor, createWorldRenderer } from "./worldRender.js";
+import { drawPosed, makePose, steerPose } from "./pose.js";
+import { drawTurned, steerTurn } from "./turn.js";
 import { zones } from "./zones.js";
 
 // The bank the teacher has assigned this game (Teacher page).
@@ -42,8 +44,6 @@ const calmChance = 0.012;
 // Start loading the next region this close to its edge.
 const preloadRange = 360;
 const autosaveEvery = 20;
-// Seconds of play (swimming or battling) between math questions.
-const questionEvery = Infinity;
 
 const session = initPage();
 const canvas = document.getElementById("game");
@@ -67,15 +67,18 @@ const game = {
   inTown: false,
   mode: "title",
   moving: false,
-  questionTimer: 0,
+  // Mermaid swimming and turning poses (see pose.js).
+  pose: makePose(),
   saveTimer: 0,
   scene: { zone: "prismreef" },
   sinceEncounter: 0,
+  // Which save slot the adventure in play belongs to.
+  slot: 0,
   state: null,
   stride: 0,
   swimAngle: 0,
   tilt: 0,
-  turn: 1,
+  turn: { angle: 0, speed: 0 },
   warned: 0,
 };
 
@@ -98,19 +101,7 @@ const questionsReady = loadQuestions(questionSource).then(() => {
 async function ask(label) {
   if (!(await questionsReady)) return true;
   await askQuestion({ inputDelay: 300, label, source: questionSource });
-  // Any answered question restarts the 30 second countdown.
-  game.questionTimer = 0;
   return true;
-}
-
-// The regular question. One that comes due mid-battle waits until you are
-// back to swimming.
-async function timedQuestion() {
-  game.busy = true;
-  await ask("Math time! Answer to keep swimming");
-  input.flush();
-  game.busy = false;
-  save();
 }
 
 function save() {
@@ -119,7 +110,7 @@ function save() {
   if (claimUnlock(game.state, username)) {
     panels.toast(`You've befriended ${unlockGoal} creatures! ${perUnlock} new mermaids and ${perUnlock} new mermen are unlocked for your next adventure.`, 6000);
   }
-  saveGame(game.state, username);
+  saveGame(game.state, username, game.slot);
 }
 
 function isLocked(zone) {
@@ -155,6 +146,26 @@ function blocked(x, y) {
   });
 }
 
+// If you'd come out inside a building (an edge that lands on a tower, or a
+// save made while stuck), move to the nearest open water instead.
+function unstick(p) {
+  if (!blocked(p.x, p.y)) return;
+  const z = zones[game.state.zone];
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  for (let d = 8; d <= 1200; d += 8) {
+    const spot = dirs.map(([dx, dy]) => {
+      return { x: p.x + dx * d, y: p.y + dy * d };
+    }).find((s) => {
+      return s.x > 24 && s.y > 24 && s.x < z.width - 24 && s.y < z.height - 24 && !blocked(s.x, s.y);
+    });
+    if (spot) {
+      p.x = spot.x;
+      p.y = spot.y;
+      return;
+    }
+  }
+}
+
 function warnSealed(zone) {
   if (view.time - game.warned < 3) return;
   game.warned = view.time;
@@ -176,6 +187,7 @@ function crossEdge(nx, ny) {
   state.zone = exit.to;
   state.player.x = at.x;
   state.player.y = at.y;
+  unstick(state.player);
   game.flash = view.time;
   game.fade = true;
   game.atDoor = false;
@@ -199,6 +211,7 @@ function preloadAhead(p) {
 
 function battleEnv() {
   return {
+    ask,
     choose: panels.choose,
     playRhythm,
     say: panels.say,
@@ -242,6 +255,8 @@ async function startBattle(species, level) {
     healAll(game.state);
     placeAtTown(game.state.lastTown);
     panels.toast(`You woke up in ${world.townById(game.state.lastTown).name}, fully healed.${lost ? ` You dropped ${lost} pearls.` : ""}`, 4000);
+  } else {
+    await ask("Battle over! Answer to keep swimming");
   }
   game.mode = "explore";
   game.sinceEncounter = 0;
@@ -252,19 +267,24 @@ async function startBattle(species, level) {
 
 async function openScreen(kind) {
   game.busy = true;
-  const env = { isLocked, isVisited, panels, sound, state: game.state, world };
+  const env = { ask, isLocked, isVisited, panels, sound, state: game.state, world };
   if (kind === "menu") {
     const choice = await openMainMenu(env);
-    if (choice === "restart") {
-      if (window.confirm("Start over with a new character? Your current adventure will be erased.")) {
-        deleteSave(username);
-        game.state = null;
-        game.mode = "title";
-        game.busy = false;
-        showTitle();
-        return;
-      }
-    } else if (choice === "graphics") {
+    if (choice === "quit" && !window.confirm("Quit to the main menu without saving? Anything since your last save will be lost.")) {
+      game.busy = false;
+      return openScreen("menu");
+    }
+    if (choice === "title" || choice === "quit") {
+      // Saved first, so the adventure is waiting in its slot. Quitting skips
+      // this, so the slot keeps its last save.
+      if (choice === "title") save();
+      game.state = null;
+      game.mode = "title";
+      game.busy = false;
+      showTitle();
+      return;
+    }
+    if (choice === "graphics") {
       game.state.lowGraphics = !game.state.lowGraphics;
       panels.toast(`Graphics set to ${game.state.lowGraphics ? "low (faster on older Chromebooks)" : "full"}.`);
     } else if (choice === "save") {
@@ -318,7 +338,9 @@ async function step() {
   if (state.calmSteps > 0) state.calmSteps -= 1;
   if (!world.isWild(state.zone, p.x, p.y) || game.sinceEncounter < 6) return;
   if (Math.random() < (state.calmSteps > 0 ? calmChance : encounterChance)) {
-    const { level, species } = rollEncounter(state.zone);
+    const { level, species } = rollEncounter(state.zone, { caught: state.caught, streak: state.discovery ?? 0 });
+    // Meeting one you haven't befriended resets the boost; otherwise it grows.
+    state.discovery = state.caught.includes(species.id) ? (state.discovery ?? 0) + 1 : 0;
     await startBattle(species, level);
   }
 }
@@ -350,11 +372,6 @@ function checkSpot() {
 
 function updateExplore(dt) {
   const { state } = game;
-  game.questionTimer += dt;
-  if (game.questionTimer >= questionEvery) {
-    timedQuestion();
-    return;
-  }
   const action = input.nextAction();
   if (action && action !== "confirm") {
     openScreen(action);
@@ -389,50 +406,52 @@ function updateExplore(dt) {
 
 // While swimming the side profile tips towards the direction of travel
 // (in the mirrored frame, so 0 is level and up is negative). Changing
-// direction flips the picture over smoothly rather than snapping.
+// direction turns the picture round (see turn.js) rather than snapping.
 function steerSwimmer(dir, dt) {
   if (game.moving) {
     const target = Math.atan2(dir.y, Math.abs(dir.x)) * 0.8;
     game.swimAngle += (target - game.swimAngle) * Math.min(1, dt * 7);
   }
-  game.turn += (game.facing - game.turn) * Math.min(1, dt * 9);
+  steerTurn(game.turn, game.facing, dt);
+  steerPose(game.pose, game.facing, game.moving, dt);
 }
 
 function drawPlayer() {
   const p = game.state.player;
   const sx = p.x - view.camX;
   const sy = p.y - view.camY;
-  const { avatar } = game.state;
+  // At rest the front model floats upright and bobs. The bob eases out as
+  // she sets off rather than stopping dead.
+  const still = 1 - game.pose.swim;
+  const bob = Math.sin(view.time * 2) * 2 * still;
   ctx.save();
-  // At rest the front model floats upright and bobs. The flip squashes
-  // through zero width, so a change of direction reads as a turn.
-  const turn = Math.abs(game.turn) < 0.08 ? Math.sign(game.turn || 1) * 0.08 : game.turn;
+  ctx.translate(sx, sy + bob);
+  // Mermaids turn through their own drawn poses; mermen turn like a card.
+  const wobble = Math.sin(view.time * 2) * 0.025 * still;
+  if (!drawPosed(ctx, game.state.avatar, game.pose, game.swimAngle, wobble)) {
+    drawTurned(ctx, game.turn.angle, paintPlayer);
+  }
+  ctx.restore();
+  return { sx, sy };
+}
+
+// Paints the player facing right, centred on (0, 0).
+function paintPlayer(c) {
+  const { avatar } = game.state;
   if (game.moving) {
-    ctx.translate(sx, sy);
-    ctx.scale(turn, 1);
     // Swimming switches to the side profile; only its tail moves.
     const flap = Math.sin(view.time * 10) * 0.4;
-    if (drawSwimmer(ctx, avatar, game.swimAngle, flap)) {
-      ctx.restore();
-      return { sx, sy };
-    }
+    if (drawSwimmer(c, avatar, game.swimAngle, flap)) return;
   } else {
-    ctx.translate(sx, sy + Math.sin(view.time * 2) * 2);
-    ctx.scale(turn, 1);
-    ctx.rotate(Math.sin(view.time * 2) * 0.025);
+    c.rotate(Math.sin(view.time * 2) * 0.025);
   }
-  if (drawModel(ctx, avatar)) {
-    ctx.restore();
-    return { sx, sy };
-  }
+  if (drawModel(c, avatar)) return;
   const speed = game.moving ? 14 : 5;
   const f = Math.floor(view.time * speed) % spriteFrames;
   // The drawn stand-in is already a side view, so it only leans.
-  ctx.rotate(game.tilt * 0.35);
-  ctx.scale(playerScale, playerScale);
-  ctx.drawImage(spriteFrame(avatar, f), -spriteWidth / 2, -spriteHeight / 2);
-  ctx.restore();
-  return { sx, sy };
+  c.rotate(game.tilt * 0.35);
+  c.scale(playerScale, playerScale);
+  c.drawImage(spriteFrame(avatar, f), -spriteWidth / 2, -spriteHeight / 2);
 }
 
 function renderExplore() {
@@ -488,7 +507,6 @@ function loop(now) {
     if (!game.busy && !panels.isOpen()) updateExplore(dt);
     renderExplore();
   } else if (game.mode === "battle") {
-    game.questionTimer += dt;
     const r = game.scene.rhythm;
     if (r && updateRhythm(r, input.takeLanes())) game.scene.rhythmDone();
     drawBattle(ctx, game.scene, game.state, view);
@@ -505,48 +523,85 @@ function begin(state) {
   game.atLair = true;
   game.inTown = true;
   game.stride = 0;
-  game.questionTimer = 0;
   clearPortraitCache();
   clearSpriteCache();
   if (!zones[state.zone]) placeAtTown(state.lastTown);
+  unstick(state.player);
   visit(state.zone);
   input.flush();
 }
 
-async function newGame() {
+async function newGame(slot) {
   const avatar = await runCreator(panels, username);
+  // Backing out of the character select returns to the main menu.
+  if (!avatar) {
+    showTitle();
+    return;
+  }
   const home = world.townById("coralhaven");
   const state = newState(avatar, { x: home.x, y: home.y, zone: home.zone });
   healAll(state);
+  game.slot = slot;
   begin(state);
   save();
   panels.toast(`Welcome to Coralhaven Market, ${state.avatar.name}! Swim out of town to meet wild creatures. Visit the Shop and Song Hall here first.`, 7000);
 }
 
+async function continueGame(saved, slot) {
+  panels.close();
+  // The region you saved in may not be loaded yet if it isn't slot 1's.
+  await whenLoaded(zones[saved.zone] ? saved.zone : "prismreef");
+  game.slot = slot;
+  begin(saved);
+  panels.toast(`Welcome back, ${saved.avatar.name}!`);
+}
+
+function slotRow(saved, slot) {
+  if (!saved) {
+    return `<li class="ts-slot empty">
+      <span class="ts-slot-info"><b>Slot ${slot + 1}</b>Empty</span>
+      <button type="button" class="ts-btn go" data-new="${slot}">New character</button>
+    </li>`;
+  }
+  return `<li class="ts-slot">
+    <span class="ts-slot-info"><b>Slot ${slot + 1}: ${escapeHtml(saved.avatar.name)}</b>Level ${saved.player.level}, ${saved.caught.length}/150 befriended</span>
+    <button type="button" class="ts-btn go" data-continue="${slot}">Continue</button>
+    <button type="button" class="ts-btn ghost small" data-delete="${slot}">Delete</button>
+  </li>`;
+}
+
 function showTitle() {
-  const saved = loadGame(username);
+  const saves = listSaves(username);
   panels.open("ts-title", (root) => {
+    const full = saves.every(Boolean);
     const view2 = html(`
       <div class="ts-title-card">
         <h2>TIDESONG</h2>
         <p>Explore a vast ocean, sing to sea creatures and befriend all 150.</p>
-        ${saved ? `<p class="ts-note">Saved adventure: ${escapeHtml(saved.avatar.name)}, level ${saved.player.level}, ${saved.caught.length}/150 befriended.</p>` : ""}
-        <div class="ts-title-actions">
-          ${saved ? "<button type=\"button\" class=\"ts-btn go\" data-continue>Continue</button>" : ""}
-          <button type="button" class="ts-btn ${saved ? "ghost" : "go"}" data-new>${saved ? "New character" : "Start"}</button>
-        </div>
+        <ul class="ts-slots">${saves.map(slotRow).join("")}</ul>
+        ${full ? "<p class=\"ts-note\">Every slot is in use. Delete one to start a new character.</p>" : ""}
       </div>`);
     root.append(view2);
-    view2.querySelector("[data-continue]")?.addEventListener("click", () => {
-      panels.close();
-      begin(saved);
-      panels.toast(`Welcome back, ${saved.avatar.name}!`);
+    view2.querySelectorAll("[data-continue]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const slot = Number(b.dataset.continue);
+        continueGame(saves[slot], slot);
+      });
     });
-    view2.querySelector("[data-new]").addEventListener("click", () => {
-      if (saved && !window.confirm("Start a new character? Your saved adventure will be erased.")) return;
-      deleteSave(username);
-      panels.close();
-      newGame();
+    view2.querySelectorAll("[data-new]").forEach((b) => {
+      b.addEventListener("click", () => {
+        panels.close();
+        newGame(Number(b.dataset.new));
+      });
+    });
+    view2.querySelectorAll("[data-delete]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const slot = Number(b.dataset.delete);
+        if (!window.confirm(`Delete ${saves[slot].avatar.name}'s adventure in slot ${slot + 1}? This can't be undone.`)) return;
+        deleteSave(username, slot);
+        panels.close();
+        showTitle();
+      });
     });
     view2.querySelector("button").focus();
   });
@@ -575,7 +630,7 @@ bindFullscreen(document.getElementById("fullscreen"), frame);
 if (session) {
   // The merfolk and creature pictures, the ocean map and the first region
   // load before the title screen.
-  const firstZone = loadGame(username)?.zone ?? "prismreef";
+  const firstZone = listSaves(username).find(Boolean)?.zone ?? "prismreef";
   Promise.all([loadCastArt(), loadModelArt(), loadCreatureArt(), whenLoaded(zones[firstZone] ? firstZone : "prismreef")]).finally(() => {
     showTitle();
     requestAnimationFrame(loop);

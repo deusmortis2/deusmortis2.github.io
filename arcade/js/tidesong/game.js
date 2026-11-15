@@ -32,7 +32,7 @@ import { createWorld, legendaryLevel, rollEncounter, tileSize } from "./world.js
 import { cameraFor, createWorldRenderer } from "./worldRender.js";
 import { drawPosed, makePose, steerPose } from "./pose.js";
 import { drawTurned, steerTurn } from "./turn.js";
-import { zones } from "./zones.js";
+import { keySource, zones } from "./zones.js";
 
 // The bank the teacher has assigned this game (Teacher page).
 const questionSource = await assignedSource("tidesong");
@@ -172,7 +172,9 @@ function unstick(p) {
 function warnSealed(zone) {
   if (view.time - game.warned < 3) return;
   game.warned = view.time;
-  panels.toast(`A powerful current blocks the way into ${zones[zone].name}. You need a ${items[zones[zone].requires].name}.`);
+  const key = zones[zone].requires;
+  const from = keySource(key);
+  panels.toast(`A powerful current blocks the way into ${zones[zone].name}. You need a ${items[key].name}.${from ? ` The legendary of ${from.name} guards one.` : ""}`);
 }
 
 // Crossing an edge carries you into the next region, if it's open to you.

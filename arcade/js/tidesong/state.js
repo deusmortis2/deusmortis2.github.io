@@ -114,6 +114,15 @@ export function addCaptured(state, species, level, hp) {
   return "storage";
 }
 
+// Each region's legendary leaves its key item behind (see `drops` in
+// zones.js). Returns the key if it's new to you, otherwise null.
+export function claimLegendKey(state, species) {
+  const key = species.rarity === "legendary" ? zones[species.zone]?.drops : null;
+  if (!key || state.keys.includes(key)) return null;
+  state.keys.push(key);
+  return key;
+}
+
 // What a creature's reaction to a song has taught you: heart, liked or none.
 export function learnReaction(state, speciesId, songId, reaction) {
   state.reactions[speciesId] ??= {};
@@ -191,6 +200,13 @@ export function loadGame(username, slot = 0) {
   state.items = Object.fromEntries(Object.entries(raw.items ?? {}).filter(([id, n]) => {
     return items[id] && n > 0;
   }));
+  // Keys used to be bought in shops. A save that befriended a legendary
+  // before keys dropped from them gets that legendary's key now.
+  state.keys = [...(raw.keys ?? [])];
+  (raw.caught ?? []).forEach((id) => {
+    const species = creatureById(id);
+    if (species) claimLegendKey(state, species);
+  });
   return state;
 }
 

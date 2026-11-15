@@ -9,7 +9,7 @@ import { knownHeart, playerMoves, playerStats, useUpItem } from "./state.js";
 import { creatureCard } from "./town.js";
 import { escapeHtml } from "./util.js";
 import { drawOceanMap, mapPoint, mapSize } from "./hud.js";
-import { zoneOrder, zones } from "./zones.js";
+import { keySource, zoneOrder, zones } from "./zones.js";
 
 function sheet(env, title, build, className = "") {
   return new Promise((resolve) => {
@@ -276,7 +276,8 @@ export function openMap(env) {
     const locked = Object.values(zones).filter((z) => {
       return z.requires && !state.keys.includes(z.requires);
     }).map((z) => {
-      return `${z.name}: needs ${items[z.requires].name}`;
+      const from = keySource(z.requires);
+      return `${z.name}: needs ${items[z.requires].name}${from ? ` (from the ${from.name} legendary)` : ""}`;
     });
     body.append(html(`<p class="ts-note">You are in <b>${escapeHtml(zones[state.zone].name)}</b>. Shaded regions are still unexplored. ★ marks a legendary's lair. ${locked.length ? `Sealed: ${escapeHtml(locked.join(" · "))}` : "Every region is open to you!"}</p>`));
   }, "ts-wide");

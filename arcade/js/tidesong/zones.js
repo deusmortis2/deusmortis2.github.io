@@ -8,6 +8,8 @@
 //
 // tier: order of difficulty (also sets which songs its creatures respond to).
 // levels: wild creature levels. requires: key item needed to swim in.
+// drops: key item this region's legendary leaves behind when you befriend
+// or defeat it.
 // dark: how dark it is without a lantern (0 to 1). water: the region's colour
 // for menus and loading screens. map: the region's box on the ocean map, and
 // lair.mapX / mapY the lair's own dot there. keepers: which set of
@@ -38,7 +40,7 @@ function town(id, name, buildings, extraSolids = []) {
 
 export const zones = {
   abyssal: {
-    dark: 0.2, levels: [25, 31], name: "Abyssal Anchor", requires: "heatWard", tier: 8, water: "#3a1f24",
+    dark: 0.2, drops: "pressurePearl", levels: [25, 31], name: "Abyssal Anchor", requires: "heatWard", tier: 8, water: "#3a1f24",
     keepers: "deep",
     image: { h: 896, scale: 1.5, w: 1200 },
     lair: { name: "The Hydrothermal Furnace", x: 947, y: 825, mapX: 1155, mapY: 735 },
@@ -50,7 +52,7 @@ export const zones = {
     exits: { north: [[0, 0.5, "pelagia"], [0.5, 1, "cragspire"]], west: [[0, 1, "gloomveil"]] },
   },
   brinewallow: {
-    dark: 0, levels: [12, 17], name: "Brinewallow Fen", requires: "ruinKey", tier: 4, water: "#3b4a35",
+    dark: 0, drops: "thermalCloak", levels: [12, 17], name: "Brinewallow Fen", requires: "ruinKey", tier: 4, water: "#3b4a35",
     image: { h: 2528, scale: 1, w: 1696 },
     lair: { name: "Crocodile Grotto", x: 1378, y: 2125, mapX: 752, mapY: 93 },
     map: [430, 0, 850, 200],
@@ -63,7 +65,7 @@ export const zones = {
     },
   },
   cragspire: {
-    dark: 0.1, levels: [21, 27], name: "Cragspire Bluff", requires: "stormCharm", tier: 7, water: "#24384f",
+    dark: 0.1, drops: "heatWard", levels: [21, 27], name: "Cragspire Bluff", requires: "stormCharm", tier: 7, water: "#24384f",
     image: { h: 1888, scale: 0.85, w: 2220 },
     lair: { name: "The Sea Lion Nest", x: 1810, y: 1440, mapX: 1190, mapY: 498 },
     map: [880, 200, 1264, 600],
@@ -88,7 +90,7 @@ export const zones = {
     exits: { south: [[0, 1, "cragspire"]], west: [[0, 1, "brinewallow"]] },
   },
   fluvius: {
-    dark: 0, levels: [6, 10], name: "Fluvius Basin", requires: null, tier: 2, water: "#2a6a5f",
+    dark: 0, drops: "ruinKey", levels: [6, 10], name: "Fluvius Basin", requires: null, tier: 2, water: "#2a6a5f",
     image: { h: 2528, scale: 0.85, w: 1696 },
     lair: { name: "Axolotl Hollow", x: 1380, y: 2240, mapX: 347, mapY: 288 },
     map: [0, 215, 430, 420],
@@ -101,7 +103,7 @@ export const zones = {
     },
   },
   frostveil: {
-    dark: 0, levels: [15, 20], name: "Frostveil Reach", requires: "thermalCloak", tier: 5, water: "#4f9fc2",
+    dark: 0, drops: "lanternJelly", levels: [15, 20], name: "Frostveil Reach", requires: "thermalCloak", tier: 5, water: "#4f9fc2",
     keepers: "arctic",
     image: { h: 2528, scale: 1, w: 1696 },
     lair: { name: "The Leviathan's Ice Cave", x: 1205, y: 2190, mapX: 352, mapY: 132 },
@@ -113,7 +115,7 @@ export const zones = {
     exits: { east: [[0, 1, "brinewallow"]], south: [[0, 1, "fluvius"]] },
   },
   gloomveil: {
-    dark: 0.35, levels: [18, 24], name: "Gloomveil Depths", requires: "lanternJelly", tier: 6, water: "#1b1f3a",
+    dark: 0.35, drops: "stormCharm", levels: [18, 24], name: "Gloomveil Depths", requires: "lanternJelly", tier: 6, water: "#1b1f3a",
     keepers: "deep",
     image: { h: 2048, scale: 0.9, w: 2048 },
     lair: { name: "The Vampire Squid Crypt", x: 1530, y: 1590, mapX: 347, mapY: 711 },
@@ -177,6 +179,13 @@ Object.entries(zones).forEach(([id, z]) => {
 });
 
 // Zone ids in difficulty order, which is also the creature numbering order.
+// The region whose legendary drops a key item, if any.
+export function keySource(key) {
+  return Object.values(zones).find((z) => {
+    return z.drops === key;
+  }) ?? null;
+}
+
 export const zoneOrder = Object.keys(zones).sort((a, b) => {
   return zones[a].tier - zones[b].tier;
 });
@@ -185,15 +194,15 @@ export const zoneOrder = Object.keys(zones).sort((a, b) => {
 // `teaches` is a song id, `sells` lists item ids.
 const townGoods = {
   abyssal: {
-    sells: ["elixir", "pearlCharm", "revive", "guardShell", "pressurePearl"],
+    sells: ["elixir", "pearlCharm", "revive", "guardShell"],
     teaches: null,
   },
   brinewallow: {
-    sells: ["tonic", "pearlCharm", "revive", "calmInk", "heartCoral", "thermalCloak"],
+    sells: ["tonic", "pearlCharm", "revive", "calmInk", "heartCoral"],
     teaches: "chant",
   },
   cragspire: {
-    sells: ["elixir", "pearlCharm", "revive", "strengthPearl", "heartCoral", "heatWard"],
+    sells: ["elixir", "pearlCharm", "revive", "strengthPearl", "heartCoral"],
     teaches: null,
   },
   fangshore: {
@@ -201,15 +210,15 @@ const townGoods = {
     teaches: null,
   },
   fluvius: {
-    sells: ["salve", "tonic", "echoShell", "revive", "calmInk", "strengthPearl", "ruinKey"],
+    sells: ["salve", "tonic", "echoShell", "revive", "calmInk", "strengthPearl"],
     teaches: "hum",
   },
   frostveil: {
-    sells: ["tonic", "elixir", "pearlCharm", "revive", "strengthPearl", "guardShell", "lanternJelly"],
+    sells: ["tonic", "elixir", "pearlCharm", "revive", "strengthPearl", "guardShell"],
     teaches: "dirge",
   },
   gloomveil: {
-    sells: ["tonic", "elixir", "pearlCharm", "revive", "calmInk", "swiftScale", "stormCharm"],
+    sells: ["tonic", "elixir", "pearlCharm", "revive", "calmInk", "swiftScale"],
     teaches: null,
   },
   pelagia: {

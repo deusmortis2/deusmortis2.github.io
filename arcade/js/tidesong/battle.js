@@ -5,7 +5,8 @@
 import { catchRates, creatureById, movesFor, statsFor, xpForLevel, xpReward } from "./creatures.js";
 import { fxImpact, launchFx } from "./battleFx.js";
 import { elementInfo, items, moves, songById, typeMultiplier } from "./data.js";
-import { addCaptured, hasCaught, learnReaction, markSeen, playerMoves, playerStats, useUpItem } from "./state.js";
+import { addCaptured, claimLegendKey, hasCaught, learnReaction, markSeen, playerMoves, playerStats, useUpItem } from "./state.js";
+import { zones } from "./zones.js";
 import { clamp } from "./util.js";
 
 const maxLevel = 60;
@@ -152,6 +153,15 @@ async function reward(b) {
   const pearls = Math.round((6 + wild.level * 3) * (legendary ? 5 : 1));
   state.pearls += pearls;
   await b.say(`You found ${pearls} pearls.`);
+  // A legendary leaves behind the key item to the next sealed region.
+  const key = claimLegendKey(state, wild.species);
+  if (key) {
+    const opens = Object.values(zones).find((z) => {
+      return z.requires === key;
+    });
+    b.sound("level");
+    await b.say(`${wild.species.name} left you a ${items[key].name}!${opens ? ` The way into ${opens.name} is open.` : ""}`);
+  }
   for (const uid of b.participants) {
     if (uid === "you") {
       const before = playerStats(state);

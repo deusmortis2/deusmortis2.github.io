@@ -1,3 +1,6 @@
+// Fallback only: pose.js turns mermaids and mermen through their drawn
+// poses, and this is used when that art is missing.
+//
 // Turns the player around as if they had depth, rather than squashing a
 // flat picture through zero width. The picture is painted once into a
 // buffer, then redrawn in thin upright strips: each strip is placed where

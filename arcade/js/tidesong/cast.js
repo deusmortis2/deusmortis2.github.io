@@ -3,6 +3,8 @@
 // entry also has rough colours for the small swimming sprite, and `long`
 // for long hair that streams behind it. `turned: "left"` marks the pictures
 // drawn turned to the left, which battles mirror so the player faces right.
+// Every merman is marked: the top grid row is turned left and the bottom row
+// stands front-on with its tail swept right, so all read as facing left.
 import { castAtlas } from "./castAtlas.js";
 import { artVersion } from "./util.js";
 
@@ -22,18 +24,18 @@ export const mermaids = [
 ];
 
 export const mermen = [
-  { hair: "#1a1210", long: false, name: "Riptide", skin: "#4a2a1c", tail: "#4aa02a", top: "#3a8a2a" },
-  { hair: "#1a1210", long: false, name: "Current", skin: "#6a3a22", tail: "#a04a2a", top: "#8a4a2a" },
-  { hair: "#1e1614", long: false, name: "Drift", skin: "#c08a62", tail: "#2aa0a0", top: "#2a8a8a" },
-  { hair: "#1e1614", long: false, name: "Harbour", skin: "#b07850", tail: "#e8dcc0", top: "#6a4a2a" },
-  { hair: "#1e1614", long: false, name: "Delta", skin: "#9a6040", tail: "#8a5a6a", top: "#7a4a2a" },
-  { hair: "#1a1418", long: true, name: "Storm", skin: "#f0d0b0", tail: "#6a8ac8", top: "#3a5a8a" },
-  { hair: "#1a1418", long: false, name: "Atoll", skin: "#c89a70", tail: "#5a3a24", top: "#6a4a2a" },
-  { hair: "#1e1614", long: true, name: "Breaker", skin: "#9a6040", tail: "#8a5a3a", top: null },
-  { hair: "#1a1418", long: true, name: "Canyon", skin: "#a8704a", tail: "#9a3a2a", top: "#8a4a2a" },
-  { hair: "#1a1418", long: false, name: "Marlin", skin: "#8a5434", tail: "#3a8a3a", top: "#c04a3a" },
-  { hair: "#e0c070", long: false, name: "Frost", skin: "#f0d0b8", tail: "#8ab8d8", top: "#5a4a3a" },
-  { hair: "#2a1c14", long: false, name: "Triton", skin: "#b07850", tail: "#3a6ab0", top: "#e8e0d0" },
+  { hair: "#1a1210", long: false, name: "Riptide", skin: "#4a2a1c", tail: "#4aa02a", top: "#3a8a2a", turned: "left" },
+  { hair: "#1a1210", long: false, name: "Current", skin: "#6a3a22", tail: "#a04a2a", top: "#8a4a2a", turned: "left" },
+  { hair: "#1e1614", long: false, name: "Drift", skin: "#c08a62", tail: "#2aa0a0", top: "#2a8a8a", turned: "left" },
+  { hair: "#1e1614", long: false, name: "Harbour", skin: "#b07850", tail: "#e8dcc0", top: "#6a4a2a", turned: "left" },
+  { hair: "#1e1614", long: false, name: "Delta", skin: "#9a6040", tail: "#8a5a6a", top: "#7a4a2a", turned: "left" },
+  { hair: "#1a1418", long: true, name: "Storm", skin: "#f0d0b0", tail: "#6a8ac8", top: "#3a5a8a", turned: "left" },
+  { hair: "#1a1418", long: false, name: "Atoll", skin: "#c89a70", tail: "#5a3a24", top: "#6a4a2a", turned: "left" },
+  { hair: "#1e1614", long: true, name: "Breaker", skin: "#9a6040", tail: "#8a5a3a", top: null, turned: "left" },
+  { hair: "#1a1418", long: true, name: "Canyon", skin: "#a8704a", tail: "#9a3a2a", top: "#8a4a2a", turned: "left" },
+  { hair: "#1a1418", long: false, name: "Marlin", skin: "#8a5434", tail: "#3a8a3a", top: "#c04a3a", turned: "left" },
+  { hair: "#e0c070", long: false, name: "Frost", skin: "#f0d0b8", tail: "#8ab8d8", top: "#5a4a3a", turned: "left" },
+  { hair: "#2a1c14", long: false, name: "Triton", skin: "#b07850", tail: "#3a6ab0", top: "#e8e0d0", turned: "left" },
 ];
 
 // The order characters unlock in: the first three are open from the start,

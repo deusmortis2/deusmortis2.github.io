@@ -3,6 +3,7 @@
 // health boxes.
 import { battleImage } from "./art.js";
 import { castMember } from "./avatar.js";
+import { drawFx, lungeOffset } from "./battleFx.js";
 import { creatureCanvas } from "./creatureArt.js";
 import { creatureById, statsFor } from "./creatures.js";
 import { elementInfo, songById } from "./data.js";
@@ -123,10 +124,11 @@ function drawWild(ctx, scene, state, now, time) {
     }
   }
   const bob = Math.sin(time * 2.2) * 6;
-  const dx = shakeOffset(scene, "wild", now);
+  const lunge = lungeOffset(scene, "wild", now);
+  const dx = shakeOffset(scene, "wild", now) + lunge.x;
   const size = 230 * scale;
   ctx.globalAlpha = fade;
-  ctx.drawImage(art, 700 - size / 2 + dx, 150 - size / 2 + bob + (230 - size) / 2, size, size);
+  ctx.drawImage(art, 700 - size / 2 + dx, 150 - size / 2 + bob + lunge.y + (230 - size) / 2, size, size);
   ctx.globalAlpha = 1;
   const species = wild.species;
   const info = elementInfo[species.element];
@@ -145,8 +147,9 @@ function drawWild(ctx, scene, state, now, time) {
 
 function drawAlly(ctx, scene, state, now, time) {
   const fighter = scene.fighter?.() ?? "you";
-  const dx = shakeOffset(scene, "ally", now);
-  const bob = Math.sin(time * 1.8 + 1) * 4;
+  const lunge = lungeOffset(scene, "ally", now);
+  const dx = shakeOffset(scene, "ally", now) + lunge.x;
+  const bob = Math.sin(time * 1.8 + 1) * 4 + lunge.y;
   if (fighter === "you") {
     const art = fullCanvas(state.avatar, 290);
     const x = 220 - art.width / 2 + dx;
@@ -193,5 +196,6 @@ export function drawBattle(ctx, scene, state, view) {
   background(ctx, scene.zone, view.width, view.height);
   if (scene.wild) drawWild(ctx, scene, state, now, view.time);
   drawAlly(ctx, scene, state, now, view.time);
+  drawFx(ctx, scene, now);
   if (scene.rhythm) drawRhythm(ctx, scene.rhythm, view.width, view.height);
 }

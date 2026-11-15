@@ -199,7 +199,7 @@ let models = null;
 let swimmers = null;
 
 // The loaded model and side-profile pictures (null until loaded), for the
-// mermaid poses in pose.js.
+// poses in pose.js.
 export function loadedArt() {
   return { models, swimmers };
 }
@@ -251,27 +251,21 @@ export function drawModel(ctx, avatar) {
 // cutswim.py cuts each group at one scale with that side 250 pixels, so
 // every swimmer is drawn at the same scale and keeps her drawn size.
 export const swimSize = 116;
-// Mermaid side profiles are drawn with bigger heads than their front
-// models, so they are shrunk by `sideShrink` to keep the head the same size
-// when she turns from facing the viewer to swimming side-on.
-const sideShrink = 0.86;
+// Side profiles are shrunk by `sideShrink` to keep the head the same size
+// when turning from facing the viewer to swimming side-on. Mermaid side
+// profiles are drawn with bigger heads than their front models; the merman
+// sheets are drawn at the same size as each other, so theirs only evens
+// out the different cutting scales (cutmodels.py 0.8, cutswim.py about
+// 0.71) against the front model's on-screen scale.
+const sideShrink = { mermaids: 0.86, mermen: 0.97 };
 export const swimScale = {
-  mermaids: sideShrink * swimSize / 250,
-  mermen: swimSize / 250,
+  mermaids: sideShrink.mermaids * swimSize / 250,
+  mermen: sideShrink.mermen * swimSize / 250,
 };
 
 // How far each group's side profile is tipped forward when swimming level,
 // in radians. The merman pictures stand more upright than the mermaids.
 export const swimLean = { mermaids: 0.3, mermen: 0.6 };
-
-// Merman tails hang straight down in their pictures, so the tail (with its
-// fin) is swung back from the hips by this much, in radians, to trail
-// behind like a mermaid's.
-const tailBend = 1.05;
-
-// Mermen sway their whole tail, fin included, by this share of `flap`
-// (their fin is not swung on its own: its cut leaves a sliver on the tail).
-const tailSway = 0.5;
 
 // The moving part of the tail is drawn as this many rings around the point
 // it bends about, each turned a little more than the one inside it.
@@ -306,10 +300,10 @@ export function drawBent(ctx, pieces, size, pivot, reach, rest, flap) {
 }
 
 // Draws the avatar's side-profile swimmer centred on (0, 0), heading right
-// and tipped by `heading` radians (up is negative). Only the tail moves: a
-// mermaid's fin bends from its joint by up to `flap` radians, a merman's
-// whole tail bends from the hips. Returns false when there is no side
-// profile to draw.
+// and tipped by `heading` radians (up is negative). Only the tail moves:
+// the fin bends from its joint by up to `flap` radians. Returns false when
+// there is no side profile to draw. (pose.js normally draws the swimmer;
+// this is the fallback when its art is missing.)
 export function drawSwimmer(ctx, avatar, heading, flap) {
   if (!swimmers) return false;
   const group = groupOf(avatar);
@@ -321,11 +315,7 @@ export function drawSwimmer(ctx, avatar, heading, flap) {
   ctx.rotate(heading + swimLean[group]);
   ctx.scale(scale, scale);
   ctx.translate(-bw / 2, -bh / 2);
-  if (s.hip && s.tail) {
-    drawBent(ctx, [s.fin, s.tail], [bw, bh], s.hip, s.reach, tailBend, flap * tailSway);
-  } else {
-    drawBent(ctx, [s.fin], [bw, bh], s.joint, s.reach, 0, flap);
-  }
+  drawBent(ctx, [s.fin], [bw, bh], s.joint, s.reach, 0, flap);
   ctx.drawImage(swimmers, bx, by, bw, bh, 0, 0, bw, bh);
   ctx.restore();
   return true;

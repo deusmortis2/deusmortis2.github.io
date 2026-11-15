@@ -3,6 +3,7 @@
 // song: the right one makes capture far more likely, and legendaries ignore
 // every other song. Resolves "caught", "won", "fled" or "blackout".
 import { catchRates, creatureById, movesFor, statsFor, xpForLevel, xpReward } from "./creatures.js";
+import { fxImpact, launchFx } from "./battleFx.js";
 import { elementInfo, items, moves, songById, typeMultiplier } from "./data.js";
 import { addCaptured, hasCaught, learnReaction, markSeen, playerMoves, playerStats, useUpItem } from "./state.js";
 import { clamp } from "./util.js";
@@ -66,24 +67,48 @@ function damage(level, atk, def, moveId, attackerElement, defenderElement) {
   return { amount, crit: crit > 1, mult };
 }
 
+// HP left after a hit. A target at full HP always survives on at least 1, so
+// no single attack can knock out a fresh creature; later hits can finish it.
+function hpAfterHit(hp, maxHp, amount) {
+  const floor = hp >= maxHp ? 1 : 0;
+  return Math.max(Math.min(floor, hp), hp - amount);
+}
+
 async function effectLine(say, result) {
   if (result.crit) await say("A critical hit!");
   if (result.mult > 1) await say("It's super effective!");
   if (result.mult < 1) await say("It's not very effective...");
 }
 
+// Shows the "used" message while the move's effect flies across, and calls
+// `land` the moment it reaches the target (unless it missed). Waits for both
+// the message and the landing, so damage never shows before the hit.
+function strike(b, text, moveId, from, missed, land) {
+  const fx = launchFx(moveId, from, missed);
+  b.scene.fx = fx;
+  const arrival = new Promise((resolve) => {
+    setTimeout(() => {
+      if (!missed) land();
+      resolve();
+    }, fxImpact(fx));
+  });
+  return Promise.all([b.say(text), arrival]);
+}
+
 async function playerAttack(b, moveId) {
   const f = fighterOf(b);
   const wild = b.scene.wild;
-  await b.say(`${f.name} used ${moves[moveId].name}!`);
-  if (Math.random() < 0.05) {
+  const missed = Math.random() < 0.05;
+  const result = damage(f.level, f.stats.atk, wild.stats.def, moveId, f.element, wild.species.element);
+  await strike(b, `${f.name} used ${moves[moveId].name}!`, moveId, "ally", missed, () => {
+    wild.hp = hpAfterHit(wild.hp, wild.stats.hp, result.amount);
+    b.scene.hit = { time: performance.now(), who: "wild" };
+    b.sound("hit");
+  });
+  if (missed) {
     await b.say("It missed!");
     return;
   }
-  const result = damage(f.level, f.stats.atk, wild.stats.def, moveId, f.element, wild.species.element);
-  wild.hp = Math.max(0, wild.hp - result.amount);
-  b.scene.hit = { time: performance.now(), who: "wild" };
-  b.sound("hit");
   await effectLine(b.say, result);
 }
 
@@ -92,15 +117,17 @@ async function wildAttack(b) {
   const list = movesFor(wild.species, wild.level);
   const moveId = Math.random() < 0.35 ? list[0] : list[list.length - 1];
   const f = fighterOf(b);
-  await b.say(`${wild.species.name} used ${moves[moveId].name}!`);
-  if (Math.random() < 0.06) {
+  const missed = Math.random() < 0.06;
+  const result = damage(wild.level, wild.stats.atk, f.stats.def, moveId, wild.species.element, f.element);
+  await strike(b, `${wild.species.name} used ${moves[moveId].name}!`, moveId, "wild", missed, () => {
+    f.setHp(hpAfterHit(f.getHp(), f.maxHp, result.amount));
+    b.scene.hit = { time: performance.now(), who: "ally" };
+    b.sound("hurt");
+  });
+  if (missed) {
     await b.say("It missed!");
     return;
   }
-  const result = damage(wild.level, wild.stats.atk, f.stats.def, moveId, wild.species.element, f.element);
-  f.setHp(Math.max(0, f.getHp() - result.amount));
-  b.scene.hit = { time: performance.now(), who: "ally" };
-  b.sound("hurt");
   await effectLine(b.say, result);
 }
 
@@ -318,11 +345,34 @@ async function tryFlee(b) {
   return false;
 }
 
+// When a hit drops the fighter to a third of its HP or less, suggest a
+// healing item. It only speaks as the HP crosses the line, so it won't nag
+// every turn, but it speaks again if you heal up and get knocked down.
+const lowHpShare = 1 / 3;
+
+async function lowHpHint(b, f, before) {
+  const line = f.maxHp * lowHpShare;
+  if (f.getHp() > line || before <= line) return;
+  const heal = ["salve", "tonic"].find((id) => {
+    return b.state.items[id] > 0;
+  });
+  if (!heal) {
+    await b.say(`${f.name} is low on HP, and your bag has nothing to heal with. You could swim away!`);
+    return;
+  }
+  const count = b.state.items[heal];
+  await b.say(`${f.name} is low on HP! Open your Bag and use a ${items[heal].name} to heal (you have ${count}).`);
+}
+
 // The wild creature's turn, then checks for fainting.
 async function enemyTurn(b) {
+  const before = fighterOf(b).getHp();
   await wildAttack(b);
   const f = fighterOf(b);
-  if (f.getHp() > 0) return null;
+  if (f.getHp() > 0) {
+    await lowHpHint(b, f, before);
+    return null;
+  }
   if (b.fighter !== "you") {
     b.sound("faint");
     await b.say(`${f.name} fainted!`);
@@ -374,6 +424,7 @@ export async function runBattle(env, species, level) {
   const scene = env.scene;
   scene.wild = { hp: stats.hp, level, species, stats };
   scene.hit = null;
+  scene.fx = null;
   scene.capture = null;
   const firstSighting = !state.seen.includes(species.id);
   const befriended = hasCaught(state, species.id);

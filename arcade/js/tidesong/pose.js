@@ -1,21 +1,23 @@
-// Mermaids have hand-drawn poses for swimming and for turning round, so
-// they are not swung round like a flat card (turn.js still does that for
-// the mermen).
+// Mermaids and mermen have hand-drawn poses for swimming and for turning
+// round, so they are not swung round like a flat card (turn.js only does
+// that now if this art is missing).
 //
-// - Swimming, her tail beats between its normal side-profile pose and a
+// - Swimming, the tail beats between its normal side-profile pose and a
 //   lowered one (merfolk-swim.webp, `low` in swimAtlas.js).
 // - Turning round, the side view turns to face the viewer with the tail on
 //   the side it was trailing, the front picture then changes to the one
-//   with the tail curled the other way, and she turns out into the side
-//   view heading the other way. Facing right her front picture is the
+//   with the tail curled the other way, and the swimmer turns out into the
+//   side view heading the other way. Facing right the front picture is the
 //   switched one (tail on the left, `switch` in modelAtlas.js); facing
-//   left it is the normal one.
+//   left it is the normal one. A merman's switched picture is his normal
+//   one mirrored.
 // - Starting and stopping change between the side view and the front one.
 //
 // Pictures change over in a frame or two, like hand-drawn animation, so
-// two pictures never show at once. What moves smoothly is where she is
-// drawn: her head glides from one picture's place to the next, the side
-// view leans and narrows as she turns, and the fin bends before each beat.
+// two pictures never show at once. What moves smoothly is where the
+// swimmer is drawn: the head glides from one picture's place to the next,
+// the side view leans and narrows as it turns, and the fin bends before
+// each beat.
 import { groupOf } from "./avatar.js";
 import { modelAtlas } from "./modelAtlas.js";
 import { drawBent, loadedArt, modelScale, swimLean, swimScale } from "./sprite.js";
@@ -52,7 +54,7 @@ let layer = null;
 
 // Fresh pose state: `turn` runs from 0 (facing right) to 1 (facing left),
 // `swim` from 0 (floating still) to 1 (swimming), and `beat` is how far
-// through the tail beat she is.
+// through the tail beat the swimmer is.
 export function makePose() {
   // The beat starts with the tail up, well away from a picture change.
   return { beat: 0.75, swim: 0, turn: 0 };
@@ -87,15 +89,15 @@ export function steerPose(pose, facing, moving, dt) {
   if (moving) pose.beat = (pose.beat + dt * beatRate) % 1;
 }
 
-function lookOf(avatar) {
-  return swimAtlas.mermaids[avatar.look] ? avatar.look : 0;
+function lookOf(group, avatar) {
+  return swimAtlas[group][avatar.look] ? avatar.look : 0;
 }
 
 // Where the side view's head lands, relative to its centre.
-function sideHead(look, { mirror, tilt, wide }) {
-  const s = swimAtlas.mermaids[look];
+function sideHead(group, look, { mirror, tilt, wide }) {
+  const s = swimAtlas[group][look];
   const [, , bw, bh] = s.body;
-  const scale = swimScale.mermaids;
+  const scale = swimScale[group];
   const x = (s.head[0] - bw / 2) * scale;
   const y = (s.head[1] - bh / 2) * scale;
   const cos = Math.cos(tilt);
@@ -104,10 +106,10 @@ function sideHead(look, { mirror, tilt, wide }) {
 }
 
 // Where the front picture's head lands, relative to its centre.
-function frontHead(look, { wide }) {
-  const r = modelAtlas.mermaids[look];
-  const scale = modelScale.mermaids;
-  const [hx, hy] = modelAtlas.heads.mermaids[look];
+function frontHead(group, look, { wide }) {
+  const r = modelAtlas[group][look];
+  const scale = modelScale[group];
+  const [hx, hy] = modelAtlas.heads[group][look];
   return [(hx - r[2] / 2) * scale * wide, (hy - r[3] / 2) * scale];
 }
 
@@ -115,11 +117,11 @@ function frontHead(look, { wide }) {
 // `tilt` and narrowed to `wide` of its width, moved by `shift`. The normal
 // pose bends its fin by `bend`; the lowered pose is drawn when `lowered`
 // is set.
-function drawSide(c, look, { bend, lowered, mirror, shift, tilt, wide }) {
+function drawSide(c, group, look, { bend, lowered, mirror, shift, tilt, wide }) {
   const { swimmers } = loadedArt();
-  const s = swimAtlas.mermaids[look];
+  const s = swimAtlas[group][look];
   const [bx, by, bw, bh] = s.body;
-  const scale = swimScale.mermaids;
+  const scale = swimScale[group];
   c.translate(shift[0], shift[1]);
   c.scale(mirror * wide, 1);
   c.rotate(tilt);
@@ -136,11 +138,11 @@ function drawSide(c, look, { bend, lowered, mirror, shift, tilt, wide }) {
 
 // A front picture, normal or switched, placed so both line up on the same
 // head and body, then moved by `shift`.
-function drawFront(c, look, { shift, switched, wide, wobble }) {
+function drawFront(c, group, look, { shift, switched, wide, wobble }) {
   const { models } = loadedArt();
-  const r = modelAtlas.mermaids[look];
-  const scale = modelScale.mermaids;
-  const [x, y, w, h, dx, dy] = switched ? modelAtlas.switch.mermaids[look] : [...r, 0, 0];
+  const r = modelAtlas[group][look];
+  const scale = modelScale[group];
+  const [x, y, w, h, dx, dy] = switched ? modelAtlas.switch[group][look] : [...r, 0, 0];
   c.translate(shift[0], shift[1]);
   c.rotate(wobble);
   c.scale(wide, 1);
@@ -153,20 +155,20 @@ function drawFront(c, look, { shift, switched, wide, wobble }) {
 
 // Every picture showing this frame, with how much of it shows. The shares
 // add up to 1.
-function layersFor(look, pose, heading, wobble) {
+function layersFor(group, look, pose, heading, wobble) {
   const p = pose.turn;
   // The turn is four pictures in quarters: side view, switched front,
   // normal front, side view the other way.
   const sideShown = p < 0.5 ? 1 - cut(0.25, p) : cut(0.75, p);
   const swim = sideShown * cut(0.5, pose.swim);
   const normal = cut(0.5, p);
-  // How far round she is, smoothly, for the parts that glide: 1 side-on,
+  // How far round the swimmer is, smoothly, for the parts that glide: 1 side-on,
   // 0 facing the viewer.
   const side = p < 0.5 ? 1 - ease(0, 0.5, p) : ease(0.5, 1, p);
   const glide = side * ease(0, 1, pose.swim);
   const away = 1 - side;
   const mirror = p < 0.5 ? 1 : -1;
-  const tilt = (heading + swimLean.mermaids) * (1 - sideStraighten * away);
+  const tilt = (heading + swimLean[group]) * (1 - sideStraighten * away);
   const wide = 1 - sideNarrow * away;
   // The tail beat: the fin bends down as the beat rises, then the picture
   // changes to the lowered tail, and back.
@@ -177,30 +179,31 @@ function layersFor(look, pose, heading, wobble) {
   const front = { wide: 1 - frontNarrow * glide, wobble };
   // The head glides from the side view's place to the front picture's,
   // whichever picture is showing, so changing picture never jumps.
-  const sh = sideHead(look, sideAt);
-  const fh = frontHead(look, front);
+  const sh = sideHead(group, look, sideAt);
+  const fh = frontHead(group, look, front);
   const head = [fh[0] + (sh[0] - fh[0]) * glide, fh[1] + (sh[1] - fh[1]) * glide];
   sideAt.shift = [head[0] - sh[0], head[1] - sh[1]];
   front.shift = [head[0] - fh[0], head[1] - fh[1]];
   return [
-    { draw: (c) => { drawSide(c, look, { ...sideAt, bend, lowered: false }); }, share: swim * (1 - low) },
-    { draw: (c) => { drawSide(c, look, { ...sideAt, lowered: true }); }, share: swim * low },
-    { draw: (c) => { drawFront(c, look, { ...front, switched: true }); }, share: (1 - swim) * (1 - normal) },
-    { draw: (c) => { drawFront(c, look, { ...front, switched: false }); }, share: (1 - swim) * normal },
+    { draw: (c) => { drawSide(c, group, look, { ...sideAt, bend, lowered: false }); }, share: swim * (1 - low) },
+    { draw: (c) => { drawSide(c, group, look, { ...sideAt, lowered: true }); }, share: swim * low },
+    { draw: (c) => { drawFront(c, group, look, { ...front, switched: true }); }, share: (1 - swim) * (1 - normal) },
+    { draw: (c) => { drawFront(c, group, look, { ...front, switched: false }); }, share: (1 - swim) * normal },
   ].filter((l) => {
     return l.share > 0.003;
   });
 }
 
-// Draws a mermaid in her current pose centred on (0, 0). `heading` tips the
-// side view towards the way she is swimming (up is negative) and `wobble`
-// rocks the front picture. Returns false for anyone without the posed art
-// (mermen, or before it has loaded), who should be drawn the old way.
+// Draws the swimmer in the current pose centred on (0, 0). `heading` tips
+// the side view towards the way they are swimming (up is negative) and
+// `wobble` rocks the front picture. Returns false when the posed art is
+// missing (or has not loaded yet), so the old way should be used.
 export function drawPosed(ctx, avatar, pose, heading, wobble) {
   const { models, swimmers } = loadedArt();
-  if (groupOf(avatar) !== "mermaids" || !models || !swimmers) return false;
-  if (!modelAtlas.switch || !modelAtlas.heads || !swimAtlas.mermaids[0].low) return false;
-  const layers = layersFor(lookOf(avatar), pose, heading, wobble);
+  const group = groupOf(avatar);
+  if (!models || !swimmers) return false;
+  if (!modelAtlas.switch?.[group] || !modelAtlas.heads?.[group] || !swimAtlas[group]?.[0]?.low) return false;
+  const layers = layersFor(group, lookOf(group, avatar), pose, heading, wobble);
   if (layers.length === 1) {
     ctx.save();
     layers[0].draw(ctx);

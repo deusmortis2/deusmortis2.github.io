@@ -1,8 +1,8 @@
 // Tidesong: an underwater open-world adventure. Create a mermaid, explore
 // ten ocean regions, and befriend 150 sea creatures by weakening them in
 // battle and then singing their heart song. Math: a question comes up after
-// every battle, and resting at a Healer, using a healing item, or waking up
-// after blacking out each need one answered right too.
+// every battle, and resting at a Healer or waking up after blacking out
+// each need one answered right too. Using items never asks a question.
 import { askQuestion, loadQuestions } from "../questions.js";
 import { assignedSource } from "../question-sets.js";
 import { play } from "../sound.js";
@@ -214,7 +214,6 @@ function preloadAhead(p) {
 
 function battleEnv() {
   return {
-    ask,
     choose: panels.choose,
     playRhythm,
     say: panels.say,
@@ -270,7 +269,7 @@ async function startBattle(species, level) {
 
 async function openScreen(kind) {
   game.busy = true;
-  const env = { ask, isLocked, isVisited, panels, sound, state: game.state, world };
+  const env = { isLocked, isVisited, panels, sound, state: game.state, world };
   if (kind === "menu") {
     const choice = await openMainMenu(env);
     if (choice === "quit" && !window.confirm("Quit to the main menu without saving? Anything since your last save will be lost.")) {

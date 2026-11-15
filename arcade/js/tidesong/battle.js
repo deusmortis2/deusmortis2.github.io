@@ -10,6 +10,9 @@ import { clamp } from "./util.js";
 
 const maxLevel = 60;
 const songMultipliers = { heart: 2.6, liked: 1.35, none: 0.45 };
+// Legendaries only answer their heart song, so when they hear it the odds
+// get a big extra boost on top of the usual heart-song multiplier.
+const legendaryHeartBonus = 3;
 const reactionText = {
   heart: "is entranced! Its heart song!",
   liked: "sways along. It likes this one.",
@@ -223,7 +226,8 @@ async function sing(b) {
   }
   const hpFactor = 1.5 - wild.hp / wild.stats.hp;
   const perf = 0.35 + score * 0.85;
-  const chance = clamp(catchRates[wild.species.rarity] * songMultipliers[reaction] * perf * hpFactor * state.charm, 0.02, 0.96);
+  const bonus = legendary ? legendaryHeartBonus : 1;
+  const chance = clamp(catchRates[wild.species.rarity] * songMultipliers[reaction] * bonus * perf * hpFactor * state.charm, 0.02, 0.96);
   state.charm = 1;
   b.scene.capture = { start: performance.now() };
   b.sound("sing");
@@ -289,7 +293,6 @@ async function useOnTarget(b, id) {
   targets.push({ label: "Back", tone: "ghost", value: null });
   const who = await b.choose(`Use ${item.name} on...`, targets);
   if (!who) return false;
-  await b.ask(`Answer to use your ${item.name}`);
   useUpItem(state, id);
   if (who === "you") {
     const max = playerStats(state).hp;

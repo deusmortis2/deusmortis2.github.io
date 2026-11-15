@@ -1,7 +1,8 @@
 // The heads-up display while exploring: your portrait with HP and
 // pearls (top left), the region name and minimap (top right), and the
-// collection count (bottom left).
+// collection counts, overall and for this region (bottom left).
 import { oceanMap } from "./art.js";
+import { creatures } from "./creatures.js";
 import { bustCanvas } from "./portrait.js";
 import { playerStats } from "./state.js";
 import { zones } from "./zones.js";
@@ -111,9 +112,19 @@ function drawMinimap(ctx, state, view) {
 export function drawHud(ctx, state, world, view) {
   drawPortraitPanel(ctx, state);
   drawMinimap(ctx, state, view);
-  panel(ctx, 12, view.height - 46, 196, 34);
+  const inZone = creatures.filter((c) => {
+    return c.zone === state.zone;
+  });
+  const gotHere = inZone.filter((c) => {
+    return state.caught.includes(c.id);
+  }).length;
+  panel(ctx, 12, view.height - 64, 236, 52);
   ctx.textAlign = "left";
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 14px system-ui, sans-serif";
-  ctx.fillText(`Codex  ${state.caught.length} / 150 caught`, 26, view.height - 24);
+  ctx.fillText(`Codex  ${state.caught.length} / 150 caught`, 26, view.height - 42);
+  // This region's share of the Codex, so you can tell when it's finished.
+  ctx.fillStyle = gotHere === inZone.length ? "#ffe27a" : "#bfe6ff";
+  ctx.font = "bold 13px system-ui, sans-serif";
+  ctx.fillText(`${zones[state.zone].name}  ${gotHere} / ${inZone.length}${gotHere === inZone.length ? " ★" : ""}`, 26, view.height - 22);
 }

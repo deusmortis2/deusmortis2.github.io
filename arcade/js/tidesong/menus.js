@@ -186,7 +186,6 @@ function useOutside(env, id, refresh) {
   targets.forEach((t) => {
     const b = html(`<button type="button" class="ts-btn small">${escapeHtml(t.label)}</button>`);
     b.addEventListener("click", async () => {
-      await env.ask(`Answer to use your ${item.name}`);
       useUpItem(state, id);
       if (t.who === "you") {
         state.player.hp = Math.min(playerStats(state).hp, state.player.hp + item.value);

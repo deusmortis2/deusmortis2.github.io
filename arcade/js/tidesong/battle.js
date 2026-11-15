@@ -227,7 +227,8 @@ async function sing(b) {
   if (wild.species.heart === songId) reaction = "heart";
   else if (wild.species.liked === songId) reaction = "liked";
   learnReaction(state, wild.species.id, songId, reaction);
-  await b.say(`${score >= 0.9 ? "A flawless performance!" : `Performance: ${Math.round(score * 100)}%.`} ${wild.species.name} ${reactionText[reaction]}`);
+  const flawless = score >= 0.9;
+  await b.say(`${flawless ? "A flawless performance!" : `Performance: ${Math.round(score * 100)}%.`} ${wild.species.name} ${reactionText[reaction]}`);
   const legendary = wild.species.rarity === "legendary";
   if (legendary && reaction !== "heart") {
     state.charm = 1;
@@ -242,7 +243,8 @@ async function sing(b) {
   b.scene.capture = { start: performance.now() };
   b.sound("sing");
   await b.say("...");
-  const caught = Math.random() < chance;
+  // A flawless heart song always lands.
+  const caught = (flawless && reaction === "heart") || Math.random() < chance;
   if (!caught) {
     b.scene.capture = null;
     b.sound("wrong");

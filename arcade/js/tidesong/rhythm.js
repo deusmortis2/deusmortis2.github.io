@@ -1,28 +1,55 @@
-// The song and dance mini-game: notes fall down four lanes and you press
-// the matching arrow (or tap the lane) as each one reaches the line. How well
-// you play scales the capture chance.
+// The song and dance mini-game: the song plays (music.js) and its notes
+// fall down four lanes, low notes on the left and high on the right. Press
+// the matching arrow (or tap the lane) as each one reaches the line, in
+// time with the music. How well you play scales the capture chance.
+import { compose, playTune } from "./music.js";
+import { tunes } from "./tunes.js";
+
 const laneColors = ["#ff6fa8", "#4db3ff", "#7dffd9", "#ffe14d"];
 const arrows = ["◀", "▼", "▲", "▶"];
 const letters = ["A", "S", "W", "D"];
-const travel = 1.5;
-const leadIn = 1.0;
+// Seconds a note takes to fall from the top to the line.
+const travel = 1.8;
 const perfectWindow = 0.075;
 const goodWindow = 0.16;
 
+// Spreads the song's pitches across the lanes, lowest on the left.
+function laneMap(taps) {
+  const pitches = [...new Set(taps.map((n) => n.midi))].sort((a, b) => a - b);
+  return (midi) => {
+    if (pitches.length < 2) return 1;
+    return Math.round((pitches.indexOf(midi) * 3) / (pitches.length - 1));
+  };
+}
+
+// `speed` makes rarer creatures' songs a little quicker (still slow).
 export function createRhythm(song, speed = 1) {
-  const gap = 1 / (song.tempo * speed);
-  const notes = song.notes.map((lane, i) => {
-    return { hit: null, lane, time: leadIn + i * gap };
+  const tune = tunes[song.id];
+  const piece = compose(tune);
+  const secondsPerBeat = 60 / (tune.bpm * speed);
+  const bar = tune.meter * secondsPerBeat;
+  // At least one bar of count-in, and long enough for the first note to
+  // fall the whole way.
+  const leadIn = bar * Math.ceil(travel / bar);
+  const taps = piece.lead.filter((n) => n.tap);
+  const laneOf = laneMap(taps);
+  const notes = taps.map((n) => {
+    return { hit: null, lane: laneOf(n.midi), time: leadIn + n.beat * secondsPerBeat };
   });
-  const end = leadIn + (notes.length - 1) * gap + 0.8;
+  const start = performance.now();
+  const music = playTune(tune, piece, secondsPerBeat, leadIn);
   return {
-    end,
+    beat: secondsPerBeat,
+    clock: music?.clock ?? ((ms) => (ms - start) / 1000),
+    end: leadIn + piece.beats * secondsPerBeat + 0.5,
     flashes: [0, 0, 0, 0],
     label: "",
     labelTime: 0,
+    leadIn,
+    meter: tune.meter,
+    music,
     notes,
     song,
-    start: performance.now(),
     time: 0,
   };
 }
@@ -34,9 +61,9 @@ function judge(r, text) {
 
 // Feeds key presses (with their own timestamps) and advances the clock.
 export function updateRhythm(r, presses) {
-  r.time = (performance.now() - r.start) / 1000;
+  r.time = r.clock(performance.now());
   presses.forEach(({ lane, time }) => {
-    const at = (time - r.start) / 1000;
+    const at = r.clock(time);
     r.flashes[lane] = r.time;
     const note = r.notes.find((n) => {
       return n.hit === null && n.lane === lane && Math.abs(n.time - at) <= goodWindow;
@@ -52,7 +79,9 @@ export function updateRhythm(r, presses) {
       judge(r, "Miss");
     }
   });
-  return r.time >= r.end;
+  if (r.time < r.end) return false;
+  r.music?.stop();
+  return true;
 }
 
 // 0 (all missed) to 1 (all perfect).
@@ -114,10 +143,17 @@ export function drawRhythm(ctx, r, width, height) {
     ctx.fillStyle = r.label === "Miss" ? "#ff6f6f" : "#ffe14d";
     ctx.fillText(r.label, width / 2, line + 52);
   }
-  if (r.time < leadIn - 0.1) {
+  if (r.time < r.leadIn) {
     ctx.font = "bold 14px system-ui, sans-serif";
     ctx.fillStyle = "#cfe8ff";
     ctx.fillText("Press the arrow keys or WASD (or tap)", width / 2, top + 24);
-    ctx.fillText("as notes reach the circles", width / 2, top + 44);
+    ctx.fillText("as notes reach the circles, to the beat", width / 2, top + 44);
+    // Counts the last bar in, in time with the ticks.
+    const count = Math.ceil((r.leadIn - Math.max(0, r.time)) / r.beat);
+    if (count <= r.meter) {
+      ctx.font = "bold 44px system-ui, sans-serif";
+      ctx.fillStyle = "#ffe14d";
+      ctx.fillText(String(count), width / 2, top + 110);
+    }
   }
 }

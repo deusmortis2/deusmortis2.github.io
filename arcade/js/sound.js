@@ -58,19 +58,6 @@ function tone(freq, start, duration, type = "square") {
   osc.stop(at + duration);
 }
 
-// The shared audio context for longer music (Tidesong's songs), or null
-// when sound is off or unsupported.
-export function audioContext() {
-  if (isMuted()) return null;
-  try {
-    audio ??= new AudioContext();
-    if (audio.state === "suspended") audio.resume();
-    return audio;
-  } catch {
-    return null;
-  }
-}
-
 export function play(name) {
   if (isMuted() || !tunes[name]) return;
   try {

@@ -143,7 +143,7 @@ export const zones = {
   prismreef: {
     dark: 0, levels: [2, 6], name: "Prismreef Shallows", requires: null, tier: 0, water: "#2ea7c7",
     image: { h: 1344, scale: 1, w: 3168 },
-    lair: { name: "The Wobbegong Cavern", x: 2000, y: 1072, mapX: 557, mapY: 499 },
+    lair: { name: "The Wobbegong Cavern", x: 2848, y: 1115, mapX: 557, mapY: 499 },
     map: [200, 420, 620, 650],
     town: town("coralhaven", "Coralhaven Market", [
       [315, 215, 458, 395, 430, 56], [497, 280, 648, 585, 430, 50],

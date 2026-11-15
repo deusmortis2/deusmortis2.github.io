@@ -22,7 +22,7 @@ export function unlockTier(username) {
   }
 }
 
-function saveTier(username, tier) {
+export function setUnlockTier(username, tier) {
   try {
     localStorage.setItem(key(username), JSON.stringify({ tier }));
   } catch {
@@ -50,6 +50,6 @@ export function claimUnlock(state, username) {
   if (state.unlockClaimed || state.caught.length < unlockGoal) return false;
   state.unlockClaimed = true;
   if (unlockedCount(username) >= total) return false;
-  saveTier(username, unlockTier(username) + 1);
+  setUnlockTier(username, unlockTier(username) + 1);
   return true;
 }

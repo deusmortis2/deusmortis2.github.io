@@ -13,6 +13,7 @@ import { drawBattle } from "./battleView.js";
 import { runCreator } from "./creator.js";
 import { loadCastArt } from "./cast.js";
 import { loadCreatureArt } from "./creatureArt.js";
+import { pullSaves, pushSlot, pushUnlocks } from "./cloud.js";
 import { claimUnlock, perUnlock, unlockGoal } from "./unlocks.js";
 import { creatureById } from "./creatures.js";
 import { items } from "./data.js";
@@ -109,8 +110,10 @@ function save() {
   // Reaching the befriend goal unlocks more merfolk for the next adventure.
   if (claimUnlock(game.state, username)) {
     panels.toast(`You've befriended ${unlockGoal} creatures! ${perUnlock} new mermaids and ${perUnlock} new mermen are unlocked for your next adventure.`, 6000);
+    pushUnlocks(username);
   }
   saveGame(game.state, username, game.slot);
+  pushSlot(username, game.slot);
 }
 
 function isLocked(zone) {
@@ -426,7 +429,8 @@ function drawPlayer() {
   const bob = Math.sin(view.time * 2) * 2 * still;
   ctx.save();
   ctx.translate(sx, sy + bob);
-  // Mermaids turn through their own drawn poses; mermen turn like a card.
+  // Everyone turns through their own drawn poses (pose.js); turning like a
+  // card is only the fallback when that art is missing.
   const wobble = Math.sin(view.time * 2) * 0.025 * still;
   if (!drawPosed(ctx, game.state.avatar, game.pose, game.swimAngle, wobble)) {
     drawTurned(ctx, game.turn.angle, paintPlayer);
@@ -599,6 +603,7 @@ function showTitle() {
         const slot = Number(b.dataset.delete);
         if (!window.confirm(`Delete ${saves[slot].avatar.name}'s adventure in slot ${slot + 1}? This can't be undone.`)) return;
         deleteSave(username, slot);
+        pushSlot(username, slot);
         panels.close();
         showTitle();
       });
@@ -628,6 +633,8 @@ document.addEventListener("visibilitychange", () => {
 bindFullscreen(document.getElementById("fullscreen"), frame);
 
 if (session) {
+  // A signed-in student's saves from other computers come down first.
+  await pullSaves(username);
   // The merfolk and creature pictures, the ocean map and the first region
   // load before the title screen.
   const firstZone = listSaves(username).find(Boolean)?.zone ?? "prismreef";

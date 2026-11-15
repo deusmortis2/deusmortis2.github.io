@@ -29,7 +29,7 @@ export function newState(avatar, start) {
     charm: 1,
     // Wild battles since you last met a creature you hadn't befriended.
     discovery: 0,
-    items: { echoShell: 2, salve: 4 },
+    items: { echoShell: 2, salve: 20 },
     keys: [],
     lastTown: "coralhaven",
     lowGraphics: false,
@@ -127,9 +127,19 @@ export function knownHeart(state, species) {
   }) ?? null;
 }
 
+// What each slot last held, so savedAt only moves when something changed.
+const lastSaved = {};
+
 export function saveGame(state, username, slot = 0) {
+  const key = saveKey(username, slot);
+  const { savedAt, ...rest } = state;
+  const body = JSON.stringify(rest);
+  // When this adventure last changed. The copy saved last wins when saves
+  // are synced between computers (see cloud.js).
+  if (!savedAt || body !== lastSaved[key]) state.savedAt = Date.now();
+  lastSaved[key] = body;
   try {
-    localStorage.setItem(saveKey(username, slot), JSON.stringify(state));
+    localStorage.setItem(key, JSON.stringify(state));
     return true;
   } catch {
     return false;
@@ -191,9 +201,11 @@ export function listSaves(username) {
   });
 }
 
+// The slot keeps when it was deleted, so a synced copy from another
+// computer can't bring the adventure back.
 export function deleteSave(username, slot = 0) {
   try {
-    localStorage.removeItem(saveKey(username, slot));
+    localStorage.setItem(saveKey(username, slot), JSON.stringify({ deletedAt: Date.now() }));
   } catch {
     // Storage blocked: nothing to delete.
   }

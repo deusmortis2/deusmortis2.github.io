@@ -178,9 +178,10 @@ export function createWorld() {
 }
 
 // Each battle against a creature you've already befriended makes the ones
-// you haven't befriended a little more likely (25% per battle, up to 6 times as likely).
-const discoveryStep = 0.25;
-const discoveryCap = 6;
+// you haven't befriended more likely (130% per battle, up to 15 times as likely).
+// Tuned so a region's last missing rare turns up in about 10 battles.
+const discoveryStep = 1.3;
+const discoveryCap = 15;
 
 export function discoveryMultiplier(streak = 0) {
   return Math.min(discoveryCap, 1 + streak * discoveryStep);

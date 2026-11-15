@@ -1,40 +1,49 @@
 // Songs and dances, battle moves, element matchups and shop items.
 
 // Each creature has one heart song (it is entranced) and one song it likes.
-// Each song's music, and so its notes in the rhythm game, is in tunes.js.
-// `hint` is what the Codex says about a creature whose heart song this is.
+// `notes` is the lane pattern for the rhythm game (0 left, 1 down, 2 up,
+// 3 right) and `tempo` is beats per second. `hint` is what the Codex says
+// about a creature whose heart song this is.
 export const songs = [
   {
     hint: "Drowsy and slow. A soft, gentle tune might soothe it.",
     id: "lullaby", kind: "Song", name: "Lullaby of the Deep",
+    notes: [1, 2, 1, 0, 1, 2], tempo: 2.2,
   },
   {
     hint: "Bounces about restlessly, as if it wants to dance.",
     id: "jig", kind: "Dance", name: "Bubble Jig",
+    notes: [0, 3, 0, 3, 1, 2, 1], tempo: 3.0,
   },
   {
     hint: "Sways gracefully with the current, round and round.",
     id: "waltz", kind: "Dance", name: "Coral Waltz",
+    notes: [0, 1, 2, 0, 1, 2, 3, 2], tempo: 2.6,
   },
   {
     hint: "Darts about at high speed and never stops still.",
     id: "reel", kind: "Dance", name: "Riptide Reel",
+    notes: [3, 2, 3, 1, 3, 0, 2, 3, 1], tempo: 3.6,
   },
   {
     hint: "Gazes upwards at faint, far-off light.",
     id: "hum", kind: "Song", name: "Moonlit Hum",
+    notes: [2, 2, 1, 3, 2, 0, 2, 1], tempo: 2.4,
   },
   {
     hint: "Calls out into the blue, then listens for an answer.",
     id: "echo", kind: "Song", name: "Whalesong Echo",
+    notes: [0, 0, 3, 3, 1, 2, 0, 3, 2], tempo: 2.8,
   },
   {
     hint: "Crackles with restless energy, like the air before thunder.",
     id: "chant", kind: "Song", name: "Storm Chant",
+    notes: [3, 1, 3, 1, 2, 0, 2, 0, 3, 2], tempo: 3.8,
   },
   {
     hint: "Lurks in the shadows and shies away from anything bright.",
     id: "dirge", kind: "Song", name: "Abyssal Dirge",
+    notes: [1, 1, 0, 1, 2, 1, 3, 1, 0, 2], tempo: 3.2,
   },
 ];
 

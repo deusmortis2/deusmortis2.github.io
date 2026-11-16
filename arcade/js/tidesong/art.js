@@ -5,6 +5,9 @@ const root = "img/tidesong/";
 const cache = new Map();
 const keepScenes = 3;
 const sceneOrder = [];
+// Bump a region's tag whenever its scene file is repainted, so browsers
+// holding the old picture fetch the new one.
+const sceneVersions = { fangshore: "den1" };
 
 function load(path) {
   if (cache.has(path)) return cache.get(path);
@@ -27,7 +30,8 @@ function ready(path) {
 
 // Marks a scene as recently used and forgets the oldest ones.
 function touchScene(zone) {
-  const path = `zones/${zone}.jpg`;
+  const tag = sceneVersions[zone];
+  const path = `zones/${zone}.jpg${tag ? `?v=${tag}` : ""}`;
   const at = sceneOrder.indexOf(path);
   if (at !== 0) {
     if (at > 0) sceneOrder.splice(at, 1);

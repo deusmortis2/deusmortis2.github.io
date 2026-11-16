@@ -81,7 +81,7 @@ export const zones = {
   fangshore: {
     dark: 0, levels: [30, 40], name: "Fangshore Coast", requires: "pressurePearl", tier: 9, water: "#2b4a3a",
     image: { h: 2528, scale: 0.75, w: 1696 },
-    lair: { name: "The Jaguar's Den", x: 1530, y: 1860, mapX: 1190, mapY: 77 },
+    lair: { name: "The Jaguar's Den", x: 1393, y: 2200, mapX: 1190, mapY: 77 },
     map: [850, 0, 1264, 210],
     town: town("grizzlyWatch", "Grizzly Watch", [
       [189, 391, 389, 296, 700], [437, 469, 707, 570, 678],

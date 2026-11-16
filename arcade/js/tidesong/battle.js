@@ -4,7 +4,7 @@
 // every other song. Resolves "caught", "won", "fled" or "blackout".
 import { catchRates, creatureById, movesFor, statsFor, xpForLevel, xpReward } from "./creatures.js";
 import { fxImpact, launchFx } from "./battleFx.js";
-import { elementInfo, items, moves, songById, typeMultiplier } from "./data.js";
+import { elementInfo, items, moves, songById, strongAgainst, typeMultiplier } from "./data.js";
 import { addCaptured, claimLegendKey, hasCaught, learnReaction, markSeen, playerMoves, playerStats, useUpItem } from "./state.js";
 import { zones } from "./zones.js";
 import { clamp } from "./util.js";
@@ -401,12 +401,28 @@ async function enemyTurn(b) {
   return "blackout";
 }
 
+// Scanning costs a turn and, in one line, names the elements the creature is
+// weak to and its heart song. The heart song is written into your notes, so
+// the Sing menu and the Codex remember it.
+async function scan(b) {
+  const species = b.scene.wild.species;
+  const weakTo = Object.keys(strongAgainst).filter((id) => {
+    return strongAgainst[id].includes(species.element);
+  }).map((id) => {
+    return elementInfo[id].label;
+  });
+  learnReaction(b.state, species.id, species.heart, "heart");
+  b.sound("swap");
+  await b.say(`${species.name} is weak to ${weakTo.join(" and ")}. Its heart song is the ${songById[species.heart].name}.`);
+}
+
 async function playerTurn(b) {
   const choice = await b.choose(`What will ${fighterOf(b).name} do?`, [
     { label: "Fight", sub: "Weaken it", tone: "fight", value: "fight" },
     { label: "Sing / Dance", sub: "Capture it", tone: "sing", value: "sing" },
     { label: "Bag", sub: "Use an item", value: "bag" },
     { label: "Team", sub: "Switch fighter", value: "team" },
+    { label: "Scan", sub: "Reveal its secrets", value: "scan" },
     { label: "Swim away", sub: "Flee", tone: "ghost", value: "flee" },
   ], { columns: 3 });
   if (choice === "fight") {
@@ -430,6 +446,10 @@ async function playerTurn(b) {
   }
   if (choice === "bag") return (await useBag(b)) ? "acted" : "again";
   if (choice === "team") return (await switchFighter(b)) ? "acted" : "again";
+  if (choice === "scan") {
+    await scan(b);
+    return "acted";
+  }
   return (await tryFlee(b)) ? "fled" : "acted";
 }
 

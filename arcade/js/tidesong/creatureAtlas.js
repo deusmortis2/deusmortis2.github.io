@@ -7,4 +7,4 @@ export const creatureAtlas = {"prismreef":[[2,2,252,205],[258,2,252,180],[514,2,
 
 // A hash of each region picture, added to its address so browsers fetch
 // the new picture whenever it changes.
-export const creatureArtVersion = {"prismreef":"d20cc8d508","verdant":"070a72cadb","fluvius":"4781425dd9","pelagia":"941ec72ac7","brinewallow":"b69db1bfab","frostveil":"8fc600987e","gloomveil":"12e54daefc","cragspire":"581d9bd57d","abyssal":"733a6e8694","fangshore":"5ef6469e44"};
+export const creatureArtVersion = {"prismreef":"d20cc8d508","verdant":"070a72cadb","fluvius":"4781425dd9","pelagia":"941ec72ac7","brinewallow":"b69db1bfab","frostveil":"8fc600987e","gloomveil":"12e54daefc","cragspire":"581d9bd57d","abyssal":"733a6e8694","fangshore":"a9b7f3933a"};

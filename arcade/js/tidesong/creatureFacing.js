@@ -6,7 +6,7 @@ export const creatureFacing = {
   abyssal: "LLLRLFRRLRFFLFF",
   brinewallow: "FLLRRFFRFFRRRLR",
   cragspire: "FFFFRLRRFRRRLLR",
-  fangshore: "LRLLRLLLLLRLRRL",
+  fangshore: "RRLLRLLLLLRLRRL",
   fluvius: "RRFRLFRRRRRLLLL",
   frostveil: "FFLLRFRFLFFFLRL",
   gloomveil: "RLRRRFRLRFLLLFF",

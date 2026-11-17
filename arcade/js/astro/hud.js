@@ -1,8 +1,8 @@
-// Score, hearts, the oxygen meter, lives, the math clock, messages, title
-// cards and touch buttons.
+// Score, lives (as hearts), the oxygen meter, the math clock, messages,
+// title cards and touch buttons.
 import { touchButtons } from "./input.js";
 import { maxOxygen } from "./oxygen.js";
-import { maxHearts } from "./player.js";
+import { maxLives } from "./player.js";
 
 const font = '"Press Start 2P", monospace';
 const width = 960;
@@ -78,11 +78,6 @@ function cardLines(game) {
       `SCORE ${game.score}`,
       "RESTARTING THE MISSION...",
     ],
-    ready: [
-      "LIFE LOST!",
-      `${game.lives} ${game.lives === 1 ? "LIFE" : "LIVES"} LEFT`,
-      "GET READY...",
-    ],
     title: [
       "ASTRO STOMP",
       "JUMP, THEN PRESS DOWN TO SMASH",
@@ -104,13 +99,13 @@ function drawCard(ctx, game) {
   const centre = { align: "center" };
   text(ctx, lines[0], width / 2, 170, { ...centre, colour: "#ff2e88", size: 36 });
   text(ctx, lines[1], width / 2, 245, { ...centre, colour: "#ffd400", size: 18 });
-  const steady = ["clear", "intro", "over", "ready"].includes(game.phase);
+  const steady = ["clear", "intro", "over"].includes(game.phase);
   if (steady || Math.floor(game.clock * 2) % 2 === 0) {
     text(ctx, lines[2], width / 2, 320, { ...centre, size: 16 });
   }
   if (game.phase !== "title") return;
   text(ctx, "ARROWS OR A/D TO MOVE", width / 2, 400, { ...centre, colour: "#a8a8c8", size: 12 });
-  text(ctx, "OXYGEN RUNS OUT. GRAB O2 TANKS. FLAGS ARE CHECKPOINTS", width / 2, 425, {
+  text(ctx, "3 LIVES. OXYGEN RUNS OUT FAST: GRAB O2 TANKS", width / 2, 425, {
     ...centre,
     colour: "#a8a8c8",
     size: 12,
@@ -143,8 +138,8 @@ function drawOxygen(ctx, round, clock) {
 
 function drawStatus(ctx, game) {
   const { round } = game;
-  for (let i = 0; i < maxHearts; i += 1) {
-    drawHeart(ctx, 16 + i * 36, 16, i < round.hearts);
+  for (let i = 0; i < maxLives; i += 1) {
+    drawHeart(ctx, 16 + i * 36, 16, i < game.lives);
   }
   drawOxygen(ctx, round, game.clock);
   text(ctx, `SCORE ${game.score}`, 16, 80, { colour: "#ffd400" });
@@ -153,9 +148,8 @@ function drawStatus(ctx, game) {
     ...right,
     colour: "#00e5ff",
   });
-  text(ctx, `LIVES ${game.lives}`, width - 16, 40, right);
   const wait = Math.max(0, Math.ceil(game.nextQuestion - game.mathTime));
-  text(ctx, `BOOST IN ${wait}`, width - 16, 64, { ...right, colour: "#ff2e88" });
+  text(ctx, `BOOST IN ${wait}`, width - 16, 40, { ...right, colour: "#ff2e88" });
 }
 
 export function drawHud(ctx, art, game) {

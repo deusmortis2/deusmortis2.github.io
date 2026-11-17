@@ -1,9 +1,9 @@
 // Astro Stomp: a three-planet platformer. Jump, then press down to smash
 // aliens, and get past each planet's hazards. Oxygen drains all the time, and
-// an empty meter costs hearts. Losing all your hearts costs a life, and after
-// 3 lives the whole mission starts again. A math question pops up every 30
-// seconds: a right answer refills oxygen, and either way you get a short
-// shield.
+// an empty meter costs lives. You get 3 lives for the whole mission, shown as
+// hearts, and losing the last one starts the mission again. A math question
+// pops up every 30 seconds: a right answer refills oxygen, and either way you
+// get a short shield.
 import { askQuestion, loadQuestions } from "../questions.js";
 import { assignedSource } from "../question-sets.js";
 import { play } from "../sound.js";
@@ -21,7 +21,6 @@ import { touchesLava } from "./physics.js";
 import {
   createPlayer,
   hurtPlayer,
-  maxHearts,
   placePlayer,
   updatePlayer,
 } from "./player.js";
@@ -82,7 +81,6 @@ function newRound(index, checkpoint = null) {
     enemies: stage.enemies.map(createEnemy),
     events: [],
     hazards: stage.hazards.map(make),
-    hearts: maxHearts,
     items,
     level,
     player,
@@ -148,18 +146,11 @@ function launch() {
   setPhase("clear");
 }
 
-// All hearts gone: lose a life and go back to the last checkpoint, or start
-// the whole mission again once the last life is gone.
-function loseLife() {
-  game.lives -= 1;
+// The last life is gone: the whole mission starts again.
+function gameOver() {
   play("lose");
-  if (game.lives <= 0) {
-    recordRun("astro", game.score);
-    setPhase("over");
-    return;
-  }
-  newRound(game.stageIndex, game.round.checkpoint);
-  setPhase("ready");
+  recordRun("astro", game.score);
+  setPhase("over");
 }
 
 // Fell in a pit or lava (respawn on safe ground), or got hit by an alien,
@@ -169,7 +160,7 @@ function hurt(fromX, kind) {
   const { player } = round;
   if (game.phase !== "playing") return;
   if (kind !== "fell" && player.hurtFor > 0) return;
-  round.hearts -= 1;
+  game.lives -= 1;
   round.shake = 0.3;
   play("hit");
   if (kind === "fell") {
@@ -178,18 +169,18 @@ function hurt(fromX, kind) {
   } else {
     hurtPlayer(player, fromX, kind === "spike");
   }
-  if (round.hearts <= 0) loseLife();
+  if (game.lives <= 0) gameOver();
 }
 
-// An empty oxygen meter takes a heart every couple of seconds.
+// An empty oxygen meter takes a life every couple of seconds.
 function choke() {
   const { round } = game;
-  round.hearts -= 1;
+  game.lives -= 1;
   round.shake = 0.2;
   round.player.hurtFor = 0.6;
   play("hit");
   showToast("NO OXYGEN! FIND A TANK!", "#ff2e88");
-  if (round.hearts <= 0) loseLife();
+  if (game.lives <= 0) gameOver();
 }
 
 function updateWorld(dt) {
@@ -258,7 +249,6 @@ function update(dt) {
       showToast("JUMP, THEN PRESS DOWN TO SMASH!", "#ffd400");
     }
   }
-  if (game.phase === "ready" && game.phaseTime > 2) setPhase("playing");
   // Out of lives: the mission restarts on its own after a moment.
   const restart = game.phaseTime > 4 || (start && game.phaseTime > 1.5);
   if (game.phase === "over" && restart) startMission();

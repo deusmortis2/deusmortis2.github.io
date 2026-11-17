@@ -2,7 +2,7 @@
 import { tile } from "./levels.js";
 import { moveBody, standingSafely } from "./physics.js";
 
-export const maxHearts = 3;
+export const maxLives = 3;
 const runSpeed = 300;
 const runAccel = 2600;
 // Low gravity: a slow, floaty arc with a gentle top speed when falling.

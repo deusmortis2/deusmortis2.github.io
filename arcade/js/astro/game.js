@@ -1,11 +1,14 @@
 // Astro Stomp: a three-planet platformer. Jump, then press down to smash
-// aliens, and get past each planet's hazards. Running out of oxygen asks
-// questions until one is right, which refills oxygen. The rocket at the end of
-// each planet asks one more for a launch bonus.
+// aliens, and get past each planet's hazards. Oxygen drains all the time, and
+// an empty meter costs hearts. Losing all your hearts costs a life, and after
+// 3 lives the whole mission starts again. A math question pops up every 30
+// seconds: a right answer refills oxygen, and either way you get a short
+// shield.
 import { askQuestion, loadQuestions } from "../questions.js";
 import { assignedSource } from "../question-sets.js";
 import { play } from "../sound.js";
 import { bindFullscreen } from "../fullscreen.js";
+import { recordRun } from "../leaderboard.js";
 import { initPage } from "../ui.js";
 import { loadArt, mirrorSheet } from "./art.js";
 import { playEvents, puff, resolveContacts } from "./contacts.js";
@@ -13,6 +16,7 @@ import { createEnemy, updateEnemy } from "./enemies.js";
 import { createHazard, updateHazards } from "./hazards.js";
 import { createInput } from "./input.js";
 import { buildLevel, stages, tile } from "./levels.js";
+import { breathe, fillOxygen } from "./oxygen.js";
 import { touchesLava } from "./physics.js";
 import {
   createPlayer,
@@ -27,6 +31,10 @@ import { updateShots } from "./shots.js";
 // The bank the teacher has assigned this game (Teacher page).
 const questionSource = await assignedSource("astro");
 const launchBonus = 500;
+const questionEvery = 30;
+const shieldSeconds = 2.5;
+const answerBonus = 100;
+const startLives = 3;
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -36,6 +44,11 @@ const game = {
   clock: 0,
   hinted: false,
   input,
+  lives: startLives,
+  // The math clock runs across the whole mission: losing a life and new
+  // planets don't reset it.
+  mathTime: 0,
+  nextQuestion: questionEvery,
   phase: "title",
   phaseTime: 0,
   round: null,
@@ -78,6 +91,7 @@ function newRound(index, checkpoint = null) {
     shots: [],
     stage,
   };
+  fillOxygen(game.round);
 }
 
 function setPhase(phase) {
@@ -90,46 +104,62 @@ function showToast(text, colour = "#39ff14") {
 }
 game.showToast = showToast;
 
-async function ask(label) {
+function startMission() {
+  game.score = 0;
+  game.lives = startLives;
+  game.mathTime = 0;
+  game.nextQuestion = questionEvery;
+  newRound(0);
+  setPhase("intro");
+}
+
+// Every 30 seconds of play. A right answer refills oxygen and scores a
+// bonus; a wrong one still gets the shield, so nobody is hit mid-question.
+async function runQuestion() {
   setPhase("question");
   input.clear();
   const correct = await askQuestion({
     inputDelay: 300,
-    label,
+    label: "Answer to refill your oxygen!",
     source: questionSource,
   });
   input.clear();
-  return correct;
-}
-
-async function outOfOxygen() {
-  const correct = await ask("Out of oxygen! Solve it to refill");
-  if (!correct) {
-    const { checkpoint } = game.round;
-    game.score = game.stageScore;
-    newRound(game.stageIndex, checkpoint);
-    showToast(checkpoint === null ? "MISSION RESTART" : "BACK TO THE CHECKPOINT", "#ff2e88");
-    setPhase("intro");
-    return;
+  const { round } = game;
+  game.nextQuestion += questionEvery;
+  round.player.hurtFor = shieldSeconds;
+  round.shots = [];
+  if (correct) {
+    game.score += answerBonus;
+    fillOxygen(round);
+    showToast(`BOOST! +${answerBonus} & FULL OXYGEN`);
+  } else {
+    showToast("SHIELD UP! NO OXYGEN", "#00e5ff");
   }
-  game.round.hearts = maxHearts;
-  game.round.player.hurtFor = 2;
-  game.round.shots = [];
-  showToast("OXYGEN REFILLED!");
   setPhase("playing");
 }
 
-async function launch() {
-  const correct = await ask("Solve it to launch the rocket!");
-  if (correct) {
-    game.score += launchBonus;
-    showToast(`PERFECT LAUNCH! +${launchBonus}`);
-  } else {
-    showToast("LAUNCHING ANYWAY!", "#00e5ff");
-  }
+function launch() {
+  game.score += launchBonus;
+  showToast(`PLANET CLEARED! +${launchBonus}`);
   game.round.player.hidden = true;
+  // The leaderboard keeps the best score from one trip across the planets.
+  recordRun("astro", game.score);
   play("launch");
   setPhase("clear");
+}
+
+// All hearts gone: lose a life and go back to the last checkpoint, or start
+// the whole mission again once the last life is gone.
+function loseLife() {
+  game.lives -= 1;
+  play("lose");
+  if (game.lives <= 0) {
+    recordRun("astro", game.score);
+    setPhase("over");
+    return;
+  }
+  newRound(game.stageIndex, game.round.checkpoint);
+  setPhase("ready");
 }
 
 // Fell in a pit or lava (respawn on safe ground), or got hit by an alien,
@@ -148,7 +178,18 @@ function hurt(fromX, kind) {
   } else {
     hurtPlayer(player, fromX, kind === "spike");
   }
-  if (round.hearts <= 0) outOfOxygen();
+  if (round.hearts <= 0) loseLife();
+}
+
+// An empty oxygen meter takes a heart every couple of seconds.
+function choke() {
+  const { round } = game;
+  round.hearts -= 1;
+  round.shake = 0.2;
+  round.player.hurtFor = 0.6;
+  play("hit");
+  showToast("NO OXYGEN! FIND A TANK!", "#ff2e88");
+  if (round.hearts <= 0) loseLife();
 }
 
 function updateWorld(dt) {
@@ -188,26 +229,39 @@ function updatePlaying(dt) {
   updateWorld(dt);
   const { player, rocket, level } = game.round;
   if (game.phase !== "playing") return;
+  game.mathTime += dt;
+  if (breathe(game.round, dt)) {
+    choke();
+    if (game.phase !== "playing") return;
+  }
   const fell = player.y > level.height + 40 || touchesLava(player, level);
   if (fell) {
     hurt(player.x, "fell");
     return;
   }
   const atRocket = Math.abs(player.x + player.w / 2 - rocket.x) < 36;
-  if (atRocket && player.onGround) launch();
+  if (atRocket && player.onGround) {
+    launch();
+    return;
+  }
+  if (game.mathTime >= game.nextQuestion) runQuestion();
 }
 
 function update(dt) {
   game.clock += dt;
   game.phaseTime += dt;
   const start = input.pressed("start");
-  if (game.phase === "title" && start) setPhase("intro");
+  if (game.phase === "title" && start) startMission();
   if (game.phase === "intro" && game.phaseTime > 2) {
     setPhase("playing");
     if (game.stageIndex === 0 && !game.hinted) {
       showToast("JUMP, THEN PRESS DOWN TO SMASH!", "#ffd400");
     }
   }
+  if (game.phase === "ready" && game.phaseTime > 2) setPhase("playing");
+  // Out of lives: the mission restarts on its own after a moment.
+  const restart = game.phaseTime > 4 || (start && game.phaseTime > 1.5);
+  if (game.phase === "over" && restart) startMission();
   if (game.phase === "playing") updatePlaying(dt);
   if (game.phase === "clear") {
     game.round.rocket.lift += (120 + game.phaseTime * 500) * dt;
@@ -223,11 +277,7 @@ function update(dt) {
       setPhase("won");
     }
   }
-  if (game.phase === "won" && start && game.phaseTime > 1.5) {
-    game.score = 0;
-    newRound(0);
-    setPhase("intro");
-  }
+  if (game.phase === "won" && start && game.phaseTime > 1.5) startMission();
 }
 
 function startLoop(art) {
@@ -260,6 +310,10 @@ async function start() {
       document.fonts.load('16px "Press Start 2P"'),
     ]);
     art.mirrored = mirrorSheet(art.images.astronaut);
+    // Leaving mid-trip still counts the score so far.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) recordRun("astro", game.score);
+    });
     startLoop(art);
   } catch (error) {
     document.getElementById("load-error").textContent = `Error: ${error.message}`;

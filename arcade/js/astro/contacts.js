@@ -4,6 +4,7 @@
 import { play } from "../sound.js";
 import { isStunned } from "./enemies.js";
 import { dangerBox, pushOut } from "./hazards.js";
+import { fillOxygen, maxOxygen } from "./oxygen.js";
 import { overlaps, touchesSpikes } from "./physics.js";
 import { bouncePlayer, maxHearts } from "./player.js";
 
@@ -115,9 +116,12 @@ function collectItems(game) {
     item.taken = true;
     play("pickup");
     puff(round, item.x + item.w / 2, item.y, "#9cf0ff", 10);
-    if (round.hearts < maxHearts) {
-      round.hearts += 1;
-      game.showToast("+1 OXYGEN", "#39ff14");
+    // A tank fills the oxygen meter and patches up one heart.
+    const low = round.oxygen < maxOxygen - 1 || round.hearts < maxHearts;
+    fillOxygen(round);
+    if (low) {
+      round.hearts = Math.min(maxHearts, round.hearts + 1);
+      game.showToast("OXYGEN REFILLED!", "#39ff14");
       return;
     }
     game.score += 100;

@@ -2,7 +2,7 @@
 // region, see creatureAtlas.js). Pictures are fitted into a square and
 // cached per creature, size and mode, so a battle draws one cached image a
 // frame.
-import { creatureAtlas } from "./creatureAtlas.js";
+import { creatureArtVersion, creatureAtlas } from "./creatureAtlas.js";
 import { creatureById } from "./creatures.js";
 import { needsFlip } from "./creatureFacing.js";
 import { makeCanvas } from "./util.js";
@@ -19,7 +19,7 @@ function atlasFor(zone) {
     img.addEventListener("load", () => {
       entry.ready = true;
     });
-    img.src = `img/tidesong/creatures/${zone}.webp`;
+    img.src = `img/tidesong/creatures/${zone}.webp?v=${creatureArtVersion[zone] ?? ""}`;
     entry.loaded = new Promise((resolve) => {
       img.addEventListener("load", resolve);
       img.addEventListener("error", resolve);

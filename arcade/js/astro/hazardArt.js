@@ -1,6 +1,7 @@
 // Draws hazards, roof spikes, floor thorns, oxygen tanks, checkpoint flags
 // and power-ups lying on the ground. Pure output: reads game state, never
 // changes it.
+import { gushCell } from "./art.js";
 import { powerInfo } from "./powerups.js";
 
 const spikeColours = {
@@ -94,13 +95,6 @@ const rockColours = {
   venus: { dark: "#2a2018", light: "#6a5a48" },
 };
 
-// Geyser colours: lava, acid or freezing vapour.
-const geyserColours = {
-  neptune: ["rgba(90, 140, 255, 0.85)", "#9cc8ff", "#e8f4ff", "#c8e0ff"],
-  venus: ["rgba(120, 200, 0, 0.85)", "#c8e040", "#f4ffb0", "#e0ff60"],
-};
-const lavaGeyser = ["rgba(255, 90, 0, 0.85)", "#ffb000", "#fff2a0", "#ffd23f"];
-
 function drawRock(ctx, h, x, clock, palette) {
   const colours = rockColours[palette];
   if (h.state === "broken") return;
@@ -121,23 +115,46 @@ function drawRock(ctx, h, x, clock, palette) {
   ctx.fill();
 }
 
-function drawGeyser(ctx, h, x, clock, palette) {
-  const [outer, middle, core, bubble] = geyserColours[palette] ?? lavaGeyser;
-  if (h.state === "bubble") {
-    ctx.fillStyle = bubble;
-    for (let i = 0; i < 4; i += 1) {
-      const bob = Math.abs(Math.sin(clock * 9 + i * 1.7)) * 26;
-      ctx.fillRect(x + 4 + i * 9, h.bottom - 10 - bob, 6, 6);
-    }
+// Rows of a roaring gush frame (4 or 5), measured from the top of the
+// cell: the crown of spray, then the stem, then the splash at its base.
+const crown = { from: 15, to: 85 };
+const base = 115;
+
+function gushFrame(h, clock) {
+  if (h.state === "bubble") return Math.floor(clock * 8) % 2 === 0 ? 1 : 2;
+  if (h.h < 4) return 0;
+  if (h.h < 100) return 3;
+  return 4 + (Math.floor(clock * 10) % 2);
+}
+
+// A geyser from the user's gush drawing: the pool always, the jet while it
+// bubbles and erupts. Its column is h.h tall above the pool's surface; when
+// that's taller than the drawing, the stem stretches between crown and base.
+function drawGeyser(ctx, h, x, clock, palette, gush) {
+  if (!gush) return;
+  const { h: cellH, surface, w } = gushCell;
+  const frame = gushFrame(h, clock);
+  const sx = frame * w;
+  const left = Math.round(x + h.w / 2 - w / 2);
+  const top = h.bottom - 4;
+  ctx.drawImage(gush, sx, surface, w, cellH - surface, left, top, w, cellH - surface);
+  if (frame === 0) return;
+  if (frame < 4) {
+    ctx.drawImage(gush, sx, 0, w, surface, left, top - surface, w, surface);
+    return;
   }
-  if (h.h < 4) return;
-  const wave = Math.sin(clock * 30) * 3;
-  ctx.fillStyle = outer;
-  ctx.fillRect(x - 4 + wave, h.y, h.w + 8, h.h);
-  ctx.fillStyle = middle;
-  ctx.fillRect(x + 6 - wave, h.y + 10, h.w - 12, h.h - 10);
-  ctx.fillStyle = core;
-  ctx.fillRect(x + 15, h.y + 24, h.w - 30, h.h - 24);
+  const tall = Math.max(h.h, surface - crown.from);
+  const peak = top - tall;
+  const crownH = crown.to - crown.from;
+  const baseH = surface - base;
+  const stemH = Math.max(1, tall - crownH - baseH);
+  ctx.drawImage(gush, sx, crown.from, w, crownH, left, peak, w, crownH);
+  // Only the jet's core is stretched, so side spray doesn't smear into
+  // long streaks.
+  const core = 52;
+  const coreX = (w - core) / 2;
+  ctx.drawImage(gush, sx + coreX, crown.to, core, base - crown.to, left + coreX, peak + crownH, core, stemH);
+  ctx.drawImage(gush, sx, base, w, baseH, left, top - baseH, w, baseH);
 }
 
 function drawBeam(ctx, h, x, clock) {
@@ -172,11 +189,11 @@ const painters = {
   rock: drawRock,
 };
 
-export function drawHazards(ctx, round, clock) {
+export function drawHazards(ctx, round, clock, gush) {
   round.hazards.forEach((h) => {
     const x = Math.round(h.x - round.camera);
     if (x < -200 || x > 1160) return;
-    painters[h.kind](ctx, h, x, clock, round.stage.id);
+    painters[h.kind](ctx, h, x, clock, round.stage.id, gush);
   });
 }
 

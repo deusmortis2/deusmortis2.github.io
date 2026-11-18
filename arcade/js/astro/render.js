@@ -1,6 +1,6 @@
 // Draws the world: background, tiles, rocket, aliens, boss, astronaut and
 // effects. Pure output: reads game state, never changes it.
-import { astronautCell } from "./art.js";
+import { astronautCell, iceTop } from "./art.js";
 import { drawBoss } from "./bossArt.js";
 import { isStunned } from "./enemies.js";
 import { drawBolts, drawPatches, drawShots, drawStrikes } from "./effectsArt.js";
@@ -13,6 +13,9 @@ import {
 } from "./hazardArt.js";
 import { drawHud } from "./hud.js";
 import { rows, tile } from "./levels.js";
+
+// The top floor row. Rows above it hold raised blocks.
+const floorRow = 10;
 import { playerFrame } from "./player.js";
 import {
   drawPlayerEffects,
@@ -38,24 +41,36 @@ function drawBackground(ctx, strip, round) {
   ctx.fillRect(0, 0, viewWidth, viewHeight);
 }
 
-const lavaColours = {
-  default: ["#b3200c", "#ff6a00", "#ffd23f"],
-  venus: ["#3a6a00", "#8ad000", "#e8ff80"],
-};
+// The liquid pool in a pit: it drifts slowly sideways and bobs a little.
+function drawPool(ctx, pool, x, y, col, clock) {
+  const drift = Math.floor(col * tile + clock * 12) % (pool.width / 2);
+  const bob = Math.round(Math.sin(clock * 2) * 2);
+  ctx.drawImage(pool, drift, 0, tile, pool.height, x, y + 2 + bob, tile, pool.height);
+}
 
-function drawLava(ctx, x, y, clock, palette) {
-  const [deep, surface, fleck] = lavaColours[palette] ?? lavaColours.default;
-  const wave = Math.sin(clock * 3 + x / 40) * 3;
-  ctx.fillStyle = deep;
-  ctx.fillRect(x, y + 6 + wave, tile, tile);
-  ctx.fillStyle = surface;
-  ctx.fillRect(x, y + 6 + wave, tile, 8);
-  ctx.fillStyle = fleck;
-  ctx.fillRect(x + ((clock * 30 + x) % tile), y + 8 + wave, 6, 3);
+// Floor rows are dirt, with the grassy edge on top; anything raised above
+// the floor is stone brick.
+function drawSolid(ctx, tiles, round, col, row, x, y) {
+  const { grid, icy } = round.level;
+  const open = row === 0 || grid[row - 1][col] !== "#";
+  const side = col % 2;
+  if (row < floorRow) {
+    ctx.drawImage(tiles.bricks[row % 2][side], x, y);
+    if (open && icy.has(col)) {
+      ctx.fillStyle = iceTop;
+      ctx.fillRect(x, y, tile, 6);
+    }
+    return;
+  }
+  if (!open) {
+    ctx.drawImage(tiles.solid[side], x, y);
+    return;
+  }
+  ctx.drawImage((icy.has(col) ? tiles.ice : tiles.surface)[side], x, y);
 }
 
 function drawTiles(ctx, art, round, clock) {
-  const { grid, icy } = round.level;
+  const { grid } = round.level;
   const palette = round.stage.id;
   const tiles = art.tiles[palette];
   const first = Math.max(0, Math.floor(round.camera / tile));
@@ -65,13 +80,9 @@ function drawTiles(ctx, art, round, clock) {
       const ch = grid[row][col];
       const x = Math.round(col * tile - round.camera);
       const y = row * tile;
-      if (ch === "#") {
-        const open = row === 0 || grid[row - 1][col] !== "#";
-        const top = icy.has(col) ? tiles.ice : tiles.surface;
-        ctx.drawImage(open ? top : tiles.solid, x, y);
-      }
-      if (ch === "=") ctx.drawImage(tiles.ledge, x, y);
-      if (ch === "L") drawLava(ctx, x, y, clock, palette);
+      if (ch === "#") drawSolid(ctx, tiles, round, col, row, x, y);
+      if (ch === "=") ctx.drawImage(tiles.ledge[col % 2], x, y);
+      if (ch === "L") drawPool(ctx, tiles.pool, x, y, col, clock);
       if (ch === "v") drawSpikes(ctx, x, y, palette);
       if (ch === "^") drawThorns(ctx, x, y, palette);
     }
@@ -243,13 +254,13 @@ export function draw(ctx, art, game) {
   }
   drawBackground(ctx, art.strips[zone], round);
   drawTiles(ctx, art, round, game.clock);
-  drawPatches(ctx, round, game.clock);
+  drawPatches(ctx, round, game.clock, art.images.slime);
   drawItems(ctx, round, game.clock);
   drawRocket(ctx, round, game.clock);
   round.enemies.forEach((e) => drawEnemy(ctx, art, e, round, game.clock));
   if (round.boss) drawBoss(ctx, art, round, game.clock);
   drawPlayer(ctx, art, round, game.clock);
-  drawHazards(ctx, round, game.clock);
+  drawHazards(ctx, round, game.clock, art.gush[round.stage.id]);
   drawStrikes(ctx, round, game.clock);
   drawShots(ctx, round);
   drawBolts(ctx, round, game.clock);

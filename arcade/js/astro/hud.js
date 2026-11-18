@@ -1,8 +1,12 @@
-// Score, lives (as hearts), the oxygen meter, the math clock, messages,
-// title cards and touch buttons.
+// Score, lives (as hearts), the oxygen meter, power-ups, the boss's health,
+// the math clock, messages, title cards and touch buttons.
+import { bossName } from "./bosses.js";
+import { powerLetters } from "./hazardArt.js";
 import { touchButtons } from "./input.js";
+import { stages } from "./levels.js";
 import { maxOxygen } from "./oxygen.js";
-import { maxLives } from "./player.js";
+import { startLives } from "./player.js";
+import { powerInfo } from "./powerups.js";
 
 const font = '"Press Start 2P", monospace';
 const width = 960;
@@ -16,6 +20,9 @@ const heartArt = [
   "..rrr..",
   "...r...",
 ];
+
+// Where the title screen's continue button sits (canvas pixels).
+export const continueButton = { h: 44, w: 520, x: 220, y: 466 };
 
 export function text(ctx, value, x, y, options = {}) {
   const { align = "left", colour = "#ffffff", size = 16 } = options;
@@ -41,22 +48,46 @@ function drawHeart(ctx, x, y, full) {
   });
 }
 
-function drawTouch(ctx) {
+function drawTouch(ctx, game) {
+  const armed = game.round.player.powers.blaster > 0;
+  const buttons = touchButtons.filter((b) => b.action !== "fire" || armed);
   ctx.globalAlpha = 0.35;
-  touchButtons.forEach((b) => {
+  buttons.forEach((b) => {
     ctx.fillStyle = "#0a0a1f";
     ctx.beginPath();
     ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#00e5ff";
+    ctx.strokeStyle = b.action === "fire" ? "#ff2e88" : "#00e5ff";
     ctx.lineWidth = 4;
     ctx.stroke();
   });
   ctx.globalAlpha = 0.8;
-  touchButtons.forEach((b) => {
+  buttons.forEach((b) => {
     text(ctx, b.label, b.x, b.y - 10, { align: "center", size: 22 });
   });
   ctx.globalAlpha = 1;
+}
+
+// Eight little planets in a row, the current one ringed.
+function drawPlanetRow(ctx, game, y) {
+  const colours = ["#c8a080", "#e8c060", "#4a90e0", "#d0603a", "#d8a878", "#e8d8a0", "#9ce8e8", "#4a6ad0"];
+  const gap = 70;
+  const left = width / 2 - (gap * (stages.length - 1)) / 2;
+  stages.forEach((stage, i) => {
+    const x = left + i * gap;
+    ctx.globalAlpha = i <= game.stageIndex ? 1 : 0.35;
+    ctx.fillStyle = colours[i];
+    ctx.beginPath();
+    ctx.arc(x, y, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    if (i !== game.stageIndex) return;
+    ctx.strokeStyle = "#ffd400";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(x, y, 21, 0, Math.PI * 2);
+    ctx.stroke();
+  });
 }
 
 function cardLines(game) {
@@ -69,26 +100,46 @@ function cardLines(game) {
       "BLASTING OFF...",
     ],
     intro: [
-      `STAGE ${stageNumber}: ${round.stage.name}`,
+      `PLANET ${stageNumber}: ${round.stage.name}`,
       round.stage.tagline,
       "GET READY!",
     ],
     over: [
       "OUT OF LIVES!",
       `SCORE ${game.score}`,
-      "RESTARTING THE MISSION...",
+      "BACK TO THE LAST CHECKPOINT...",
     ],
     title: [
       "ASTRO STOMP",
       "JUMP, THEN PRESS DOWN TO SMASH",
-      "SPACE OR TAP TO START",
+      "SPACE OR TAP: NEW MISSION",
     ],
     won: [
-      "MISSION COMPLETE!",
+      "SOLAR SYSTEM SAVED!",
       `FINAL SCORE ${game.score}`,
       "ENTER OR TAP: PLAY AGAIN",
     ],
   }[game.phase];
+}
+
+function drawTitleExtras(ctx, game) {
+  const small = { align: "center", colour: "#a8a8c8", size: 12 };
+  text(ctx, "ARROWS OR A/D TO MOVE. X FIRES A BLASTER POWER-UP", width / 2, 370, small);
+  text(ctx, "8 PLANETS, A BOSS ON EACH. OXYGEN RUNS OUT FAST: GRAB O2", width / 2, 395, small);
+  text(ctx, "A BOOST EVERY 30 SECONDS REFILLS YOUR OXYGEN", width / 2, 420, small);
+  if (game.saved <= 0) return;
+  const b = continueButton;
+  ctx.fillStyle = "rgba(0, 229, 255, 0.15)";
+  ctx.fillRect(b.x, b.y, b.w, b.h);
+  ctx.strokeStyle = "#00e5ff";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(b.x, b.y, b.w, b.h);
+  const name = stages[game.saved].name;
+  text(ctx, `C OR TAP HERE: CONTINUE ON ${name}`, width / 2, b.y + 14, {
+    align: "center",
+    colour: "#00e5ff",
+    size: 14,
+  });
 }
 
 function drawCard(ctx, game) {
@@ -97,27 +148,18 @@ function drawCard(ctx, game) {
   ctx.fillStyle = "rgba(10, 10, 31, 0.7)";
   ctx.fillRect(0, 0, width, height);
   const centre = { align: "center" };
-  text(ctx, lines[0], width / 2, 170, { ...centre, colour: "#ff2e88", size: 36 });
-  text(ctx, lines[1], width / 2, 245, { ...centre, colour: "#ffd400", size: 18 });
+  text(ctx, lines[0], width / 2, 150, { ...centre, colour: "#ff2e88", size: 36 });
+  text(ctx, lines[1], width / 2, 225, { ...centre, colour: "#ffd400", size: 18 });
   const steady = ["clear", "intro", "over"].includes(game.phase);
   if (steady || Math.floor(game.clock * 2) % 2 === 0) {
-    text(ctx, lines[2], width / 2, 320, { ...centre, size: 16 });
+    text(ctx, lines[2], width / 2, 295, { ...centre, size: 16 });
   }
-  if (game.phase !== "title") return;
-  text(ctx, "ARROWS OR A/D TO MOVE", width / 2, 400, { ...centre, colour: "#a8a8c8", size: 12 });
-  text(ctx, "3 LIVES. OXYGEN RUNS OUT FAST: GRAB O2 TANKS", width / 2, 425, {
-    ...centre,
-    colour: "#a8a8c8",
-    size: 12,
-  });
-  text(ctx, "A BOOST EVERY 30 SECONDS REFILLS YOUR OXYGEN", width / 2, 450, {
-    ...centre,
-    colour: "#a8a8c8",
-    size: 12,
-  });
+  if (game.phase === "intro") drawPlanetRow(ctx, game, 380);
+  if (game.phase === "title") drawTitleExtras(ctx, game);
 }
 
-// The O2 bar under the hearts. It turns red and flashes when it's low.
+// The O2 bar under the hearts. It turns red and flashes when it's low, and
+// turns green while you're in poison gas.
 function drawOxygen(ctx, round, clock) {
   const share = round.oxygen / maxOxygen;
   const low = share < 0.25;
@@ -130,37 +172,76 @@ function drawOxygen(ctx, round, clock) {
   ctx.fillStyle = "#3a2a44";
   ctx.fillRect(x, y, w, 14);
   const flash = low && Math.floor(clock * 4) % 2 === 0;
-  ctx.fillStyle = low ? (flash ? "#ffffff" : "#ff2e88") : "#00e5ff";
+  let colour = low ? (flash ? "#ffffff" : "#ff2e88") : "#00e5ff";
+  if (round.poisoned) colour = "#9cd020";
+  ctx.fillStyle = colour;
   ctx.fillRect(x, y, Math.round(w * share), 14);
-  if (share > 0) return;
+  if (round.poisoned) text(ctx, "POISON!", x + w + 14, y, { colour: "#9cd020", size: 14 });
+  if (share > 0 || round.poisoned) return;
   text(ctx, "EMPTY!", x + w + 14, y, { colour: "#ff2e88", size: 14 });
+}
+
+// A row of the power-ups you have, each with its seconds left.
+function drawPowers(ctx, player) {
+  const { powers } = player;
+  let x = 16;
+  Object.keys(powerInfo).forEach((kind) => {
+    const left = powers[kind];
+    if (!left || left <= 0) return;
+    const { colour, seconds } = powerInfo[kind];
+    ctx.fillStyle = "#0a0a1f";
+    ctx.fillRect(x, 108, 30, 30);
+    ctx.strokeStyle = colour;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, 108, 30, 30);
+    text(ctx, powerLetters[kind], x + 15, 116, { align: "center", colour, size: 12 });
+    if (seconds) text(ctx, String(Math.ceil(left)), x + 15, 142, { align: "center", size: 10 });
+    x += 38;
+  });
+}
+
+function drawBossBar(ctx, boss) {
+  const w = 360;
+  const x = width / 2 - w / 2;
+  const y = height - 34;
+  text(ctx, bossName(boss), width / 2, y - 22, { align: "center", colour: "#ff8a3a", size: 12 });
+  ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+  ctx.fillRect(x - 3, y - 3, w + 6, 18);
+  ctx.fillStyle = "#3a2a44";
+  ctx.fillRect(x, y, w, 12);
+  ctx.fillStyle = boss.angry ? "#ff2e88" : "#ff8a3a";
+  ctx.fillRect(x, y, Math.round((w * boss.hp) / boss.max), 12);
 }
 
 function drawStatus(ctx, game) {
   const { round } = game;
-  for (let i = 0; i < maxLives; i += 1) {
+  const hearts = Math.max(startLives, game.lives);
+  for (let i = 0; i < hearts; i += 1) {
     drawHeart(ctx, 16 + i * 36, 16, i < game.lives);
   }
   drawOxygen(ctx, round, game.clock);
   text(ctx, `SCORE ${game.score}`, 16, 80, { colour: "#ffd400" });
+  drawPowers(ctx, round.player);
   const right = { align: "right" };
-  text(ctx, `${game.stageIndex + 1}/3 ${round.stage.name}`, width - 16, 16, {
+  text(ctx, `${game.stageIndex + 1}/${stages.length} ${round.stage.name}`, width - 16, 16, {
     ...right,
     colour: "#00e5ff",
   });
   const wait = Math.max(0, Math.ceil(game.nextQuestion - game.mathTime));
   text(ctx, `BOOST IN ${wait}`, width - 16, 40, { ...right, colour: "#ff2e88" });
+  const { boss } = round;
+  if (boss && boss.dying === undefined) drawBossBar(ctx, boss);
 }
 
 export function drawHud(ctx, art, game) {
   if (game.phase !== "title") drawStatus(ctx, game);
   if (game.toast && game.toast.until > game.clock) {
-    text(ctx, game.toast.text, width / 2, 110, {
+    text(ctx, game.toast.text, width / 2, 160, {
       align: "center",
       colour: game.toast.colour,
       size: 16,
     });
   }
-  if (game.input.state.touch && game.phase === "playing") drawTouch(ctx);
+  if (game.input.state.touch && game.phase === "playing") drawTouch(ctx, game);
   drawCard(ctx, game);
 }

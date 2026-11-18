@@ -56,6 +56,12 @@ function moveY(body, dy, level) {
   }
 }
 
+// Shoves a body sideways (wind, gravity wells), stopping at walls.
+export function slide(body, dx, level) {
+  const steps = Math.max(1, Math.ceil(Math.abs(dx) / maxStep));
+  for (let i = 0; i < steps; i += 1) moveX(body, dx / steps, level);
+}
+
 // Moves a body through the level in small steps so fast falls can't tunnel.
 export function moveBody(body, dt, level, fall = gravity) {
   body.vy += fall * dt;
@@ -105,13 +111,17 @@ export function overlaps(a, b) {
 }
 
 // Roof spikes only hurt along the points: the top 24px of a "v" tile.
+// Floor thorns ("^") hurt along the bottom 24px of theirs.
 export function touchesSpikes(body, level) {
-  const row = Math.floor(body.y / tile);
   const left = Math.floor(body.x / tile);
   const right = Math.floor((body.x + body.w) / tile);
-  const inPoints = body.y - row * tile < 24;
+  const head = Math.floor(body.y / tile);
+  const foot = Math.floor((body.y + body.h - 1) / tile);
+  const inPoints = body.y - head * tile < 24;
+  const onThorns = (body.y + body.h) - foot * tile > tile - 24;
   for (let col = left; col <= right; col += 1) {
-    if (inPoints && tileAt(level, col, row) === "v") return true;
+    if (inPoints && tileAt(level, col, head) === "v") return "above";
+    if (onThorns && tileAt(level, col, foot) === "^") return "below";
   }
-  return false;
+  return null;
 }

@@ -20,7 +20,7 @@
 <main class="screen">
   <h1 class="heading">ASTRO STOMP</h1>
   <div id="game-frame" class="game-frame wide">
-  <canvas id="game" class="game-canvas wide" width="960" height="540" aria-label="Astro Stomp game. Guide the astronaut across three planets, smashing aliens from above."></canvas>
+  <canvas id="game" class="game-canvas wide" width="960" height="540" aria-label="Astro Stomp game. Guide the astronaut across eight planets, smashing aliens and bosses from above."></canvas>
   </div>
   <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
   <p id="load-error" class="status" role="status"></p>
@@ -28,17 +28,20 @@
     <strong>Move:</strong> arrow keys or A/D &nbsp;
     <strong>Jump:</strong> space, up or W &nbsp;
     <strong>Smash:</strong> down or S while in the air &nbsp;
+    <strong>Fire:</strong> X or J (with a blaster) &nbsp;
     <strong>Fullscreen:</strong> F<br>
-    Cross Mars, Venus and Saturn and reach the rocket on each. Smash aliens from
-    above; touching them, their shots or a hazard costs a life. Every alien has
-    a trick: stalkers pounce, blades throw discs, brutes take three smashes and
-    send out shock waves (jump them), ravagers charge and get dazed if they hit
-    a wall, brains fire orbs and flies dive or drip acid. Watch out for cliffs,
-    low cave roofs, falling rocks, crushers, lava geysers and lasers. You get 3
-    lives for the whole trip. Your oxygen meter drains fast: grab O2 tanks to
-    refill it (they also give back a lost life), and once it's empty you lose
-    a life every 2 seconds. Lose all 3 and the mission starts over.
-    Every 30 seconds you get a boost: full oxygen and a short shield.
+    Fly out from Mercury past Venus, Earth, Mars, Jupiter, Saturn and Uranus
+    to Neptune. Each planet has four kinds of alien with their own tricks
+    (hot shells, poison gas, kicked turtle shells, burrowing scorpions,
+    gusts, gravity wells, freezing frost and mind rings that swap left and
+    right), and a boss guards the rocket at the end. A boss can only be
+    smashed when it's worn out after a big attack: watch for SMASH! Beaten
+    aliens sometimes drop power-ups: shields, blasters, jet boots, speed,
+    star power, quake smashes, oxygen and extra lives. You get 3 lives;
+    lose them all and you go back to the last checkpoint flag (or the
+    boss's door). Your oxygen meter drains fast: grab O2 tanks to refill it.
+    Every 30 seconds you get a boost: full oxygen and a short shield. Press C on the title screen
+    to carry on from the furthest planet you've reached.
   </p>
 </main>
 <script type="module" src="js/astro/game.js"></script>

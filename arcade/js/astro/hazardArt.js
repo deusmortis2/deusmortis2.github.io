@@ -1,10 +1,38 @@
-// Draws hazards, alien shots, roof spikes, oxygen tanks and checkpoint flags.
-// Pure output: reads game state, never changes it.
+// Draws hazards, roof spikes, floor thorns, oxygen tanks, checkpoint flags
+// and power-ups lying on the ground. Pure output: reads game state, never
+// changes it.
+import { powerInfo } from "./powerups.js";
+
 const spikeColours = {
+  earth: { edge: "#1c3a14", fill: "#8ac850" },
+  jupiter: { edge: "#1e2430", fill: "#c8d0dc" },
   mars: { edge: "#4f1d10", fill: "#c88a60" },
+  mercury: { edge: "#1e1816", fill: "#8a6a58" },
+  neptune: { edge: "#0c1030", fill: "#9cb8ff" },
   saturn: { edge: "#2a4a66", fill: "#bfefff" },
+  uranus: { edge: "#0e2a30", fill: "#dff8ff" },
   venus: { edge: "#1c1712", fill: "#8a7a60" },
 };
+
+// Thorns growing up from the floor, points upwards.
+export function drawThorns(ctx, x, y, palette) {
+  const colours = spikeColours[palette];
+  for (let i = 0; i < 3; i += 1) {
+    const left = x + i * 15;
+    ctx.fillStyle = colours.edge;
+    ctx.beginPath();
+    ctx.moveTo(left, y + 45);
+    ctx.lineTo(left + 15, y + 45);
+    ctx.lineTo(left + 7.5, y + 17);
+    ctx.fill();
+    ctx.fillStyle = colours.fill;
+    ctx.beginPath();
+    ctx.moveTo(left + 3, y + 45);
+    ctx.lineTo(left + 12, y + 45);
+    ctx.lineTo(left + 7.5, y + 24);
+    ctx.fill();
+  }
+}
 
 export function drawSpikes(ctx, x, y, palette) {
   const colours = spikeColours[palette];
@@ -56,10 +84,22 @@ function drawCrusher(ctx, h, x, clock) {
 }
 
 const rockColours = {
+  earth: { dark: "#3a3a2a", light: "#7a7a5a" },
+  jupiter: { dark: "#3a4458", light: "#9aa8bc" },
   mars: { dark: "#4a3428", light: "#8a6a58" },
+  mercury: { dark: "#2a2220", light: "#6a5a50" },
+  neptune: { dark: "#2a3a80", light: "#9cb8ff" },
   saturn: { dark: "#5a8aa8", light: "#dff6ff" },
+  uranus: { dark: "#3a8a9a", light: "#e8ffff" },
   venus: { dark: "#2a2018", light: "#6a5a48" },
 };
+
+// Geyser colours: lava, acid or freezing vapour.
+const geyserColours = {
+  neptune: ["rgba(90, 140, 255, 0.85)", "#9cc8ff", "#e8f4ff", "#c8e0ff"],
+  venus: ["rgba(120, 200, 0, 0.85)", "#c8e040", "#f4ffb0", "#e0ff60"],
+};
+const lavaGeyser = ["rgba(255, 90, 0, 0.85)", "#ffb000", "#fff2a0", "#ffd23f"];
 
 function drawRock(ctx, h, x, clock, palette) {
   const colours = rockColours[palette];
@@ -81,9 +121,10 @@ function drawRock(ctx, h, x, clock, palette) {
   ctx.fill();
 }
 
-function drawGeyser(ctx, h, x, clock) {
+function drawGeyser(ctx, h, x, clock, palette) {
+  const [outer, middle, core, bubble] = geyserColours[palette] ?? lavaGeyser;
   if (h.state === "bubble") {
-    ctx.fillStyle = "#ffd23f";
+    ctx.fillStyle = bubble;
     for (let i = 0; i < 4; i += 1) {
       const bob = Math.abs(Math.sin(clock * 9 + i * 1.7)) * 26;
       ctx.fillRect(x + 4 + i * 9, h.bottom - 10 - bob, 6, 6);
@@ -91,11 +132,11 @@ function drawGeyser(ctx, h, x, clock) {
   }
   if (h.h < 4) return;
   const wave = Math.sin(clock * 30) * 3;
-  ctx.fillStyle = "rgba(255, 90, 0, 0.85)";
+  ctx.fillStyle = outer;
   ctx.fillRect(x - 4 + wave, h.y, h.w + 8, h.h);
-  ctx.fillStyle = "#ffb000";
+  ctx.fillStyle = middle;
   ctx.fillRect(x + 6 - wave, h.y + 10, h.w - 12, h.h - 10);
-  ctx.fillStyle = "#fff2a0";
+  ctx.fillStyle = core;
   ctx.fillRect(x + 15, h.y + 24, h.w - 30, h.h - 24);
 }
 
@@ -135,7 +176,7 @@ export function drawHazards(ctx, round, clock) {
   round.hazards.forEach((h) => {
     const x = Math.round(h.x - round.camera);
     if (x < -200 || x > 1160) return;
-    painters[h.kind](ctx, h, x, clock, round.stage.palette);
+    painters[h.kind](ctx, h, x, clock, round.stage.id);
   });
 }
 
@@ -167,6 +208,37 @@ function drawFlag(ctx, item, x, clock) {
   ctx.fill();
 }
 
+// A power-up: a glowing bubble with a letter. It blinks before it vanishes.
+function drawDrop(ctx, drop, x, clock) {
+  if (drop.life < 3 && Math.floor(clock * 8) % 2 === 0) return;
+  const { colour } = powerInfo[drop.kind];
+  const cx = x + drop.w / 2;
+  const cy = drop.y + drop.h / 2 + Math.sin(clock * 4 + drop.x) * 3;
+  const glow = ctx.createRadialGradient(cx, cy, 4, cx, cy, 26);
+  glow.addColorStop(0, colour);
+  glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.globalAlpha = 0.55;
+  ctx.fillStyle = glow;
+  ctx.fillRect(cx - 26, cy - 26, 52, 52);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#0a0a1f";
+  ctx.beginPath();
+  ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = colour;
+  ctx.font = '12px "Press Start 2P", monospace';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(powerLetters[drop.kind], cx + 1, cy + 1);
+}
+
+export const powerLetters = {
+  blaster: "B", boots: "J", heart: "+", o2: "O", quake: "Q", shield: "S", speed: "F", star: "*",
+};
+
 export function drawItems(ctx, round, clock) {
   round.items.forEach((item) => {
     const x = Math.round(item.x - round.camera);
@@ -174,68 +246,8 @@ export function drawItems(ctx, round, clock) {
     if (item.kind === "flag") drawFlag(ctx, item, x, clock);
     if (item.kind === "tank" && !item.taken) drawTank(ctx, item, x, clock);
   });
-}
-
-const shotPainters = {
-  acid: (ctx, s, x) => {
-    ctx.fillStyle = "#7aff3a";
-    ctx.fillRect(x + 2, s.y, s.w - 4, s.h);
-    ctx.fillRect(x, s.y + 4, s.w, s.h - 6);
-    ctx.fillStyle = "#e0ffc0";
-    ctx.fillRect(x + 3, s.y + 3, 4, 4);
-  },
-  // A four-pointed throwing star, spinning.
-  disc: (ctx, s, x) => {
-    const r = s.w / 2 + 3;
-    ctx.save();
-    ctx.translate(x + s.w / 2, s.y + s.h / 2);
-    ctx.rotate(s.age * 22);
-    ctx.fillStyle = "#e8e8f8";
-    ctx.beginPath();
-    for (let i = 0; i < 8; i += 1) {
-      const reach = i % 2 ? 5 : r;
-      const angle = (i * Math.PI) / 4;
-      ctx.lineTo(Math.cos(angle) * reach, Math.sin(angle) * reach);
-    }
-    ctx.fill();
-    ctx.fillStyle = "#00e5ff";
-    ctx.fillRect(-3, -3, 6, 6);
-    ctx.restore();
-  },
-  orb: (ctx, s, x) => {
-    const cx = x + s.w / 2;
-    const cy = s.y + s.h / 2;
-    const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, 22);
-    glow.addColorStop(0, "rgba(200, 120, 255, 0.9)");
-    glow.addColorStop(1, "rgba(200, 120, 255, 0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(cx - 22, cy - 22, 44, 44);
-    ctx.fillStyle = "#f4d8ff";
-    ctx.fillRect(cx - 5, cy - 5, 10, 10);
-  },
-  // A ridge of rock and dust bursting up out of the ground.
-  wave: (ctx, s, x) => {
-    const fade = Math.max(0.3, 1 - s.age / 1.25);
-    const floor = s.y + s.h;
-    ctx.globalAlpha = fade;
-    [[0, 0.55], [8, 1], [18, 0.75], [26, 0.4]].forEach(([dx, tall], i) => {
-      const jag = Math.abs(Math.sin(s.age * 30 + i)) * 4;
-      ctx.fillStyle = i % 2 ? "#b89a78" : "#d8c8b0";
-      ctx.beginPath();
-      ctx.moveTo(x + dx - 6, floor);
-      ctx.lineTo(x + dx + 2, floor - s.h * tall - jag);
-      ctx.lineTo(x + dx + 10, floor);
-      ctx.fill();
-    });
-    ctx.fillStyle = "#ffd400";
-    ctx.fillRect(x - 4, floor - 4, s.w + 8, 4);
-    ctx.globalAlpha = 1;
-  },
-};
-
-export function drawShots(ctx, round) {
-  round.shots.forEach((s) => {
-    shotPainters[s.kind](ctx, s, Math.round(s.x - round.camera));
+  round.drops.forEach((drop) => {
+    drawDrop(ctx, drop, Math.round(drop.x - round.camera), clock);
   });
 }
 

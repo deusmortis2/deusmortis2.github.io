@@ -156,10 +156,28 @@ const patchColours = {
   spark: ["#9cf0ff", "#ffffff"],
 };
 
-export function drawPatches(ctx, round, clock) {
+// Slime from the user's drawing: a goo cap whose drips run down over the
+// edge of the ground. Drawn a little wider than the patch that slows you.
+const slimeWidth = 64;
+const slimeEdge = 0.45;
+
+function drawSlime(ctx, p, x, slime, fade) {
+  const h = Math.round((slime.height * slimeWidth) / slime.width);
+  const left = Math.round(x + p.w / 2 - slimeWidth / 2);
+  const top = Math.round(p.y + p.h - h * slimeEdge);
+  ctx.globalAlpha = fade;
+  ctx.drawImage(slime, left, top, slimeWidth, h);
+  ctx.globalAlpha = 1;
+}
+
+export function drawPatches(ctx, round, clock, slime) {
   round.patches.forEach((p) => {
     const x = Math.round(p.x - round.camera);
     const fade = Math.min(1, p.life / 0.6);
+    if (p.kind === "slime" && slime) {
+      drawSlime(ctx, p, x, slime, fade);
+      return;
+    }
     ctx.globalAlpha = fade * 0.85;
     if (p.kind === "poison") {
       for (let i = 0; i < 6; i += 1) {

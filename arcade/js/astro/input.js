@@ -1,4 +1,5 @@
-// Keyboard and touch input. Actions are left, right, jump, down and start.
+// Keyboard and touch input. Actions are left, right, jump, down, fire,
+// start and cont (continue a saved mission).
 const keyActions = {
   " ": "jump",
   a: "left",
@@ -6,10 +7,13 @@ const keyActions = {
   arrowleft: "left",
   arrowright: "right",
   arrowup: "jump",
+  c: "cont",
   d: "right",
+  j: "fire",
   enter: "start",
   s: "down",
   w: "jump",
+  x: "fire",
   z: "jump",
 };
 
@@ -19,13 +23,16 @@ export const touchButtons = [
   { action: "right", label: ">", r: 52, x: 205, y: 462 },
   { action: "down", label: "V", r: 52, x: 755, y: 462 },
   { action: "jump", label: "^", r: 60, x: 880, y: 420 },
+  // Only shown (and only works) while the blaster is on.
+  { action: "fire", label: "*", r: 44, x: 880, y: 300 },
 ];
 
 export function createInput(canvas, viewWidth) {
   const keys = new Set();
   const fresh = new Set();
   const touches = new Map();
-  const state = { touch: false };
+  // Where the last tap or click landed, in canvas pixels.
+  const state = { tap: null, touch: false };
 
   const press = (action) => {
     fresh.add(action);
@@ -48,26 +55,33 @@ export function createInput(canvas, viewWidth) {
     touches.clear();
   });
 
-  const buttonAt = (event) => {
+
+  const canvasPoint = (event) => {
     const rect = canvas.getBoundingClientRect();
     const scale = viewWidth / rect.width;
-    const x = (event.clientX - rect.left) * scale;
-    const y = (event.clientY - rect.top) * scale;
-    return touchButtons.find((b) => Math.hypot(b.x - x, b.y - y) < b.r * 1.3);
+    return {
+      x: (event.clientX - rect.left) * scale,
+      y: (event.clientY - rect.top) * scale,
+    };
   };
 
   canvas.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "touch") state.touch = true;
     canvas.setPointerCapture(event.pointerId);
-    const button = state.touch ? buttonAt(event) : null;
+    state.tap = canvasPoint(event);
+    const button = state.touch ? buttonAt(state.tap) : null;
     press("start");
     if (!button) return;
     touches.set(event.pointerId, button.action);
     press(button.action);
   });
+  const buttonAt = ({ x, y }) => {
+    return touchButtons.find((b) => Math.hypot(b.x - x, b.y - y) < b.r * 1.3);
+  };
+
   canvas.addEventListener("pointermove", (event) => {
     if (!touches.has(event.pointerId)) return;
-    const button = buttonAt(event);
+    const button = buttonAt(canvasPoint(event));
     // Sliding a thumb from left to right swaps direction without lifting.
     const isMove = button && ["left", "right"].includes(button.action);
     if (isMove) touches.set(event.pointerId, button.action);

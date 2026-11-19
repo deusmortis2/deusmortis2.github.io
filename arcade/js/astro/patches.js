@@ -5,12 +5,14 @@
 //   ice     a frozen sheet (slippery: hard to stop or turn)
 //   poison  a gas cloud (oxygen drains five times faster inside it)
 //   spark   crackling electricity hanging in the air (hurts)
+//   embers  what's left when a fire burns out (just smoke: harmless)
 import { overlaps } from "./physics.js";
 import { afflict } from "./status.js";
 
 const sizes = {
   acid: { h: 14, life: 3.5, w: 56 },
-  fire: { h: 22, life: 2.5, w: 44 },
+  embers: { h: 8, life: 1.4, w: 56 },
+  fire: { h: 22, life: 2.5, w: 56 },
   ice: { h: 10, life: 5, w: 56 },
   poison: { h: 120, life: 4.5, w: 140 },
   slime: { h: 10, life: 3.5, w: 52 },
@@ -24,14 +26,21 @@ export const hurtsOnTouch = new Set(["acid", "fire", "spark"]);
 export function addPatch(round, kind, x, y, life = sizes[kind].life) {
   const { h, w } = sizes[kind];
   const top = kind === "spark" ? y - h / 2 : y - h;
-  round.patches.push({ age: 0, h, kind, life, max: life, w, x: x - w / 2, y: top });
+  const patch = { age: 0, h, kind, life, max: life, w, x: x - w / 2, y: top };
+  round.patches.push(patch);
+  return patch;
 }
 
 export function updatePatches(round, dt) {
+  const burntOut = [];
   round.patches = round.patches.filter((patch) => {
     patch.age += dt;
     patch.life -= dt;
+    if (patch.life <= 0 && patch.kind === "fire") burntOut.push(patch);
     return patch.life > 0;
+  });
+  burntOut.forEach((fire) => {
+    addPatch(round, "embers", fire.x + fire.w / 2, fire.y + fire.h);
   });
 }
 

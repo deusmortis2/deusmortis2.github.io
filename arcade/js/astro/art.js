@@ -38,6 +38,23 @@ const poolSize = { h: 50, w: 135 };
 // Slime is drawn the same on every planet (only Venus has slime slugs).
 const slimePath = "venus/slime.png";
 const terrainVersion = "draft1";
+// The smasher pieces, the rocket (hull plus flames) and the planet bar, cut
+// by astrostomp/machine-tools/export.py. Bump after re-cutting them.
+const machineVersion = "machines1";
+const smasherParts = ["green", "red", "mount", "rods", "head", "impact"];
+// The O2 tank, the checkpoint flags (closed, then open), the floor and
+// roof spikes, and each planet's fallspike.png (the falling spike,
+// recoloured per planet). Bump this whenever they're redrawn.
+const hazardVersion = "spikes1";
+// Effects from the user's concept sheet, shared by every planet (see
+// fxArt.js). Bump fxVersion when they're redrawn.
+const fxNames = [
+  "dart", "fire1", "fire2", "fire3", "smolder", "splash",
+  "vine1", "vine2", "vine3", "vine4",
+];
+const fxVersion = "concept1";
+// Bump when a planet's alien or boss art is redrawn.
+const spriteVersion = "s2";
 
 function loadImage(path) {
   return new Promise((resolve, reject) => {
@@ -108,13 +125,31 @@ function mirrorStrip(image) {
 }
 
 export async function loadArt() {
-  const [astronaut, slime] = await Promise.all([
+  const machine = (path) => loadImage(`${path}?v=${machineVersion}`);
+  const [astronaut, slime, tank, flags, spikes, rocket, planets, ...rest] = await Promise.all([
     loadAstronaut(),
     loadImage(`${slimePath}?v=${terrainVersion}`),
+    ...["tank", "flags", "spikes"].map((name) => {
+      return loadImage(`${name}.png?v=${hazardVersion}`);
+    }),
+    machine("rocket.png"),
+    machine("planets.png"),
+    ...smasherParts.map((name) => machine(`smasher/${name}.png`)),
+    ...fxNames.map((name) => loadImage(`fx/${name}.png?v=${fxVersion}`)),
   ]);
+  const fx = {};
+  fxNames.forEach((name, i) => {
+    fx[name] = rest[smasherParts.length + i];
+  });
+  const images = { astronaut, flags, planets, rocket, slime, spikes, tank };
+  smasherParts.forEach((name, i) => {
+    images[`smasher/${name}`] = rest[i];
+  });
   return {
+    fallspike: {},
+    fx,
     gush: {},
-    images: { astronaut, slime },
+    images,
     loading: {},
     mirrored: mirrorSheet(astronaut),
     ready: {},
@@ -131,14 +166,16 @@ export function loadZone(art, zone) {
       loadImage(`${zone}/bg.jpg`),
       loadImage(`${zone}/terrain.png?v=${terrainVersion}`),
       loadImage(`${zone}/gush.png?v=${terrainVersion}`),
-      ...names.map((name) => loadImage(`${zone}/${name}.png`)),
-    ]).then(([bg, terrain, gush, ...sprites]) => {
+      loadImage(`${zone}/fallspike.png?v=${hazardVersion}`),
+      ...names.map((name) => loadImage(`${zone}/${name}.png?v=${spriteVersion}`)),
+    ]).then(([bg, terrain, gush, fallspike, ...sprites]) => {
       art.strips[zone] = mirrorStrip(bg);
       names.forEach((name, i) => {
         art.images[`${zone}/${name}`] = sprites[i];
       });
       art.tiles[zone] = buildTiles(terrain);
       art.gush[zone] = gush;
+      art.fallspike[zone] = fallspike;
       art.ready[zone] = true;
     });
   }

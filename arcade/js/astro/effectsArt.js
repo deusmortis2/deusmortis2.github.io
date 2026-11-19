@@ -1,5 +1,6 @@
 // Draws alien shots, ground patches, boss strikes and the astronaut's own
 // bolts and quake waves. Pure output: reads game state, never changes it.
+import { drawDart, drawEmbers, drawFire, drawFireball, drawVine } from "./fxArt.js";
 
 function blob(ctx, cx, cy, r, fill, shine) {
   ctx.fillStyle = fill;
@@ -67,7 +68,8 @@ const shotPainters = {
     ctx.fillRect(x + 3, s.y, s.w - 6, 5);
     ctx.fillRect(x + 4, s.y + 10, s.w - 8, 4);
   },
-  fireball: (ctx, s, x) => {
+  fireball: (ctx, s, x, fx) => {
+    if (drawFireball(ctx, s, x, fx)) return;
     glowAt(ctx, x + 11, s.y + 11, 22, "255, 140, 0");
     blob(ctx, x + 11, s.y + 11, 9, "#ffd23f", "#fff8c0");
   },
@@ -133,7 +135,8 @@ const shotPainters = {
   seed: (ctx, s, x) => blob(ctx, x + 8, s.y + 8, 8, "#6a4a20", "#c8a050"),
   shard: (ctx, s, x) => spinner(ctx, s, x, 4, "#bfefff", "#4a8aa8"),
   spark: (ctx, s, x) => ridge(ctx, s, x, ["#fff4a0", "#9cf0ff"], "#ffffff"),
-  stinger: (ctx, s, x) => {
+  stinger: (ctx, s, x, fx) => {
+    if (drawDart(ctx, s, x, fx)) return;
     ctx.fillStyle = "#2a2a2a";
     ctx.fillRect(x, s.y + 3, s.w, 6);
     ctx.fillStyle = "#ffd400";
@@ -142,9 +145,9 @@ const shotPainters = {
   wave: (ctx, s, x) => ridge(ctx, s, x, ["#d8c8b0", "#b89a78"], "#ffd400"),
 };
 
-export function drawShots(ctx, round) {
+export function drawShots(ctx, round, fx) {
   round.shots.forEach((s) => {
-    shotPainters[s.kind](ctx, s, Math.round(s.x - round.camera));
+    shotPainters[s.kind](ctx, s, Math.round(s.x - round.camera), fx);
   });
 }
 
@@ -170,10 +173,15 @@ function drawSlime(ctx, p, x, slime, fade) {
   ctx.globalAlpha = 1;
 }
 
-export function drawPatches(ctx, round, clock, slime) {
+export function drawPatches(ctx, round, clock, slime, fx) {
   round.patches.forEach((p) => {
     const x = Math.round(p.x - round.camera);
     const fade = Math.min(1, p.life / 0.6);
+    if (p.kind === "embers") {
+      drawEmbers(ctx, p, x, clock, fx);
+      return;
+    }
+    if (p.kind === "fire" && drawFire(ctx, p, x, clock, fx)) return;
     if (p.kind === "slime" && slime) {
       drawSlime(ctx, p, x, slime, fade);
       return;
@@ -258,7 +266,8 @@ const strikePainters = {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x + s.w / 2 - 2, s.y + 12, 4, s.h - 20);
   },
-  vine: (ctx, s, x, clock) => {
+  vine: (ctx, s, x, clock, fx) => {
+    if (drawVine(ctx, s, x, clock, fx)) return;
     ctx.fillStyle = "#2a6a1a";
     const sway = Math.sin(clock * 8 + s.x) * 4;
     ctx.fillRect(x + s.w / 2 - 7 + sway, s.y + 10, 14, s.h - 10);
@@ -272,14 +281,16 @@ const strikePainters = {
   },
 };
 
-export function drawStrikes(ctx, round, clock) {
+export function drawStrikes(ctx, round, clock, fx) {
   round.strikes.forEach((s) => {
     const x = Math.round(s.x - round.camera);
     if (!s.fired) {
       drawWarning(ctx, s, x, clock);
+      // A vine starts sprouting while its warning flashes.
+      if (s.kind === "vine") drawVine(ctx, s, x, clock, fx);
       return;
     }
-    strikePainters[s.kind]?.(ctx, s, x, clock);
+    strikePainters[s.kind]?.(ctx, s, x, clock, fx);
   });
 }
 

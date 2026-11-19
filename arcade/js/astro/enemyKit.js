@@ -1,7 +1,7 @@
 // Small helpers shared by every alien behaviour: where things are, walking,
 // winding up, hovering and reporting events for sounds and dust.
-import { tile, tileAt } from "./levels.js";
-import { floorAhead, moveBody } from "./physics.js";
+import { rows, tile, tileAt } from "./levels.js";
+import { floorAhead, gravity, moveBody } from "./physics.js";
 
 export const centreX = (body) => body.x + body.w / 2;
 export const centreY = (body) => body.y + body.h / 2;
@@ -32,12 +32,70 @@ export function faceTowards(enemy, target) {
   enemy.dir = Math.sign(gapX(enemy, target)) || enemy.dir;
 }
 
-// Back and forth, turning at walls and ledges.
+// True when a grounded walker is standing right at the lip of a drop.
+export function atLedge(enemy, level) {
+  return enemy.onGround && !floorAhead(enemy, enemy.dir, level);
+}
+
+// Stands still (still feeling gravity) for one frame.
+function stand(enemy, dt, level) {
+  enemy.vx = 0;
+  moveBody(enemy, dt, level);
+}
+
+// Back and forth, turning at walls and ledges. The ledge is checked before
+// stepping, so turning to face the player every frame can't walk it off.
 export function walk(enemy, dt, level, speed = enemy.def.speed) {
+  if (atLedge(enemy, level)) {
+    enemy.dir = -enemy.dir;
+    stand(enemy, dt, level);
+    return;
+  }
   enemy.vx = enemy.dir * speed;
   moveBody(enemy, dt, level);
-  const ledge = enemy.onGround && !floorAhead(enemy, enemy.dir, level);
-  if (enemy.hitWall || ledge) enemy.dir = -enemy.dir;
+  if (enemy.hitWall || atLedge(enemy, level)) enemy.dir = -enemy.dir;
+}
+
+// Walks towards a target, but waits at the edge rather than following it
+// over a drop.
+export function chase(enemy, dt, level, target, speed) {
+  faceTowards(enemy, target);
+  if (atLedge(enemy, level)) {
+    stand(enemy, dt, level);
+    return;
+  }
+  walk(enemy, dt, level, speed);
+}
+
+// Traces a jump with the given launch speed and says whether it comes down
+// on solid ground (or a platform) instead of into a pit or lava.
+export function safeLanding(enemy, vx, vy, level) {
+  const step = 1 / 60;
+  const fall = { ...enemy, vx, vy };
+  for (let t = 0; t < 3; t += step) {
+    fall.vy += gravity * step;
+    const ahead = vx > 0 ? fall.x + fall.w + vx * step : fall.x + vx * step;
+    if (!wallAt(level, ahead, fall.y + fall.h / 2)) fall.x += vx * step;
+    fall.y += fall.vy * step;
+    if (fall.vy > 0 && landsOn(level, fall)) return true;
+    if (fall.y > rows * tile) return false;
+  }
+  return false;
+}
+
+function wallAt(level, x, y) {
+  return tileAt(level, Math.floor(x / tile), Math.floor(y / tile)) === "#";
+}
+
+function landsOn(level, body) {
+  const row = Math.floor(feet(body) / tile);
+  const left = Math.floor(body.x / tile);
+  const right = Math.floor((body.x + body.w - 0.01) / tile);
+  for (let col = left; col <= right; col += 1) {
+    const ch = tileAt(level, col, row);
+    if (ch === "#" || ch === "=") return true;
+  }
+  return false;
 }
 
 // Stands still while the timer runs, then switches state. Returns true on

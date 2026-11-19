@@ -1,10 +1,12 @@
 // Planet hazards in Astro Stomp, plus the oxygen tanks and checkpoint flags.
 //   crusher  a heavy block that shakes, slams to the floor, then winds back up
-//   rock     a stalactite that drops when you walk underneath, then regrows
+//   rock     a big spike that drops when you walk underneath, then regrows.
+//            It hangs from a roof block, or from the top of the screen (row 0)
 //   geyser   a lava pit that bubbles, then erupts in a tall column of fire
 //   laser    an upright beam that blocks the way while it's on
 //   beam     a flat beam overhead that stops you jumping while it's on
 import { rows, tile, tileAt } from "./levels.js";
+import { smasherBox, smasherRest } from "./machineArt.js";
 import { overlaps } from "./physics.js";
 
 const isFloor = (ch) => ch === "#" || ch === "=";
@@ -43,8 +45,10 @@ const builders = {
     return { h: 10, phase, w: (to - from + 1) * tile, x: from * tile, y };
   },
   crusher: ([, col, phase = 0], level) => {
-    const x = col * tile + tile / 2 - 40;
-    return { floor: floorBelow(level, x, 80, 3 * tile), h: 64, phase, rest: 20, w: 80, x, y: 20 };
+    const { h, w } = smasherBox;
+    const x = col * tile + tile / 2 - w / 2;
+    const floor = floorBelow(level, x, w, 3 * tile);
+    return { floor, h, phase, rest: smasherRest, w, x, y: smasherRest };
   },
   flag: ([, wanted], level) => {
     const x = groundColumn(level, wanted) * tile + tile / 2 - 6;
@@ -57,8 +61,8 @@ const builders = {
     return { h: (to - from) * tile, phase, w: 10, x: col * tile + tile / 2 - 5, y: from * tile };
   },
   rock: ([, col, row], level) => {
-    const x = col * tile + tile / 2 - 15;
-    return { floor: floorBelow(level, x, 30, (row + 1) * tile), h: 44, home: row * tile, w: 30, x, y: row * tile };
+    const x = col * tile + tile / 2 - 17;
+    return { floor: floorBelow(level, x, 34, (row + 1) * tile), h: 84, home: row * tile, w: 34, x, y: row * tile };
   },
   tank: ([, col, row]) => {
     return { h: 36, w: 24, x: col * tile + tile / 2 - 12, y: (row + 1) * tile - 36 };

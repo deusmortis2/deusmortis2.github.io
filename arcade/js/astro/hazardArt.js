@@ -1,118 +1,41 @@
-// Draws hazards, roof spikes, floor thorns, oxygen tanks, checkpoint flags
+// Draws hazards, roof spikes, floor spikes, oxygen tanks, checkpoint flags
 // and power-ups lying on the ground. Pure output: reads game state, never
 // changes it.
 import { gushCell } from "./art.js";
+import { tile } from "./levels.js";
+import { drawSmasher } from "./machineArt.js";
 import { powerInfo } from "./powerups.js";
 
-const spikeColours = {
-  earth: { edge: "#1c3a14", fill: "#8ac850" },
-  jupiter: { edge: "#1e2430", fill: "#c8d0dc" },
-  mars: { edge: "#4f1d10", fill: "#c88a60" },
-  mercury: { edge: "#1e1816", fill: "#8a6a58" },
-  neptune: { edge: "#0c1030", fill: "#9cb8ff" },
-  saturn: { edge: "#2a4a66", fill: "#bfefff" },
-  uranus: { edge: "#0e2a30", fill: "#dff8ff" },
-  venus: { edge: "#1c1712", fill: "#8a7a60" },
-};
+// spikes.png: the floor spikes on top (90 x 39), the roof spikes under
+// them (90 x 34). Each row is two tiles wide; neighbouring columns take
+// alternate halves so a long strip joins up.
+const spikeSheet = { floor: 39, roof: 34 };
 
-// Thorns growing up from the floor, points upwards.
-export function drawThorns(ctx, x, y, palette) {
-  const colours = spikeColours[palette];
-  for (let i = 0; i < 3; i += 1) {
-    const left = x + i * 15;
-    ctx.fillStyle = colours.edge;
-    ctx.beginPath();
-    ctx.moveTo(left, y + 45);
-    ctx.lineTo(left + 15, y + 45);
-    ctx.lineTo(left + 7.5, y + 17);
-    ctx.fill();
-    ctx.fillStyle = colours.fill;
-    ctx.beginPath();
-    ctx.moveTo(left + 3, y + 45);
-    ctx.lineTo(left + 12, y + 45);
-    ctx.lineTo(left + 7.5, y + 24);
-    ctx.fill();
-  }
+// Spikes growing up from the floor, points upwards.
+export function drawThorns(ctx, x, y, sheet, col) {
+  const h = spikeSheet.floor;
+  ctx.drawImage(sheet, (col % 2) * tile, 0, tile, h, x, y + tile - h, tile, h);
 }
 
-export function drawSpikes(ctx, x, y, palette) {
-  const colours = spikeColours[palette];
-  for (let i = 0; i < 3; i += 1) {
-    const left = x + i * 15;
-    ctx.fillStyle = colours.edge;
-    ctx.beginPath();
-    ctx.moveTo(left, y);
-    ctx.lineTo(left + 15, y);
-    ctx.lineTo(left + 7.5, y + 26);
-    ctx.fill();
-    ctx.fillStyle = colours.fill;
-    ctx.beginPath();
-    ctx.moveTo(left + 2, y);
-    ctx.lineTo(left + 13, y);
-    ctx.lineTo(left + 7.5, y + 20);
-    ctx.fill();
-  }
+// Spikes hanging from a roof, points downwards.
+export function drawSpikes(ctx, x, y, sheet, col) {
+  const h = spikeSheet.roof;
+  ctx.drawImage(sheet, (col % 2) * tile, spikeSheet.floor, tile, h, x, y, tile, h);
 }
 
-function drawCrusher(ctx, h, x, clock) {
-  const shake = h.state === "shake" ? Math.sin(clock * 70) * 3 : 0;
-  const left = x + shake;
-  // Warning shadow on the floor while it's getting ready.
-  if (h.state === "shake" || h.state === "slam") {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
-    ctx.fillRect(x - 4, h.floor - 8, h.w + 8, 8);
-  }
-  ctx.fillStyle = "#55556a";
-  ctx.fillRect(left + h.w / 2 - 8, 0, 16, h.y);
-  ctx.fillStyle = "#7a7a90";
-  ctx.fillRect(left + h.w / 2 - 4, 0, 4, h.y);
-  ctx.fillStyle = "#3a3a4c";
-  ctx.fillRect(left, h.y, h.w, h.h);
-  ctx.fillStyle = "#8a8aa4";
-  ctx.fillRect(left + 4, h.y + 4, h.w - 8, h.h - 18);
-  ctx.fillStyle = h.state === "shake" ? "#ff2e88" : "#ffd400";
-  ctx.fillRect(left + 10, h.y + 14, h.w - 20, 8);
-  // Teeth along the bottom.
-  ctx.fillStyle = "#d8d8e8";
-  for (let i = 0; i < 5; i += 1) {
-    const tx = left + 4 + i * ((h.w - 8) / 5);
-    ctx.beginPath();
-    ctx.moveTo(tx, h.y + h.h - 14);
-    ctx.lineTo(tx + (h.w - 8) / 5, h.y + h.h - 14);
-    ctx.lineTo(tx + (h.w - 8) / 10, h.y + h.h);
-    ctx.fill();
-  }
-}
+// The falling spike picture is wider and taller than the part that hurts.
+// Its top tucks a little into whatever it hangs from, and its tip sinks
+// into the floor when it lands.
+const fallArt = { h: 97, tuck: 6, w: 76 };
 
-const rockColours = {
-  earth: { dark: "#3a3a2a", light: "#7a7a5a" },
-  jupiter: { dark: "#3a4458", light: "#9aa8bc" },
-  mars: { dark: "#4a3428", light: "#8a6a58" },
-  mercury: { dark: "#2a2220", light: "#6a5a50" },
-  neptune: { dark: "#2a3a80", light: "#9cb8ff" },
-  saturn: { dark: "#5a8aa8", light: "#dff6ff" },
-  uranus: { dark: "#3a8a9a", light: "#e8ffff" },
-  venus: { dark: "#2a2018", light: "#6a5a48" },
-};
-
-function drawRock(ctx, h, x, clock, palette) {
-  const colours = rockColours[palette];
-  if (h.state === "broken") return;
+// It regrows from the top down after it breaks.
+function drawRock(ctx, h, x, clock, art, zone) {
+  const image = art.fallspike[zone];
+  if (h.state === "broken" || !image) return;
   const wobble = h.state === "wobble" ? Math.sin(clock * 60) * 3 : 0;
-  const size = h.grow;
-  const cx = x + h.w / 2 + wobble;
-  ctx.fillStyle = colours.dark;
-  ctx.beginPath();
-  ctx.moveTo(cx - (h.w / 2) * size, h.y);
-  ctx.lineTo(cx + (h.w / 2) * size, h.y);
-  ctx.lineTo(cx, h.y + h.h * size);
-  ctx.fill();
-  ctx.fillStyle = colours.light;
-  ctx.beginPath();
-  ctx.moveTo(cx - (h.w / 2 - 6) * size, h.y);
-  ctx.lineTo(cx + 2 * size, h.y);
-  ctx.lineTo(cx - 2 * size, h.y + (h.h - 12) * size);
-  ctx.fill();
+  const w = fallArt.w * h.grow;
+  const left = x + h.w / 2 + wobble - w / 2;
+  ctx.drawImage(image, left, h.y - fallArt.tuck, w, fallArt.h * h.grow);
 }
 
 // Rows of a roaring gush frame (4 or 5), measured from the top of the
@@ -130,7 +53,8 @@ function gushFrame(h, clock) {
 // A geyser from the user's gush drawing: the pool always, the jet while it
 // bubbles and erupts. Its column is h.h tall above the pool's surface; when
 // that's taller than the drawing, the stem stretches between crown and base.
-function drawGeyser(ctx, h, x, clock, palette, gush) {
+function drawGeyser(ctx, h, x, clock, art, zone) {
+  const gush = art.gush[zone];
   if (!gush) return;
   const { h: cellH, surface, w } = gushCell;
   const frame = gushFrame(h, clock);
@@ -183,46 +107,38 @@ function drawBeam(ctx, h, x, clock) {
 
 const painters = {
   beam: drawBeam,
-  crusher: drawCrusher,
+  crusher: (ctx, h, x, clock, art) => {
+    drawSmasher(ctx, h, x, clock, art.images);
+  },
   geyser: drawGeyser,
   laser: drawBeam,
   rock: drawRock,
 };
 
-export function drawHazards(ctx, round, clock, gush) {
+export function drawHazards(ctx, round, clock, art) {
   round.hazards.forEach((h) => {
     const x = Math.round(h.x - round.camera);
     if (x < -200 || x > 1160) return;
-    painters[h.kind](ctx, h, x, clock, round.stage.id, gush);
+    painters[h.kind](ctx, h, x, clock, art, round.stage.id);
   });
 }
 
-function drawTank(ctx, item, x, clock) {
+// The tank picture (34 x 46) is a little bigger than the 24 x 36 you
+// touch to grab it, and bobs gently.
+function drawTank(ctx, item, x, clock, image) {
   const y = item.y + Math.sin(clock * 3) * 4;
-  ctx.fillStyle = "#2a5db0";
-  ctx.fillRect(x, y + 6, item.w, item.h - 6);
-  ctx.fillStyle = "#9cf0ff";
-  ctx.fillRect(x + 4, y + 10, 6, item.h - 14);
-  ctx.fillStyle = "#c0c0d0";
-  ctx.fillRect(x + 6, y, item.w - 12, 8);
-  ctx.fillStyle = "#ffffff";
-  ctx.font = '10px "Press Start 2P", monospace';
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText("O2", x + item.w / 2 + 2, y + 16);
+  ctx.drawImage(image, x - 5, y - 10);
 }
 
-function drawFlag(ctx, item, x, clock) {
-  ctx.fillStyle = "#c0c0d0";
-  ctx.fillRect(x, item.y, 6, item.h);
-  const colour = item.taken ? "#39ff14" : "#00e5ff";
-  const ripple = Math.sin(clock * 6) * 3;
-  ctx.fillStyle = colour;
-  ctx.beginPath();
-  ctx.moveTo(x + 6, item.y + 4);
-  ctx.lineTo(x + 40, item.y + 18 + ripple);
-  ctx.lineTo(x + 6, item.y + 32);
-  ctx.fill();
+// flags.png: closed, then open, each 101 x 124, with the middle of the
+// rock base (and the pole) 24 px from the left of the frame. The flag
+// stays furled until the player reaches it.
+const flagCell = { base: 24, h: 124, w: 101 };
+
+function drawFlag(ctx, item, x, image) {
+  const { base, h, w } = flagCell;
+  const sx = item.taken ? w : 0;
+  ctx.drawImage(image, sx, 0, w, h, x + 3 - base, item.y + item.h - h, w, h);
 }
 
 // A power-up: a glowing bubble with a letter. It blinks before it vanishes.
@@ -256,12 +172,14 @@ export const powerLetters = {
   blaster: "B", boots: "J", heart: "+", o2: "O", quake: "Q", shield: "S", speed: "F", star: "*",
 };
 
-export function drawItems(ctx, round, clock) {
+export function drawItems(ctx, round, clock, images) {
   round.items.forEach((item) => {
     const x = Math.round(item.x - round.camera);
     if (x < -100 || x > 1060) return;
-    if (item.kind === "flag") drawFlag(ctx, item, x, clock);
-    if (item.kind === "tank" && !item.taken) drawTank(ctx, item, x, clock);
+    if (item.kind === "flag") drawFlag(ctx, item, x, images.flags);
+    if (item.kind === "tank" && !item.taken) {
+      drawTank(ctx, item, x, clock, images.tank);
+    }
   });
   round.drops.forEach((drop) => {
     drawDrop(ctx, drop, Math.round(drop.x - round.camera), clock);

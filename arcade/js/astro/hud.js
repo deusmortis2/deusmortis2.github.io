@@ -3,6 +3,7 @@
 import { bossName } from "./bosses.js";
 import { powerLetters } from "./hazardArt.js";
 import { touchButtons } from "./input.js";
+import { drawPlanetBar } from "./machineArt.js";
 import { stages } from "./levels.js";
 import { maxOxygen } from "./oxygen.js";
 import { startLives } from "./player.js";
@@ -68,28 +69,6 @@ function drawTouch(ctx, game) {
   ctx.globalAlpha = 1;
 }
 
-// Eight little planets in a row, the current one ringed.
-function drawPlanetRow(ctx, game, y) {
-  const colours = ["#c8a080", "#e8c060", "#4a90e0", "#d0603a", "#d8a878", "#e8d8a0", "#9ce8e8", "#4a6ad0"];
-  const gap = 70;
-  const left = width / 2 - (gap * (stages.length - 1)) / 2;
-  stages.forEach((stage, i) => {
-    const x = left + i * gap;
-    ctx.globalAlpha = i <= game.stageIndex ? 1 : 0.35;
-    ctx.fillStyle = colours[i];
-    ctx.beginPath();
-    ctx.arc(x, y, 14, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    if (i !== game.stageIndex) return;
-    ctx.strokeStyle = "#ffd400";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(x, y, 21, 0, Math.PI * 2);
-    ctx.stroke();
-  });
-}
-
 function cardLines(game) {
   const { round } = game;
   const stageNumber = game.stageIndex + 1;
@@ -142,7 +121,7 @@ function drawTitleExtras(ctx, game) {
   });
 }
 
-function drawCard(ctx, game) {
+function drawCard(ctx, art, game) {
   const lines = cardLines(game);
   if (!lines) return;
   ctx.fillStyle = "rgba(10, 10, 31, 0.7)";
@@ -154,7 +133,9 @@ function drawCard(ctx, game) {
   if (steady || Math.floor(game.clock * 2) % 2 === 0) {
     text(ctx, lines[2], width / 2, 295, { ...centre, size: 16 });
   }
-  if (game.phase === "intro") drawPlanetRow(ctx, game, 380);
+  if (game.phase === "intro") {
+    drawPlanetBar(ctx, art.images.planets, game.stageIndex, width / 2, 385);
+  }
   if (game.phase === "title") drawTitleExtras(ctx, game);
 }
 
@@ -243,5 +224,5 @@ export function drawHud(ctx, art, game) {
     });
   }
   if (game.input.state.touch && game.phase === "playing") drawTouch(ctx, game);
-  drawCard(ctx, game);
+  drawCard(ctx, art, game);
 }

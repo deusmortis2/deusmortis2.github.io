@@ -3,6 +3,7 @@ import {
   aim,
   centreX,
   centreY,
+  chase,
   cooldown,
   emit,
   faceTowards,
@@ -10,6 +11,7 @@ import {
   gapX,
   hoverTo,
   nearby,
+  safeLanding,
   walk,
   windup,
 } from "./enemyKit.js";
@@ -78,10 +80,12 @@ export function prowler(enemy, dt, round) {
   // Cloaked: only its glowing spots give it away.
   enemy.alpha = 0.32 + Math.abs(Math.sin(enemy.age * 2)) * 0.12;
   const hunting = Math.abs(gapX(enemy, player)) < 600;
-  if (hunting) faceTowards(enemy, player);
-  walk(enemy, dt, level, hunting ? enemy.def.speed * 1.3 : enemy.def.speed);
+  if (hunting) chase(enemy, dt, level, player, enemy.def.speed * 1.3);
+  else walk(enemy, dt, level);
   if (!nearby(enemy, player, 220)) return;
   faceTowards(enemy, player);
+  // Only pounce if the leap lands on solid ground.
+  if (!safeLanding(enemy, enemy.dir * 300, -560, level)) return;
   enemy.state = "reveal";
   enemy.timer = 0.45;
 }
@@ -212,10 +216,11 @@ export function ambusher(enemy, dt, round) {
     return;
   }
   const hunting = enemy.state === "hunt" && enemy.timer > 0;
-  if (hunting) faceTowards(enemy, player);
-  walk(enemy, dt, level, hunting ? 170 : enemy.def.speed);
+  if (hunting) chase(enemy, dt, level, player, 170);
+  else walk(enemy, dt, level);
   enemy.spit -= dt;
   if (!hunting || enemy.spit > 0 || !nearby(enemy, player, 200)) return;
+  if (!safeLanding(enemy, enemy.dir * 260, -520, level)) return;
   enemy.state = "leap";
   enemy.vx = enemy.dir * 260;
   enemy.vy = -520;

@@ -15,7 +15,7 @@ export const spriteSizes = {
   "earth/panther": [106, 56],
   "earth/hornet": [65, 72],
   "earth/turtle": [78, 56],
-  "earth/boss": [312, 290],
+  "earth/boss": [306, 290],
   "mars/crab": [77, 56],
   "mars/crawler": [89, 84],
   "mars/bat": [82, 54],

@@ -11,6 +11,7 @@ import {
   hoverTo,
   keepAboveFloor,
   nearby,
+  safeLanding,
   walk,
   windup,
 } from "./enemyKit.js";
@@ -126,7 +127,9 @@ export function hopper(enemy, dt, round) {
   if (!enemy.onGround || enemy.timer > 0 || !close) return;
   faceTowards(enemy, player);
   enemy.state = "hop";
-  enemy.vx = enemy.dir * 170;
+  // Hop on the spot rather than bound into a pit.
+  const safe = safeLanding(enemy, enemy.dir * 170, -600, level);
+  enemy.vx = safe ? enemy.dir * 170 : 0;
   enemy.vy = -600;
 }
 

@@ -86,7 +86,10 @@ function splash(round, shot) {
   const { def } = shot;
   const cx = shot.x + shot.w / 2;
   const floorY = landing(shot, round.level);
-  if (def.land && floorY !== null) addPatch(round, def.land, cx, floorY);
+  if (def.land && floorY !== null) {
+    // A thrown fireball splashes before it burns.
+    addPatch(round, def.land, cx, floorY).splashed = true;
+  }
   if (!def.burst) return;
   const y = shot.y;
   [-1, 0, 1].forEach((dir) => {

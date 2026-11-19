@@ -12,6 +12,7 @@ import {
   drawThorns,
 } from "./hazardArt.js";
 import { drawHud } from "./hud.js";
+import { drawRocket } from "./machineArt.js";
 import { rows, tile } from "./levels.js";
 
 // The top floor row. Rows above it hold raised blocks.
@@ -83,38 +84,10 @@ function drawTiles(ctx, art, round, clock) {
       if (ch === "#") drawSolid(ctx, tiles, round, col, row, x, y);
       if (ch === "=") ctx.drawImage(tiles.ledge[col % 2], x, y);
       if (ch === "L") drawPool(ctx, tiles.pool, x, y, col, clock);
-      if (ch === "v") drawSpikes(ctx, x, y, palette);
-      if (ch === "^") drawThorns(ctx, x, y, palette);
+      if (ch === "v") drawSpikes(ctx, x, y, art.images.spikes, col);
+      if (ch === "^") drawThorns(ctx, x, y, art.images.spikes, col);
     }
   }
-}
-
-function drawRocket(ctx, round, clock) {
-  const { rocket } = round;
-  if (!rocket.landed && rocket.drop === undefined) return;
-  const x = rocket.x - round.camera;
-  const y = rocket.y - rocket.lift - (rocket.drop ?? 0);
-  if (rocket.lift > 0 || rocket.drop > 0) {
-    const flicker = 30 + Math.sin(clock * 40) * 10;
-    ctx.fillStyle = "#ffd23f";
-    ctx.fillRect(x - 10, y, 20, flicker + 20);
-    ctx.fillStyle = "#ff6a00";
-    ctx.fillRect(x - 6, y, 12, flicker + 34);
-  }
-  ctx.fillStyle = "#c0322b";
-  ctx.fillRect(x - 34, y - 30, 16, 30);
-  ctx.fillRect(x + 18, y - 30, 16, 30);
-  ctx.fillStyle = "#e8e8f0";
-  ctx.fillRect(x - 20, y - 110, 40, 104);
-  ctx.fillStyle = "#c0322b";
-  ctx.fillRect(x - 14, y - 128, 28, 18);
-  ctx.fillRect(x - 6, y - 140, 12, 12);
-  ctx.fillStyle = "#2a5db0";
-  ctx.fillRect(x - 10, y - 90, 20, 20);
-  ctx.fillStyle = "#9cd2ff";
-  ctx.fillRect(x - 6, y - 86, 8, 8);
-  ctx.fillStyle = "#8a8aa0";
-  ctx.fillRect(x - 20, y - 10, 40, 6);
 }
 
 export function drawStars(ctx, clock, height) {
@@ -254,15 +227,15 @@ export function draw(ctx, art, game) {
   }
   drawBackground(ctx, art.strips[zone], round);
   drawTiles(ctx, art, round, game.clock);
-  drawPatches(ctx, round, game.clock, art.images.slime);
-  drawItems(ctx, round, game.clock);
-  drawRocket(ctx, round, game.clock);
+  drawPatches(ctx, round, game.clock, art.images.slime, art.fx);
+  drawItems(ctx, round, game.clock, art.images);
+  drawRocket(ctx, round, game.clock, art.images.rocket);
   round.enemies.forEach((e) => drawEnemy(ctx, art, e, round, game.clock));
   if (round.boss) drawBoss(ctx, art, round, game.clock);
   drawPlayer(ctx, art, round, game.clock);
-  drawHazards(ctx, round, game.clock, art.gush[round.stage.id]);
-  drawStrikes(ctx, round, game.clock);
-  drawShots(ctx, round);
+  drawHazards(ctx, round, game.clock, art);
+  drawStrikes(ctx, round, game.clock, art.fx);
+  drawShots(ctx, round, art.fx);
   drawBolts(ctx, round, game.clock);
   drawDust(ctx, round);
   ctx.restore();

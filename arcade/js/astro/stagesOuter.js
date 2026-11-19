@@ -48,7 +48,7 @@ export const outerStages = [
     hazards: [
       ["laser", 12, 0, 10, 0], ["beam", 40, 49, 285, 0.8],
       ["crusher", 59, 0], ["crusher", 67, 1.2], ["laser", 80, 0, 10, 0.5],
-      ["beam", 102, 108, 285, 1.2], ["rock", 123, 6],
+      ["beam", 102, 108, 285, 1.2], ["rock", 124, 6],
     ],
     id: "saturn",
     items: [["tank", 57, 9], ["flag", 82], ["tank", 102, 3]],
@@ -76,8 +76,8 @@ export const outerStages = [
     ],
     floor: [[0, 22], [26, 44], [48, 66], [70, 86], [90, 118]],
     hazards: [
-      ["rock", 40, 5], ["rock", 65, 6], ["rock", 82, 5], ["crusher", 94, 0.5],
-      ["rock", 106, 5], ["crusher", 116, 1.1],
+      ["rock", 40, 0], ["rock", 65, 6], ["rock", 82, 0], ["crusher", 94, 0.5],
+      ["rock", 106, 0], ["crusher", 116, 1.1],
     ],
     ice: [[30, 44], [54, 66], [96, 110]],
     id: "uranus",

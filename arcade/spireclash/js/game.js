@@ -33,7 +33,7 @@
 
   /* Settings -------------------------------------------------------------- */
 
-  const settings = { sens: 1, instant: true, volume: 0.7, difficulty: 'knight', controls: 'auto', graphics: 'classic' };
+  const settings = { sens: 1, instant: true, volume: 0.7, difficulty: 'knight', controls: 'auto', graphics: 'classic', aimAssist: 'standard', aimAssistOn: true };
   try {
     Object.assign(settings, JSON.parse(localStorage.getItem('spireclash-settings') || '{}'));
   } catch (e) {
@@ -47,6 +47,12 @@
     }
   }
   if (!G.DIFFICULTIES[settings.difficulty]) settings.difficulty = 'knight';
+  // On by default: most players are on trackpads.
+  if (settings.aimAssist === 'off') settings.aimAssistOn = false;
+  if (!G.aimAssist.LEVELS[settings.aimAssist]) settings.aimAssist = 'standard';
+  const AIM = G.aimAssist;
+  // The aim assist level in use, or 'off' when the box is unticked.
+  const assistLevel = () => (settings.aimAssistOn ? settings.aimAssist : 'off');
   KB.load(settings.keys);
   TOUCH.setMode(settings.controls);
 
@@ -182,7 +188,7 @@
   window.addEventListener('contextmenu', (e) => e.preventDefault());
   window.addEventListener('mousemove', (e) => {
     if (!locked) return;
-    const s = 0.0022 * settings.sens * (ctrl.ads ? 0.6 : 1);
+    const s = 0.0022 * settings.sens * (ctrl.ads ? 0.6 : 1) * AIM.friction(assistLevel());
     ctrl.yaw -= e.movementX * s;
     ctrl.pitch = G.clamp(ctrl.pitch - e.movementY * s, -1.45, 1.45);
   });
@@ -761,6 +767,15 @@
       autoPilot.jump = false;
       return;
     }
+    // Aim assist steers the view onto the rival before the shot is aimed.
+    AIM.update(dt, {
+      ctrl,
+      camera,
+      player,
+      foe,
+      level: assistLevel(),
+      active: canAct && locked && player.alive && ctrl.mode === 'weapon',
+    });
     player.yaw = ctrl.yaw;
     player.pitch = ctrl.pitch;
     ctrl.wandCd = Math.max(0, ctrl.wandCd - dt);
@@ -1176,6 +1191,7 @@
     ctrl.ads = false;
     ctrl.wandCd = 0;
     ctrl.boxAt = undefined;
+    AIM.reset();
     state = 'countdown';
     countdownT = 3;
     lastCount = 0;
@@ -1270,6 +1286,9 @@
     $('vol').value = settings.volume;
     $('vol-out').textContent = Math.round(settings.volume * 100);
     $('instant').checked = !!settings.instant;
+    $('aim-assist').value = settings.aimAssist;
+    $('aim-assist-on').checked = !!settings.aimAssistOn;
+    $('aim-assist').disabled = !settings.aimAssistOn;
     G.sound.setVolume(settings.volume);
   }
   document.querySelectorAll('.diff').forEach((b) => {
@@ -1321,7 +1340,7 @@
   TOUCH.init({
     look(dx, dy) {
       if (!locked || spectating) return;
-      const s = 0.0062 * settings.sens * (ctrl.ads ? 0.55 : 1);
+      const s = 0.0062 * settings.sens * (ctrl.ads ? 0.55 : 1) * AIM.friction(assistLevel());
       ctrl.yaw -= dx * s;
       ctrl.pitch = G.clamp(ctrl.pitch - dy * s, -1.45, 1.45);
     },
@@ -1340,6 +1359,15 @@
       }
       doAction(id);
     },
+  });
+  $('aim-assist').addEventListener('change', (e) => {
+    settings.aimAssist = e.target.value;
+    saveSettings();
+  });
+  $('aim-assist-on').addEventListener('change', (e) => {
+    settings.aimAssistOn = e.target.checked;
+    saveSettings();
+    refreshMenu();
   });
   $('instant').addEventListener('change', (e) => {
     settings.instant = e.target.checked;

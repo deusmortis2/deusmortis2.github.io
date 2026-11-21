@@ -14,7 +14,7 @@ import { runCreator } from "./creator.js";
 import { loadCastArt } from "./cast.js";
 import { loadCreatureArt } from "./creatureArt.js";
 import { pullSaves, pushSlot, pushUnlocks } from "./cloud.js";
-import { claimUnlock, perUnlock, unlockGoal } from "./unlocks.js";
+import { claimUnlock } from "./unlocks.js";
 import { creatureById } from "./creatures.js";
 import { items } from "./data.js";
 import { drawHud } from "./hud.js";
@@ -68,6 +68,8 @@ const game = {
   inTown: false,
   mode: "title",
   moving: false,
+  // An unlock step just reached: offer a new look once the player is free.
+  lookOffer: null,
   // Mermaid swimming and turning poses (see pose.js).
   pose: makePose(),
   saveTimer: 0,
@@ -107,10 +109,12 @@ async function ask(label) {
 
 function save() {
   if (!game.state) return;
-  // Reaching the befriend goal unlocks more merfolk for the next adventure.
-  if (claimUnlock(game.state, username)) {
-    panels.toast(`You've befriended ${unlockGoal} creatures! ${perUnlock} new mermaids and ${perUnlock} new mermen are unlocked for your next adventure.`, 6000);
-    pushUnlocks(username);
+  // Befriending 25, 50 and 75 creatures unlocks more merfolk, and each
+  // time the player may switch to one.
+  const reached = claimUnlock(game.state, username);
+  if (reached) {
+    if (reached.fresh) pushUnlocks(username);
+    game.lookOffer = reached;
   }
   saveGame(game.state, username, game.slot);
   pushSlot(username, game.slot);
@@ -333,6 +337,27 @@ async function useLair(lair) {
   if (go) await startBattle(species, legendaryLevel(species.id));
 }
 
+// At an unlock step: the character picker, starting on the current look.
+async function offerLook() {
+  const { count, fresh } = game.lookOffer;
+  game.lookOffer = null;
+  game.busy = true;
+  // The note under the tabs gives the counts, so the heading stays short.
+  const title = fresh ? `${count} befriended! New merfolk unlocked!` : `${count} befriended! Switch your look?`;
+  const chosen = await runCreator(panels, username, { switching: game.state.avatar, title });
+  if (chosen) {
+    game.state.avatar = chosen;
+    // The pictures and turn pose belong to the old character.
+    game.pose = makePose();
+    clearPortraitCache();
+    clearSpriteCache();
+    save();
+    panels.toast("New look saved!");
+  }
+  input.flush();
+  game.busy = false;
+}
+
 // One step through the wild: maybe a creature appears.
 async function step() {
   const { state } = game;
@@ -509,6 +534,7 @@ function loop(now) {
   game.dt = dt;
   view.time += dt;
   if (game.mode === "explore" && game.state) {
+    if (!game.busy && !panels.isOpen() && game.lookOffer) offerLook();
     if (!game.busy && !panels.isOpen()) updateExplore(dt);
     renderExplore();
   } else if (game.mode === "battle") {
@@ -523,6 +549,7 @@ function loop(now) {
 
 function begin(state) {
   game.state = state;
+  game.lookOffer = null;
   game.mode = "explore";
   game.atDoor = true;
   game.atLair = true;

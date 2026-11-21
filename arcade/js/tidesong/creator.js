@@ -1,12 +1,15 @@
 // Choosing your character: a mermaid or merman from the cast, shown exactly
 // as drawn, plus a name. Three of each are open at first; the rest show as
-// locked until playthroughs unlock them (unlocks.js). Resolves with the
+// locked until adventures unlock them (unlocks.js). Resolves with the
 // finished avatar, or null if the player backs out to the main menu.
+// With `switching` (the avatar in play) it is the look picker offered at
+// each unlock milestone: no name box, and it resolves with the new avatar,
+// or null to keep the current one.
 import { bodies } from "./avatar.js";
 import { castList, drawCast, unlockOrder } from "./cast.js";
 import { html } from "./panels.js";
 import { drawPortrait, portraitHeight, portraitWidth } from "./portrait.js";
-import { isUnlocked, perUnlock, unlockGoal, unlockedLooks } from "./unlocks.js";
+import { isUnlocked, nextUnlockAt, perUnlock, unlockedLooks } from "./unlocks.js";
 import { escapeHtml } from "./util.js";
 
 function renderPreview(canvas, avatar) {
@@ -38,30 +41,35 @@ function card(group, look, avatar, username) {
   </button>`;
 }
 
-export function runCreator(panels, username) {
+export function runCreator(panels, username, { switching = null, title = "Choose your merfolk" } = {}) {
   const firstOpen = (group) => {
     return unlockedLooks(username, group)[0];
   };
-  const avatar = { body: 0, look: firstOpen("mermaids"), name: "" };
-  avatar.name = castList("mermaids")[avatar.look].name;
+  const avatar = switching
+    ? { ...switching }
+    : { body: 0, look: firstOpen("mermaids"), name: "" };
+  if (!switching) avatar.name = castList("mermaids")[avatar.look].name;
+  const nameBox = switching ? "" : `<label class="ts-name">Name <input maxlength="14" autocomplete="off" spellcheck="false"></label>`;
+  const backLabel = switching ? "Keep my look" : "Back";
+  const goLabel = switching ? "Switch!" : "Dive in!";
   return new Promise((resolve) => {
     panels.open("ts-creator-screen", (root) => {
       const view = html(`
         <div class="ts-creator">
           <div class="ts-preview">
             <canvas width="${portraitWidth}" height="${portraitHeight}" aria-label="Your character"></canvas>
-            <label class="ts-name">Name <input maxlength="14" autocomplete="off" spellcheck="false"></label>
+            ${nameBox}
           </div>
           <div class="ts-options">
-            <h2>Choose your merfolk</h2>
+            <h2>${escapeHtml(title)}</h2>
             <div class="ts-body-tabs" role="group" aria-label="Mermaid or merman"></div>
             <p class="ts-note ts-unlock-note"></p>
             <div class="ts-cast"></div>
           </div>
           <div class="ts-creator-actions">
-            <button type="button" class="ts-btn ghost" data-back>Back</button>
+            <button type="button" class="ts-btn ghost" data-back>${backLabel}</button>
             <button type="button" class="ts-btn ghost" data-random>Surprise me</button>
-            <button type="button" class="ts-btn go" data-begin>Dive in!</button>
+            <button type="button" class="ts-btn go" data-begin>${goLabel}</button>
           </div>
         </div>`);
       root.append(view);
@@ -69,9 +77,12 @@ export function runCreator(panels, username) {
       const tabs = view.querySelector(".ts-body-tabs");
       const note = view.querySelector(".ts-unlock-note");
       const grid = view.querySelector(".ts-cast");
-      const name = view.querySelector("input");
+      // Switching has no name box. The name then follows the character
+      // only if it is still that character's own name.
+      const name = view.querySelector("input") ?? { value: avatar.name };
       name.value = avatar.name;
-      let typed = false;
+      let typed = Boolean(switching)
+        && avatar.name !== castList(bodies[avatar.body].group)[avatar.look].name;
 
       const pick = (look) => {
         const group = bodies[avatar.body].group;
@@ -92,7 +103,7 @@ export function runCreator(panels, username) {
         const open = unlockedLooks(username, group).length;
         note.textContent = open >= 12
           ? `All 12 ${bodies[avatar.body].plural.toLowerCase()} are unlocked!`
-          : `${open} of 12 unlocked. Befriend ${unlockGoal} creatures in one adventure to unlock ${perUnlock} more mermaids and ${perUnlock} more mermen for your next adventure.`;
+          : `${open} of 12 unlocked. Befriend ${nextUnlockAt(username)} creatures in one adventure to unlock ${perUnlock} more mermaids and ${perUnlock} more mermen.`;
         grid.innerHTML = unlockOrder[group].map((look) => {
           return card(group, look, avatar, username);
         }).join("");
@@ -118,10 +129,12 @@ export function runCreator(panels, username) {
         refresh();
         grid.querySelector(`[data-look="${avatar.look}"]`)?.focus();
       });
-      name.addEventListener("input", () => {
-        typed = name.value.trim() !== "";
-        avatar.name = name.value;
-      });
+      if (!switching) {
+        name.addEventListener("input", () => {
+          typed = name.value.trim() !== "";
+          avatar.name = name.value;
+        });
+      }
       view.querySelector("[data-random]").addEventListener("click", () => {
         const open = unlockedLooks(username, bodies[avatar.body].group);
         pick(open[Math.floor(Math.random() * open.length)]);

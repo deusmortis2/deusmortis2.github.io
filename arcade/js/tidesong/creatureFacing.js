@@ -11,7 +11,7 @@ export const creatureFacing = {
   frostveil: "FFLLRFRFLFFFLRL",
   gloomveil: "RLRRRFRLRFLLLFF",
   pelagia: "LLFFLLLRRLFRLLL",
-  prismreef: "RRFRLFLLLRLFFFF",
+  prismreef: "RRFRLFLLLRLFFFL",
   verdant: "RFLLFFRRLLLFRRR",
 };
 

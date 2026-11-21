@@ -145,6 +145,26 @@ function levelUp(entity, gain) {
   return grew;
 }
 
+// Names everyone who earns XP from this battle: you, plus each team member
+// who took part and is still standing.
+function xpLine(b, gain) {
+  const { state } = b;
+  const names = [];
+  for (const uid of b.participants) {
+    if (uid === "you") {
+      names.push(state.avatar.name);
+      continue;
+    }
+    const c = state.party.find((p) => {
+      return p.uid === uid;
+    });
+    if (c && c.hp > 0) names.push(creatureById(c.species).name);
+  }
+  if (names.length === 0) return `You earned ${gain} XP.`;
+  const who = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return `${who} ${names.length === 1 ? "earned" : "each earned"} ${gain} XP.`;
+}
+
 async function reward(b) {
   const { state } = b;
   const wild = b.scene.wild;
@@ -162,6 +182,7 @@ async function reward(b) {
     b.sound("level");
     await b.say(`${wild.species.name} left you a ${items[key].name}!${opens ? ` The way into ${opens.name} is open.` : ""}`);
   }
+  await b.say(xpLine(b, gain));
   for (const uid of b.participants) {
     if (uid === "you") {
       const before = playerStats(state);
@@ -253,6 +274,8 @@ async function sing(b) {
   }
   b.scene.capture = { done: true, start: performance.now() };
   b.sound("win");
+  // You sang the song, so you share the XP for the capture.
+  b.participants.add("you");
   const where = addCaptured(state, wild.species, wild.level, Math.max(1, wild.hp));
   await b.say(`You befriended ${wild.species.name}!`);
   if (where === "storage") await b.say("Your team is full, so it swam off to your Tide Pool.");

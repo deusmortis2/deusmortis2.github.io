@@ -2,6 +2,7 @@
 // rocket that lands after a boss and blasts off again, and the bar of
 // planets on the "get ready" card. Pure output: reads game state, never
 // changes it. Sizes come from machineSizes.js, written by the art cutter.
+import { glowBetween } from "./looks.js";
 import { machineSizes } from "./machineSizes.js";
 
 const smasher = (name) => machineSizes[`smasher/${name}`];
@@ -71,11 +72,7 @@ function drawFlame(ctx, image, part, x, y, clock) {
   const flicker = 1 + Math.sin(clock * 47) * 0.08 + Math.sin(clock * 29) * 0.05;
   const height = size.h * flicker;
   // A soft glow behind the fire.
-  const glow = ctx.createRadialGradient(x, y + height * 0.3, 2, x, y + height * 0.3, height * 0.7);
-  glow.addColorStop(0, "rgba(255, 200, 80, 0.55)");
-  glow.addColorStop(1, "rgba(255, 140, 40, 0)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(x - height, y - height * 0.4, height * 2, height * 1.4);
+  glowBetween(ctx, x, y + height * 0.3, height * 0.7, "rgba(255, 200, 80, 0.55)", "rgba(255, 140, 40, 0)");
   ctx.drawImage(image, part * cell[0], 0, size.w, size.h, Math.round(x - size.x), Math.round(y - 4), size.w, height);
 }
 

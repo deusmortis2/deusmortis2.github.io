@@ -3,6 +3,7 @@
 // changes it.
 import { gushCell } from "./art.js";
 import { tile } from "./levels.js";
+import { glowBetween } from "./looks.js";
 import { drawSmasher } from "./machineArt.js";
 import { powerInfo } from "./powerups.js";
 
@@ -147,12 +148,8 @@ function drawDrop(ctx, drop, x, clock) {
   const { colour } = powerInfo[drop.kind];
   const cx = x + drop.w / 2;
   const cy = drop.y + drop.h / 2 + Math.sin(clock * 4 + drop.x) * 3;
-  const glow = ctx.createRadialGradient(cx, cy, 4, cx, cy, 26);
-  glow.addColorStop(0, colour);
-  glow.addColorStop(1, "rgba(0, 0, 0, 0)");
   ctx.globalAlpha = 0.55;
-  ctx.fillStyle = glow;
-  ctx.fillRect(cx - 26, cy - 26, 52, 52);
+  glowBetween(ctx, cx, cy, 26, colour, "rgba(0, 0, 0, 0)", 4 / 26);
   ctx.globalAlpha = 1;
   ctx.fillStyle = "#0a0a1f";
   ctx.beginPath();

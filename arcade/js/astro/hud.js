@@ -25,28 +25,71 @@ const heartArt = [
 // Where the title screen's continue button sits (canvas pixels).
 export const continueButton = { h: 44, w: 520, x: 220, y: 466 };
 
-export function text(ctx, value, x, y, options = {}) {
-  const { align = "left", colour = "#ffffff", size = 16 } = options;
-  ctx.font = `${size}px ${font}`;
-  ctx.textAlign = align;
-  ctx.textBaseline = "top";
-  ctx.fillStyle = "#000000";
-  ctx.fillText(value, x + 3, y + 3);
-  ctx.fillStyle = colour;
-  ctx.fillText(value, x, y);
+// Drawing text is one of the slowest things a canvas does, and the HUD
+// redraws the same words every frame. Each line (with its drop shadow) is
+// drawn once into a little canvas and reused until it changes.
+const textPad = 2;
+const shadow = 3;
+const textCache = new Map();
+const keptTexts = 300;
+
+function textImage(value, size, colour) {
+  const key = `${size}|${colour}|${value}`;
+  if (textCache.has(key)) return textCache.get(key);
+  const canvas = document.createElement("canvas");
+  const c = canvas.getContext("2d");
+  c.font = `${size}px ${font}`;
+  const textWidth = Math.ceil(c.measureText(value).width);
+  canvas.width = textWidth + shadow + textPad * 2;
+  canvas.height = Math.ceil(size * 1.25) + shadow + textPad * 2;
+  // Resizing a canvas resets its settings.
+  c.font = `${size}px ${font}`;
+  c.textBaseline = "top";
+  c.fillStyle = "#000000";
+  c.fillText(value, textPad + shadow, textPad + shadow);
+  c.fillStyle = colour;
+  c.fillText(value, textPad, textPad);
+  const image = { canvas, textWidth };
+  // Until the pixel font arrives, don't keep a copy in the fallback font.
+  if (!document.fonts.check(`${size}px ${font}`)) return image;
+  if (textCache.size >= keptTexts) textCache.clear();
+  textCache.set(key, image);
+  return image;
 }
 
-function drawHeart(ctx, x, y, full) {
+export function text(ctx, value, x, y, options = {}) {
+  const { align = "left", colour = "#ffffff", size = 16 } = options;
+  const { canvas, textWidth } = textImage(String(value), size, colour);
+  let left = x;
+  if (align === "center") left = x - textWidth / 2;
+  if (align === "right") left = x - textWidth;
+  ctx.drawImage(canvas, Math.round(left) - textPad, Math.round(y) - textPad);
+}
+
+const heartImages = new Map();
+
+function heartImage(full) {
+  if (heartImages.has(full)) return heartImages.get(full);
   const colours = full
     ? { r: "#ff2e88", w: "#ffffff" }
     : { r: "#3a2a44", w: "#3a2a44" };
+  const canvas = document.createElement("canvas");
+  canvas.width = heartArt[0].length * 4;
+  canvas.height = heartArt.length * 4;
+  const c = canvas.getContext("2d");
   heartArt.forEach((row, dy) => {
     [...row].forEach((ch, dx) => {
       if (!colours[ch]) return;
-      ctx.fillStyle = colours[ch];
-      ctx.fillRect(x + dx * 4, y + dy * 4, 4, 4);
+      c.fillStyle = colours[ch];
+      c.fillRect(dx * 4, dy * 4, 4, 4);
     });
   });
+  heartImages.set(full, canvas);
+  return canvas;
+}
+
+function drawHeart(ctx, x, y, full) {
+  ctx.drawImage(heartImage(full), x, y);
 }
 
 function drawTouch(ctx, game) {

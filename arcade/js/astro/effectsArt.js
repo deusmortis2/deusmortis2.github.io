@@ -1,6 +1,7 @@
 // Draws alien shots, ground patches, boss strikes and the astronaut's own
 // bolts and quake waves. Pure output: reads game state, never changes it.
 import { drawDart, drawEmbers, drawFire, drawFireball, drawVine } from "./fxArt.js";
+import { glowAt } from "./looks.js";
 
 function blob(ctx, cx, cy, r, fill, shine) {
   ctx.fillStyle = fill;
@@ -10,14 +11,6 @@ function blob(ctx, cx, cy, r, fill, shine) {
   if (!shine) return;
   ctx.fillStyle = shine;
   ctx.fillRect(cx - r / 2, cy - r / 2, Math.max(3, r / 3), Math.max(3, r / 3));
-}
-
-function glowAt(ctx, cx, cy, r, rgb, strength = 0.9) {
-  const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, r);
-  glow.addColorStop(0, `rgba(${rgb}, ${strength})`);
-  glow.addColorStop(1, `rgba(${rgb}, 0)`);
-  ctx.fillStyle = glow;
-  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
 }
 
 // A ridge of rock bursting up out of the ground, in a given pair of colours.

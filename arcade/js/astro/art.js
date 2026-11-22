@@ -111,16 +111,23 @@ function buildTiles(sheet) {
 }
 
 // The background, plus a mirrored copy beside it, so it can scroll forever
-// without a seam.
+// without a seam. The bottom is darkened here, once, so the real ground
+// stands out from the painted one without a full-screen fill every frame.
 function mirrorStrip(image) {
   const w = image.width;
-  return canvasOf(w * 2, image.height, (ctx) => {
+  const h = image.height;
+  return canvasOf(w * 2, h, (ctx) => {
     ctx.drawImage(image, 0, 0);
     ctx.save();
     ctx.translate(w * 2, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(image, 0, 0);
     ctx.restore();
+    const shade = ctx.createLinearGradient(0, h * 0.45, 0, h);
+    shade.addColorStop(0, "rgba(0, 0, 0, 0)");
+    shade.addColorStop(1, "rgba(0, 0, 0, 0.45)");
+    ctx.fillStyle = shade;
+    ctx.fillRect(0, 0, w * 2, h);
   });
 }
 

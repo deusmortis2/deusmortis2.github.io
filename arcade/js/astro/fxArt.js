@@ -6,17 +6,12 @@
 //   vine1 to 4     the hydra's thorn vines: sprout, growing, rising, full
 //   dart           a bee's stinger
 // Each image's bottom edge is the ground it stands on.
+import { glowAt } from "./looks.js";
 
 const splashTime = 0.22;
 const dyingTime = 0.6;
 
-function glow(ctx, cx, cy, r, rgb, strength) {
-  const g = ctx.createRadialGradient(cx, cy, 2, cx, cy, r);
-  g.addColorStop(0, `rgba(${rgb}, ${strength})`);
-  g.addColorStop(1, `rgba(${rgb}, 0)`);
-  ctx.fillStyle = g;
-  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-}
+const glow = glowAt;
 
 // Draws an image with its bottom centre at (cx, floor).
 function stand(ctx, image, cx, floor, sx = 1, sy = 1) {

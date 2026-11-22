@@ -8,12 +8,44 @@ export function hexRgb(hex) {
   return `${Math.floor(n / 65536) % 256}, ${Math.floor(n / 256) % 256}, ${n % 256}`;
 }
 
+// Glows are painted once per colour into a small canvas and then stretched
+// into place. Building a fresh gradient every frame is slow on school
+// Chromebooks, and the stretched copy looks the same.
+const glowSize = 64;
+const glowSprites = new Map();
+
+function glowSprite(inner, outer, start) {
+  const key = `${inner}|${outer}|${start}`;
+  if (glowSprites.has(key)) return glowSprites.get(key);
+  const sprite = document.createElement("canvas");
+  sprite.width = glowSize * 2;
+  sprite.height = glowSize * 2;
+  const c = sprite.getContext("2d");
+  const glow = c.createRadialGradient(glowSize, glowSize, start, glowSize, glowSize, glowSize);
+  glow.addColorStop(0, inner);
+  glow.addColorStop(1, outer);
+  c.fillStyle = glow;
+  c.fillRect(0, 0, glowSize * 2, glowSize * 2);
+  glowSprites.set(key, sprite);
+  return sprite;
+}
+
+// A round glow of radius r fading from the inner colour to the outer one.
+// Start is how far out the fade begins, as a share of r.
+export function glowBetween(ctx, cx, cy, r, inner, outer, start = 0.04) {
+  if (!(r > 0)) return;
+  const sprite = glowSprite(inner, outer, Math.round(start * glowSize));
+  ctx.drawImage(sprite, cx - r, cy - r, r * 2, r * 2);
+}
+
+// The strength is applied as transparency, so one cached picture serves
+// every strength (fading glows change it each frame).
 export function glowAt(ctx, cx, cy, r, rgb, strength = 0.9) {
-  const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, r);
-  glow.addColorStop(0, `rgba(${rgb}, ${strength})`);
-  glow.addColorStop(1, `rgba(${rgb}, 0)`);
-  ctx.fillStyle = glow;
-  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+  if (!(strength > 0)) return;
+  const before = ctx.globalAlpha;
+  ctx.globalAlpha = before * Math.min(1, strength);
+  glowBetween(ctx, cx, cy, r, `rgba(${rgb}, 1)`, `rgba(${rgb}, 0)`);
+  ctx.globalAlpha = before;
 }
 
 // A heap of sand with something moving under it.

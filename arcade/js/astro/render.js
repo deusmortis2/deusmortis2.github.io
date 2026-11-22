@@ -33,13 +33,10 @@ const parallax = 0.3;
 function drawBackground(ctx, strip, round) {
   const offset = (round.camera * parallax) % strip.width;
   ctx.drawImage(strip, -Math.round(offset), 0);
-  ctx.drawImage(strip, Math.round(strip.width - offset), 0);
-  // Darken the bottom so the real ground stands out from the painted one.
-  const shade = ctx.createLinearGradient(0, viewHeight * 0.45, 0, viewHeight);
-  shade.addColorStop(0, "rgba(0, 0, 0, 0)");
-  shade.addColorStop(1, "rgba(0, 0, 0, 0.45)");
-  ctx.fillStyle = shade;
-  ctx.fillRect(0, 0, viewWidth, viewHeight);
+  // The second copy is only on screen near the wrap point.
+  if (strip.width - offset < viewWidth) {
+    ctx.drawImage(strip, Math.round(strip.width - offset), 0);
+  }
 }
 
 // The liquid pool in a pit: it drifts slowly sideways and bobs a little.
@@ -70,22 +67,74 @@ function drawSolid(ctx, tiles, round, col, row, x, y) {
   ctx.drawImage((icy.has(col) ? tiles.ice : tiles.surface)[side], x, y);
 }
 
+// The tiles that never move are painted into chunks a few screens wide, so
+// a frame draws two or three pictures instead of a couple of hundred
+// tiles. Only the liquid pools are drawn fresh each frame.
+const chunkCols = 16;
+const keptChunks = 4;
+const chunkCaches = new WeakMap();
+
+// A fingerprint of the grid, so a chunk is repainted when the arena gate
+// shuts or opens.
+function gridKey(grid, from, to) {
+  let key = "";
+  for (let row = 0; row < rows; row += 1) key += grid[row].slice(from, to).join("");
+  return key;
+}
+
+function paintChunk(art, round, index) {
+  const { grid } = round.level;
+  const tiles = art.tiles[round.stage.id];
+  const from = index * chunkCols;
+  const to = Math.min(round.level.cols, from + chunkCols);
+  const canvas = document.createElement("canvas");
+  canvas.width = (to - from) * tile;
+  canvas.height = rows * tile;
+  const c = canvas.getContext("2d");
+  c.imageSmoothingEnabled = false;
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = from; col < to; col += 1) {
+      const ch = grid[row][col];
+      const x = (col - from) * tile;
+      const y = row * tile;
+      if (ch === "#") drawSolid(c, tiles, round, col, row, x, y);
+      if (ch === "=") c.drawImage(tiles.ledge[col % 2], x, y);
+      if (ch === "v") drawSpikes(c, x, y, art.images.spikes, col);
+      if (ch === "^") drawThorns(c, x, y, art.images.spikes, col);
+    }
+  }
+  return canvas;
+}
+
+function chunkFor(art, round, index) {
+  const { level } = round;
+  if (!chunkCaches.has(level)) chunkCaches.set(level, new Map());
+  const cache = chunkCaches.get(level);
+  const from = index * chunkCols;
+  const key = gridKey(level.grid, from, from + chunkCols);
+  const kept = cache.get(index);
+  if (kept && kept.key === key) return kept.canvas;
+  const canvas = paintChunk(art, round, index);
+  cache.delete(index);
+  cache.set(index, { canvas, key });
+  // Forget the chunk used longest ago once too many are kept.
+  if (cache.size > keptChunks) cache.delete(cache.keys().next().value);
+  return canvas;
+}
+
 function drawTiles(ctx, art, round, clock) {
   const { grid } = round.level;
-  const palette = round.stage.id;
-  const tiles = art.tiles[palette];
+  const tiles = art.tiles[round.stage.id];
   const first = Math.max(0, Math.floor(round.camera / tile));
   const last = Math.min(round.level.cols - 1, first + Math.ceil(viewWidth / tile) + 1);
+  const shift = Math.round(-round.camera);
+  for (let index = Math.floor(first / chunkCols); index <= Math.floor(last / chunkCols); index += 1) {
+    ctx.drawImage(chunkFor(art, round, index), index * chunkCols * tile + shift, 0);
+  }
   for (let row = 0; row < rows; row += 1) {
     for (let col = first; col <= last; col += 1) {
-      const ch = grid[row][col];
-      const x = Math.round(col * tile - round.camera);
-      const y = row * tile;
-      if (ch === "#") drawSolid(ctx, tiles, round, col, row, x, y);
-      if (ch === "=") ctx.drawImage(tiles.ledge[col % 2], x, y);
-      if (ch === "L") drawPool(ctx, tiles.pool, x, y, col, clock);
-      if (ch === "v") drawSpikes(ctx, x, y, art.images.spikes, col);
-      if (ch === "^") drawThorns(ctx, x, y, art.images.spikes, col);
+      if (grid[row][col] !== "L") continue;
+      drawPool(ctx, tiles.pool, col * tile + shift, row * tile, col, clock);
     }
   }
 }

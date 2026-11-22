@@ -45,7 +45,9 @@ const answerBonus = 100;
 const savedKey = "astroStompReached";
 
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+// The picture always covers the whole canvas, so it needn't be see-through.
+// That spares the browser blending it over the page every frame.
+const ctx = canvas.getContext("2d", { alpha: false });
 const input = createInput(canvas, viewWidth);
 let art = null;
 

@@ -54,7 +54,7 @@ const fxNames = [
 ];
 const fxVersion = "concept1";
 // Bump when a planet's alien or boss art is redrawn.
-const spriteVersion = "s2";
+const spriteVersion = "s3";
 
 function loadImage(path) {
   return new Promise((resolve, reject) => {

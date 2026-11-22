@@ -1,5 +1,6 @@
 // Keyboard and touch input. Actions are left, right, jump, down, fire,
-// start and cont (continue a saved mission).
+// start, cont (continue a saved mission) and restart (back to Mercury
+// after a game over).
 const keyActions = {
   " ": "jump",
   a: "left",
@@ -10,6 +11,7 @@ const keyActions = {
   c: "cont",
   d: "right",
   j: "fire",
+  r: "restart",
   enter: "start",
   s: "down",
   w: "jump",

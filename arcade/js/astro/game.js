@@ -2,8 +2,9 @@
 // then press down to smash aliens, get past each planet's hazards and beat
 // the boss at the end to reach the rocket. Oxygen drains until the boss
 // fight, only O2 tanks refill it, and an empty meter costs lives. Losing
-// your last life wipes the score and sends you back to the last checkpoint
-// on that planet (a flag, or the boss's door). A math question pops up
+// your last life wipes the score, then you pick: carry on from the last
+// checkpoint on that planet (a flag, or the boss's door), or restart the
+// whole trip from Mercury. A math question pops up
 // every 30 seconds: a right answer scores a bonus, and either way you get
 // a short shield. The rocket pays a bonus that shrinks the longer the
 // planet took.
@@ -17,7 +18,7 @@ import { loadArt, loadZone } from "./art.js";
 import { createEnemy } from "./enemies.js";
 import { playEnding } from "./ending.js";
 import { createHazard } from "./hazards.js";
-import { continueButton } from "./hud.js";
+import { continueButton, overButtons } from "./hud.js";
 import { createInput } from "./input.js";
 import { buildLevel, stages, tile } from "./levels.js";
 import { breathe, fillOxygen } from "./oxygen.js";
@@ -216,7 +217,7 @@ function launch() {
   setPhase("clear");
 }
 
-// The last life is gone: back to the last checkpoint on this planet.
+// The last life is gone: the player picks a checkpoint retry or a restart.
 function gameOver() {
   play("lose");
   recordRun("astro", game.score);
@@ -300,11 +301,27 @@ function updatePlaying(dt) {
 
 // On the title screen: a new mission, or carry on from the furthest planet
 // reached before.
-function updateTitle() {
+function tapped(b) {
   const { tap } = input.state;
-  const b = continueButton;
-  const onContinue = tap && tap.x > b.x && tap.x < b.x + b.w && tap.y > b.y && tap.y < b.y + b.h;
-  const carryOn = game.saved > 0 && (input.pressed("cont") || (input.pressed("start") && onContinue));
+  if (!input.pressed("start") || !tap) return false;
+  return tap.x > b.x && tap.x < b.x + b.w && tap.y > b.y && tap.y < b.y + b.h;
+}
+
+// Out of lives: C (or its button) retries from the checkpoint with the
+// score at 0; R (or its button) starts a fresh trip from Mercury. A short
+// wait stops a key held while dying from choosing.
+function updateOver() {
+  if (game.phaseTime < 1) return;
+  if (input.pressed("restart") || tapped(overButtons.restart)) {
+    startMission(0);
+    return;
+  }
+  if (input.pressed("cont") || tapped(overButtons.cont)) retryPlanet();
+}
+
+function updateTitle() {
+  const onContinue = tapped(continueButton);
+  const carryOn = game.saved > 0 && (input.pressed("cont") || onContinue);
   if (carryOn) {
     startMission(game.saved);
     return;
@@ -348,9 +365,7 @@ function update(dt) {
       showToast("JUMP, THEN PRESS DOWN TO SMASH!", "#ffd400");
     }
   }
-  // Out of lives: back to the checkpoint after a moment.
-  const restart = game.phaseTime > 3.5 || (start && game.phaseTime > 1.5);
-  if (game.phase === "over" && restart) retryPlanet();
+  if (game.phase === "over") updateOver();
   if (game.phase === "playing") updatePlaying(dt);
   if (game.phase === "clear") {
     game.round.rocket.lift += (120 + game.phaseTime * 500) * dt;

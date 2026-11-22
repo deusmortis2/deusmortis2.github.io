@@ -25,6 +25,12 @@ const heartArt = [
 // Where the title screen's continue button sits (canvas pixels).
 export const continueButton = { h: 44, w: 520, x: 220, y: 466 };
 
+// The two choices on the out-of-lives screen (canvas pixels).
+export const overButtons = {
+  cont: { h: 44, w: 520, x: 220, y: 330 },
+  restart: { h: 44, w: 520, x: 220, y: 390 },
+};
+
 // Drawing text is one of the slowest things a canvas does, and the HUD
 // redraws the same words every frame. Each line (with its drop shadow) is
 // drawn once into a little canvas and reused until it changes.
@@ -129,7 +135,7 @@ function cardLines(game) {
     over: [
       "OUT OF LIVES!",
       "SCORE RESET TO 0",
-      "BACK TO THE LAST CHECKPOINT...",
+      "PICK ONE:",
     ],
     title: [
       "ASTRO STOMP",
@@ -164,6 +170,21 @@ function drawTitleExtras(ctx, game) {
   });
 }
 
+function drawChoice(ctx, b, label, colour) {
+  ctx.fillStyle = "rgba(10, 10, 31, 0.6)";
+  ctx.fillRect(b.x, b.y, b.w, b.h);
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 3;
+  ctx.strokeRect(b.x, b.y, b.w, b.h);
+  text(ctx, label, width / 2, b.y + 14, { align: "center", colour, size: 14 });
+}
+
+// Out of lives: carry on from the checkpoint, or start the whole trip over.
+function drawOverChoices(ctx) {
+  drawChoice(ctx, overButtons.cont, "C OR TAP: CONTINUE FROM CHECKPOINT", "#00e5ff");
+  drawChoice(ctx, overButtons.restart, "R OR TAP: RESTART FROM MERCURY", "#ffd400");
+}
+
 function drawCard(ctx, art, game) {
   const lines = cardLines(game);
   if (!lines) return;
@@ -180,6 +201,7 @@ function drawCard(ctx, art, game) {
     drawPlanetBar(ctx, art.images.planets, game.stageIndex, width / 2, 385);
   }
   if (game.phase === "title") drawTitleExtras(ctx, game);
+  if (game.phase === "over") drawOverChoices(ctx);
 }
 
 // The O2 bar under the hearts. It turns red and flashes when it's low, and

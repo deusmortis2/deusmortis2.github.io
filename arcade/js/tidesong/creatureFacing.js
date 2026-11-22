@@ -7,7 +7,7 @@ export const creatureFacing = {
   brinewallow: "FLLRRFFRFFRRRLR",
   cragspire: "FFFFRLRRFRRRLLR",
   fangshore: "RRLLRLLLLLRLRRL",
-  fluvius: "RRFRLFRRRRRLLLL",
+  fluvius: "RRFRLFRRRRRLLLR",
   frostveil: "FFLLRFRFLFFFLRL",
   gloomveil: "RLRRRFRLRFLLLFF",
   pelagia: "LLFFLLLRRLFRLLL",

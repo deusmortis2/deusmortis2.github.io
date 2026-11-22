@@ -47,7 +47,6 @@ function checkArena(game) {
   round.fight = "on";
   round.boss = createBoss(stage.arena.boss, level);
   round.checkpoint = "arena";
-  game.checkpointScore = game.score;
   const { left } = arenaOf(level);
   round.enemies = round.enemies.filter((e) => e.x > left);
   game.showToast(`BOSS: ${round.boss.def.name}!`, "#ff8a3a");

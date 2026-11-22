@@ -74,7 +74,7 @@ function cardLines(game) {
   const stageNumber = game.stageIndex + 1;
   return {
     clear: [
-      "PLANET CLEARED!",
+      `PLANET CLEARED IN ${game.clearTime}!`,
       `SCORE ${game.score}`,
       "BLASTING OFF...",
     ],
@@ -85,7 +85,7 @@ function cardLines(game) {
     ],
     over: [
       "OUT OF LIVES!",
-      `SCORE ${game.score}`,
+      "SCORE RESET TO 0",
       "BACK TO THE LAST CHECKPOINT...",
     ],
     title: [
@@ -105,7 +105,7 @@ function drawTitleExtras(ctx, game) {
   const small = { align: "center", colour: "#a8a8c8", size: 12 };
   text(ctx, "ARROWS OR A/D TO MOVE. X FIRES A BLASTER POWER-UP", width / 2, 370, small);
   text(ctx, "8 PLANETS, A BOSS ON EACH. OXYGEN RUNS OUT FAST: GRAB O2", width / 2, 395, small);
-  text(ctx, "A BOOST EVERY 30 SECONDS REFILLS YOUR OXYGEN", width / 2, 420, small);
+  text(ctx, "A BOOST EVERY 30 SECONDS. CLEAR PLANETS FAST FOR BONUS POINTS", width / 2, 420, small);
   if (game.saved <= 0) return;
   const b = continueButton;
   ctx.fillStyle = "rgba(0, 229, 255, 0.15)";

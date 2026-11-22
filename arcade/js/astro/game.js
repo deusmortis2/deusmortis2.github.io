@@ -1,10 +1,12 @@
 // Astro Stomp: an eight-planet platformer from Mercury out to Neptune. Jump,
 // then press down to smash aliens, get past each planet's hazards and beat
-// the boss at the end to reach the rocket. Oxygen drains all the time, and
-// an empty meter costs lives. Losing your last life sends you back to the
-// last checkpoint on that planet (a flag, or the boss's door). A math
-// question pops up every 30 seconds: a right answer refills oxygen, and
-// either way you get a short shield.
+// the boss at the end to reach the rocket. Oxygen drains until the boss
+// fight, only O2 tanks refill it, and an empty meter costs lives. Losing
+// your last life wipes the score and sends you back to the last checkpoint
+// on that planet (a flag, or the boss's door). A math question pops up
+// every 30 seconds: a right answer scores a bonus, and either way you get
+// a short shield. The rocket pays a bonus that shrinks the longer the
+// planet took.
 import { askQuestion, loadQuestions } from "../questions.js";
 import { assignedSource } from "../question-sets.js";
 import { isMuted, play } from "../sound.js";
@@ -32,7 +34,11 @@ import { updateWorld } from "./world.js";
 
 // The bank the teacher has assigned this game (Teacher page).
 const questionSource = await assignedSource("astro");
-const launchBonus = 500;
+// Launch bonus: the most a planet can pay, what each second costs, and the
+// least it can pay however long it took.
+const launchBonusTop = 2000;
+const launchBonusPerSecond = 8;
+const launchBonusLeast = 100;
 const questionEvery = 30;
 const shieldSeconds = 2.5;
 const answerBonus = 100;
@@ -69,8 +75,10 @@ function writeSaved(index) {
 }
 
 const game = {
-  checkpointScore: 0,
   clock: 0,
+  // How long this planet has taken so far, counting checkpoint retries.
+  // Only play time counts, not time spent on questions.
+  planetTime: 0,
   hinted: false,
   input,
   lives: startLives,
@@ -96,7 +104,7 @@ function newRound(index, checkpoint = null) {
   const level = buildLevel(stage);
   const make = (spec) => createHazard(spec, level);
   game.stageIndex = index;
-  game.checkpointScore = game.score;
+  if (checkpoint === null) game.planetTime = 0;
   game.toast = null;
   const player = createPlayer(stage.start, game.powers);
   const items = stage.items.map(make);
@@ -157,14 +165,14 @@ function startMission(index = 0) {
   setPhase("intro");
 }
 
-// Every 30 seconds. A right answer refills oxygen and scores a bonus; a
-// wrong one still gets the shield, so nobody is hit mid-question.
+// Every 30 seconds. A right answer scores a bonus; either way you get the
+// shield, so nobody is hit mid-question. Answers don't refill oxygen.
 async function runQuestion() {
   setPhase("question");
   input.clear();
   const correct = await askQuestion({
     inputDelay: 300,
-    label: "Answer to refill your oxygen!",
+    label: `Answer for +${answerBonus} points!`,
     source: questionSource,
   });
   input.clear();
@@ -175,17 +183,30 @@ async function runQuestion() {
   round.shots = [];
   if (correct) {
     game.score += answerBonus;
-    fillOxygen(round);
-    showToast(`BOOST! +${answerBonus} & FULL OXYGEN`);
+    showToast(`BOOST! +${answerBonus}`);
   } else {
-    showToast("SHIELD UP! NO OXYGEN", "#00e5ff");
+    showToast("SHIELD UP!", "#00e5ff");
   }
   setPhase("playing");
 }
 
+function clockText(seconds) {
+  const whole = Math.floor(seconds);
+  const secs = String(whole % 60).padStart(2, "0");
+  return `${Math.floor(whole / 60)}:${secs}`;
+}
+
+// The quicker the planet, the bigger the bonus, rounded to tens.
+function launchBonus(seconds) {
+  const bonus = launchBonusTop - seconds * launchBonusPerSecond;
+  return Math.max(launchBonusLeast, Math.round(bonus / 10) * 10);
+}
+
 function launch() {
-  game.score += launchBonus;
-  showToast(`PLANET CLEARED! +${launchBonus}`);
+  const bonus = launchBonus(game.planetTime);
+  game.score += bonus;
+  game.clearTime = clockText(game.planetTime);
+  showToast(`CLEARED IN ${game.clearTime}! +${bonus}`);
   game.round.player.hidden = true;
   // The leaderboard keeps the best score from one trip across the planets.
   recordRun("astro", game.score);
@@ -203,8 +224,8 @@ function gameOver() {
 function retryPlanet() {
   const { checkpoint } = game.round;
   game.lives = startLives;
-  // Points scored since the checkpoint are lost with the lives.
-  game.score = game.checkpointScore;
+  // The score is lost with the lives; the checkpoint is kept.
+  game.score = 0;
   game.powers = newPowers();
   newRound(game.stageIndex, checkpoint);
   setPhase("intro");
@@ -257,6 +278,7 @@ function updatePlaying(dt) {
   const { player, rocket, level } = game.round;
   if (game.phase !== "playing") return;
   game.mathTime += dt;
+  game.planetTime += dt;
   if (breathe(game.round, dt)) {
     choke();
     if (game.phase !== "playing") return;

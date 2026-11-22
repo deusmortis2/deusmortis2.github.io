@@ -189,7 +189,6 @@ function collectItems(game) {
     play("pickup");
     if (item.kind === "flag") {
       round.checkpoint = item.x + item.w / 2;
-      game.checkpointScore = game.score;
       game.showToast("CHECKPOINT!", "#00e5ff");
       return;
     }

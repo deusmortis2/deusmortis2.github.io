@@ -7,12 +7,13 @@
 // either way you get a short shield.
 import { askQuestion, loadQuestions } from "../questions.js";
 import { assignedSource } from "../question-sets.js";
-import { play } from "../sound.js";
+import { isMuted, play } from "../sound.js";
 import { bindFullscreen } from "../fullscreen.js";
 import { recordRun } from "../leaderboard.js";
 import { initPage } from "../ui.js";
 import { loadArt, loadZone } from "./art.js";
 import { createEnemy } from "./enemies.js";
+import { playEnding } from "./ending.js";
 import { createHazard } from "./hazards.js";
 import { continueButton } from "./hud.js";
 import { createInput } from "./input.js";
@@ -47,6 +48,15 @@ function readSaved() {
     return Number(localStorage.getItem(savedKey)) || 0;
   } catch {
     return 0;
+  }
+}
+
+// After the ending the trip starts over, so "carry on" is wiped too.
+function clearSaved() {
+  try {
+    localStorage.removeItem(savedKey);
+  } catch {
+    // Nothing was stored, so nothing to clear.
   }
 }
 
@@ -289,6 +299,17 @@ function nextPlanet() {
   }
   play("win");
   setPhase("won");
+  game.ending = true;
+  playEnding(document.getElementById("game-frame"), isMuted(), backToStart);
+}
+
+// The ending film is over: back to the title screen with a fresh trip.
+function backToStart() {
+  game.ending = false;
+  clearSaved();
+  game.saved = 0;
+  newRound(0);
+  setPhase("title");
 }
 
 function update(dt) {
@@ -312,7 +333,7 @@ function update(dt) {
     game.round.shake = 0.1;
   }
   if (game.phase === "clear" && game.phaseTime > 2.6) nextPlanet();
-  if (game.phase === "won" && start && game.phaseTime > 1.5) {
+  if (game.phase === "won" && !game.ending && start && game.phaseTime > 1.5) {
     game.saved = 0;
     startMission(0);
   }

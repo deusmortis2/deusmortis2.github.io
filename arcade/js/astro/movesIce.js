@@ -211,7 +211,9 @@ export function statue(enemy, dt, round) {
 export function mindJelly(enemy, dt, round) {
   const { player } = round;
   enemy.timer -= dt;
-  loop(enemy, round, [["idle", 3.4], ["glow", 0.6], ["pulse", 0.9]]);
+  // The rest between rings is 1.5x the old 3.4s, so a ring can't keep you
+  // confused back to back.
+  loop(enemy, round, [["idle", 5.1], ["glow", 0.6], ["pulse", 0.9]]);
   hoverTo(enemy, centreX(player), player.y - 110, dt, 45, 45);
   keepAboveFloor(enemy);
   enemy.ring = 0;

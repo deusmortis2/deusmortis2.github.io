@@ -85,7 +85,7 @@ export const courses = [
       "A tour of a big canvas platformer: tile physics, forgiving jumps, " +
       "aliens and bosses as data plus state machines, drop tables and an " +
       "oxygen meter.",
-    title: "Course 7: Astro Stomp",
+    title: "Course 4: Astro Stomp",
     steps: [
       { id: "astro-tour", title: "A Tour of Astro Stomp" },
       { id: "astro-levels", title: "Planets Made of Data" },
@@ -103,6 +103,90 @@ export const courses = [
       { id: "astro-frame", title: "One Frame, Start to Finish" },
       { id: "astro-oxygen", title: "Oxygen, Score and Game Over" },
       { id: "spacewalk-air", lab: true, title: "Lab: Spacewalk Air Supply" },
+    ],
+  },
+  {
+    id: "jormungandr",
+    page: "jormungandr.html",
+    summary:
+      "A snake game on a canvas: the game loop, a grid of cells, a body " +
+      "that's just a list, a step clock, a runaway Thor, procedural " +
+      "drawing, phases and the leaderboard.",
+    title: "Course 5: Jörmungandr",
+    steps: [
+      { id: "jor-page", title: "The Game Page" },
+      { id: "jor-loop", title: "The Game Loop" },
+      { id: "jor-grid", title: "A Board Made of Cells" },
+      { id: "jor-treasure-map", lab: true, title: "Lab: Treasure Map" },
+      { id: "jor-snake", title: "The Serpent Is a List" },
+      { id: "jor-input", title: "Steering the Serpent" },
+      { id: "jor-robot-remote", lab: true, title: "Lab: Robot Vacuum Remote" },
+      { id: "jor-step", title: "Moving to a Beat" },
+      { id: "jor-eat", title: "Eating, Growing and Crashing" },
+      { id: "jor-mole-patrol", lab: true, title: "Lab: Mole Patrol" },
+      { id: "jor-thor", title: "Thor Runs Away" },
+      { id: "jor-draw", title: "Drawing a Frame" },
+      { id: "jor-body", title: "The Serpent's Body" },
+      { id: "jor-phases", title: "Phases and the Question Gate" },
+      { id: "jor-scores", title: "Scores and the Leaderboard" },
+      { id: "jor-high-scores", lab: true, title: "Lab: Pinball Hall of Fame" },
+    ],
+  },
+  {
+    id: "tidesong",
+    page: "tidesong.html",
+    summary:
+      "A big game split into modules: the game loop, a world of joined " +
+      "regions, data-built creatures, promise-driven battles, a rhythm " +
+      "game, and saves synced between computers.",
+    title: "Course 6: Tidesong",
+    steps: [
+      { id: "tide-page", title: "A Canvas with Buttons on Top" },
+      { id: "tide-modules", title: "One Game, Many Modules" },
+      { id: "tide-loop", title: "The Game Loop and Input" },
+      { id: "tide-world", title: "Regions, Edges and the Camera" },
+      { id: "tide-trail-map", lab: true, title: "Lab: Trail Map" },
+      { id: "tide-creatures", title: "150 Creatures from One String" },
+      { id: "tide-encounters", title: "Weighted Random Encounters" },
+      { id: "tide-fishing-pond", lab: true, title: "Lab: Fishing Pond" },
+      { id: "tide-panels", title: "Waiting for the Player with Promises" },
+      { id: "tide-battle", title: "The Battle Loop" },
+      { id: "tide-cave-quest", lab: true, title: "Lab: Cave Quest" },
+      { id: "tide-rhythm", title: "The Song and Dance Game" },
+      { id: "tide-drum-tutor", lab: true, title: "Lab: Drum Tutor" },
+      { id: "tide-catch", title: "Befriending, Keys and the Question Gate" },
+      { id: "tide-save", title: "Saving and Loading" },
+      { id: "tide-cloud", title: "Cloud Sync: the Newest Save Wins" },
+      { id: "tide-sticky-notes", lab: true, title: "Lab: Sticky Notes Sync" },
+      { id: "tide-art", title: "Atlases, Caches and Poses" },
+      { id: "tide-unlocks", title: "Unlocking New Merfolk" },
+    ],
+  },
+  {
+    id: "spireclash",
+    page: "spireclash.html",
+    summary:
+      "A 3D duel with three.js: a game loop driven by dt, yaw and pitch, " +
+      "box collisions, a building grid held up by a flood fill, hitscan " +
+      "shots, aim assist maths and a rival with a reaction time.",
+    title: "Course 7: Spireclash",
+    steps: [
+      { id: "spire-page", title: "The Game Page" },
+      { id: "spire-scene", title: "A 3D Scene with three.js" },
+      { id: "spire-loop", title: "The Game Loop" },
+      { id: "spire-crossing", lab: true, title: "Lab: Pelican Crossing" },
+      { id: "spire-angles", title: "Angles: Yaw and Pitch" },
+      { id: "spire-lighthouse", lab: true, title: "Lab: Lighthouse Keeper" },
+      { id: "spire-input", title: "Mouse Look and the Keyboard" },
+      { id: "spire-physics", title: "Moving a Knight" },
+      { id: "spire-grid", title: "The Building Grid" },
+      { id: "spire-collapse", title: "When Supports Break" },
+      { id: "spire-ice-floes", lab: true, title: "Lab: Ice Floes" },
+      { id: "spire-shots", title: "Hitscan Shots and Damage" },
+      { id: "spire-aim-assist", title: "Aim Assist" },
+      { id: "spire-rival", title: "A Rival That Thinks" },
+      { id: "spire-star-tracker", lab: true, title: "Lab: Star Tracker" },
+      { id: "spire-rounds", title: "Rounds, Questions and the Leaderboard" },
     ],
   },
 ];

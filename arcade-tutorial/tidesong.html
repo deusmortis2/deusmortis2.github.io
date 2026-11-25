@@ -1,0 +1,2001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Tidesong | Arcade Tutorial</title>
+</head>
+<body data-course="tidesong">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/tidesong.html">Play Tidesong</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 5: TIDESONG</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-page">
+  <header><p>Course 6 · Lesson 1</p></header>
+  <h1>A Canvas with Buttons on Top</h1>
+
+  <p>
+    Tidesong is the biggest game in the arcade: an underwater adventure
+    where you create a mermaid or merman, swim through ten painted ocean
+    regions and befriend 150 sea creatures by singing to them. Have a swim
+    first: <a href="../arcade/tidesong.html">play Tidesong</a> on your
+    site's free arcade. Meet a creature or two, then come back.
+  </p>
+  <p>
+    A game this size can't be explained line by line, so this course picks
+    the systems worth learning from: how the code is split up, the game
+    loop, the world map, the creature data, the battle and its song game,
+    saving (in the browser and in the cloud), the art, and unlocking new
+    characters. First, the page itself.
+  </p>
+  <script type="text/plain" data-lang="html" data-file="tidesong.html">
+    <main class="screen">
+      <h1 class="heading">TIDESONG</h1>
+      <div id="game-frame" class="game-frame wide ts-frame">
+        <canvas id="game" class="game-canvas wide" width="960" height="540"
+          aria-label="Tidesong. Swim through an underwater world and befriend sea creatures with songs."></canvas>
+        <div class="ts-hudbtns">
+          <button type="button" data-open="menu">Menu</button>
+          <button type="button" data-open="codex">Codex</button>
+          <button type="button" data-open="bag">Bag</button>
+          <button type="button" data-open="map">Map</button>
+        </div>
+        <div class="ts-stick" aria-hidden="true"><div class="ts-knob"></div></div>
+        <div class="ts-lanes" hidden>
+          <button type="button" data-lane="0" aria-label="Left note">◀</button>
+          ...
+        </div>
+        <div class="ts-battle" hidden>
+          <p class="ts-msg" aria-live="polite"></p>
+          <div class="ts-actions"></div>
+        </div>
+        <div class="ts-overlay" hidden></div>
+        <p class="ts-toast" role="status" hidden></p>
+      </div>
+      <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+      ...
+    </main>
+    <script type="module" src="js/tidesong/game.js"><\/script>
+  </script>
+
+  <h2>Two layers</h2>
+  <p>
+    Everything inside <code>#game-frame</code> sits in the same box. The
+    <code>&lt;canvas&gt;</code> fills it and shows the world: the painted
+    region, the swimmer, the creatures in battle. Everything
+    <em>else</em> in the frame is ordinary HTML positioned on top of the
+    canvas by CSS: the Menu and Bag buttons, the touch joystick, the battle
+    message box, full-screen overlays like the shops and the Codex, and
+    little pop-up messages called <strong>toasts</strong>.
+  </p>
+  <p>
+    Why not draw the buttons on the canvas too? A canvas is just pixels.
+    A button drawn on it can't be reached with Tab, isn't announced by a
+    screen reader, and needs its own code to work out whether a click
+    landed on it. Real <code>&lt;button&gt;</code>s get all of that free,
+    and HTML wraps long text by itself, which matters in a game with a lot
+    of talking. So the rule is: <strong>pictures on the canvas, words and
+    controls in HTML</strong>.
+  </p>
+
+  <h2>Things to notice</h2>
+  <ul>
+    <li><strong><code>width="960" height="540"</code></strong> is the size of the canvas's drawing surface, in its own pixels. CSS can show it bigger or smaller on screen; the game always draws as if the screen were 960 by 540.</li>
+    <li><strong>The canvas has an <code>aria-label</code></strong>. A screen reader can't see what's painted, so this one sentence tells it what the canvas is.</li>
+    <li><strong><code>hidden</code></strong> on the lanes, the battle box and the overlay. They're in the page from the start, ready, and JavaScript just flips <code>hidden</code> off when they're needed.</li>
+    <li><strong><code>aria-live="polite"</code></strong> on the battle message, so "A wild Puffle swims up!" is read out, and <code>role="status"</code> on the toast for the same reason.</li>
+    <li><strong><code>data-open="menu"</code></strong>: one click handler serves all four HUD buttons by reading which screen each one opens.</li>
+    <li><strong>One script</strong>: <code>game.js</code>, loaded as a module. It imports everything else, as the next lesson shows.</li>
+  </ul>
+
+  <h2>One page, two editions</h2>
+  <p>
+    The controls text under the game has passages like this:
+  </p>
+  <script type="text/plain" data-lang="html">
+    <span data-only="full"> A math question comes up after every battle ...</span>
+    <span data-only="free"> If you black out, you wake up safe in town ...</span>
+  </script>
+  <p>
+    The arcade exists in two editions: the full one for students, with maths
+    questions, and the free one on your site, without. Rather than keep two
+    copies of the page, the text for both is written once and a small
+    shared script (<code>edition.js</code>) hides whichever
+    <code>data-only</code> passages don't belong to the edition being
+    shown.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why are the battle choices real HTML buttons and not drawn on the canvas?</p>
+      <ul>
+        <li>The canvas can't draw text.</li>
+        <li data-right>Buttons can be reached by keyboard, are announced by screen readers and handle their own clicks.</li>
+        <li>HTML is faster to draw than a canvas.</li>
+      </ul>
+      <p class="why">A canvas is only pixels. Anything you can press or read belongs in HTML, positioned over it.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>width="960"</code> on the canvas set?</p>
+      <ul>
+        <li data-right>The width of its drawing surface, in the canvas's own pixels.</li>
+        <li>Its width on screen, which can never change.</li>
+        <li>The maximum width of the page.</li>
+      </ul>
+      <p class="why">CSS decides how big it looks. The game's drawing code always works in a 960 by 540 space.</p>
+    </div>
+    <div class="q">
+      <p>What are the <code>data-only="full"</code> and <code>data-only="free"</code> spans for?</p>
+      <ul>
+        <li>They load different scripts.</li>
+        <li>They're comments for the developer.</li>
+        <li data-right>One page holds the text for both editions, and a script hides the passages that don't apply.</li>
+      </ul>
+      <p class="why">Writing the text once in one page means the two editions can't drift apart.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-modules">
+  <header><p>Course 6 · Lesson 2</p></header>
+  <h1>One Game, Many Modules</h1>
+
+  <p>
+    The tic-tac-toe game is one file. Tidesong is about thirty-five, all
+    in <code>js/tidesong/</code>, and most are under 300 lines. Each file is
+    a <strong>module</strong> with one job:
+  </p>
+  <ul>
+    <li><code>game.js</code>: the conductor. It owns the game loop and calls everyone else.</li>
+    <li><code>zones.js</code>, <code>creatures.js</code>, <code>data.js</code>: plain data (the ten regions, the 150 creatures, songs, moves and shop items).</li>
+    <li><code>world.js</code>, <code>worldRender.js</code>: what's solid, where the edges lead, and drawing the map.</li>
+    <li><code>battle.js</code>, <code>rhythm.js</code>, <code>battleView.js</code>: the battle rules, the song mini-game, and drawing a battle.</li>
+    <li><code>state.js</code>, <code>cloud.js</code>, <code>unlocks.js</code>: saving, syncing between computers, and which characters you can pick.</li>
+    <li><code>panels.js</code>, <code>input.js</code>, <code>menus.js</code>, <code>town.js</code>: the HTML layer, the keyboard and joystick, and the screens.</li>
+    <li><code>sprite.js</code>, <code>pose.js</code>, <code>art.js</code> and the <code>*Atlas.js</code> files: loading and drawing the pictures.</li>
+  </ul>
+
+  <h2>The imports</h2>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    import { gameQuestions } from "../game-shell.js";
+    import { play } from "../sound.js";
+    import { initPage } from "../ui.js";
+    import { runBattle } from "./battle.js";
+    import { pullSaves, pushSlot, pushUnlocks } from "./cloud.js";
+    import { claimUnlock } from "./unlocks.js";
+    import { createPanels, html } from "./panels.js";
+    import { createRhythm, rhythmScore, updateRhythm } from "./rhythm.js";
+    import { befriendGoal, deleteSave, healAll, listSaves, newState, saveGame } from "./state.js";
+    import { createWorld, legendaryLevel, rollEncounter, tileSize } from "./world.js";
+    import { keySource, zones } from "./zones.js";
+    // ... and about twenty more
+  </script>
+  <p>
+    <code>../</code> reaches the arcade's shared modules (questions, sound,
+    the top bar), the same ones tic-tac-toe uses. <code>./</code> is
+    Tidesong's own folder. Notice which way the arrows point:
+    <code>game.js</code> imports everyone, and <strong>nothing imports
+    <code>game.js</code></strong>. The data files at the bottom import
+    almost nothing. Dependencies flowing one way is what keeps a big project
+    understandable: you can read <code>creatures.js</code> without knowing
+    anything about battles.
+  </p>
+
+  <h2>The <code>game</code> object and <code>game.state</code></h2>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    const game = {
+      busy: false,
+      facing: 1,
+      mode: "title",
+      moving: false,
+      pose: makePose(),
+      saveTimer: 0,
+      scene: { zone: "prismreef" },
+      // Which save slot the adventure in play belongs to.
+      slot: 0,
+      state: null,
+      // ...
+    };
+  </script>
+  <p>
+    There are two kinds of information here, and keeping them apart is one
+    of the best decisions in the game:
+  </p>
+  <ul>
+    <li><strong><code>game</code></strong> holds things that only matter right now: which screen is showing (<code>mode</code>), whether a menu has the player's attention (<code>busy</code>), which way the swimmer faces, how far through a tail beat she is.</li>
+    <li><strong><code>game.state</code></strong> is the adventure: where you are, your level, pearls, items, every creature you've befriended. This is exactly what gets saved, and loading a save just means putting a saved object back into <code>game.state</code>.</li>
+  </ul>
+  <p>
+    If the two were mixed together, every save would be full of
+    animation timers, and loading a save might restore a half-finished tail
+    beat.
+  </p>
+
+  <h2>Starting up</h2>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    if (session) {
+      // A signed-in student's saves from other computers come down first.
+      await pullSaves(username);
+      recordBestSave();
+      // The merfolk and creature pictures, the ocean map and the first region
+      // load before the title screen.
+      const firstZone = listSaves(username).find(Boolean)?.zone ?? "prismreef";
+      Promise.all([loadCastArt(), loadModelArt(), loadCreatureArt(), whenLoaded(firstZone)])
+        .finally(() => {
+          showTitle();
+          requestAnimationFrame(loop);
+        });
+    }
+  </script>
+  <ul>
+    <li><strong><code>await</code> outside any function.</strong> That's called <em>top-level await</em>, and it's only allowed in modules. The rest of the file waits until the cloud saves have arrived.</li>
+    <li><strong><code>Promise.all</code></strong> starts four downloads at once and waits for all of them, which is much quicker than one after another.</li>
+    <li><strong><code>.finally</code></strong> runs whether the pictures loaded or not. A missing picture shouldn't stop the game from starting; the drawing code has stand-ins.</li>
+    <li><strong><code>.find(Boolean)</code></strong> finds the first save slot that isn't empty, so the region you'll most likely continue in loads first.</li>
+  </ul>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Which of these belongs in <code>game.state</code> rather than <code>game</code>?</p>
+      <ul>
+        <li>Whether a menu is open.</li>
+        <li data-right>How many pearls the player has.</li>
+        <li>How far through a tail beat the swimmer is.</li>
+      </ul>
+      <p class="why"><code>game.state</code> is the adventure, the part that's saved. Pearls must survive closing the tab; a tail beat doesn't need to.</p>
+    </div>
+    <div class="q">
+      <p>Why can <code>game.js</code> use <code>await</code> outside a function?</p>
+      <ul>
+        <li>Any script can.</li>
+        <li data-right>It's loaded as a module, and modules allow top-level await.</li>
+        <li>Because <code>pullSaves</code> is special.</li>
+      </ul>
+      <p class="why">The page loads it with <code>type="module"</code>. In a classic script, top-level <code>await</code> is a syntax error.</p>
+    </div>
+    <div class="q">
+      <p>What happens if the creature pictures fail to load?</p>
+      <ul>
+        <li>The game never starts.</li>
+        <li>An error page appears.</li>
+        <li data-right>The title screen still appears, because <code>.finally</code> runs either way.</li>
+      </ul>
+      <p class="why"><code>.then</code> only runs on success. <code>.finally</code> runs on success or failure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-loop">
+  <header><p>Course 6 · Lesson 3</p></header>
+  <h1>The Game Loop and Input</h1>
+
+  <p>
+    Tic-tac-toe only changes when you click. Tidesong moves all the time:
+    water ripples, the swimmer bobs, notes fall. So it has a
+    <strong>game loop</strong>, a function that runs once per screen
+    refresh, about 60 times a second:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      game.dt = dt;
+      view.time += dt;
+      if (game.mode === "explore" && game.state) {
+        if (!game.busy && !panels.isOpen()) updateExplore(dt);
+        renderExplore();
+      } else if (game.mode === "battle") {
+        const r = game.scene.rhythm;
+        if (r && updateRhythm(r, input.takeLanes())) game.scene.rhythmDone();
+        drawBattle(ctx, game.scene, game.state, view);
+      } else {
+        renderBackdrop();
+      }
+      requestAnimationFrame(loop);
+    }
+  </script>
+
+  <h2>requestAnimationFrame</h2>
+  <p>
+    <code>requestAnimationFrame(loop)</code> asks the browser to call
+    <code>loop</code> just before it next paints the screen. Because
+    <code>loop</code> asks again at its end, it keeps going forever. The
+    browser passes in <code>now</code>, a timestamp in milliseconds, and it
+    pauses the loop by itself when the tab is hidden, saving battery.
+  </p>
+
+  <h2>dt: time since the last frame</h2>
+  <p>
+    <code>dt</code> ("delta time") is how many <em>seconds</em> passed since
+    the last frame: about 0.0167 on a 60Hz screen, 0.0083 on a 120Hz one.
+    Everything that moves is multiplied by it:
+  </p>
+  <script type="text/plain">
+    const swimSpeed = 190; // pixels per second
+    const nx = p.x + dir.x * swimSpeed * dt;
+  </script>
+  <p>
+    So you swim 190 pixels a second however fast the computer is. Without
+    <code>dt</code>, a 120Hz screen would make you swim twice as fast.
+    <code>Math.min(0.05, ...)</code> caps it: after a hiccup (or coming back
+    to the tab) a huge <code>dt</code> could fling you through a wall, so
+    no frame counts for more than a twentieth of a second.
+  </p>
+
+  <h2>One loop, three modes</h2>
+  <p>
+    <code>game.mode</code> decides what each frame does: swim and draw the
+    world, run a battle, or draw a backdrop behind the title screen. Notice
+    that <code>updateExplore</code> (moving) is skipped while
+    <code>game.busy</code> or a panel is open, but
+    <code>renderExplore</code> (drawing) never is. The world keeps
+    shimmering behind a shop menu; you just can't swim off.
+  </p>
+
+  <h2>Which way to swim</h2>
+  <script type="text/plain" data-file="js/tidesong/input.js">
+    const moveKeys = {
+      a: [-1, 0], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0],
+      arrowup: [0, -1], d: [1, 0], s: [0, 1], w: [0, -1],
+    };
+
+    // keydown adds to `held`, keyup removes from it.
+    direction() {
+      let x = stick.x;
+      let y = stick.y;
+      held.forEach((key) => {
+        x += moveKeys[key][0];
+        y += moveKeys[key][1];
+      });
+      const len = Math.hypot(x, y);
+      return len > 1 ? { x: x / len, y: y / len } : { x, y };
+    },
+  </script>
+  <p>
+    Each held key adds its arrow to a total, and so does the touch
+    joystick. Holding right and down gives <code>{ x: 1, y: 1 }</code>, whose
+    length (<code>Math.hypot</code>, Pythagoras) is about 1.41. Swimming
+    along that would be 41% faster diagonally, an old bug in many games. So
+    anything longer than 1 is divided by its length, which keeps the
+    direction but makes the length exactly 1.
+  </p>
+  <p>
+    One-off actions are different: pressing M should open the map
+    <em>once</em>, not 60 times a second. Those go into a queue that the
+    loop takes from with <code>input.nextAction()</code>, and
+    <code>event.repeat</code> (a key held down auto-repeating) is ignored for
+    them.
+  </p>
+
+  <h2>Sliding along walls</h2>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    if (!blocked(nx, p.y)) p.x = nx;
+    if (!blocked(p.x, ny)) p.y = ny;
+  </script>
+  <p>
+    The new x and the new y are checked <strong>separately</strong>. Swim
+    diagonally into a building's wall and the blocked direction stops, but
+    the other still moves, so you slide along the wall instead of sticking
+    to it.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why is movement multiplied by <code>dt</code>?</p>
+      <ul>
+        <li>To make the game slower.</li>
+        <li data-right>So you move the same distance per second on fast and slow screens.</li>
+        <li>Because <code>requestAnimationFrame</code> requires it.</li>
+      </ul>
+      <p class="why">Speed is in pixels per second. Times the seconds this frame took, it gives this frame's distance.</p>
+    </div>
+    <div class="q">
+      <p>Holding up and left, what does <code>direction()</code> return?</p>
+      <ul>
+        <li><code>{ x: -1, y: -1 }</code></li>
+        <li data-right>About <code>{ x: -0.71, y: -0.71 }</code></li>
+        <li><code>{ x: 0, y: 0 }</code></li>
+      </ul>
+      <p class="why">The total, (-1, -1), has length 1.41, so it's divided by 1.41. Diagonal swimming is no faster than straight.</p>
+    </div>
+    <div class="q">
+      <p>Why are the new x and new y checked against walls one at a time?</p>
+      <ul>
+        <li>It's faster than checking both.</li>
+        <li data-right>So a diagonal swim into a wall slides along it instead of stopping dead.</li>
+        <li>Walls only run in one direction.</li>
+      </ul>
+      <p class="why">If both had to be free at once, touching any wall diagonally would freeze you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-world">
+  <header><p>Course 6 · Lesson 4</p></header>
+  <h1>Regions, Edges and the Camera</h1>
+
+  <p>
+    The ocean is ten regions, each one big painted picture. Swim off the
+    edge of one and you arrive in its neighbour. All of that is described
+    as data in <code>zones.js</code>:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/zones.js">
+    cragspire: {
+      dark: 0.1, drops: "heatWard", levels: [21, 27], name: "Cragspire Bluff",
+      requires: "stormCharm", tier: 7, water: "#24384f",
+      image: { h: 1888, scale: 0.85, w: 2220 },
+      lair: { name: "The Sea Lion Nest", x: 1810, y: 1440 },
+      exits: {
+        north: [[0, 1, "fangshore"]],
+        south: [[0, 0.5, "pelagia"], [0.5, 1, "abyssal"]],
+        west: [[0, 1, "verdant"]],
+      },
+      // town: its four buildings and their doors ...
+    },
+  </script>
+  <p>
+    Each exit is <code>[from, to, region]</code>, where <code>from</code>
+    and <code>to</code> are fractions along that edge. Cragspire's whole
+    north edge leads to Fangshore, but its south edge is split: the left half
+    leads to Pelagia and the right half to Abyssal Anchor. There's no east
+    entry, so the east edge is a wall of current.
+  </p>
+  <p>
+    The other fields drive the rest of the game: <code>levels</code> for
+    wild creatures, <code>requires</code> and <code>drops</code> for the key
+    items that open the ocean up (Lesson 10), <code>dark</code> for how
+    dim it is without a lantern.
+  </p>
+
+  <h2>Which edge did you cross?</h2>
+  <script type="text/plain" data-file="js/tidesong/world.js">
+    const exitAt = (zone, x, y) => {
+      const z = zones[zone];
+      let side = null;
+      let along = 0;
+      if (y < 0) [side, along] = ["north", x / z.width];
+      else if (y > z.height) [side, along] = ["south", x / z.width];
+      else if (x < 0) [side, along] = ["west", y / z.height];
+      else if (x > z.width) [side, along] = ["east", y / z.height];
+      if (!side) return null;
+      const exit = (z.exits[side] ?? []).find(([a, b]) => {
+        return along >= a && along <= b;
+      });
+      if (!exit) return { side, to: null };
+      const [a, b, to] = exit;
+      return { side, t: (along - a) / (b - a || 1), to };
+    };
+  </script>
+  <ul>
+    <li><strong>Off the top</strong> means <code>y &lt; 0</code>; off the left means <code>x &lt; 0</code>.</li>
+    <li><strong><code>along</code></strong> is how far along that edge you are, from 0 to 1. Dividing by the width means the same exit data works however big the picture is.</li>
+    <li><strong><code>[side, along] = [...]</code></strong> is destructuring assignment: two variables set in one line.</li>
+    <li><strong><code>?? []</code></strong>: a region with no exits on that side has no list at all, so an empty one stands in.</li>
+    <li><strong><code>t</code></strong> is how far along <em>that exit</em> you were, so <code>arrival()</code> can put you at the matching spot on the other region's edge.</li>
+  </ul>
+  <p>
+    Back in <code>game.js</code>, <code>crossEdge</code> calls this before
+    every move. No exit: you stay put. An exit into a region whose
+    <code>requires</code> item you don't have: you stay put and get a toast
+    explaining which item you need. Otherwise you're moved into the new
+    region.
+  </p>
+
+  <h2>The camera</h2>
+  <p>
+    A region is far bigger than the 960 by 540 canvas, so the game draws
+    only the window around you. <code>camX</code> and <code>camY</code> are
+    where that window's top-left corner sits in the region:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/worldRender.js">
+    export function cameraFor(zone, x, y, view) {
+      const z = zones[zone];
+      const fit = (pos, size, len) => {
+        if (len <= size) return (len - size) / 2;
+        return Math.max(0, Math.min(len - size, pos - size / 2));
+      };
+      return { camX: fit(x, view.width, z.width), camY: fit(y, view.height, z.height) };
+    }
+  </script>
+  <p>
+    <code>pos - size / 2</code> puts you in the middle of the screen. The
+    <code>Math.max</code>/<code>Math.min</code> pair <strong>clamps</strong>
+    it, so near an edge the camera stops and you swim towards the side of
+    the screen instead of showing empty space past the picture. And if a
+    region is <em>smaller</em> than the screen, the result is negative:
+    the picture is centred with a border round it.
+  </p>
+  <p>
+    Drawing then subtracts the camera: the player at region position
+    <code>p.x</code> is drawn at screen position <code>p.x - view.camX</code>.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>In Cragspire, you swim off the bottom edge 30% of the way across. Where do you go?</p>
+      <ul>
+        <li data-right>Pelagia</li>
+        <li>Abyssal Anchor</li>
+        <li>Nowhere: you're blocked.</li>
+      </ul>
+      <p class="why">South exits are <code>[0, 0.5, "pelagia"]</code> and <code>[0.5, 1, "abyssal"]</code>. 0.3 is in the first, and <code>t</code> is 0.3 / 0.5 = 0.6 along it.</p>
+    </div>
+    <div class="q">
+      <p>The view is 960 wide and the region 2000 wide. You're at x = 1900. What's <code>camX</code>?</p>
+      <ul>
+        <li>1420</li>
+        <li data-right>1040</li>
+        <li>0</li>
+      </ul>
+      <p class="why">1900 - 480 = 1420, but the camera can't go past 2000 - 960 = 1040, so it's clamped to 1040.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>exitAt</code> return when you're still inside the region?</p>
+      <ul>
+        <li><code>{ side: null, to: null }</code></li>
+        <li data-right><code>null</code></li>
+        <li>The region you're in.</li>
+      </ul>
+      <p class="why">No side was crossed, so it returns <code>null</code> straight away. <code>{ side, to: null }</code> means you hit an edge with no way through.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-creatures">
+  <header><p>Course 6 · Lesson 5</p></header>
+  <h1>150 Creatures from One String</h1>
+
+  <p>
+    150 creatures, each with a name, an id, a region, a rarity, an element,
+    stats, a heart song and a liked song. Written out as objects, that would
+    be well over a thousand lines. Instead, <code>creatures.js</code> stores
+    just the parts a person chose, in one compact string:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/creatures.js">
+    // Name, body, element. Grouped by region in zoneOrder.
+    const table = `
+    Sunnyfin fish tide|Wigglet fish coral|Puffle puffer tide|Scrubby fish tide|...
+    Kelpaw mammal tide|Moonbell jelly glow|Tangerfin fish coral|...
+    `;
+  </script>
+  <p>
+    Fifteen creatures per region, separated by <code>|</code>. Everything
+    else is <strong>worked out</strong> when the module loads:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/creatures.js">
+    function build() {
+      const rows = table.split("|").map((s) => {
+        return s.trim();
+      }).filter(Boolean);
+      return rows.map((row, index) => {
+        const [name, body, element] = row.split(" ");
+        const zone = zoneOrder[Math.floor(index / 15)];
+        const slot = index % 15;
+        let rarity = "legendary";
+        if (slot < 6) rarity = "common";
+        else if (slot < 11) rarity = "uncommon";
+        else if (slot < 14) rarity = "rare";
+        const rng = makeRng(hash(`${name}:songs`));
+        // Heart songs only come from songs that can be learned by this region.
+        const pool = Math.min(songs.length, 3 + zones[zone].tier);
+        const heart = Math.floor(rng() * pool);
+        let liked = Math.floor(rng() * (pool - 1));
+        if (liked >= heart) liked += 1;
+        return {
+          blurb: bodyBlurbs[body], body, element,
+          heart: songs[heart].id, id: index + 1, liked: songs[liked].id,
+          name, rarity, slot, zone,
+        };
+      });
+    }
+
+    export const creatures = build();
+  </script>
+
+  <h2>Parsing the table</h2>
+  <ul>
+    <li><code>split("|")</code> chops the string into pieces, <code>trim()</code> removes the line breaks and spaces around each, and <code>filter(Boolean)</code> drops empty strings (there's one at each end).</li>
+    <li><code>row.split(" ")</code> turns <code>"Puffle puffer tide"</code> into three words, destructured straight into <code>name</code>, <code>body</code> and <code>element</code>.</li>
+    <li>The position decides the rest. <code>Math.floor(index / 15)</code> is the region number, and <code>index % 15</code> the place within it: places 0 to 5 are common, 6 to 10 uncommon, 11 to 13 rare, and 14 the region's legendary. It's the same row and column arithmetic as tic-tac-toe's board, with rows of 15.</li>
+  </ul>
+
+  <h2>Random, but the same every time</h2>
+  <p>
+    Nobody picked each creature's heart song by hand; they're random. But
+    they must be the <em>same</em> random on every computer, every time, or
+    the Codex's clues would be wrong after a reload. <code>Math.random()</code>
+    can't do that. <code>makeRng(seed)</code> in <code>util.js</code> is a
+    <strong>seeded</strong> random number generator: give it the same seed
+    and it produces the same "random" numbers in the same order.
+    <code>hash()</code> turns the text <code>"Puffle:songs"</code> into a
+    number to use as the seed, so each creature gets its own sequence.
+  </p>
+  <p>
+    The <code>liked</code> trick is worth stealing. To pick a random song
+    that <em>isn't</em> the heart song, pick from one fewer, and step over
+    the heart song if you land on or past it. Every other song is equally
+    likely and there's no "try again" loop.
+  </p>
+
+  <h2>Looking one up</h2>
+  <script type="text/plain" data-file="js/tidesong/creatures.js">
+    export function creatureById(id) {
+      return creatures[id - 1];
+    }
+
+    export function statsFor(species, level) {
+      const [hp, atk, def, spd] = bodyStats[species.body];
+      const m = rarityMult[species.rarity];
+      const grow = (base) => {
+        return Math.floor((base * 2 * level * m) / 50) + 5;
+      };
+      return { atk: grow(atk), def: grow(def), hp: /* similar */, spd: grow(spd) };
+    }
+  </script>
+  <p>
+    Ids start at 1 (it reads better in the Codex: "No. 1"), so the array
+    index is one less. Stats aren't stored either: a creature's
+    <em>body</em> (fish, crab, whale...) gives base numbers, and its level
+    and rarity scale them. A save only needs to remember a creature's
+    species and level; everything else can be rebuilt.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A creature is at <code>index</code> 27 in the list. Which region and rarity?</p>
+      <ul>
+        <li>Region 1 (counting from 0), common</li>
+        <li data-right>Region 1 (counting from 0), rare</li>
+        <li>Region 2, legendary</li>
+      </ul>
+      <p class="why"><code>Math.floor(27 / 15)</code> is 1, and <code>27 % 15</code> is 12, which is between 11 and 13: rare.</p>
+    </div>
+    <div class="q">
+      <p>Why use <code>makeRng(hash(...))</code> instead of <code>Math.random()</code> for heart songs?</p>
+      <ul>
+        <li>It's more random.</li>
+        <li data-right>A seeded generator gives the same answer on every computer and every reload.</li>
+        <li><code>Math.random()</code> doesn't work in modules.</li>
+      </ul>
+      <p class="why">Same seed, same sequence. The heart songs never need to be stored or sent anywhere.</p>
+    </div>
+    <div class="q">
+      <p>The pool has 5 songs and <code>heart</code> is 2. Which songs can <code>liked</code> end up as?</p>
+      <ul>
+        <li>0 to 4, including 2</li>
+        <li>0 to 3</li>
+        <li data-right>0, 1, 3 or 4</li>
+      </ul>
+      <p class="why">It picks 0 to 3, then 2 becomes 3 and 3 becomes 4. Every song except the heart song, each equally likely.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-encounters">
+  <header><p>Course 6 · Lesson 6</p></header>
+  <h1>Weighted Random Encounters</h1>
+
+  <p>
+    Every 32 pixels you swim through the wild is a "step", and each step
+    might bring a creature:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    async function step() {
+      const { state } = game;
+      const p = state.player;
+      state.steps += 1;
+      game.sinceEncounter += 1;
+      if (!world.isWild(state.zone, p.x, p.y) || game.sinceEncounter < 6) return;
+      if (Math.random() < encounterChance) {
+        const { level, species } = rollEncounter(state.zone, {
+          caught: state.caught,
+          streak: state.discovery,
+        });
+        // Meeting one you haven't befriended resets the boost; otherwise it grows.
+        state.discovery = state.caught.includes(species.id) ? state.discovery + 1 : 0;
+        await startBattle(species, level);
+      }
+    }
+  </script>
+  <p>
+    <code>encounterChance</code> is 0.045, a 4.5% chance per step. No
+    creatures in town or next to a lair (<code>isWild</code>), and never
+    within 6 steps of the last battle, so you can't be ambushed the moment
+    you swim off.
+  </p>
+
+  <h2>Picking which creature</h2>
+  <p>
+    Commons should turn up far more than rares. The trick is a
+    <strong>weighted random choice</strong>:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/world.js">
+    export function rollEncounter(zone, { caught = [], streak = 0 } = {}, rng = Math.random) {
+      const pool = creaturesInZone(zone).filter((s) => {
+        return s.rarity !== "legendary";
+      });
+      const rarityWeight = { common: 10, rare: 1.2, uncommon: 4 };
+      const boost = discoveryMultiplier(streak);
+      const weight = (s) => {
+        return rarityWeight[s.rarity] * (caught.includes(s.id) ? 1 : boost);
+      };
+      const total = pool.reduce((sum, s) => {
+        return sum + weight(s);
+      }, 0);
+      let roll = rng() * total;
+      const species = pool.find((s) => {
+        roll -= weight(s);
+        return roll <= 0;
+      }) ?? pool[0];
+      const [low, high] = zones[zone].levels;
+      const level = low + Math.floor(rng() * (high - low + 1));
+      return { level, species };
+    }
+  </script>
+  <p>
+    Picture every creature as a stretch of a ruler, as long as its weight.
+    Six commons at 10, five uncommons at 4 and three rares at 1.2 make a
+    ruler 83.6 long. Pick a random point on it (<code>rng() * total</code>),
+    then walk along subtracting each creature's length until you've gone
+    past the point. Long stretches are hit more often: each common has a
+    10 / 83.6 (12%) chance, each rare only 1.4%. Legendaries aren't in the
+    pool at all; they wait in their lairs.
+  </p>
+  <ul>
+    <li><strong><code>?? pool[0]</code></strong> is a safety net. Rounding in decimal maths could, in theory, leave <code>roll</code> a hair above 0 after the last creature, and then <code>find</code> returns <code>undefined</code>.</li>
+    <li><strong>The level</strong> is a whole number from <code>low</code> to <code>high</code>, both included, which is why it's <code>high - low + 1</code>.</li>
+  </ul>
+
+  <h2>The discovery boost</h2>
+  <p>
+    Late in a region you've befriended almost everything, and the one
+    missing rare could take forever. So creatures you <em>haven't</em>
+    befriended have their weight multiplied by a boost. Each battle against
+    one you already have (the <code>streak</code>) grows it by 1.3, up to
+    15 times. Meet a new one and the streak goes back to 0.
+  </p>
+
+  <h2>Why <code>rng = Math.random</code>?</h2>
+  <p>
+    The random number generator is a <strong>parameter</strong> with
+    <code>Math.random</code> as its default. The game never passes one, but a
+    test can pass a fake that returns, say, <code>0.99</code>, and then
+    check exactly which creature comes out. You did the same thing in the
+    Pebble Nim lab. The next lab does it again.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Pool: one common (weight 10) then one rare (weight 1.2), nothing befriended, streak 0. <code>rng()</code> returns 0.95. Which comes out?</p>
+      <ul>
+        <li>The common</li>
+        <li data-right>The rare</li>
+        <li>Neither: <code>undefined</code></li>
+      </ul>
+      <p class="why"><code>roll</code> is 0.95 × 11.2 = 10.64. Minus the common's 10 leaves 0.64, still above 0. Minus the rare's 1.2 goes below 0: the rare.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>rollEncounter</code> take <code>rng</code> as a parameter?</p>
+      <ul>
+        <li>So each region can use different randomness.</li>
+        <li data-right>So tests can pass a predictable fake instead of <code>Math.random</code>.</li>
+        <li><code>Math.random</code> isn't available in <code>world.js</code>.</li>
+      </ul>
+      <p class="why">The default means the game doesn't have to pass anything, and tests can control every roll.</p>
+    </div>
+    <div class="q">
+      <p>A region's levels are <code>[12, 17]</code>. Which levels can a wild creature be?</p>
+      <ul>
+        <li>12 to 16</li>
+        <li data-right>12 to 17</li>
+        <li>13 to 17</li>
+      </ul>
+      <p class="why"><code>Math.floor(rng() * 6)</code> is 0 to 5, plus 12 gives 12 to 17.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-panels">
+  <header><p>Course 6 · Lesson 7</p></header>
+  <h1>Waiting for the Player with Promises</h1>
+
+  <p>
+    A battle is a long conversation: show a message, wait, show some
+    buttons, wait for a click, show the result, wait... Written with
+    callbacks it would be a tangle. Tidesong writes it like a story, top to
+    bottom:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/battle.js">
+    await b.say(`A wild ${species.name} (Lv ${level}) swims up!`);
+    const choice = await b.choose(`What will ${name} do?`, [
+      { label: "Fight", sub: "Weaken it", value: "fight" },
+      { label: "Sing / Dance", sub: "Capture it", value: "sing" },
+      // ...
+    ]);
+  </script>
+  <p>
+    That works because <code>say</code> and <code>choose</code> (from
+    <code>panels.js</code>) each return a <strong>Promise</strong> that only
+    resolves when the player is done. Here's <code>choose</code>:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/panels.js">
+    // options: [{ label, value, sub, disabled, tone }]. Resolves with value.
+    const choose = (prompt, options, { columns } = {}) => {
+      battle.hidden = false;
+      message.textContent = prompt;
+      return new Promise((resolve) => {
+        const buttons = options.map((opt) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `ts-choice ${opt.tone ?? ""}`;
+          button.disabled = Boolean(opt.disabled);
+          button.innerHTML = `<span>${escapeHtml(opt.label)}</span>` +
+            (opt.sub ? `<small>${escapeHtml(opt.sub)}</small>` : "");
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            actions.replaceChildren();
+            resolve(opt.value);
+          });
+          return button;
+        });
+        actions.replaceChildren(...buttons);
+        buttons.find((b) => {
+          return !b.disabled;
+        })?.focus({ preventScroll: true });
+      });
+    };
+  </script>
+
+  <h2>A promise you resolve yourself</h2>
+  <p>
+    <code>new Promise((resolve) =&gt; { ... })</code> runs the function
+    straight away and hands it <code>resolve</code>. The promise stays
+    <em>pending</em> until someone calls <code>resolve(value)</code>. Here
+    nobody does until a button is clicked: each button's click handler
+    calls <code>resolve(opt.value)</code>, and whoever was
+    <code>await</code>ing <code>choose(...)</code> carries on with that
+    value. It turns "wait for a click" into something you can
+    <code>await</code>.
+  </p>
+  <ul>
+    <li><code>actions.replaceChildren()</code> with no arguments empties the button row, so the old buttons can't be clicked again.</li>
+    <li>The first enabled button gets focus, so a keyboard player can press Enter straight away.</li>
+    <li><code>escapeHtml</code> runs on the label because labels can include your character's name, which <em>you</em> typed. Putting typed text into <code>innerHTML</code> unescaped would let a name like <code>&lt;img onerror=...&gt;</code> run code.</li>
+  </ul>
+
+  <h2>say(): a click or a timer, but only once</h2>
+  <script type="text/plain" data-file="js/tidesong/panels.js">
+    return new Promise((resolve) => {
+      const wait = hold ? 0 : 900 + text.length * 28;
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        battle.onclick = null;
+        window.removeEventListener("keydown", onKey, true);
+        clearTimeout(timer);
+        resolve();
+      };
+      // onKey calls finish() on Enter, Space or Z
+      const timer = hold ? 0 : setTimeout(finish, wait);
+      setTimeout(() => {
+        battle.onclick = finish;
+        window.addEventListener("keydown", onKey, true);
+      }, 180);
+    });
+  </script>
+  <p>
+    A message moves on by itself after a time that grows with its length
+    (longer messages need longer to read), <em>or</em> when you click or
+    press Enter. Whichever comes first calls <code>finish</code>; the
+    <code>done</code> flag makes any later call do nothing, and
+    <code>finish</code> tidies up the other listeners. The 180ms delay
+    before listening stops the click that <em>chose</em> an action from also
+    skipping the message straight after it.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>When does <code>await choose(...)</code> finish?</p>
+      <ul>
+        <li>As soon as the buttons are shown.</li>
+        <li data-right>When a button's click handler calls <code>resolve</code>.</li>
+        <li>After a timer runs out.</li>
+      </ul>
+      <p class="why">The promise stays pending until <code>resolve(opt.value)</code> is called, and only a click does that.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>say</code> use a <code>done</code> flag?</p>
+      <ul>
+        <li data-right>The timer and a click could both call <code>finish</code>; the flag makes only the first one count.</li>
+        <li>Promises can't be resolved twice, so it would crash.</li>
+        <li>To count how many messages were shown.</li>
+      </ul>
+      <p class="why">A second <code>resolve</code> would quietly do nothing, but the clean-up would run twice. The flag keeps it simple and safe.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>opt.label</code> passed through <code>escapeHtml</code>?</p>
+      <ul>
+        <li>To make it uppercase.</li>
+        <li>Buttons can't show plain text.</li>
+        <li data-right>Labels can contain player-typed text, which must never be treated as HTML.</li>
+      </ul>
+      <p class="why">Escaping turns <code>&lt;</code> into <code>&amp;lt;</code>, so typed text is shown, never run.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-battle">
+  <header><p>Course 6 · Lesson 8</p></header>
+  <h1>The Battle Loop</h1>
+
+  <p>
+    With <code>say</code> and <code>choose</code> to lean on, the whole
+    battle fits in one readable function:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/battle.js">
+    export async function runBattle(env, species, level) {
+      const stats = statsFor(species, level);
+      env.scene.wild = { hp: stats.hp, level, species, stats };
+      const lead = env.state.party.find((c) => {
+        return c.hp > 0;
+      });
+      const b = {
+        ...env,
+        fighter: lead ? lead.uid : "you",
+        participants: new Set([lead ? lead.uid : "you"]),
+      };
+      await b.say(`A wild ${species.name} (Lv ${level}) swims up!`);
+      for (;;) {
+        const outcome = await playerTurn(b);
+        if (outcome === "again") continue;
+        if (["caught", "fled", "blackout"].includes(outcome)) return outcome;
+        if (b.scene.wild.hp <= 0) {
+          await b.say(`The wild ${species.name} swam off, worn out.`);
+          await reward(b);
+          return "won";
+        }
+        if (outcome === "acted-first") continue;
+        const result = await enemyTurn(b);
+        if (result) return result;
+      }
+    }
+  </script>
+
+  <h2>Outcomes as strings</h2>
+  <p>
+    <code>for (;;)</code> loops forever; the only ways out are the
+    <code>return</code>s. Each pass is one round, and <code>playerTurn</code>
+    reports what happened as a short string:
+  </p>
+  <ul>
+    <li><code>"again"</code>: you opened a menu and pressed Back. Nothing happened, so skip the enemy's turn and ask again.</li>
+    <li><code>"acted"</code>: you did something (attacked, used an item, sang and missed). Now the wild creature takes its turn.</li>
+    <li><code>"acted-first"</code>: the creature was faster, so it already struck before your attack. It doesn't get a second go.</li>
+    <li><code>"caught"</code>, <code>"fled"</code>, <code>"blackout"</code>: the battle is over, straight away.</li>
+  </ul>
+  <p>
+    And <code>runBattle</code> itself resolves with <code>"caught"</code>,
+    <code>"won"</code>, <code>"fled"</code> or <code>"blackout"</code>, so
+    <code>game.js</code> knows whether to send you back to town.
+  </p>
+
+  <h2>The battle doesn't know about the page</h2>
+  <p>
+    Look at the first argument, <code>env</code>. <code>game.js</code>
+    builds it:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    function battleEnv() {
+      return {
+        choose: panels.choose,
+        playRhythm,
+        say: panels.say,
+        scene: game.scene,
+        sound,
+        state: game.state,
+      };
+    }
+  </script>
+  <p>
+    <code>battle.js</code> never touches <code>document</code>. Everything
+    it needs (talking, asking, sound, the song game) is handed to it. This
+    is called <strong>dependency injection</strong>, and it's the same idea
+    as <code>rng = Math.random</code> on a bigger scale: the battle rules
+    could be run with a fake <code>choose</code> that always picks "Fight",
+    to test them without a browser. <code>{ ...env, fighter, participants }</code>
+    copies those tools into a battle object <code>b</code> and adds this
+    battle's own bits.
+  </p>
+
+  <h2>Damage, and a kindness</h2>
+  <script type="text/plain" data-file="js/tidesong/battle.js">
+    // HP left after a hit. A target at full HP always survives on at least 1, so
+    // no single attack can knock out a fresh creature; later hits can finish it.
+    function hpAfterHit(hp, maxHp, amount) {
+      const floor = hp >= maxHp ? 1 : 0;
+      return Math.max(Math.min(floor, hp), hp - amount);
+    }
+  </script>
+  <p>
+    You fight a creature to <em>weaken</em> it, then sing to befriend it.
+    If one lucky hit could knock it out from full health, you'd lose the
+    chance to befriend it before you'd even started. So from full HP, the
+    lowest a hit can leave anyone is 1. <code>Math.max(1, hp - amount)</code>
+    then; otherwise <code>Math.max(0, ...)</code>.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>You open Fight, then press Back. What does <code>playerTurn</code> return, and what happens?</p>
+      <ul>
+        <li><code>"acted"</code>: the enemy takes its turn.</li>
+        <li data-right><code>"again"</code>: the loop skips the enemy and asks you again.</li>
+        <li><code>"fled"</code>: the battle ends.</li>
+      </ul>
+      <p class="why">Backing out of a menu shouldn't cost you a turn, so <code>continue</code> goes straight back to your choice.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>env</code> passed into <code>runBattle</code> rather than <code>battle.js</code> importing the panels itself?</p>
+      <ul>
+        <li>Imports don't work for functions.</li>
+        <li data-right>The battle rules don't depend on the page, so they could run with fake tools, for example in a test.</li>
+        <li>It makes battles faster.</li>
+      </ul>
+      <p class="why">That's dependency injection: hand a piece of code its tools rather than having it reach for them.</p>
+    </div>
+    <div class="q">
+      <p>A creature has 40 of 40 HP and takes a 55-damage hit. What's left?</p>
+      <ul>
+        <li>0</li>
+        <li data-right>1</li>
+        <li>-15</li>
+      </ul>
+      <p class="why">It was at full HP, so the floor is 1: <code>Math.max(1, 40 - 55)</code> is 1. The next hit can finish it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-rhythm">
+  <header><p>Course 6 · Lesson 9</p></header>
+  <h1>The Song and Dance Game</h1>
+
+  <p>
+    Choose <em>Sing / Dance</em> and notes fall down four lanes; press the
+    matching arrow as each reaches its circle. A song is just data:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/data.js">
+    {
+      hint: "Drowsy and slow. A soft, gentle tune might soothe it.",
+      id: "lullaby", kind: "Song", name: "Lullaby of the Deep",
+      notes: [1, 2, 1, 0, 1, 2], tempo: 2.2,
+    },
+  </script>
+  <p>
+    <code>notes</code> lists the lanes in order (0 left, 1 down, 2 up, 3
+    right) and <code>tempo</code> is notes per second.
+  </p>
+
+  <h2>When each note is due</h2>
+  <script type="text/plain" data-file="js/tidesong/rhythm.js">
+    const leadIn = 1.0;
+    const perfectWindow = 0.075;
+    const goodWindow = 0.16;
+
+    export function createRhythm(song, speed = 1) {
+      const gap = 1 / (song.tempo * speed);
+      const notes = song.notes.map((lane, i) => {
+        return { hit: null, lane, time: leadIn + i * gap };
+      });
+      const end = leadIn + (notes.length - 1) * gap + 0.8;
+      return { end, notes, song, start: performance.now(), time: 0 /* ... */ };
+    }
+  </script>
+  <p>
+    At 2.2 notes a second, the gap between notes is 1 / 2.2, about 0.45
+    seconds. After a one-second lead-in to get ready, note <code>i</code> is
+    due at <code>1 + i × 0.45</code> seconds. Rarer creatures pass a
+    <code>speed</code> above 1 (a legendary plays 25% faster), which
+    shrinks the gap. Every note starts with <code>hit: null</code>,
+    meaning "not judged yet".
+  </p>
+
+  <h2>Judging a press</h2>
+  <script type="text/plain" data-file="js/tidesong/rhythm.js">
+    export function updateRhythm(r, presses) {
+      r.time = (performance.now() - r.start) / 1000;
+      presses.forEach(({ lane, time }) => {
+        const at = (time - r.start) / 1000;
+        const note = r.notes.find((n) => {
+          return n.hit === null && n.lane === lane && Math.abs(n.time - at) <= goodWindow;
+        });
+        if (!note) return;
+        const off = Math.abs(note.time - at);
+        note.hit = off <= perfectWindow ? "perfect" : "good";
+      });
+      r.notes.forEach((n) => {
+        if (n.hit === null && r.time - n.time > goodWindow) n.hit = "miss";
+      });
+      return r.time >= r.end;
+    }
+  </script>
+  <ul>
+    <li><strong>Each press carries its own timestamp</strong>, taken in the <code>keydown</code> handler with <code>performance.now()</code>. If presses were judged by the frame they were noticed in, a slow computer would make you late through no fault of your own.</li>
+    <li><strong>A press matches</strong> the first unjudged note in its lane within 0.16 seconds. Within 0.075 it's perfect, otherwise good. A press near nothing is simply ignored.</li>
+    <li><strong>Misses</strong> are notes that are now more than 0.16 seconds overdue and were never hit.</li>
+    <li>It returns <code>true</code> once the song has ended, which the loop uses to finish up.</li>
+  </ul>
+
+  <h2>Scoring</h2>
+  <script type="text/plain" data-file="js/tidesong/rhythm.js">
+    // 0 (all missed) to 1 (all perfect).
+    export function rhythmScore(r) {
+      const total = r.notes.reduce((sum, n) => {
+        if (n.hit === "perfect") return sum + 1;
+        if (n.hit === "good") return sum + 0.6;
+        return sum;
+      }, 0);
+      return total / r.notes.length;
+    }
+  </script>
+
+  <h2>From the loop back to async code</h2>
+  <p>
+    The song runs <em>inside</em> the game loop (Lesson 3 showed
+    <code>updateRhythm</code> being called every frame), but the battle
+    wants to write <code>const score = await b.playRhythm(song, speed)</code>.
+    <code>game.js</code> joins the two with the same "resolve it later"
+    trick as <code>choose</code>:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    function playRhythm(song, speed) {
+      lanesEl.hidden = false;
+      game.scene.rhythm = createRhythm(song, speed);
+      return new Promise((resolve) => {
+        game.scene.rhythmDone = () => {
+          const score = rhythmScore(game.scene.rhythm);
+          game.scene.rhythm = null;
+          lanesEl.hidden = true;
+          resolve(score);
+        };
+      });
+    }
+  </script>
+  <p>
+    The promise's <code>resolve</code> is tucked inside
+    <code>rhythmDone</code>, and the loop calls <code>rhythmDone()</code>
+    when <code>updateRhythm</code> says the song is over. The battle code
+    never needs to know there's a loop at all.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A note is due at 2.00 seconds and you press its lane at 2.10. What's the result?</p>
+      <ul>
+        <li>Perfect</li>
+        <li data-right>Good</li>
+        <li>Miss</li>
+      </ul>
+      <p class="why">0.10 seconds off is outside the 0.075 perfect window but inside the 0.16 good window.</p>
+    </div>
+    <div class="q">
+      <p>Four notes: perfect, perfect, good, miss. What does <code>rhythmScore</code> return?</p>
+      <ul>
+        <li>0.75</li>
+        <li data-right>0.65</li>
+        <li>0.5</li>
+      </ul>
+      <p class="why">(1 + 1 + 0.6 + 0) / 4 = 2.6 / 4 = 0.65.</p>
+    </div>
+    <div class="q">
+      <p>Why does each key press store <code>performance.now()</code> when it happens?</p>
+      <ul>
+        <li>To count how many keys were pressed.</li>
+        <li data-right>So presses are judged by when you pressed, not by when the next frame noticed.</li>
+        <li>Because <code>keydown</code> events have no time.</li>
+      </ul>
+      <p class="why">Frames can be 16ms or more apart. Timing each press itself keeps the judging fair on slow machines.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-catch">
+  <header><p>Course 6 · Lesson 10</p></header>
+  <h1>Befriending, Keys and the Question Gate</h1>
+
+  <h2>Did the song work?</h2>
+  <script type="text/plain" data-file="js/tidesong/battle.js">
+    const songMultipliers = { heart: 2.6, liked: 1.35, none: 0.45 };
+
+    let reaction = "none";
+    if (wild.species.heart === songId) reaction = "heart";
+    else if (wild.species.liked === songId) reaction = "liked";
+    learnReaction(state, wild.species.id, songId, reaction);
+    const flawless = score >= 0.9;
+    const legendary = wild.species.rarity === "legendary";
+    if (legendary && reaction !== "heart") {
+      await b.say(`${wild.species.name} will only answer to its heart song.`);
+      return "failed";
+    }
+    const hpFactor = 1.5 - wild.hp / wild.stats.hp;
+    const perf = 0.35 + score * 0.85;
+    const bonus = legendary ? legendaryHeartBonus : 1;
+    const chance = clamp(
+      catchRates[wild.species.rarity] * songMultipliers[reaction] * bonus * perf * hpFactor * state.charm,
+      0.02, 0.96,
+    );
+    // A flawless heart song always lands.
+    const caught = (flawless && reaction === "heart") || Math.random() < chance;
+  </script>
+  <p>
+    The chance is several factors multiplied together, each saying one
+    thing:
+  </p>
+  <ul>
+    <li><strong><code>catchRates</code></strong>: rarer creatures start harder (common 0.5, legendary 0.1).</li>
+    <li><strong>The song</strong>: the heart song multiplies by 2.6, a liked one by 1.35, any other by 0.45.</li>
+    <li><strong><code>perf</code></strong>: playing well helps, from 0.35 (all missed) up to 1.2 (all perfect).</li>
+    <li><strong><code>hpFactor</code></strong>: 0.5 at full health, up to 1.5 when nearly worn out. That's why you fight first.</li>
+    <li><strong><code>state.charm</code></strong>: a charm item from your bag.</li>
+  </ul>
+  <p>
+    <code>clamp(value, 0.02, 0.96)</code> keeps the result between 2% and
+    96%: never hopeless, never certain. Except one case is made certain on
+    purpose: a flawless heart song. Skill always wins.
+    <code>learnReaction</code> writes down what you've learned, so next time
+    the Sing menu shows "heart song!" beside it.
+  </p>
+
+  <h2>Into the team</h2>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    export function addCaptured(state, species, level, hp) {
+      const creature = makeCreature(species, level);
+      creature.hp = hp;
+      if (!state.caught.includes(species.id)) state.caught.push(species.id);
+      stampGoal(state);
+      markSeen(state, species.id);
+      if (state.party.length < partyLimit) {
+        state.party.push(creature);
+        return "party";
+      }
+      state.storage.push(creature);
+      return "storage";
+    }
+  </script>
+  <p>
+    <code>state.caught</code> is a list of species ids: which kinds you've
+    befriended, for the Codex and the goal of 150.
+    <code>state.party</code> and <code>state.storage</code> hold the actual
+    creatures, each with its own level and HP. Your team holds four; extras
+    swim off to the Tide Pool in town. <code>stampGoal</code> records your
+    play time the first time <code>caught</code> reaches 150, for the
+    leaderboard.
+  </p>
+
+  <h2>Legendaries hold the keys</h2>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    export function claimLegendKey(state, species) {
+      const key = species.rarity === "legendary" ? zones[species.zone]?.drops : null;
+      if (!key || state.keys.includes(key)) return null;
+      state.keys.push(key);
+      return key;
+    }
+  </script>
+  <p>
+    Remember <code>requires</code> and <code>drops</code> in each region's
+    data? Cragspire <em>requires</em> a Storm Charm to enter and its
+    legendary <em>drops</em> a Heat Ward, which is what Abyssal Anchor
+    requires. Beating or befriending each legendary opens the next region.
+    The whole order of the adventure is in the data, and two short
+    functions enforce it:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    function isLocked(zone) {
+      const need = zones[zone].requires;
+      return Boolean(need) && !game.state.keys.includes(need);
+    }
+  </script>
+
+  <h2>The maths question gate</h2>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    const result = await runBattle(battleEnv(), species, level);
+    panels.hideBattle();
+    if (result === "blackout") {
+      const lost = Math.floor(game.state.pearls * 0.15);
+      game.state.pearls -= lost;
+      await ask("You blacked out! Answer to wake up safe in town");
+      healAll(game.state);
+      placeAtTown(game.state.lastTown);
+    } else {
+      await ask("Battle over! Answer to keep swimming");
+    }
+    game.mode = "explore";
+    game.busy = false;
+    save();
+  </script>
+  <p>
+    Like tic-tac-toe, every battle ends with a question that must be
+    answered correctly before you can carry on. Tidesong wraps it in a small
+    <code>ask</code> function with one extra rule:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    const questionsReady = questions.loaded.then(() => {
+      return true;
+    }).catch(() => {
+      document.getElementById("load-error").textContent =
+        "Couldn't load the math questions, so they'll be skipped for now.";
+      return false;
+    });
+
+    async function ask(label) {
+      if (!(await questionsReady)) return true;
+      await questions.ask({ inputDelay: 300, label });
+      return true;
+    }
+  </script>
+  <p>
+    Tic-tac-toe refuses to start without questions. Tidesong can't do that:
+    you might be halfway through a long adventure. So if the question bank
+    fails to load, <code>questionsReady</code> becomes <code>false</code>,
+    the page says so honestly, and the game carries on without questions
+    rather than trapping you after every battle.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does fighting a creature before singing make it easier to befriend?</p>
+      <ul>
+        <li>Fighting teaches you its heart song.</li>
+        <li data-right><code>hpFactor</code> rises as its HP falls, multiplying the chance.</li>
+        <li>Worn-out creatures can't flee.</li>
+      </ul>
+      <p class="why"><code>1.5 - hp / maxHp</code> is 0.5 at full HP and nearly 1.5 when it's almost worn out: three times the chance.</p>
+    </div>
+    <div class="q">
+      <p>A legendary hears a song it likes, but not its heart song. What happens?</p>
+      <ul>
+        <li>A lower chance than with the heart song.</li>
+        <li>The usual liked-song chance.</li>
+        <li data-right>It fails straight away: legendaries only answer their heart song.</li>
+      </ul>
+      <p class="why">The <code>legendary &amp;&amp; reaction !== "heart"</code> check returns <code>"failed"</code> before any chance is worked out.</p>
+    </div>
+    <div class="q">
+      <p>What happens if the question bank can't be loaded?</p>
+      <ul>
+        <li>The game won't start.</li>
+        <li>You're stuck after your first battle.</li>
+        <li data-right>A message explains it, and <code>ask</code> lets you carry on without a question.</li>
+      </ul>
+      <p class="why"><code>.catch</code> turns the failure into <code>false</code>, and <code>ask</code> returns straight away when it sees that.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-save">
+  <header><p>Course 6 · Lesson 11</p></header>
+  <h1>Saving and Loading</h1>
+
+  <p>
+    An adventure lasts weeks, so saving has to be rock solid. Saves live in
+    <code>localStorage</code>, which (unlike the
+    <code>sessionStorage</code> the arcade's sign-in uses) survives closing
+    the browser. Each login gets three save slots:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    // Slot 0 keeps the key from before there were slots, so older saves turn
+    // up in the first slot without being moved.
+    export function saveKey(username, slot = 0) {
+      const base = `tidesong:save:${username || "guest"}`;
+      return slot ? `${base}:${slot + 1}` : base;
+    }
+  </script>
+  <p>
+    So <code>"tidesong:save:ada"</code>, <code>"tidesong:save:ada:2"</code>
+    and <code>"tidesong:save:ada:3"</code>. When slots were added, slot 1
+    kept the old key, and everyone's existing adventure simply appeared in
+    it.
+  </p>
+
+  <h2>A new adventure</h2>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    export function newState(avatar, start) {
+      return {
+        avatar,
+        caught: [],
+        items: { echoShell: 2, salve: 20 },
+        keys: [],
+        lastTown: "coralhaven",
+        party: [],
+        pearls: 150,
+        player: { hp: 0, level: startLevel, x: start.x, y: start.y /* ... */ },
+        songs: [...startingSongs],
+        version: saveVersion,
+        zone: start.zone ?? "prismreef",
+        // ... about twenty fields in all
+      };
+    }
+  </script>
+  <p>
+    The whole adventure is one plain object of strings, numbers, arrays
+    and objects. That's deliberate: <code>JSON.stringify</code> can turn it
+    into text and <code>JSON.parse</code> can turn it back, so saving is one
+    line. (Creatures in the party store just their species id and level, not
+    the species object, for the same reason.)
+  </p>
+
+  <h2>When does it save?</h2>
+  <p>
+    <code>save()</code> in <code>game.js</code> runs after every battle,
+    after closing any menu or shop, every 20 seconds while swimming, and
+    whenever the page is about to go away:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    window.addEventListener("beforeunload", save);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) save();
+    });
+  </script>
+  <p>
+    <code>beforeunload</code> is unreliable on phones and Chromebooks,
+    which often just freeze a tab. <code>visibilitychange</code> to hidden
+    fires when you switch tabs or close the lid, so the two together catch
+    nearly every way of leaving.
+  </p>
+
+  <h2>Stamping the time</h2>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    export function saveContent(text) {
+      try {
+        const { playSeconds, savedAt, ...rest } = JSON.parse(text);
+        return JSON.stringify(rest);
+      } catch {
+        return text;
+      }
+    }
+
+    export function saveGame(state, username, slot = 0) {
+      const before = readSlot(username, slot);
+      const changed = !before?.data
+        || saveContent(before.data) !== saveContent(JSON.stringify(state));
+      if (!state.savedAt || changed) state.savedAt = Date.now();
+      try {
+        localStorage.setItem(saveKey(username, slot), JSON.stringify(state));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  </script>
+  <p>
+    Every save records <code>savedAt</code>, the time it last
+    <em>changed</em>. The next lesson relies on it to decide which copy of
+    a save is newest. But play time ticks every frame, so comparing whole
+    saves would always find a change. <code>saveContent</code> uses
+    <strong>rest destructuring</strong>: <code>playSeconds</code> and
+    <code>savedAt</code> are pulled out into their own variables, and
+    <code>...rest</code> collects everything else. Comparing the rests
+    answers "has anything that matters changed?".
+  </p>
+  <p>
+    <code>localStorage.setItem</code> is wrapped in <code>try</code>
+    because it can throw: storage can be full, or blocked in a private
+    window. A save failing must never crash the game.
+  </p>
+
+  <h2>Loading old saves safely</h2>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    while (migrations[raw.version]) {
+      migrations[raw.version](raw);
+      raw.version += 1;
+    }
+    if (raw.version !== saveVersion) return null;
+    const fresh = newState(sanitiseAvatar(raw.avatar), { x: 0, y: 0 });
+    const state = { ...fresh, ...raw, avatar: sanitiseAvatar(raw.avatar) };
+    state.player = { ...fresh.player, ...raw.player };
+  </script>
+  <p>
+    The game has changed many times since the first saves were made, and
+    an old save must still load. Two techniques do it:
+  </p>
+  <ul>
+    <li><strong>Migrations.</strong> Each save carries a <code>version</code>. <code>migrations[1]</code> upgrades a version 1 save to version 2 (when the regions were repainted, it moved you back to a town). The <code>while</code> loop runs one step after another until the save is current, however old it is.</li>
+    <li><strong>Defaults underneath.</strong> <code>{ ...fresh, ...raw }</code> starts with a brand-new adventure and lays the saved one on top. Later spreads win, so anything the save has is kept, and any field added to the game since the save was made gets its default.</li>
+  </ul>
+  <p>
+    After that, <code>loadGame</code> checks everything it can't trust:
+    creatures with unknown species are dropped, items that no longer exist
+    are removed, a position past a region's edge sends you to town.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does Tidesong use <code>localStorage</code> rather than <code>sessionStorage</code>?</p>
+      <ul>
+        <li>It's faster.</li>
+        <li data-right>It keeps the save after the browser is closed.</li>
+        <li>It's shared between computers.</li>
+      </ul>
+      <p class="why"><code>sessionStorage</code> is cleared when the tab closes. Neither is shared between computers; that's what the cloud copy in the next lesson is for.</p>
+    </div>
+    <div class="q">
+      <p>A save from before <code>playSeconds</code> existed is loaded. What does <code>{ ...fresh, ...raw }</code> give for it?</p>
+      <ul>
+        <li><code>undefined</code></li>
+        <li data-right>The default from <code>newState</code>, because <code>raw</code> has nothing to override it.</li>
+        <li>An error.</li>
+      </ul>
+      <p class="why">Spreading copies <code>fresh</code>'s fields first. <code>raw</code> only replaces the ones it actually has.</p>
+    </div>
+    <div class="q">
+      <p>You only swam on the spot for a minute, so just <code>playSeconds</code> changed. Does <code>savedAt</code> change?</p>
+      <ul>
+        <li>Yes, every save updates it.</li>
+        <li data-right>No: <code>saveContent</code> leaves play time out of the comparison.</li>
+        <li>Only if a minute has passed.</li>
+      </ul>
+      <p class="why">Nothing that matters changed, so the old <code>savedAt</code> stays and the save won't look newer than it is.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-cloud">
+  <header><p>Course 6 · Lesson 12</p></header>
+  <h1>Cloud Sync: the Newest Save Wins</h1>
+
+  <p>
+    Students play at school on one Chromebook and at home on another. A
+    save only in <code>localStorage</code> would stay on the first.
+    <code>cloud.js</code> keeps a copy of each slot in Firestore (Google's
+    online database), but the game still always plays from the copy in the
+    browser. Syncing just makes sure that copy is the newest one.
+  </p>
+
+  <h2>What a slot looks like</h2>
+  <script type="text/plain" data-file="js/tidesong/state.js">
+    // One slot as it is stored in this browser: { data, savedAt }, where data
+    // is the save's text, or "" for a deleted slot. A deleted slot keeps when
+    // it was deleted, so another computer's older copy can't bring it back.
+    export function readSlot(username, slot) {
+      try {
+        const text = localStorage.getItem(saveKey(username, slot));
+        const raw = JSON.parse(text);
+        if (!raw) return null;
+        if (raw.deletedAt) return { data: "", savedAt: raw.deletedAt };
+        return { data: text, savedAt: Number(raw.savedAt) || 0 };
+      } catch {
+        return null;
+      }
+    }
+
+    export function writeSlot(username, slot, { data, savedAt }) {
+      try {
+        const text = data || JSON.stringify({ deletedAt: savedAt });
+        localStorage.setItem(saveKey(username, slot), text);
+      } catch {
+        // Storage blocked: the game will start this slot empty.
+      }
+    }
+  </script>
+
+  <h2>Tombstones</h2>
+  <p>
+    Here's the problem with simply removing a deleted save. You delete
+    slot 2 at home. Next day at school, the school computer still has the
+    old slot 2, and finds the cloud has nothing for it. "Only I have this
+    save," it thinks, "better upload it." The deleted adventure is back.
+  </p>
+  <p>
+    So deleting doesn't remove anything. It writes a
+    <strong>tombstone</strong>: <code>{ deletedAt: 1764072000000 }</code>,
+    a note saying "this slot was emptied at this time". A tombstone has a
+    time like any save, so it can win or lose against the other copies in
+    the same way.
+  </p>
+
+  <h2>Merging one slot</h2>
+  <script type="text/plain" data-file="js/tidesong/cloud.js">
+    function mergeSlot({ cloud, late, slot, uid, username }) {
+      const local = readSlot(username, slot);
+      const localAt = local?.savedAt ?? -1;
+      const cloudAt = cloud ? Number(cloud.savedAt) || 0 : -1;
+      if (cloudAt > localAt && !late) {
+        writeSlot(username, slot, cloud);
+        pushed[slot] = saveContent(cloud.data);
+        return;
+      }
+      if (local && localAt > cloudAt) send(uid, slot, local);
+    }
+  </script>
+  <p>
+    The rule is <strong>the copy saved last wins</strong>, and nothing else.
+    A missing copy counts as time -1, older than anything.
+  </p>
+  <ul>
+    <li>Cloud newer: write it into this browser.</li>
+    <li>This browser newer (you played offline, say): send it up.</li>
+    <li>Same time: they're the same save. Do nothing.</li>
+  </ul>
+  <p>
+    Tombstones need no special case. A deletion at 10:00 beats a save from
+    09:00, and an adventure saved at 11:00 (after you started a new
+    character in that slot) beats the deletion.
+  </p>
+
+  <h2>Not waiting forever</h2>
+  <script type="text/plain" data-file="js/tidesong/cloud.js">
+    export async function pullSaves(username) {
+      let late = false;
+      let timer = null;
+      const timeout = new Promise((resolve) => {
+        timer = setTimeout(() => {
+          late = true;
+          resolve();
+        }, pullTimeout);
+      });
+      try {
+        await Promise.race([pull(username, () => late), timeout]);
+      } catch {
+        // Offline or blocked: play from this browser's saves.
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+  </script>
+  <p>
+    <code>Promise.race</code> settles as soon as the <em>first</em> promise
+    does. If the cloud answers within 6 seconds, great. If not, the
+    timeout wins and the title screen appears using what's in the browser.
+    But the download carries on in the background, so
+    <code>late</code> tells it: you're too late to <em>replace</em>
+    anything here (the player may already be playing that slot), but you
+    may still upload this browser's newer copies.
+  </p>
+  <p>
+    One more detail: <code>pushed[slot]</code> remembers the content last
+    sent for each slot, so <code>pushSlot</code> (called after every save)
+    doesn't upload the same save again every 20 seconds.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does deleting a save write <code>{ deletedAt }</code> instead of removing the key?</p>
+      <ul>
+        <li>Removing keys from <code>localStorage</code> isn't allowed.</li>
+        <li data-right>So another computer's older copy can't bring the deleted save back.</li>
+        <li>To keep a backup of the adventure.</li>
+      </ul>
+      <p class="why">A missing save looks like "never had one". A tombstone says "emptied at this time", which beats any older copy.</p>
+    </div>
+    <div class="q">
+      <p>This browser's slot was saved at time 500. The cloud's copy is a tombstone from time 800. What happens?</p>
+      <ul>
+        <li>This browser's save is uploaded.</li>
+        <li data-right>The tombstone is written here: the slot is deleted on this computer too.</li>
+        <li>Both are kept.</li>
+      </ul>
+      <p class="why">800 is newer than 500, and a tombstone is just a copy with a time, so it wins like any other.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>Promise.race([pull(...), timeout])</code> wait for?</p>
+      <ul>
+        <li>Both promises.</li>
+        <li data-right>Whichever settles first.</li>
+        <li>Only the timeout.</li>
+      </ul>
+      <p class="why">That caps the wait at 6 seconds on a slow or dropped connection.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-art">
+  <header><p>Course 6 · Lesson 13</p></header>
+  <h1>Atlases, Caches and Poses</h1>
+
+  <h2>One picture, fifteen creatures</h2>
+  <p>
+    Downloading 150 separate creature pictures would mean 150 requests.
+    Instead each region's fifteen are packed into one image, an
+    <strong>atlas</strong> (or sprite sheet), and a generated file says
+    where each one is:
+  </p>
+  <script type="text/plain" data-file="js/tidesong/creatureAtlas.js">
+    // Each creature's rectangle [x, y, w, h] in img/tidesong/creatures/<region>.webp,
+    // in the same order as the region's 15 creatures in creatures.js.
+    // Do not edit by hand.
+    export const creatureAtlas = {"prismreef":[[2,2,252,205],[258,2,252,180],...
+  </script>
+  <p>
+    "Do not edit by hand" matters: a tool cut the pictures out of the
+    artwork and wrote this file. Fix the tool's input and run it again, or
+    your edit disappears next time.
+  </p>
+
+  <h2>Cutting one out, once</h2>
+  <script type="text/plain" data-file="js/tidesong/creatureArt.js">
+    export function creatureCanvas(id, size, mode = "full") {
+      const key = `${id}:${size}:${mode}`;
+      if (cache.has(key)) return cache.get(key);
+      const species = creatureById(id);
+      const atlas = atlasFor(species.zone);
+      const canvas = makeCanvas(size, size);
+      if (!atlas.ready) return canvas;
+      const [sx, sy, sw, sh] = creatureAtlas[species.zone][species.slot];
+      const scale = Math.min(size / sw, size / sh);
+      const w = sw * scale;
+      const h = sh * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(atlas.img, sx, sy, sw, sh, (size - w) / 2, size - h, w, h);
+      if (mode === "silhouette") {
+        ctx.globalCompositeOperation = "source-in";
+        ctx.fillStyle = "#0b1a2e";
+        ctx.fillRect(0, 0, size, size);
+      }
+      cache.set(key, canvas);
+      return canvas;
+    }
+  </script>
+  <ul>
+    <li><strong>The nine-argument <code>drawImage</code></strong> copies a <em>part</em> of an image: the source rectangle <code>sx, sy, sw, sh</code> in the atlas, drawn into the rectangle <code>x, y, w, h</code> on the canvas.</li>
+    <li><strong><code>Math.min(size / sw, size / sh)</code></strong> is the largest scale that fits both ways, so tall and wide creatures both fit the square without stretching. <code>size - h</code> stands it on the bottom edge.</li>
+    <li><strong>The silhouette</strong> for creatures you haven't seen: <code>"source-in"</code> means "paint only where there's already something", so filling the whole square with dark blue colours just the creature's shape.</li>
+    <li><strong>A cache</strong>, keyed by everything that changes the result. The cutting happens once; every later frame draws the ready-made canvas. A blank canvas returned while the atlas is still loading is deliberately <em>not</em> cached, or the creature would stay blank forever.</li>
+  </ul>
+
+  <h2>Busting the browser's cache</h2>
+  <script type="text/plain" data-file="js/tidesong/creatureArt.js">
+    img.src = `img/tidesong/creatures/${zone}.webp?v=${creatureArtVersion[zone] ?? ""}`;
+  </script>
+  <p>
+    Browsers keep images they've downloaded. If an atlas is redrawn but the
+    browser keeps the old picture while the rectangles are new, every
+    creature is cut out wrong. <code>?v=c906772ae3</code> is a hash of the
+    picture: change the picture and the address changes, so the browser
+    has to fetch the new one.
+  </p>
+
+  <h2>Poses: animating with numbers</h2>
+  <script type="text/plain" data-file="js/tidesong/pose.js">
+    // Fresh pose state: `turn` runs from 0 (facing right) to 1 (facing left),
+    // `swim` from 0 (floating still) to 1 (swimming), and `beat` is how far
+    // through the tail beat the swimmer is.
+    export function makePose() {
+      return { beat: 0.75, swim: 0, turn: 0 };
+    }
+
+    function approach(value, goal, step) {
+      if (value < goal) return Math.min(goal, value + step);
+      return Math.max(goal, value - step);
+    }
+
+    export function steerPose(pose, facing, moving, dt) {
+      pose.turn = approach(pose.turn, facing < 0 ? 1 : 0, dt / turnTime);
+      pose.swim = approach(pose.swim, moving ? 1 : 0, dt / swimTime);
+      if (moving) pose.beat = (pose.beat + dt * beatRate) % 1;
+    }
+  </script>
+  <p>
+    The swimmer is drawn from a handful of hand-painted pictures (side
+    view, front view, tail up, tail down), but the <em>state</em> of the
+    animation is just three numbers between 0 and 1. <code>approach</code>
+    moves a number towards its goal by at most one step without
+    overshooting, so turning round takes <code>turnTime</code> (0.36
+    seconds) whatever the frame rate. Change your mind halfway and it just
+    runs back. <code>% 1</code> wraps the tail beat round from 1 to 0
+    forever. The drawing code then reads the numbers and picks (or blends)
+    the pictures to show.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A creature's picture is 200 wide and 100 tall. What's its scale in a 120 square?</p>
+      <ul>
+        <li>1.2</li>
+        <li data-right>0.6</li>
+        <li>0.83</li>
+      </ul>
+      <p class="why"><code>Math.min(120 / 200, 120 / 100)</code> = <code>Math.min(0.6, 1.2)</code> = 0.6. It's drawn 120 by 60, standing on the bottom.</p>
+    </div>
+    <div class="q">
+      <p>Why isn't the blank canvas cached while the atlas is loading?</p>
+      <ul>
+        <li data-right>Otherwise the blank would be returned forever, even once the picture had loaded.</li>
+        <li>Blank canvases can't be stored in a Map.</li>
+        <li>To save memory.</li>
+      </ul>
+      <p class="why">The cache is only for finished results. Next frame it tries again, and once the atlas is ready the real picture is cached.</p>
+    </div>
+    <div class="q">
+      <p><code>approach(0.9, 1, 0.25)</code> returns...</p>
+      <ul>
+        <li>1.15</li>
+        <li data-right>1</li>
+        <li>0.65</li>
+      </ul>
+      <p class="why">0.9 + 0.25 would overshoot, so <code>Math.min(goal, ...)</code> stops it at exactly 1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tide-unlocks">
+  <header><p>Course 6 · Lesson 14</p></header>
+  <h1>Unlocking New Merfolk</h1>
+
+  <p>
+    There are 12 mermaids and 12 mermen, but only three of each to choose
+    from at first. Befriending 25, 50 and 75 creatures opens three more of
+    each. Unlocks belong to your <em>login</em>, not to one adventure, so
+    starting a new character keeps them.
+  </p>
+  <script type="text/plain" data-file="js/tidesong/unlocks.js">
+    export const unlockSteps = [25, 50, 75];
+    export const perUnlock = 3;
+    const total = 12;
+
+    function key(username) {
+      return `tidesong:unlocks:${username || "guest"}`;
+    }
+
+    export function unlockedCount(username) {
+      return Math.min(total, perUnlock * (1 + unlockTier(username)));
+    }
+
+    // The character indices open to this player, in unlock order.
+    export function unlockedLooks(username, group) {
+      return unlockOrder[group].slice(0, unlockedCount(username));
+    }
+  </script>
+  <p>
+    The login's <strong>tier</strong> is how many steps it has reached, 0 to
+    3, stored under its own <code>localStorage</code> key. Tier 0 gives 3
+    characters, tier 1 gives 6, tier 3 gives all 12. <code>unlockOrder</code>
+    (in <code>cast.js</code>) lists the characters in the order they open,
+    so <code>slice(0, count)</code> is the list you can pick from.
+  </p>
+
+  <h2>Reaching a step</h2>
+  <script type="text/plain" data-file="js/tidesong/unlocks.js">
+    export function claimUnlock(state, username) {
+      const before = stepsReached(state);
+      const reached = unlockSteps.filter((n) => {
+        return state.caught.length >= n;
+      }).length;
+      if (reached <= before) return null;
+      state.unlockStep = reached;
+      const fresh = reached > unlockTier(username);
+      if (fresh) setUnlockTier(username, reached);
+      return { count: unlockSteps[reached - 1], fresh };
+    }
+  </script>
+  <p>
+    Two counters are in play. <code>state.unlockStep</code> is how many
+    steps <em>this adventure</em> has passed, saved with it. The login's
+    tier is the best any adventure has reached. Your second character
+    reaching 25 doesn't unlock anything new (<code>fresh</code> is false),
+    but it's still a milestone, so the game still offers a change of look.
+  </p>
+  <script type="text/plain" data-file="js/tidesong/game.js">
+    function save() {
+      const reached = claimUnlock(game.state, username);
+      if (reached) {
+        if (reached.fresh) pushUnlocks(username);
+        game.lookOffer = reached;
+      }
+      saveGame(game.state, username, game.slot);
+      pushSlot(username, game.slot);
+    }
+
+    // In the loop:
+    if (!game.busy && !panels.isOpen() && game.lookOffer) offerLook();
+  </script>
+  <p>
+    The check lives in <code>save()</code> because every way of befriending a
+    creature ends with a save. But the offer isn't shown there: you might be
+    mid-battle. It's parked in <code>game.lookOffer</code>, and the loop
+    picks it up once you're free to swim. That's a handy pattern: notice
+    something now, act on it when the moment is right.
+  </p>
+
+  <h2>Syncing unlocks: a different rule</h2>
+  <script type="text/plain" data-file="js/tidesong/cloud.js">
+    // Unlocks only ever go up, so the higher of the two counts wins.
+    const here = unlockTier(username);
+    const there = Number(cloud.unlocks?.tier) || 0;
+    if (there > here) setUnlockTier(username, there);
+    if (here > there) pushUnlocks(username);
+  </script>
+  <p>
+    Saves sync by "newest wins" because an adventure can go any way,
+    including being deleted. Unlocks can only ever grow, so the safest
+    merge is simply <strong>the bigger number wins</strong>. It needs no
+    timestamps at all, and no order of syncing can ever take an unlock
+    away. Choosing the merge rule to fit the data is the real lesson here.
+  </p>
+
+  <div class="tip">
+    <strong>The whole build, in one sentence:</strong> one page lays HTML
+    controls over a canvas, a loop moves and draws by <code>dt</code>,
+    data files describe the ocean and its 150 creatures, promises let
+    battles read like a story, and a save is one plain object that's stamped,
+    migrated and synced so an adventure can last for weeks on any computer.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A login is at tier 2. How many mermaids can it choose from?</p>
+      <ul>
+        <li>6</li>
+        <li data-right>9</li>
+        <li>12</li>
+      </ul>
+      <p class="why"><code>Math.min(12, 3 * (1 + 2))</code> = 9.</p>
+    </div>
+    <div class="q">
+      <p>Why is the look offer stored in <code>game.lookOffer</code> instead of shown inside <code>save()</code>?</p>
+      <ul>
+        <li><code>save()</code> can't open panels.</li>
+        <li data-right><code>save()</code> may run mid-battle or in a menu; the loop shows the offer once you're free.</li>
+        <li>So it's saved with the adventure.</li>
+      </ul>
+      <p class="why">Noticing and acting are split: <code>save()</code> notices, the loop acts when nothing else needs the screen.</p>
+    </div>
+    <div class="q">
+      <p>Why do unlocks sync by "higher wins" when saves use "newest wins"?</p>
+      <ul>
+        <li>Unlocks have no timestamps because they're older code.</li>
+        <li data-right>Unlocks only ever go up, so the higher count is always right, whatever order things sync in.</li>
+        <li>Firestore can only store the higher number.</li>
+      </ul>
+      <p class="why">A save can change in any direction, even be deleted, so it needs time to decide. A count that only grows just needs <code>max</code>.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>

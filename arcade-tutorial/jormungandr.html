@@ -1,0 +1,1789 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Jörmungandr | Arcade Tutorial</title>
+</head>
+<body data-course="jormungandr">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/jormungandr.html">Play Jörmungandr</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 4: JÖRMUNGANDR</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-page">
+  <header><p>Course 5 · Lesson 1</p></header>
+  <h1>The Game Page</h1>
+
+  <p>
+    <a href="../arcade/jormungandr.html">Play Jörmungandr</a> for a few
+    minutes first. You are the world serpent of Norse myth: steer round a
+    grid, eat to grow, don't bite your own tail, and catch Thor to cross
+    into the next of the nine realms. It's the classic game of
+    <em>Snake</em>, with a few twists.
+  </p>
+  <p>
+    Tic-tac-toe was built out of HTML buttons. Jörmungandr is different:
+    almost everything you see is painted onto a single
+    <code>&lt;canvas&gt;</code>, sixty times a second. So the page itself is
+    small:
+  </p>
+  <script type="text/plain" data-lang="html" data-file="jormungandr.html">
+    <main class="screen">
+      <h1 class="heading">JÖRMUNGANDR</h1>
+      <div id="game-frame" class="game-frame wide">
+        <canvas id="game" class="game-canvas wide wood" width="960" height="540"
+          aria-label="Jörmungandr game. Steer the world serpent round the board,
+          eat food to grow, and catch Thor when he appears."><\/canvas>
+      </div>
+      <div class="touch-buttons">
+        <button id="boost-btn" class="btn" type="button">BOOST</button>
+        <button id="power-btn" class="btn alt" type="button">POWER</button>
+      </div>
+      <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+      <p id="load-error" class="status" role="status"></p>
+      <p class="controls wide">...</p>
+    </main>
+    <script type="module" src="js/jormungandr/game.js"><\/script>
+  </script>
+
+  <h2>Things to notice</h2>
+  <ul>
+    <li><strong><code>width="960" height="540"</code></strong> set the canvas's <em>drawing</em> size: 960 by 540 pixels to paint on, a 16:9 shape like a TV. CSS can then shrink or stretch the canvas on screen, and the drawing scales with it. The game always thinks in those 960 by 540 pixels, whatever the window size.</li>
+    <li><strong>The <code>aria-label</code></strong> matters more than usual. A screen reader can't see anything painted on a canvas, so the label is the only description it has.</li>
+    <li><strong><code>#load-error</code></strong> starts empty. If the art or the questions fail to load, the game writes the error there rather than leaving a blank board.</li>
+    <li><strong>One script</strong>, <code>js/jormungandr/game.js</code>, is a module that imports the rest. The game is split into eleven small files under <code>js/jormungandr/</code>: <code>board.js</code>, <code>snake.js</code>, <code>input.js</code>, <code>play.js</code>, <code>items.js</code>, <code>thor.js</code>, <code>render.js</code>, <code>body.js</code>, <code>art.js</code>, <code>hud.js</code> and <code>game.js</code>. Each one has one job, and this course visits them all.</li>
+  </ul>
+
+  <h2>A wooden cabinet, in CSS</h2>
+  <script type="text/plain" data-lang="css" data-file="jormungandr.html">
+    /* A wooden arcade cabinet round the screen, like the concept art. */
+    .game-canvas.wood {
+      border: 12px solid #5a3417;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px #2a1708, 0 0 0 3px #2a1708, 6px 6px 0 #000;
+      cursor: default;
+    }
+  </script>
+  <p>
+    A thick brown border is the wood. <code>box-shadow</code> takes a
+    comma-separated list, and each shadow here does a different job: an
+    <code>inset</code> one draws a dark line just inside the border, a
+    shadow with no blur and a 3px <strong>spread</strong> draws a dark line
+    just outside it, and the last one is the hard black drop shadow every
+    arcade panel has. Three outlines and no extra elements.
+  </p>
+
+  <h2>Buttons only for touch screens</h2>
+  <script type="text/plain" data-lang="css">
+    .touch-buttons {
+      display: none;
+      gap: 12px;
+    }
+    @media (pointer: coarse) {
+      .touch-buttons {
+        display: flex;
+      }
+    }
+  </script>
+  <p>
+    On a computer you boost with the space bar and use a power-up with B.
+    A phone has neither, so the page has two real buttons, hidden by
+    default. <code>@media (pointer: coarse)</code> asks "is the main pointer
+    something blunt, like a finger?" Only then do the buttons appear. This
+    is better than checking the screen width, because a small laptop window
+    still has a keyboard, and a big tablet still doesn't.
+  </p>
+
+  <div class="tip">
+    <strong>Two editions, one page.</strong> The controls text contains
+    spans like <code>&lt;span data-only="full"&gt;A question comes every 30
+    seconds...&lt;/span&gt;</code> and <code>&lt;span
+    data-only="free"&gt;...&lt;/span&gt;</code>. The build script for your
+    free arcade keeps only the <code>free</code> text, so the same page
+    serves the classroom arcade and the no-maths copy.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The canvas is shown 480 pixels wide on a phone. How wide does the game think it is?</p>
+      <ul>
+        <li>480 pixels</li>
+        <li data-right>960 pixels, from its <code>width</code> attribute</li>
+        <li>It depends on the CSS</li>
+      </ul>
+      <p class="why">The attributes set the drawing surface. CSS only changes how big that surface looks, so the game's maths never has to change.</p>
+    </div>
+    <div class="q">
+      <p>When are the BOOST and POWER buttons shown?</p>
+      <ul>
+        <li>When the window is narrower than 600px.</li>
+        <li data-right>When the main pointer is coarse, like a finger on a touch screen.</li>
+        <li>Always, but only clickable on phones.</li>
+      </ul>
+      <p class="why"><code>@media (pointer: coarse)</code> tests the kind of pointer, not the size of the screen.</p>
+    </div>
+    <div class="q">
+      <p>Why is the canvas's <code>aria-label</code> so long and descriptive?</p>
+      <ul>
+        <li>The pixel font needs it.</li>
+        <li data-right>Everything inside a canvas is just pixels, so the label is all a screen reader can describe.</li>
+        <li>It's shown as a tooltip during play.</li>
+      </ul>
+      <p class="why">Buttons and text describe themselves. A painted picture doesn't, so the label has to.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-loop">
+  <header><p>Course 5 · Lesson 2</p></header>
+  <h1>The Game Loop</h1>
+
+  <p>
+    Tic-tac-toe only did something when you clicked. An action game never
+    stops: the serpent keeps sliding whether you press anything or not. That
+    takes a <strong>game loop</strong>, a function that runs once per frame
+    and does two things every time: <em>update</em> the state a little, then
+    <em>draw</em> it.
+  </p>
+
+  <h2>All the state in one object</h2>
+  <script type="text/plain" data-file="js/jormungandr/game.js">
+    const game = {
+      boost: 1,
+      clock: 0,
+      effects: [],
+      held: null,
+      high: 0,
+      level: 1,
+      lives: 3,
+      overChoice: 1,
+      phase: "title",
+      phaseTime: 0,
+      score: 0,
+      shield: 0,
+      speedFor: 0,
+      stepClock: 0,
+      toast: null,
+    };
+  </script>
+  <p>
+    Tic-tac-toe kept its state in separate variables. Jörmungandr has far
+    more of it, so it lives in one object called <code>game</code>. That
+    one object can then be handed to other files: <code>play.js</code>
+    changes it, <code>render.js</code> draws it. Other fields
+    (<code>snake</code>, <code>items</code>, <code>thor</code>) are added
+    when a realm is set up.
+  </p>
+
+  <h2>Starting the game</h2>
+  <script type="text/plain" data-file="js/jormungandr/game.js">
+    runGame({
+      canvas,
+      draw: () => draw(ctx, art, game),
+      fonts: ['10px "Press Start 2P"'],
+      height,
+      load: () => [loadArt(), questions.loaded],
+      ready: ([loaded]) => {
+        art = loaded;
+        game.high = loadHigh();
+        // ...set up the first realm and bind the controls
+      },
+      run: { id: "jormungandr", score: () => game.score },
+      update,
+      width,
+    });
+  </script>
+  <p>
+    <code>runGame</code> lives in <code>js/game-shell.js</code> and is
+    shared by every canvas game in the arcade. Each game hands it an object
+    of settings and functions, and it does the boring parts: check the
+    session, load everything, then run the loop. Notice
+    <code>canvas,</code> on its own: that's <strong>shorthand</strong> for
+    <code>canvas: canvas</code>.
+  </p>
+
+  <h2>Loading first</h2>
+  <script type="text/plain" data-file="js/game-shell.js">
+    try {
+      const loaded = await Promise.all([
+        ...load(),
+        ...fonts.map((font) => document.fonts.load(font)),
+      ]);
+      await ready?.(loaded);
+    } catch (error) {
+      document.getElementById("load-error").textContent =
+        `Error: ${error.message}`;
+      return;
+    }
+  </script>
+  <p>
+    <code>Promise.all</code> takes a list of promises and waits for
+    <em>all</em> of them: the images, the question bank and the pixel font.
+    Its result is a list of their results in the same order, which is why
+    <code>ready</code> can pick out the art with
+    <code>([loaded]) =&gt;</code>, destructuring the first item. If any of
+    them fails, the whole thing fails, and the error lands in
+    <code>#load-error</code>. The font is loaded on purpose: text drawn on a
+    canvas before the font arrives would come out in a plain fallback font.
+  </p>
+
+  <h2>The loop itself</h2>
+  <script type="text/plain" data-file="js/game-shell.js">
+    let last = performance.now();
+    const frame = (now) => {
+      update(Math.min(Math.max((now - last) / 1000, 0), 0.05));
+      endFrame?.();
+      last = now;
+      draw();
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  </script>
+  <ul>
+    <li><code>requestAnimationFrame(frame)</code> asks the browser to call <code>frame</code> just before it next paints the screen, usually 60 times a second. <code>frame</code> asks again at the end, so it keeps going for ever. The browser also pauses it in a hidden tab, which saves battery.</li>
+    <li>The browser passes <code>now</code>, a time in milliseconds. <code>now - last</code> is how long the last frame took. Divided by 1000 it becomes seconds, and that's <code>dt</code> ("delta time"), the number every <code>update</code> works with.</li>
+    <li><code>Math.min(..., 0.05)</code> caps <code>dt</code> at a twentieth of a second. Come back to a tab after a minute and the first <code>dt</code> would be 60 seconds: without the cap, everything would leap a minute ahead in one frame. <code>Math.max(..., 0)</code> stops it ever going negative.</li>
+    <li><code>endFrame?.()</code> uses <strong>optional chaining</strong>: call it only if the game supplied one. Jörmungandr doesn't, so nothing happens.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Why seconds, not frames?</strong> Screens refresh at 60, 120 or
+    144 times a second. If the game moved "one bit per frame", it would run
+    twice as fast on a 120Hz screen. Moving "this much per second, times
+    <code>dt</code>" makes it the same speed on every screen.
+  </div>
+
+  <h2>Counting a run when you leave</h2>
+  <script type="text/plain" data-file="js/game-shell.js">
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) recordRun(run.id, run.score());
+    });
+  </script>
+  <p>
+    If a player switches tab or closes the laptop mid-game, the score so far
+    still goes to the leaderboard. <code>run.score</code> is a function, not
+    a number, so it reads the score at the moment the tab is hidden rather
+    than the 0 it was at the start.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A frame took 16 milliseconds. What <code>dt</code> does <code>update</code> get?</p>
+      <ul>
+        <li>16</li>
+        <li data-right>0.016</li>
+        <li>0.05</li>
+      </ul>
+      <p class="why">Milliseconds divided by 1000 gives seconds. It's under the 0.05 cap, so it's left alone.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>dt</code> capped at 0.05?</p>
+      <ul>
+        <li>To make the game run at 20 frames a second.</li>
+        <li data-right>So a long pause (a background tab, say) can't make everything jump far ahead in one frame.</li>
+        <li>Because <code>requestAnimationFrame</code> can't go faster.</li>
+      </ul>
+      <p class="why">The loop still runs every frame. The cap only matters when a frame is unusually long.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>run</code> pass <code>score: () =&gt; game.score</code> instead of <code>score: game.score</code>?</p>
+      <ul>
+        <li>Arrow functions are faster.</li>
+        <li data-right><code>game.score</code> would be copied once, as 0. The function reads the score whenever it's called.</li>
+        <li><code>recordRun</code> only accepts functions.</li>
+      </ul>
+      <p class="why">A number is copied when it's passed. A function can look up the current value later.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-grid">
+  <header><p>Course 5 · Lesson 3</p></header>
+  <h1>A Board Made of Cells</h1>
+
+  <p>
+    The serpent glides smoothly on screen, but underneath, the game is as
+    blocky as tic-tac-toe. The board is a grid of cells, and the serpent,
+    the food and Thor each sit in exactly one cell. All of that lives in
+    <code>board.js</code>:
+  </p>
+  <script type="text/plain" data-file="js/jormungandr/board.js">
+    export const width = 960;
+    export const height = 540;
+    export const cell = 40;
+    export const cols = 22;
+    export const rows = 11;
+    export const boardX = 40;
+    export const boardY = 56;
+  </script>
+  <p>
+    22 columns of 40 pixel cells is 880 pixels, which leaves 40 pixels
+    either side of the 960 pixel canvas: that's <code>boardX</code>. 11 rows
+    is 440 pixels tall, starting 56 pixels down to leave room for the score
+    bar. Every other number in the game is worked out from these, so the
+    board could be resized by changing them.
+  </p>
+
+  <h2>Cells and pixels</h2>
+  <p>
+    The game logic talks in cells: "the head is at column 7, row 5". The
+    drawing code needs pixels. Two small functions translate:
+  </p>
+  <script type="text/plain">
+    // Centre of a cell in canvas pixels.
+    export function centreX(x) {
+      return boardX + x * cell + cell / 2;
+    }
+
+    export function centreY(y) {
+      return boardY + y * cell + cell / 2;
+    }
+  </script>
+  <p>
+    Start at the board's edge, move across <code>x</code> whole cells, then
+    half a cell more to reach the middle. Column 0's centre is
+    <code>40 + 0 + 20 = 60</code>; column 7's is
+    <code>40 + 280 + 20 = 340</code>.
+  </p>
+
+  <h2>Is it on the board?</h2>
+  <script type="text/plain">
+    export function inside(x, y) {
+      return x >= 0 && y >= 0 && x < cols && y < rows;
+    }
+  </script>
+  <p>
+    Columns run from 0 to 21, so <code>x &lt; cols</code> (strictly less)
+    is the right test. This is how the game spots the serpent hitting a
+    wall: the cell it's about to move into isn't <code>inside</code>.
+  </p>
+
+  <h2>How far apart?</h2>
+  <script type="text/plain">
+    export function distance(a, b) {
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+  </script>
+  <p>
+    The serpent can't move diagonally, so the useful distance isn't a
+    straight line. It's the number of steps across plus the number of steps
+    down, called the <strong>Manhattan distance</strong> after the grid of
+    streets in New York. <code>Math.abs</code> drops the minus sign, so it
+    doesn't matter which way round the two cells are. Thor uses this to
+    decide how scared to be, and new food uses it to appear a few steps away
+    from the serpent's nose.
+  </p>
+
+  <h2>Nine realms, round and round</h2>
+  <script type="text/plain">
+    export const realms = [
+      { floor: "#1f1d40", name: "MIDGARD" },
+      { floor: "#1a2a44", name: "JOTUNHEIM" },
+      // ...seven more, ending with ASGARD
+    ];
+
+    export function realmIndex(level) {
+      return (level - 1) % realms.length;
+    }
+
+    export function realmFor(level) {
+      return realms[realmIndex(level)];
+    }
+  </script>
+  <p>
+    Levels count from 1 and never stop, but there are only nine realms.
+    <code>level - 1</code> turns "level 1" into index 0, and
+    <code>% realms.length</code> (the remainder after dividing by 9) wraps
+    round: level 10 gives <code>9 % 9 = 0</code>, back to Midgard. This
+    "subtract one, take the remainder" pattern is how to cycle through any
+    list with a counter that starts at 1.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What is <code>centreY(2)</code>, with <code>boardY = 56</code> and <code>cell = 40</code>?</p>
+      <ul>
+        <li>80</li>
+        <li data-right>156</li>
+        <li>136</li>
+      </ul>
+      <p class="why">56 + 2 × 40 + 20 = 156.</p>
+    </div>
+    <div class="q">
+      <p>What is the Manhattan distance from <code>{ x: 2, y: 5 }</code> to <code>{ x: 6, y: 2 }</code>?</p>
+      <ul>
+        <li>5</li>
+        <li data-right>7</li>
+        <li>1</li>
+      </ul>
+      <p class="why">4 across plus 3 up. (The straight-line distance would be 5, but a serpent can't cut corners.)</p>
+    </div>
+    <div class="q">
+      <p>Which realm is level 12?</p>
+      <ul>
+        <li>The twelfth realm.</li>
+        <li data-right>The third one, Alfheim: <code>(12 - 1) % 9</code> is 2.</li>
+        <li>None. The game would crash.</li>
+      </ul>
+      <p class="why">Index 2 is the third item in the list. After Asgard, the journey starts again.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-snake">
+  <header><p>Course 5 · Lesson 4</p></header>
+  <h1>The Serpent Is a List</h1>
+
+  <p>
+    Here is the whole trick of every snake game: the snake is just a list of
+    cells, head first. Moving it doesn't mean moving every piece. You add a
+    new head at the front and remove the tail from the back. Everything in
+    between stays exactly where it is, and yet the whole snake appears to
+    slide forward.
+  </p>
+  <script type="text/plain" data-file="js/jormungandr/board.js">
+    // The snake starts in the middle row heading right, head first.
+    export const startCells = [
+      { x: 7, y: 5 },
+      { x: 6, y: 5 },
+      { x: 5, y: 5 },
+      { x: 4, y: 5 },
+    ];
+  </script>
+  <script type="text/plain" data-file="js/jormungandr/snake.js">
+    export const directions = {
+      down: { x: 0, y: 1 },
+      left: { x: -1, y: 0 },
+      right: { x: 1, y: 0 },
+      up: { x: 0, y: -1 },
+    };
+
+    export function createSnake() {
+      return {
+        body: startCells.map((c) => ({ ...c, belly: -1 })),
+        dir: directions.right,
+        grow: 0,
+        // Turns pressed between steps, so a quick "up then left" isn't lost.
+        queue: [],
+      };
+    }
+  </script>
+  <ul>
+    <li>A <strong>direction</strong> is a little vector: how far to move in <code>x</code> and in <code>y</code> for one step. Up is <code>y: -1</code> because canvas rows count downwards from the top.</li>
+    <li><code>({ ...c, belly: -1 })</code> <strong>spreads</strong> a start cell into a new object and adds a <code>belly</code> field. It makes copies, so moving the snake can never change <code>startCells</code> itself. (The belly says which side of the body the brown belly stripe is on, for drawing.) The extra brackets round the <code>{ }</code> tell JavaScript it's an object, not the body of the arrow function.</li>
+    <li><code>grow</code> counts how many steps the tail should stay put. More on that below.</li>
+  </ul>
+
+  <h2>Taking a step</h2>
+  <script type="text/plain">
+    // The cell the head moves into next, taking the next queued turn.
+    export function takeTurn(snake) {
+      if (snake.queue.length > 0) snake.dir = snake.queue.shift();
+      const head = snake.body[0];
+      return { x: head.x + snake.dir.x, y: head.y + snake.dir.y };
+    }
+
+    export function advance(snake, cell) {
+      snake.body.unshift({ ...cell, belly: bellySide(snake) });
+      if (snake.grow > 0) {
+        snake.grow -= 1;
+        return;
+      }
+      snake.body.pop();
+    }
+  </script>
+  <p>
+    The step is split in two on purpose. <code>takeTurn</code> only
+    <em>works out</em> the next cell: the head plus the direction. The game
+    then checks that cell (is it a wall? the snake's own body?) and only
+    calls <code>advance</code> if it's safe.
+  </p>
+  <p>
+    <code>unshift</code> puts the new head at the front of the array, and
+    <code>pop</code> takes the last item (the tail) off the end. Watch the
+    start snake heading right:
+  </p>
+  <script type="text/plain" data-lang="text">
+    before:          (7,5) (6,5) (5,5) (4,5)
+    unshift (8,5):   (8,5) (7,5) (6,5) (5,5) (4,5)
+    pop:             (8,5) (7,5) (6,5) (5,5)
+  </script>
+
+  <h2>Growing is just not shrinking</h2>
+  <p>
+    Eating an apple adds 1 to <code>snake.grow</code>. On the next step the
+    head is added as usual, but the <code>pop</code> is skipped, so the snake
+    is one cell longer. A golden egg adds 2, so the tail waits for two steps.
+    Nothing has to be inserted into the middle of the body.
+  </p>
+
+  <h2>Is the body here?</h2>
+  <script type="text/plain">
+    // True if the snake's body covers (x, y). The tail cell is left out when
+    // it is about to move away, since the head can follow straight into it.
+    export function bodyAt(snake, x, y, tailMoves = false) {
+      const end = tailMoves && snake.grow === 0 ? snake.body.length - 1 : snake.body.length;
+      for (let i = 0; i < end; i += 1) {
+        if (snake.body[i].x === x && snake.body[i].y === y) return true;
+      }
+      return false;
+    }
+  </script>
+  <p>
+    A plain loop over the cells. The interesting part is
+    <code>tailMoves</code>. When the head is about to step, the tail is
+    about to leave its cell in the very same step, so chasing your own tail
+    round a tight loop is allowed. But if the snake is growing, the tail
+    <em>won't</em> move, and running into it is a crash. Get that wrong and
+    the game either kills you unfairly or lets you pass through yourself.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The snake's head is at <code>(3, 4)</code> heading <code>up</code>. What does <code>takeTurn</code> return (with no turns queued)?</p>
+      <ul>
+        <li><code>{ x: 3, y: 5 }</code></li>
+        <li data-right><code>{ x: 3, y: 3 }</code></li>
+        <li><code>{ x: 2, y: 4 }</code></li>
+      </ul>
+      <p class="why">Up is <code>{ x: 0, y: -1 }</code>, and rows count down from the top.</p>
+    </div>
+    <div class="q">
+      <p>A 4-cell snake with <code>grow</code> at 2 takes three steps. How long is it now?</p>
+      <ul>
+        <li>4</li>
+        <li data-right>6</li>
+        <li>7</li>
+      </ul>
+      <p class="why">The first two steps skip the <code>pop</code>. The third step adds a head and pops a tail, so the length stays at 6.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>bodyAt</code> sometimes leave the tail cell out?</p>
+      <ul>
+        <li>The tail is too thin to crash into.</li>
+        <li data-right>On a normal step the tail moves away at the same time, so the head can safely follow into it.</li>
+        <li>To make the game easier on early levels.</li>
+      </ul>
+      <p class="why">Only when <code>grow</code> is 0, though. A growing snake's tail stays put, so it still counts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-input">
+  <header><p>Course 5 · Lesson 5</p></header>
+  <h1>Steering the Serpent</h1>
+
+  <h2>Turning, with rules</h2>
+  <script type="text/plain" data-file="js/jormungandr/snake.js">
+    // Queues a turn. Reversing straight into the neck, or repeating the
+    // direction already queued, is ignored.
+    export function turn(snake, dir) {
+      const last = snake.queue.at(-1) ?? snake.dir;
+      if (dir.x === last.x && dir.y === last.y) return;
+      if (dir.x === -last.x && dir.y === -last.y) return;
+      if (snake.queue.length < 2) snake.queue.push(dir);
+    }
+  </script>
+  <p>
+    A key press doesn't change the direction at once. It joins a short
+    <strong>queue</strong> of turns, and <code>takeTurn</code> uses one per
+    step. Why? The snake steps about four times a second. Press up then left
+    quickly, inside one step, and without a queue the left would simply
+    replace the up, and the snake would turn the wrong way, often straight
+    into a wall.
+  </p>
+  <ul>
+    <li><code>snake.queue.at(-1)</code> is the last item in the array (negative numbers count from the end). If the queue is empty, it's <code>undefined</code>, and <code>??</code> falls back to the current direction. Each new turn is compared with whatever the snake <em>will</em> be doing just before it.</li>
+    <li>The same direction again is ignored. Holding the key down would otherwise fill the queue with copies.</li>
+    <li>The exact opposite is ignored: a direction is a reverse if both its parts are the negatives of the other's. Heading right (<code>x: 1</code>), pressing left (<code>x: -1</code>) would drive the head straight back into its own neck.</li>
+    <li>At most two turns wait. Mash the keys and you won't build up a long list of moves that play out after you've stopped.</li>
+  </ul>
+
+  <h2>Keys to directions</h2>
+  <script type="text/plain" data-file="js/jormungandr/input.js">
+    const steering = {
+      a: "left",
+      arrowdown: "down",
+      arrowleft: "left",
+      arrowright: "right",
+      arrowup: "up",
+      d: "right",
+      s: "down",
+      w: "up",
+    };
+
+    const gameKeys = [...Object.keys(steering), " ", "enter", "b", "r", "c"];
+  </script>
+  <p>
+    A lookup object instead of a long <code>if</code> chain: adding another
+    key is one more line. <code>gameKeys</code> spreads the steering keys
+    into a list with the other keys the game uses.
+  </p>
+
+  <h2>Listening</h2>
+  <script type="text/plain">
+    window.addEventListener("keydown", (event) => {
+      if (document.querySelector("dialog[open]")) return;
+      const key = event.key.toLowerCase();
+      if (!gameKeys.includes(key)) return;
+      event.preventDefault();
+      if (key === " ") state.boosting = true;
+      if (event.repeat) return;
+      if (steering[key]) handlers.onSteer(steering[key]);
+      handlers.onKey(key);
+    });
+    window.addEventListener("keyup", (event) => {
+      if (event.key === " ") state.boosting = false;
+    });
+    window.addEventListener("blur", () => {
+      state.boosting = false;
+    });
+  </script>
+  <ol>
+    <li><strong>A question is open?</strong> Then the keys belong to the answer box, not the game.</li>
+    <li><code>event.key</code> is <code>"ArrowUp"</code>, <code>"w"</code>, or <code>"W"</code> with Caps Lock on. <code>toLowerCase()</code> makes them all match the lookup's keys.</li>
+    <li><strong>Not a game key?</strong> Leave it alone, so shortcuts like Ctrl + R still work.</li>
+    <li><code>preventDefault()</code> stops the browser's own reaction. Without it, the arrow keys and space bar would scroll the page while you play.</li>
+    <li>Space is <strong>held</strong> to boost, so keydown turns boosting on, keyup turns it off. If the window loses focus while space is down, the keyup never arrives, so <code>blur</code> turns it off too.</li>
+    <li><code>event.repeat</code> is true for the automatic repeats when a key is held. They still count for the boost, but they mustn't steer again and again.</li>
+  </ol>
+  <p>
+    <code>input.js</code> doesn't know about snakes. It calls
+    <code>handlers.onSteer("up")</code>, and <code>game.js</code> decides
+    what that means:
+  </p>
+  <script type="text/plain" data-file="js/jormungandr/game.js">
+    function onSteer(name) {
+      if (game.phase === "over") {
+        if (name === "left") game.overChoice = 0;
+        if (name === "right") game.overChoice = 1;
+        return;
+      }
+      if (["intro", "playing", "ready"].includes(game.phase)) turn(game.snake, directions[name]);
+    }
+  </script>
+  <p>
+    On the game-over screen, left and right pick a button. During play, the
+    name becomes a direction vector for <code>turn</code>.
+  </p>
+
+  <h2>Swipes</h2>
+  <p>
+    On a touch screen, <code>input.js</code> watches pointer events on the
+    canvas. Every 24 pixels dragged counts as a swipe, and the direction
+    is whichever way the finger moved further:
+  </p>
+  <script type="text/plain">
+    function swipeDirection(dx, dy) {
+      if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? "right" : "left";
+      return dy > 0 ? "down" : "up";
+    }
+  </script>
+  <p>
+    It calls the very same <code>onSteer</code>, so the game can't tell a
+    swipe from a key press.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The snake is heading right with an empty queue. You press up, then right, very quickly. What's in the queue?</p>
+      <ul>
+        <li>Nothing. Right is the current direction.</li>
+        <li data-right>Up, then right.</li>
+        <li>Just up.</li>
+      </ul>
+      <p class="why">Right is compared with the last <em>queued</em> turn (up), not the current direction. After going up, turning right is a real turn.</p>
+    </div>
+    <div class="q">
+      <p>Why does the keydown handler call <code>event.preventDefault()</code>?</p>
+      <ul>
+        <li>To stop the key reaching the game.</li>
+        <li data-right>So the arrow keys and space don't scroll the page.</li>
+        <li>To make the key repeat faster.</li>
+      </ul>
+      <p class="why">It's only called for game keys, so every other key keeps its normal job.</p>
+    </div>
+    <div class="q">
+      <p>You hold the up arrow down. How many times does the snake try to turn?</p>
+      <ul>
+        <li>Many times, once for every repeat.</li>
+        <li data-right>Once. Repeats have <code>event.repeat</code> set and return before steering.</li>
+        <li>Never, until you let go.</li>
+      </ul>
+      <p class="why">And even if they did get through, <code>turn</code> ignores the direction already queued.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-step">
+  <header><p>Course 5 · Lesson 6</p></header>
+  <h1>Moving to a Beat</h1>
+
+  <p>
+    The game loop runs 60 times a second, but the serpent only moves about
+    four times a second, one whole cell at a time. So the loop needs a way to
+    say "not yet... not yet... now step". That's the job of a
+    <strong>step clock</strong>.
+  </p>
+
+  <h2>How long is a step?</h2>
+  <script type="text/plain" data-file="js/jormungandr/play.js">
+    // Seconds per step: faster each level, and faster again when boosting.
+    function stepSeconds(game, boosting) {
+      const base = Math.max(0.14, 0.26 - (game.level - 1) * 0.01);
+      const fast = game.speedFor > 0 || (boosting && game.boost > 0);
+      return fast ? base * 0.55 : base;
+    }
+  </script>
+  <p>
+    Level 1 is 0.26 seconds a step. Each level takes off 0.01, but
+    <code>Math.max(0.14, ...)</code> sets a floor, so it never goes faster
+    than 0.14 however high you climb. Boosting (or the star power-up)
+    multiplies the step by 0.55, which makes the serpent nearly twice as
+    fast.
+  </p>
+
+  <h2>The step clock</h2>
+  <script type="text/plain">
+    export function updatePlay(game, dt, boosting, hooks) {
+      updateTimers(game, dt, boosting);
+      game.stepClock += dt;
+      const step = stepSeconds(game, boosting);
+      for (let i = 0; i < 2 && game.stepClock >= step; i += 1) {
+        game.stepClock -= step;
+        moveSnake(game, hooks);
+        if (game.phase !== "playing") return;
+        if (game.thorCaught) break;
+      }
+      game.stepClock = Math.min(game.stepClock, step);
+      // ...items, Thor and the question timer
+    }
+  </script>
+  <p>
+    Every frame adds <code>dt</code> to <code>stepClock</code>. Once it holds
+    a whole step's worth of time, the snake moves and that step's time is
+    <em>subtracted</em>. Why subtract instead of resetting to 0? Say a step
+    is 0.26 seconds and the clock reaches 0.27. Resetting would throw away
+    the spare 0.01, and over many steps the serpent would drift slow. Keeping
+    it means the beat stays steady.
+  </p>
+  <ul>
+    <li>The loop runs <strong>at most twice</strong> per frame. If a frame was long, the snake catches up by a step, but it never teleports several cells.</li>
+    <li>If the step killed the snake or opened a question, the phase is no longer <code>"playing"</code>, so it stops at once.</li>
+    <li><code>Math.min(game.stepClock, step)</code> throws away anything more than one step of spare time, so a slow moment can't store up a burst of extra moves.</li>
+  </ul>
+
+  <h2>The boost meter</h2>
+  <script type="text/plain">
+    const boostSeconds = 2.5;
+    const boostRefill = 6;
+
+    function updateTimers(game, dt, boosting) {
+      game.roundTime += dt;
+      game.shield = Math.max(0, game.shield - dt);
+      game.speedFor = Math.max(0, game.speedFor - dt);
+      const draining = boosting && game.speedFor <= 0 && game.boost > 0;
+      const change = draining ? -dt / boostSeconds : dt / boostRefill;
+      game.boost = Math.max(0, Math.min(1, game.boost + change));
+    }
+  </script>
+  <p>
+    <code>game.boost</code> runs from 0 (empty) to 1 (full). Draining takes
+    away <code>dt / 2.5</code> each frame, so a full meter lasts 2.5 seconds
+    of holding space. When you let go it refills at <code>dt / 6</code>: six
+    seconds from empty to full. <code>Math.max(0, Math.min(1, ...))</code>
+    <strong>clamps</strong> the value between 0 and 1, a pattern you'll see
+    everywhere in games. The shield and the star's speed-up count down the
+    same way, stopping at 0.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>On level 20, how long is a step without boosting?</p>
+      <ul>
+        <li>0.07 seconds</li>
+        <li data-right>0.14 seconds</li>
+        <li>0.26 seconds</li>
+      </ul>
+      <p class="why"><code>0.26 - 19 × 0.01</code> is 0.07, but <code>Math.max(0.14, 0.07)</code> is 0.14.</p>
+    </div>
+    <div class="q">
+      <p>A step is 0.25s. <code>stepClock</code> is 0.2 and the next frame's <code>dt</code> is 0.1. What happens?</p>
+      <ul>
+        <li>No step. The clock is 0.3.</li>
+        <li data-right>One step, and the clock is left at about 0.05.</li>
+        <li>One step, and the clock goes back to 0.</li>
+      </ul>
+      <p class="why">0.3 is at least 0.25, so the snake steps and 0.25 is subtracted. The spare 0.05 counts towards the next step.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>Math.max(0, Math.min(1, value))</code> do?</p>
+      <ul>
+        <li>Rounds the value to 0 or 1.</li>
+        <li data-right>Keeps the value between 0 and 1.</li>
+        <li>Picks whichever of 0 and 1 is nearer.</li>
+      </ul>
+      <p class="why">The <code>min</code> stops it going over 1, and the <code>max</code> stops it going under 0.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-eat">
+  <header><p>Course 5 · Lesson 7</p></header>
+  <h1>Eating, Growing and Crashing</h1>
+
+  <h2>One step, checked</h2>
+  <script type="text/plain" data-file="js/jormungandr/play.js">
+    function deadly(game, c) {
+      return !inside(c.x, c.y) || bodyAt(game.snake, c.x, c.y, true);
+    }
+
+    function moveSnake(game, hooks) {
+      const next = takeTurn(game.snake);
+      if (deadly(game, next)) {
+        if (game.shield > 0) {
+          shieldSave(game, hooks);
+          return;
+        }
+        hooks.die();
+        return;
+      }
+      advance(game.snake, next);
+      eat(game, next, hooks);
+    }
+  </script>
+  <p>
+    This is where the pieces from earlier lessons meet. Work out the next
+    cell; if it's off the board or on the body (with
+    <code>tailMoves</code> set to <code>true</code>), that's a crash. A
+    shield turns the crash into a swerve; otherwise the game is told the
+    snake died. Only a safe cell is moved into and then eaten from.
+  </p>
+  <p>
+    <code>hooks</code> is an object of functions passed in from
+    <code>game.js</code>: <code>die</code>, <code>toast</code>,
+    <code>sound</code> and so on. <code>play.js</code> calls
+    <code>hooks.die()</code> without knowing what dying involves (a sound, a
+    flashing snake, losing a life). That keeps the rules separate from the
+    presentation.
+  </p>
+
+  <h2>Eating</h2>
+  <script type="text/plain">
+    function eatFood(game, item, hooks) {
+      const food = foods[item.kind];
+      const points = food.points * (game.speedFor > 0 ? 2 : 1);
+      game.score += points;
+      game.snake.grow += food.grow;
+      floatText(game, item, `+${points}`, item.kind === "egg" ? "#ffd23a" : "#ece6d2");
+      hooks.sound(item.kind === "apple" ? "pickup" : "kill");
+    }
+  </script>
+  <script type="text/plain" data-file="js/jormungandr/items.js">
+    export const foods = {
+      apple: { grow: 1, label: "FOOD", points: 10 },
+      boar: { grow: 1, label: "BOAR", points: 100 },
+      egg: { grow: 2, label: "GOLDEN EGG", points: 20 },
+      rune: { grow: 1, label: "RUNE", points: 50 },
+    };
+  </script>
+  <p>
+    Each food is a row of data: how many points, how much to grow.
+    <code>foods[item.kind]</code> looks up the row by the item's name, so
+    adding a new food is one more line, not a new <code>if</code>. With the
+    star power-up running, points are doubled. Growing is just adding to
+    <code>grow</code>, which <code>advance</code> uses on the following steps.
+  </p>
+
+  <h2>Food that comes and goes</h2>
+  <script type="text/plain" data-file="js/jormungandr/items.js">
+    const schedule = {
+      boar: { every: 24, life: 8, spread: 6 },
+      egg: { every: 17, life: 10, spread: 5 },
+      power: { every: 14, life: 9, spread: 4 },
+      rune: { every: 11, life: 10, spread: 4 },
+    };
+
+    function rollTimer(kind) {
+      const { every, spread } = schedule[kind];
+      return every + (Math.random() * 2 - 1) * spread;
+    }
+  </script>
+  <p>
+    A boar turns up about every 24 seconds, give or take 6.
+    <code>Math.random() * 2 - 1</code> is a random number from -1 to 1, so
+    the timer lands anywhere from 18 to 30. A little randomness stops the
+    game feeling like clockwork.
+  </p>
+  <script type="text/plain">
+    export function updateItems(items, dt, isFree, head) {
+      items.list.forEach((item) => {
+        item.age += dt;
+      });
+      items.list = items.list.filter((item) => item.age < item.life);
+      if (!items.list.some((item) => item.kind === "apple")) place(items, "apple", isFree, head);
+      Object.keys(schedule).forEach((kind) => {
+        items.timers[kind] -= dt;
+        if (items.timers[kind] > 0) return;
+        items.timers[kind] = rollTimer(kind);
+        // ...place one, unless that kind is already on the board
+      });
+    }
+  </script>
+  <ul>
+    <li>Every item ages by <code>dt</code>, and <code>filter</code> keeps only the ones younger than their <code>life</code>. Expired items simply aren't copied into the new list.</li>
+    <li>An apple's <code>life</code> is <code>Infinity</code>, so <code>age &lt; life</code> is always true and it never expires. There's always one waiting: if none is on the board, a new one is placed.</li>
+    <li>Each kind has a countdown. When it reaches 0 it's rolled again and a new item appears.</li>
+  </ul>
+
+  <h2>Finding an empty cell</h2>
+  <script type="text/plain" data-file="js/jormungandr/board.js">
+    export function freeCell(isFree, from = null, away = 0) {
+      const ok = (x, y) => isFree(x, y) && (!from || distance(from, { x, y }) >= away);
+      for (let i = 0; i < 200; i += 1) {
+        const x = Math.floor(Math.random() * cols);
+        const y = Math.floor(Math.random() * rows);
+        if (ok(x, y)) return { x, y };
+      }
+      for (let y = 0; y < rows; y += 1) {
+        for (let x = 0; x < cols; x += 1) {
+          if (ok(x, y)) return { x, y };
+        }
+      }
+      return null;
+    }
+  </script>
+  <p>
+    Picking random cells until one is free is quick and fair while the board
+    is mostly empty. But late in a game the serpent can fill most of the
+    board, and random guesses might miss the last few gaps for a long time.
+    So after 200 tries it gives up guessing and <strong>scans</strong> every
+    cell in order. If even that finds nothing, it returns
+    <code>null</code>, and the caller places nothing. Two strategies, the
+    fast one first, the sure one as a fallback.
+  </p>
+  <p>
+    <code>isFree</code> is a function passed in. <code>board.js</code>
+    doesn't know about snakes or Thor; the caller decides what "free" means.
+    Food is placed at least 3 steps from the head, "so it has to go and get
+    it".
+  </p>
+
+  <div class="tip">
+    <strong>The shield's swerve.</strong> <code>sideTurns</code> works out
+    left and right of the current heading with a neat trick: for a direction
+    <code>{ x, y }</code>, the two turns are <code>{ x: -y, y: x }</code> and
+    <code>{ x: y, y: -x }</code>. Swapping the parts and flipping one sign
+    rotates a vector by a quarter turn. The shield picks whichever side isn't
+    deadly.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The star power-up is running and the serpent eats a rune. How many points?</p>
+      <ul>
+        <li>50</li>
+        <li data-right>100</li>
+        <li>300</li>
+      </ul>
+      <p class="why">A rune is 50, and <code>speedFor &gt; 0</code> doubles it.</p>
+    </div>
+    <div class="q">
+      <p>What range can <code>rollTimer("rune")</code> return?</p>
+      <ul>
+        <li>0 to 11</li>
+        <li>11 to 15</li>
+        <li data-right>7 to 15</li>
+      </ul>
+      <p class="why"><code>every</code> is 11 and <code>spread</code> is 4, so 11 - 4 to 11 + 4.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>freeCell</code> scan every cell after 200 random tries?</p>
+      <ul>
+        <li>Scanning is faster than guessing.</li>
+        <li data-right>On a crowded board, guesses could keep missing the few free cells. The scan is sure to find one if any exist.</li>
+        <li>To place items in the top-left corner.</li>
+      </ul>
+      <p class="why">Random first keeps placements spread out. The scan is the safety net.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-thor">
+  <header><p>Course 5 · Lesson 8</p></header>
+  <h1>Thor Runs Away</h1>
+
+  <p>
+    Thor is the reason to keep moving: catching him is the only way out of
+    a realm. He doesn't attack. He just runs, and he's written to be good at
+    it but not perfect, so a careful player can corner him.
+  </p>
+
+  <h2>Turning up</h2>
+  <script type="text/plain" data-file="js/jormungandr/thor.js">
+    export function nextThorIn(level) {
+      const extra = (Math.min(level, lastRealm) - 1) * thorDelayPerLevel;
+      return 16 + extra + Math.random() * 14;
+    }
+
+    // Appears well away from the head. Null if the board is too full.
+    export function spawnThor(isFree, head) {
+      const spot = freeCell(isFree, head, 9);
+      if (!spot) return null;
+      return {
+        age: 0,
+        facing: 1,
+        fromX: spot.x,
+        fromY: spot.y,
+        moveClock: 0,
+        stunned: 0,
+        x: spot.x,
+        y: spot.y,
+      };
+    }
+  </script>
+  <p>
+    He arrives 16 to 30 seconds into a realm, a little later in each realm
+    up to Asgard. He's placed with the same <code>freeCell</code> as the
+    food, but at least 9 steps from the serpent's head, so you never get a
+    free catch.
+  </p>
+
+  <h2>Choosing where to run</h2>
+  <script type="text/plain">
+    function chooseStep(thor, isFree, head) {
+      const panicking = distance(thor, head) <= panicRange;
+      let best = null;
+      let bestScore = -Infinity;
+      steps.forEach((s) => {
+        const x = thor.x + s.x;
+        const y = thor.y + s.y;
+        if (!isFree(x, y)) return;
+        const away = distance({ x, y }, head);
+        const room = openNeighbours(isFree, x, y);
+        const score = panicking
+          ? away * 3 + room * 1.5 + Math.random() * 2.5
+          : room + Math.random() * 6;
+        if (score > bestScore) {
+          bestScore = score;
+          best = { x, y };
+        }
+      });
+      return best;
+    }
+  </script>
+  <p>
+    This is a simple kind of game <strong>AI</strong>: give every possible
+    move a score, then take the highest. Thor has at most four moves (up,
+    down, left, right), skipping any that aren't free.
+  </p>
+  <ul>
+    <li><code>away</code>: the Manhattan distance from the serpent's head after the move. Further is better.</li>
+    <li><code>room</code>: how many free cells are next to the new cell. A move into a dead end scores low, so he avoids corners.</li>
+    <li>When the serpent is within 7 steps, he's <strong>panicking</strong>, and distance counts three times over. Otherwise he doesn't care where you are and wanders, mostly at random.</li>
+    <li><code>Math.random() * 2.5</code> is a dash of chance. Without it he'd always pick the mathematically best move and be very hard to catch.</li>
+  </ul>
+  <p>
+    Starting <code>bestScore</code> at <code>-Infinity</code> means the
+    first free move always beats it. If no move is free,
+    <code>best</code> stays <code>null</code> and he stays put.
+  </p>
+  <p>
+    Compare this with tic-tac-toe's minimax. Minimax looked at every future
+    of the game; Thor only looks one step ahead, with a rough "how good does
+    this look" score. That's called a <strong>heuristic</strong>. It's
+    nowhere near perfect, but it's fast, and in a real-time game, "pretty
+    good, instantly" is what you want.
+  </p>
+
+  <h2>Smooth movement on a grid</h2>
+  <script type="text/plain">
+    // Where to draw him: part way between his last cell and this one.
+    export function thorPosition(thor) {
+      const t = Math.min(thor.moveClock, 1);
+      return {
+        x: thor.fromX + (thor.x - thor.fromX) * t,
+        y: thor.fromY + (thor.y - thor.fromY) * t,
+      };
+    }
+  </script>
+  <p>
+    Thor's <em>real</em> position is always a whole cell. But
+    <code>moveClock</code> climbs from 0 to 1 between his steps, and the
+    drawing code places him that fraction of the way from his last cell to
+    his new one. This is <strong>linear interpolation</strong>, or "lerp":
+    <code>from + (to - from) * t</code>. At <code>t = 0</code> you get
+    <code>from</code>, at <code>t = 1</code> you get <code>to</code>, and in
+    between a smooth slide. The rules stay simple and the picture stays
+    smooth.
+  </p>
+
+  <h2>The lightning bolt</h2>
+  <p>
+    The bolt power-up sets <code>thor.stunned = 6</code>. While that's above
+    0, <code>updateThor</code> counts it down and returns early, before any
+    of the running code: six seconds to reach him. If he isn't on the board
+    yet, the bolt summons him with <code>game.thor ??= spawnThor(...)</code>.
+    <code>??=</code> assigns only if the left side is <code>null</code> or
+    <code>undefined</code>.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Thor is 3 steps from the serpent. Which matters most to his choice?</p>
+      <ul>
+        <li>Pure chance.</li>
+        <li data-right>Getting further from the head: he's panicking, so distance counts three times.</li>
+        <li>Staying near the middle of the board.</li>
+      </ul>
+      <p class="why">3 is within the panic range of 7, so the score is <code>away * 3 + room * 1.5 + a little chance</code>.</p>
+    </div>
+    <div class="q">
+      <p>He's moving from column 4 to column 5 and <code>moveClock</code> is 0.25. Where is he drawn?</p>
+      <ul>
+        <li>Column 4</li>
+        <li data-right>Column 4.25</li>
+        <li>Column 5</li>
+      </ul>
+      <p class="why"><code>4 + (5 - 4) × 0.25 = 4.25</code>: a quarter of the way there.</p>
+    </div>
+    <div class="q">
+      <p>Why does Thor's score include some <code>Math.random()</code>?</p>
+      <ul>
+        <li>To make him faster.</li>
+        <li data-right>So he isn't perfect and can be cornered.</li>
+        <li>Because two moves can't have the same score.</li>
+      </ul>
+      <p class="why">A perfect runner on an open board would be no fun to chase.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-draw">
+  <header><p>Course 5 · Lesson 9</p></header>
+  <h1>Drawing a Frame</h1>
+
+  <p>
+    Every frame, the canvas is painted from scratch, back to front, like a
+    painter laying down a background first and the details last. Whatever is
+    drawn later covers what was drawn before.
+  </p>
+  <script type="text/plain" data-file="js/jormungandr/render.js">
+    export function draw(ctx, art, game) {
+      ctx.fillStyle = "#03050b";
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.drawImage(boardImage(art, realmIndex(game.level)), 0, 0);
+      if (game.phase !== "title") drawItems(ctx, art, game.items, game.clock);
+      const title = game.phase === "title";
+      if (game.thor && !title) drawThor(ctx, art, game.thor, game.clock);
+      const dying = game.phase === "dying";
+      drawSnake(ctx, art, game.snake, {
+        clock: game.clock,
+        hidden: title || (dying && Math.floor(game.phaseTime * 10) % 2 === 0),
+        shielded: game.shield > 0,
+      });
+      drawEffects(ctx, game.effects);
+      drawHud(ctx, art, game);
+    }
+  </script>
+  <p>
+    Background, board, items, Thor, serpent, effects (floating points,
+    lightning), and the score bar on top. <code>ctx</code> is the canvas's
+    2D drawing <strong>context</strong>, the object with all the drawing
+    methods, from <code>canvas.getContext("2d")</code>.
+  </p>
+
+  <h2>Flashing with Math.floor</h2>
+  <p>
+    A dying serpent flickers: <code>Math.floor(game.phaseTime * 10) % 2 ===
+    0</code>. <code>phaseTime * 10</code> counts tenths of a second, the
+    floor makes it a whole number, and <code>% 2</code> is 0 on even tenths
+    and 1 on odd ones. So the serpent is hidden for a tenth, shown for a
+    tenth, five times a second. Items that are about to vanish blink the same
+    way, and Thor blinks just before he leaves.
+  </p>
+
+  <h2>Drawing the board once</h2>
+  <script type="text/plain" data-file="js/jormungandr/art.js">
+    // The board for one realm, drawn once and cached.
+    export function boardImage(art, realm) {
+      if (art.boards.has(realm)) return art.boards.get(realm);
+      const c = document.createElement("canvas");
+      c.width = boardX * 2 + cols * cell;
+      c.height = boardY + rows * cell + 8;
+      const g = c.getContext("2d");
+      const rand = seeded(1234 + realm * 77);
+      // ...cells, gold runes round the edge, blue cracks, the rune circle
+      art.boards.set(realm, c);
+      return c;
+    }
+  </script>
+  <p>
+    The board has 242 cells, gold runes, glowing cracks and a circle of
+    runes. Drawing all that 60 times a second would be wasteful when it
+    never changes. So each realm's board is drawn <em>once</em> onto a
+    canvas that's never put on the page, kept in a <code>Map</code>, and
+    then every frame copies the finished picture with a single
+    <code>drawImage</code>. This is <strong>caching</strong>.
+  </p>
+  <script type="text/plain">
+    // A fixed pseudo-random sequence, so each realm's board looks the same
+    // every time it's drawn.
+    function seeded(seed) {
+      let s = seed;
+      return () => {
+        s = (s * 16807) % 2147483647;
+        return s / 2147483647;
+      };
+    }
+  </script>
+  <p>
+    The runes and cracks are placed "at random", but Midgard should look
+    the same every visit. <code>seeded</code> returns a function that keeps
+    its own <code>s</code> in a closure, and each call multiplies it and
+    takes a remainder. The numbers look random, but the same seed always
+    gives the same sequence. That's a <strong>pseudo-random number
+    generator</strong>. Each realm gets its own seed, so each has its own
+    pattern.
+  </p>
+
+  <h2>Turning the head</h2>
+  <script type="text/plain" data-file="js/jormungandr/render.js">
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(Math.atan2(dir.y, dir.x) - facing);
+    if (mirrored) ctx.scale(-1, 1);
+    ctx.rotate(headTilt);
+    drawFitted(ctx, art.head, 0, 0, 39);
+    ctx.restore();
+  </script>
+  <p>
+    The head is one picture, facing left. To point it any way, the code
+    moves the canvas instead of the picture. <code>translate</code> moves
+    the origin (0, 0) to the head's centre, <code>rotate</code> turns the
+    whole canvas round that point, and <code>scale(-1, 1)</code> flips it
+    like a mirror. Then the picture is drawn at (0, 0), and comes out moved,
+    turned and flipped. <code>Math.atan2(dir.y, dir.x)</code> turns a
+    direction vector into an angle. <code>save</code> and
+    <code>restore</code> put the canvas back afterwards, so nothing drawn
+    later is turned too.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why is the serpent drawn after the items?</p>
+      <ul>
+        <li>The serpent's code is in a later file.</li>
+        <li data-right>Things drawn later appear on top, so the serpent covers anything it slides over.</li>
+        <li>Items load more slowly.</li>
+      </ul>
+      <p class="why">The canvas has no layers. Order of drawing is the only thing that decides what's in front.</p>
+    </div>
+    <div class="q">
+      <p>Why is each realm's board drawn onto its own hidden canvas?</p>
+      <ul>
+        <li>So it can be printed.</li>
+        <li data-right>It never changes, so drawing it once and copying it each frame is much cheaper.</li>
+        <li>Hidden canvases draw in colour.</li>
+      </ul>
+      <p class="why">One <code>drawImage</code> replaces hundreds of drawing calls per frame.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>seeded(1234)</code> give you?</p>
+      <ul>
+        <li>The number 1234.</li>
+        <li>A truly random number.</li>
+        <li data-right>A function that returns the same "random-looking" sequence every time it's made with that seed.</li>
+      </ul>
+      <p class="why">That's why Midgard's runes are always in the same places.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-body">
+  <header><p>Course 5 · Lesson 10</p></header>
+  <h1>The Serpent's Body</h1>
+
+  <p>
+    The serpent's body isn't a picture at all. It's <strong>procedurally
+    drawn</strong>: code builds it from the list of cells every frame. A
+    thick tube with blocky scales and a belly stripe, rounding every corner
+    and tapering to a curled tail. <code>body.js</code> is the most
+    mathematical file in the game, so take it slowly.
+  </p>
+
+  <h2>A smooth line through the cells</h2>
+  <script type="text/plain" data-file="js/jormungandr/body.js">
+    function mid(a, b) {
+      return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    }
+
+    function quad(a, c, b, t) {
+      const u = 1 - t;
+      return {
+        x: u * u * a.x + 2 * u * t * c.x + t * t * b.x,
+        y: u * u * a.y + 2 * u * t * c.y + t * t * b.y,
+      };
+    }
+  </script>
+  <p>
+    Joining cell centres with straight lines would give sharp right-angle
+    corners. Instead, each cell's piece of body runs from the
+    <em>midpoint</em> with the cell before to the midpoint with the cell
+    after, curving through the cell's centre on the way. <code>quad</code>
+    is a <strong>quadratic Bézier curve</strong>: it starts at
+    <code>a</code>, ends at <code>b</code>, and is pulled towards the control
+    point <code>c</code> without quite touching it. As <code>t</code> goes
+    from 0 to 1, the point slides along the curve. On a straight run, the
+    curve is a straight line; on a corner, it's a smooth bend.
+  </p>
+  <script type="text/plain">
+    function centreline(cells) {
+      const n = cells.length;
+      const length = n - 1;
+      const out = [];
+      cells.forEach((p, k) => {
+        const a = k === 0 ? p : mid(cells[k - 1], p);
+        const b = k === n - 1 ? p : mid(p, cells[k + 1]);
+        const last = k === n - 1 ? stepsPerCell : stepsPerCell - 1;
+        for (let s = 0; s <= last; s += 1) {
+          const t = s / stepsPerCell;
+          const along = alongAt(k, n, t);
+          const w = widthAt(along, length);
+          out.push({ ...quad(a, p, b, t), along, belly: bellyAt(cells, k, t), k, s, w });
+        }
+      });
+      addTangents(out);
+      return out;
+    }
+  </script>
+  <p>
+    For every cell, 9 points are taken along its curve
+    (<code>stepsPerCell</code>). Each point also records
+    <code>along</code> (how many cells from the head it is) and
+    <code>w</code> (how wide the body should be there). The head and tail
+    cells have no neighbour on one side, so they use their own centre
+    instead of a midpoint. <code>addTangents</code> then works out which way
+    the line is heading at every point, so scales can be laid across it.
+  </p>
+
+  <h2>Thick in the middle, thin at the ends</h2>
+  <script type="text/plain">
+    function neckAt(along) {
+      const f = Math.min(1, Math.max(0, (along - neckStart) / (neckEnd - neckStart)));
+      const smooth = f * f * (3 - 2 * f);
+      return fullWidth * (neckWidth + (1 - neckWidth) * smooth);
+    }
+  </script>
+  <p>
+    The body is narrow just behind the head and flares out to full width.
+    <code>f</code> is clamped to run from 0 to 1 across the neck.
+    <code>f * f * (3 - 2 * f)</code> is a classic called
+    <strong>smoothstep</strong>: it also goes from 0 to 1, but starts and
+    ends gently, so the neck swells like a real one rather than as a cone.
+    <code>widthAt</code> does the same kind of thing at the other end,
+    narrowing the last few cells to a thin tail.
+  </p>
+
+  <h2>Chunky pixels on purpose</h2>
+  <script type="text/plain">
+    export function drawBody(ctx, centres, cells) {
+      if (centres.length < 2) return;
+      const g = surface(ctx.canvas.width, ctx.canvas.height).getContext("2d");
+      g.clearRect(0, 0, canvas.width, canvas.height);
+      const points = centreline(centres);
+      drawTube(g, [...points, ...tailTip(points)]);
+      drawScales(g, points, cells);
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(canvas, 0, 0, canvas.width * pixel, canvas.height * pixel);
+      ctx.restore();
+    }
+  </script>
+  <p>
+    The concept art is pixel art, but a curve drawn straight onto a 960
+    pixel canvas would look smooth and modern. So the body is drawn onto a
+    small hidden canvas, a third of the size (<code>pixel</code> is 3), then
+    stretched three times bigger onto the game. With
+    <code>imageSmoothingEnabled = false</code>, the browser doesn't blur
+    the stretch, so every small pixel becomes a crisp 3 by 3 block.
+  </p>
+  <p>
+    The tube itself is a trail of filled circles along the centreline:
+    first slightly bigger dark ones for the outline, then the body colour on
+    top. Overlapping circles of changing size make a tube that bends and
+    tapers with no complicated shapes at all.
+  </p>
+
+  <h2>Scales that stay put</h2>
+  <script type="text/plain">
+    // A stable pseudo-random number for a scale, from where it sits.
+    function hash(a, b, c) {
+      const n = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453;
+      return n - Math.floor(n);
+    }
+  </script>
+  <p>
+    Each scale picks one of four shades of green to give the hide a mottled
+    look. If the shade came from <code>Math.random()</code>, every scale
+    would change colour every frame and the serpent would shimmer. Instead,
+    the shade comes from a <strong>hash</strong> of the board cell the scale
+    sits in. A big multiple of <code>Math.sin</code> jumps about wildly, and
+    <code>n - Math.floor(n)</code> keeps just the part after the decimal
+    point, a number from 0 to 1. Same cell in, same number out. As the
+    serpent slides forward, its scales seem to stay where they are on the
+    board, like a real snake's skin moving over the ground.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What is <code>quad(a, c, b, 0)</code>?</p>
+      <ul>
+        <li data-right><code>a</code>, the start of the curve.</li>
+        <li><code>c</code>, the control point.</li>
+        <li><code>b</code>, the end of the curve.</li>
+      </ul>
+      <p class="why">With <code>t = 0</code>, <code>u = 1</code>, so only the <code>u * u * a</code> part is left.</p>
+    </div>
+    <div class="q">
+      <p>Why is the body drawn small and then scaled up 3 times with smoothing off?</p>
+      <ul>
+        <li>Small canvases are the only ones that support curves.</li>
+        <li data-right>To get chunky, crisp pixels that match the pixel-art look.</li>
+        <li>To make it fit inside a cell.</li>
+      </ul>
+      <p class="why">Each small pixel becomes a 3 by 3 block, with no blurring between them.</p>
+    </div>
+    <div class="q">
+      <p>Why do scales get their colour from <code>hash(x, y, ...)</code> instead of <code>Math.random()</code>?</p>
+      <ul>
+        <li><code>hash</code> is faster.</li>
+        <li data-right>The same cell always gives the same colour, so scales don't flicker from frame to frame.</li>
+        <li><code>Math.random()</code> can't give numbers between 0 and 1.</li>
+      </ul>
+      <p class="why">The body is redrawn every frame, so the colours have to come out the same each time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-phases">
+  <header><p>Course 5 · Lesson 11</p></header>
+  <h1>Phases and the Question Gate</h1>
+
+  <p>
+    The game is always in exactly one <strong>phase</strong>, a string in
+    <code>game.phase</code>: <code>"title"</code>, <code>"intro"</code> (the
+    realm's name), <code>"ready"</code> (after losing a life),
+    <code>"playing"</code>, <code>"dying"</code>, <code>"question"</code> or
+    <code>"over"</code>. Each phase decides what updates, what's drawn and
+    what the keys do. This is a <strong>state machine</strong>, and it
+    replaces dozens of separate true/false flags.
+  </p>
+  <script type="text/plain" data-file="js/jormungandr/game.js">
+    function setPhase(phase) {
+      game.phase = phase;
+      game.phaseTime = 0;
+    }
+
+    function update(dt) {
+      game.clock += dt;
+      game.phaseTime += dt;
+      // ...age the effects
+      if (game.phase === "playing") updatePlay(game, dt, input.boosting, hooks);
+      if (game.score > game.high) game.high = game.score;
+      if (game.phase === "dying") updateDying();
+      const waited = game.phase === "intro" ? 2.2 : 1.2;
+      if (["intro", "ready"].includes(game.phase) && game.phaseTime > waited) setPhase("playing");
+    }
+  </script>
+  <p>
+    <code>phaseTime</code> resets to 0 every time the phase changes, so any
+    phase can ask "how long have I been going?". The realm intro shows for
+    2.2 seconds, "GET READY!" for 1.2, and then play starts by itself. Only
+    in <code>"playing"</code> does <code>updatePlay</code> run, so the
+    serpent freezes in every other phase without any extra code.
+  </p>
+
+  <h2>A question every 30 seconds</h2>
+  <script type="text/plain" data-file="js/jormungandr/play.js">
+    export const questionEvery = 30;
+
+    // The math clock counts seconds of play across the whole game. Losing a
+    // life or crossing to a new realm doesn't reset it.
+    export function startMathClock(game) {
+      game.roundTime = 0;
+      game.nextQuestion = questionEvery;
+    }
+  </script>
+  <p>
+    <code>roundTime</code> grows by <code>dt</code> only while playing, and
+    the last line of <code>updatePlay</code> checks it:
+    <code>if (game.roundTime &gt;= game.nextQuestion) hooks.question();</code>.
+    The deadline moves forward 30 seconds after each question, rather than
+    the clock going back to 0. And because dying doesn't reset it, you can't
+    dodge a question by crashing on purpose.
+  </p>
+  <script type="text/plain" data-file="js/jormungandr/game.js">
+    // The 30-second question. Play stops until it's answered right.
+    async function timedQuestion() {
+      setPhase("question");
+      await questions.ask({
+        inputDelay: 300,
+        label: "Answer to keep slithering!",
+      });
+      game.nextQuestion += questionEvery;
+      game.score += questionBonus;
+      game.boost = 1;
+      toast(free ? `BOOST! +${questionBonus} & FULL SPEED` : `CORRECT! +${questionBonus} & FULL BOOST`, "#39ff14");
+      setPhase("playing");
+    }
+  </script>
+  <p>
+    Setting the phase to <code>"question"</code> first freezes the game
+    (the loop keeps running and drawing, but nothing moves). Then the same
+    <code>questions.ask</code> you met in tic-tac-toe waits until a question
+    is answered right. The reward: 25 points and a full boost meter.
+    <code>inputDelay: 300</code> locks the answer box for 0.3 seconds, so a
+    W or S you were still pressing to steer doesn't land in it.
+  </p>
+
+  <h2>Clearing a realm</h2>
+  <script type="text/plain">
+    async function realmQuestion() {
+      setPhase("question");
+      play("win");
+      const bonus = realmBonus * game.level;
+      await questions.ask({
+        inputDelay: 300,
+        label: `${realmFor(game.level).name} cleared! Solve it to cross the Bifrost`,
+      });
+      game.score += bonus;
+      saveHigh();
+      recordRun("jormungandr", game.score);
+      toast(`REALM BONUS +${bonus}`, "#ffd23a");
+      game.level += 1;
+      enterRealm();
+    }
+  </script>
+  <p>
+    Catching Thor sets <code>game.thorCaught</code>, and
+    <code>updatePlay</code> calls <code>hooks.cleared()</code>, which is this
+    function. One right answer, a bonus that grows with the level, and on to
+    the next realm.
+  </p>
+
+  <h2>Game over, or carry on</h2>
+  <script type="text/plain">
+    async function continueGame() {
+      setPhase("question");
+      await questions.askEach(
+        continueQuestions,
+        (i) => `Continue! Question ${i} of ${continueQuestions}`,
+        { inputDelay: 300 },
+      );
+      game.lives = 3;
+      game.score = 0;
+      resetSnake(game);
+      setPhase("ready");
+    }
+
+    function chooseOver(action) {
+      if (game.phaseTime < 1) return;
+      if (action === "restart") startGame();
+      if (action === "continue") continueGame();
+    }
+  </script>
+  <ul>
+    <li>Losing the third life moves to <code>"over"</code>, with two buttons drawn on the canvas: Restart (back to level 1) or Continue.</li>
+    <li>Continuing costs two right answers. <code>askEach</code> calls <code>ask</code> twice in a row, labelling them "Question 1 of 2" and "2 of 2", by calling the function it's given with each number.</li>
+    <li>You keep your realm but the score goes back to 0, because the leaderboard counts the best score from <em>one</em> set of three lives.</li>
+    <li><code>game.phaseTime &lt; 1</code> ignores choices for the first second of the game-over screen. You were probably mashing keys as you crashed, and an Enter meant for the game shouldn't pick a button by accident.</li>
+  </ul>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>You lose a life 20 seconds into a game. When is the next 30-second question?</p>
+      <ul>
+        <li>30 seconds after you start again.</li>
+        <li data-right>After about 10 more seconds of play: the clock didn't reset.</li>
+        <li>Straight away.</li>
+      </ul>
+      <p class="why"><code>roundTime</code> keeps counting across lives and realms. Only <code>startMathClock</code> resets it.</p>
+    </div>
+    <div class="q">
+      <p>Why does the serpent stop moving while a question is open?</p>
+      <ul>
+        <li>The game loop is stopped.</li>
+        <li data-right>The phase is <code>"question"</code>, and <code>updatePlay</code> only runs in <code>"playing"</code>.</li>
+        <li><code>await</code> freezes the whole page.</li>
+      </ul>
+      <p class="why">The loop keeps drawing the frozen scene behind the question.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>chooseOver</code> ignore input for the first second?</p>
+      <ul>
+        <li>To give the high score time to save.</li>
+        <li data-right>So keys pressed during play don't pick a game-over button by accident.</li>
+        <li>The buttons take a second to draw.</li>
+      </ul>
+      <p class="why">It's the same idea as the question box's <code>inputDelay</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="jor-scores">
+  <header><p>Course 5 · Lesson 12</p></header>
+  <h1>Scores and the Leaderboard</h1>
+
+  <h2>A high score per player</h2>
+  <script type="text/plain" data-file="js/jormungandr/game.js">
+    const highKey = () => `mathArcadeJormungandrHigh:${getSession()?.username ?? "guest"}`;
+
+    function loadHigh() {
+      try {
+        return Number(localStorage.getItem(highKey())) || 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    function saveHigh() {
+      game.high = Math.max(game.high, game.score);
+      try {
+        localStorage.setItem(highKey(), String(game.high));
+      } catch {
+        // Storage blocked: the high score lasts until the page closes.
+      }
+    }
+  </script>
+  <ul>
+    <li>Several students may share a computer, so the key includes the username: <code>mathArcadeJormungandrHigh:ana</code>. <code>getSession()?.username</code> uses optional chaining, so with no session it's <code>undefined</code>, and <code>?? "guest"</code> fills in.</li>
+    <li><code>localStorage</code> stores only strings. <code>Number(...)</code> turns <code>"1250"</code> back into 1250. A key that was never saved gives <code>null</code>, and <code>Number(null)</code> is 0. Something unreadable gives <code>NaN</code>, and <code>NaN || 0</code> is 0.</li>
+    <li>Both are wrapped in <code>try</code>/<code>catch</code>. Some browsers (private modes, strict settings) throw an error when you touch <code>localStorage</code>. A high score isn't worth crashing the game over, so the error is caught and play goes on.</li>
+    <li><code>catch</code> with no <code>(error)</code> is allowed when you don't need to look at the error.</li>
+  </ul>
+
+  <h2>Drawing the score</h2>
+  <script type="text/plain" data-file="js/jormungandr/hud.js">
+    const pad = (n) => String(Math.floor(n)).padStart(6, "0");
+
+    label(ctx, `SCORE: ${pad(game.score)}`, 40, 26, 14, cream, "left");
+  </script>
+  <p>
+    <code>padStart(6, "0")</code> adds zeros to the front until the string
+    is 6 long: 1250 becomes <code>"001250"</code>, the classic arcade look.
+    The score bar is drawn on the canvas with <code>label</code>, which
+    draws each piece of text twice: <code>strokeText</code> with a thick
+    black line, then <code>fillText</code> in colour on top, giving the
+    outlined lettering from the concept art.
+  </p>
+
+  <h2>The class leaderboard</h2>
+  <script type="text/plain" data-file="js/leaderboard.js">
+    // Draconis and Jörmungandr: the score of the current 3-life run. Astro
+    // Stomp: the score of the current trip across the planets. Only a new
+    // best is saved.
+    export function recordRun(game, score) {
+      const points = Math.floor(score);
+      if (!(points > 0)) return queue;
+      return update((data) => {
+        return points > (data[game] ?? 0) ? { [game]: points } : null;
+      });
+    }
+  </script>
+  <p>
+    Jörmungandr calls <code>recordRun("jormungandr", game.score)</code> at
+    three moments: after each realm, at game over, and (through
+    <code>runGame</code>) when the tab is hidden. Each signed-in student
+    has one leaderboard document in Firestore, the arcade's online database.
+  </p>
+  <ul>
+    <li><code>!(points &gt; 0)</code> rather than <code>points &lt;= 0</code>: if <code>score</code> were somehow <code>NaN</code>, <code>NaN &lt;= 0</code> is false and it would slip through. <code>NaN &gt; 0</code> is also false, so the <code>!</code> version catches it.</li>
+    <li><code>update</code> loads the student's saved entry and calls the arrow function with it. Returning <code>null</code> means "nothing new, don't save". Only a better score is written.</li>
+    <li><code>{ [game]: points }</code> is a <strong>computed key</strong>: the key is the <em>value</em> of <code>game</code>, so this makes <code>{ jormungandr: 1250 }</code>. The same function serves several games.</li>
+    <li>Guests and the teacher have no document, so for them it quietly does nothing. And none of it ever throws: a dropped Wi-Fi connection can't break a game.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>The whole build, in one sentence:</strong> a canvas and a game
+    loop paint the state sixty times a second, the board is a grid of cells,
+    the serpent is a list that gains a head and loses a tail, a step clock
+    sets the beat, data tables describe the foods and timers, a simple
+    scoring heuristic makes Thor run, curves and caches make it look good,
+    and phases decide when the questions come.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What does <code>Number(localStorage.getItem(key)) || 0</code> give if nothing was ever saved?</p>
+      <ul>
+        <li><code>null</code></li>
+        <li><code>NaN</code></li>
+        <li data-right><code>0</code></li>
+      </ul>
+      <p class="why"><code>getItem</code> returns <code>null</code>, and <code>Number(null)</code> is 0. The <code>|| 0</code> also covers <code>NaN</code>.</p>
+    </div>
+    <div class="q">
+      <p>Why are the <code>localStorage</code> calls inside <code>try</code>/<code>catch</code>?</p>
+      <ul>
+        <li>To make them faster.</li>
+        <li data-right>Some browsers throw when storage is blocked, and the game should carry on anyway.</li>
+        <li><code>localStorage</code> always throws the first time.</li>
+      </ul>
+      <p class="why">Without the catch, a blocked browser would stop the game the first time it touched the high score.</p>
+    </div>
+    <div class="q">
+      <p>Your best is 900 and you finish a run on 600. What does <code>recordRun</code> save?</p>
+      <ul>
+        <li>600, the latest score.</li>
+        <li>1500, the total.</li>
+        <li data-right>Nothing. 600 isn't better, so the change function returns <code>null</code>.</li>
+      </ul>
+      <p class="why">The leaderboard keeps your best single run.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>

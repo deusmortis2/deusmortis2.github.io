@@ -1,0 +1,2146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Spireclash | Arcade Tutorial</title>
+</head>
+<body data-course="spireclash">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/spireclash/index.html">Play Spireclash</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 6: SPIRECLASH</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-page">
+  <header><p>Course 7 · Lesson 1</p></header>
+  <h1>The Game Page</h1>
+
+  <p>
+    Spireclash is the biggest game in the arcade: a 3D duel in a warded
+    arena where two knights shoot water and fire at each other and conjure
+    stone walls, stairs, floors and spires to win the high ground. Have a
+    go first: <a href="../arcade/spireclash/index.html">play Spireclash</a>
+    on your site's free arcade. Then look at the page that holds it all,
+    <code>spireclash/index.html</code>. Trimmed down, the body looks like
+    this:
+  </p>
+  <script type="text/plain" data-lang="html" data-file="spireclash/index.html">
+    <body>
+    <div id="game"></div>
+
+    <div id="hud" class="hidden">
+      <div id="crosshair"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i><b></b></div>
+      <div id="scoreboard">...</div>
+      <div id="banner"></div>
+      <div id="vitals">...</div>
+      <div id="hotbar">...</div>
+    </div>
+
+    <div id="menu" class="overlay">
+      <div class="card">
+        <h1 class="title">Spireclash</h1>
+        <h2>Choose your rival</h2>
+        <div class="diff-grid" id="diff-grid">...</div>
+        <div class="row">...</div>
+        <button class="btn-primary" id="start" type="button">Enter the arena</button>
+      </div>
+    </div>
+
+    <div id="pause" class="overlay hidden">...</div>
+    <div id="end" class="overlay hidden">...</div>
+
+    <script src="lib/three.min.js"><\/script>
+    <script src="js/core.js"><\/script>
+    <script src="js/paint.js"><\/script>
+    <script src="js/builds.js"><\/script>
+    <script src="js/combat.js"><\/script>
+    <script src="js/aimassist.js"><\/script>
+    ...
+    <script src="js/ai.js"><\/script>
+    <script src="js/keybinds.js"><\/script>
+    <script src="js/touch.js"><\/script>
+    <script src="js/game.js"><\/script>
+    <script type="module" src="js/quiz.js"><\/script>
+    </body>
+  </script>
+
+  <h2>Things to notice</h2>
+  <ul>
+    <li><strong><code>#game</code> is empty.</strong> The 3D world is drawn on a <code>&lt;canvas&gt;</code> that three.js creates and <code>game.js</code> puts inside it.</li>
+    <li><strong>The HUD is plain HTML.</strong> The crosshair, the scores, the health bars and the hotbar are ordinary elements laid over the canvas with <code>position: fixed</code>. Text and bars are far easier to style in CSS than to draw in 3D. <code>#hud</code> has <code>pointer-events: none</code> so clicks go straight through it to the game.</li>
+    <li><strong>Every screen is already on the page.</strong> The menu, the pause card and the results card are overlays. Switching screens just adds or removes the class <code>hidden</code>, which the stylesheet defines as <code>display: none !important</code>.</li>
+    <li><strong>The crosshair is five empty tags.</strong> Four <code>&lt;i&gt;</code> ticks and a <code>&lt;b&gt;</code> dot, positioned by CSS around the centre of the screen. No images needed.</li>
+    <li><strong>The scripts come last</strong>, so every element exists by the time the code looks for it.</li>
+  </ul>
+
+  <h2>Thirty-six scripts and one namespace</h2>
+  <p>
+    The other games in the arcade use JavaScript modules. Spireclash
+    mostly doesn't: it's a long list of <strong>classic scripts</strong>
+    that run one after another, in the order they're listed. They share
+    their work through a single global object called <code>G</code>.
+    Here's how the first one starts:
+  </p>
+  <script type="text/plain" data-file="spireclash/js/core.js">
+    /**
+     * Spireclash core: shared constants, maths helpers, rune textures and
+     * synthesised sound. Everything hangs off the global G namespace so the game
+     * runs straight from file:// without a bundler or a local server.
+     */
+    (function () {
+      'use strict';
+      const G = (window.G = window.G || {});
+
+      G.CELL = 4;
+      G.LEVEL_H = 4;
+      G.ARENA = 32;
+      G.clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+      // ...
+    })();
+  </script>
+  <ul>
+    <li><strong><code>(function () { ... })();</code></strong> is an <em>IIFE</em>, an Immediately Invoked Function Expression. It defines a function and calls it straight away. Anything declared inside with <code>const</code> or <code>let</code> stays private to that file, so two files can both have a helper called <code>canvas</code> without clashing.</li>
+    <li><strong><code>window.G = window.G || {}</code></strong> means "use the <code>G</code> that's already there, or make an empty one". Whichever file runs first creates it; the rest add to it.</li>
+    <li><strong>What a file wants to share, it hangs on <code>G</code>:</strong> <code>G.combat</code>, <code>G.builds</code>, <code>G.aimAssist</code>, <code>G.AIBrain</code> and so on. Later files read them back.</li>
+    <li><strong><code>'use strict'</code></strong> turns on JavaScript's stricter rules, so mistakes like assigning to an undeclared variable throw an error instead of quietly creating a global.</li>
+  </ul>
+
+  <h2>Why not modules?</h2>
+  <p>
+    The comment says it: the game was written to run "straight from
+    file://". Browsers refuse to load <code>type="module"</code> scripts
+    from a file on your disk (they need a web server), but classic scripts
+    load anywhere. The price is that <strong>order matters</strong>.
+    <code>game.js</code> uses almost everything else, so it's near the
+    end. Move it to the top and it would crash looking for
+    <code>G.combat</code> before <code>combat.js</code> had run.
+  </p>
+  <p>
+    The one exception is <code>quiz.js</code>. It needs to
+    <code>import</code> the arcade's shared question code, which is written
+    as modules, so it's a module itself. You'll see in the last lesson how
+    it passes its work to the rest of the game through <code>G</code> as
+    well.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does the HTML leave <code>#game</code> empty?</p>
+      <ul>
+        <li>So the page loads faster.</li>
+        <li data-right>three.js creates the canvas, and <code>game.js</code> adds it to <code>#game</code>.</li>
+        <li>The game is drawn straight onto the page background.</li>
+      </ul>
+      <p class="why">The renderer makes its own <code>&lt;canvas&gt;</code>; the page only provides somewhere to put it.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>window.G = window.G || {}</code> do?</p>
+      <ul>
+        <li>Always replaces <code>G</code> with an empty object.</li>
+        <li data-right>Keeps the existing <code>G</code> if there is one, otherwise creates an empty object.</li>
+        <li>Makes <code>G</code> private to <code>core.js</code>.</li>
+      </ul>
+      <p class="why"><code>||</code> gives the left side if it's truthy. An object is truthy, so an existing <code>G</code> is kept and every file adds to the same one.</p>
+    </div>
+    <div class="q">
+      <p>What would happen if <code>game.js</code> were listed before <code>combat.js</code>?</p>
+      <ul>
+        <li>Nothing. Scripts can be in any order.</li>
+        <li>The browser would sort them automatically.</li>
+        <li data-right>It would fail, because <code>G.combat</code> wouldn't exist yet when <code>game.js</code> ran.</li>
+      </ul>
+      <p class="why">Classic scripts run in the order they appear, and each one can only use what earlier ones have already put on <code>G</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-scene">
+  <header><p>Course 7 · Lesson 2</p></header>
+  <h1>A 3D Scene with three.js</h1>
+
+  <p>
+    Drawing 3D by hand means talking to the graphics card through WebGL,
+    which takes hundreds of lines just to show one triangle. Spireclash
+    uses <strong>three.js</strong>, a library that does that work for you.
+    <code>lib/three.min.js</code> is the first script on the page and gives
+    every other file a global called <code>THREE</code>.
+  </p>
+  <p>Every three.js program needs the same three things: a <strong>scene</strong>, a <strong>camera</strong> and a <strong>renderer</strong>.</p>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Classic draws at one pixel per CSS pixel, so retina screens do a quarter
+    // of the work. High graphics keeps up to 2x for sharpness.
+    const maxPixelRatio = G.highGraphics ? 2 : 1;
+    renderer.setPixelRatio(Math.min(maxPixelRatio, window.devicePixelRatio || 1));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    $('game').appendChild(renderer.domElement);
+
+    const world = G.createWorld();
+    const scene = world.scene;
+    const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 2000);
+  </script>
+
+  <h2>The renderer</h2>
+  <p>
+    The <strong>renderer</strong> turns the scene into pixels.
+    <code>renderer.domElement</code> is the canvas it draws on, and that's
+    what lands in <code>#game</code>. (<code>$</code> here is just a short
+    name for <code>document.getElementById</code>.)
+  </p>
+  <p>
+    The pixel ratio line is a speed trick. A "retina" screen has 2 real
+    pixels for every CSS pixel in each direction, so drawing at full
+    sharpness means 4 times the pixels. The Classic setting draws at 1
+    pixel per CSS pixel to keep slower laptops and tablets smooth.
+  </p>
+
+  <h2>The camera</h2>
+  <p><code>new THREE.PerspectiveCamera(72, aspect, 0.1, 2000)</code> takes four numbers:</p>
+  <ul>
+    <li><strong>72</strong>: the field of view, in degrees, from the top of the screen to the bottom. Wider shows more but makes things look further away. Aiming down sights narrows it to 50 to zoom in.</li>
+    <li><strong>aspect</strong>: the screen's width divided by its height, so circles stay round.</li>
+    <li><strong>0.1 and 2000</strong>: the near and far limits. Anything closer than 0.1 units or further than 2000 isn't drawn.</li>
+  </ul>
+  <p>The aspect has to follow the window, or the picture would stretch:</p>
+  <script type="text/plain">
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+  <h2>The scene and its meshes</h2>
+  <p>
+    The <strong>scene</strong> is a tree of everything in the world.
+    <code>G.createWorld()</code> fills it with sky, ground, castle and
+    trees. Things you can see are <strong>meshes</strong>: a shape (the
+    <em>geometry</em>) plus what its surface looks like (the
+    <em>material</em>). The little flash when you fire is a good small
+    example:
+  </p>
+  <script type="text/plain" data-file="spireclash/js/combat.js">
+    const flashGeo = new THREE.SphereGeometry(0.16, 16, 12);
+
+    function flash(pos, colour) {
+      const mat = new THREE.MeshBasicMaterial({
+        color: colour,
+        transparent: true,
+        opacity: 1,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const m = new THREE.Mesh(flashGeo, mat);
+      m.position.copy(pos);
+      add([m], mat, 0.07, (e, f) => {
+        mat.opacity = 1 - f;
+        m.scale.setScalar(1 + f * 1.5);
+      });
+    }
+  </script>
+  <p>
+    A small sphere, a glowing colour (<code>AdditiveBlending</code> adds
+    its colour to what's behind it, like light), placed at the
+    weapon's tip. <code>add</code> puts it in the scene for 0.07 seconds;
+    each frame the step function fades it out and grows it a little, then
+    it's removed.
+  </p>
+
+  <h2>Units and directions</h2>
+  <p>
+    three.js uses <strong>x</strong> for left and right, <strong>y</strong>
+    for up and <strong>z</strong> for towards and away from the default
+    camera. Spireclash treats one unit as about a metre: a knight is 1.8
+    tall, one building cell is <code>G.CELL = 4</code> wide, one storey is
+    <code>G.LEVEL_H = 4</code> high, and the arena runs from
+    <code>-G.ARENA</code> to <code>G.ARENA</code> (-32 to 32) on both x
+    and z.
+  </p>
+
+  <div class="tip">
+    <strong>No image or sound files.</strong> Apart from three.js itself,
+    Spireclash loads nothing. The stone, armour and rune textures are
+    drawn onto hidden canvases with code when the page starts, and every
+    sound is made on the spot by a tiny synthesiser built on the Web Audio
+    API in <code>core.js</code>.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Which three objects does every three.js program need?</p>
+      <ul>
+        <li>A canvas, a mesh and a texture.</li>
+        <li data-right>A scene, a camera and a renderer.</li>
+        <li>A geometry, a material and a light.</li>
+      </ul>
+      <p class="why">The renderer draws the scene as seen by the camera: <code>renderer.render(scene, camera)</code>.</p>
+    </div>
+    <div class="q">
+      <p>Why does the resize handler set <code>camera.aspect</code>?</p>
+      <ul>
+        <li>To change the field of view.</li>
+        <li data-right>So the picture isn't squashed or stretched when the window changes shape.</li>
+        <li>To make the canvas load faster.</li>
+      </ul>
+      <p class="why">The aspect ratio must match the canvas. After changing it, <code>updateProjectionMatrix()</code> makes the camera use the new value.</p>
+    </div>
+    <div class="q">
+      <p>What two parts make up a <code>THREE.Mesh</code>?</p>
+      <ul>
+        <li>A position and a colour.</li>
+        <li>A camera and a scene.</li>
+        <li data-right>A geometry (its shape) and a material (how its surface looks).</li>
+      </ul>
+      <p class="why"><code>new THREE.Mesh(flashGeo, mat)</code>: one shape can be shared by many meshes with different materials.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-loop">
+  <header><p>Course 7 · Lesson 3</p></header>
+  <h1>The Game Loop</h1>
+
+  <p>
+    Tic-tac-toe only had to do something when you clicked. An action game
+    has to move, aim, shoot and draw about sixty times a second whether
+    you touch anything or not. That's the job of the <strong>game
+    loop</strong>, at the bottom of <code>game.js</code>:
+  </p>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    let last = performance.now();
+    function frame(now) {
+      requestAnimationFrame(frame);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (state !== 'paused' && state !== 'menu' && state !== 'matchEnd') simulate(dt);
+      world.update(dt, now / 1000);
+      updateCamera(dt);
+      if (state !== 'menu' && state !== 'matchEnd') updateHud(dt);
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(frame);
+  </script>
+
+  <h2>requestAnimationFrame</h2>
+  <p>
+    <code>requestAnimationFrame(frame)</code> asks the browser to call
+    <code>frame</code> just before it next paints the screen. Because
+    <code>frame</code> asks again on its first line, it runs once per
+    screen refresh, forever: usually 60 times a second, more on fast
+    monitors. The browser passes in <code>now</code>, the time in
+    milliseconds.
+  </p>
+
+  <h2>dt: how long since last time</h2>
+  <p>
+    <code>dt</code> ("delta time") is the time since the previous frame,
+    in <em>seconds</em>. Everything that moves is multiplied by it. A
+    knight walking at 6.4 units a second moves
+    <code>6.4 * dt</code> each frame: about 0.107 at 60 frames a second,
+    about 0.053 at 120. Either way, that's 6.4 units every second, so the
+    game plays at the same speed on every screen.
+  </p>
+  <p>
+    <code>Math.min(0.05, ...)</code> caps it. Switch to another tab and
+    the browser stops calling <code>frame</code>; come back ten seconds
+    later and the next <code>dt</code> would be 10. A knight would move 64
+    units in one step, straight through a wall. Capping it at 0.05 means
+    the game simply pauses while you're away.
+  </p>
+
+  <h2>One step of the world</h2>
+  <script type="text/plain">
+    function simulate(dt) {
+      G.now += dt;
+      // ... the countdown and the round clock ...
+      const canAct = state === 'playing';
+      updatePlayer(dt, canAct);
+      driveBrain(foe, brain, dt, canAct);
+      G.combat.tick(player, dt);
+      G.combat.tick(foe, dt);
+      G.builds.update(dt);
+      G.fx.update(dt);
+      player.animate(dt);
+      foe.animate(dt);
+      if (state === 'roundEnd') {
+        roundEndT -= dt;
+        if (roundEndT <= 0) afterRound();
+      }
+    }
+  </script>
+  <p>
+    Each system gets its turn, in a fixed order: you, then the rival's
+    brain, then weapon timers, then the building pieces, then effects,
+    then animation. <code>G.now</code> is the game's own clock; it only
+    moves while the game is simulating, so pausing really does freeze
+    time.
+  </p>
+
+  <h2>A state machine</h2>
+  <p>
+    The variable <code>state</code> is a string that says which part of
+    the game you're in. Each state allows different things, and the code
+    moves from one to the next:
+  </p>
+  <ol>
+    <li><code>'menu'</code>: the rival picker. Nothing is simulated; the camera slowly circles the arena.</li>
+    <li><code>'countdown'</code>: 3, 2, 1. The world runs but nobody can act.</li>
+    <li><code>'playing'</code>: the fight. <code>canAct</code> is only true here.</li>
+    <li><code>'roundEnd'</code>: the result banner shows for 3.2 seconds.</li>
+    <li><code>'question'</code>: maths questions between rounds. Then back to <code>'countdown'</code>, or on to...</li>
+    <li><code>'matchEnd'</code>: the results card.</li>
+  </ol>
+  <p>
+    <code>'paused'</code> can interrupt any of the middle ones. It saves
+    the state it interrupted in <code>prevState</code> so Resume can put it
+    back. While paused, <code>frame</code> still draws (so the screen isn't
+    blank) but skips <code>simulate</code>.
+  </p>
+
+  <h2>Timers that count down</h2>
+  <p>The countdown shows how a timer and a state change work together:</p>
+  <script type="text/plain">
+    if (state === 'countdown') {
+      countdownT -= dt;
+      const n = Math.ceil(countdownT);
+      if (n !== lastCount && n > 0) {
+        lastCount = n;
+        showBanner(`${n}<small>Round ${round}</small>`, 1.1);
+        G.sound.play('beep');
+      }
+      if (countdownT <= 0) {
+        state = 'playing';
+        showBanner('Fight!', 0.8);
+        G.sound.play('go');
+      }
+    }
+  </script>
+  <p>
+    <code>countdownT</code> starts at 3 and loses <code>dt</code> every
+    frame. <code>Math.ceil</code> rounds up, so 2.7 shows as 3 and 0.2 as
+    1. <code>lastCount</code> remembers the number already shown, so the
+    banner and beep happen once per number rather than sixty times a
+    second. When the timer runs out, the state changes. Almost every timer
+    in the game (reloads, cooldowns, the round clock) is this same
+    pattern: a number of seconds, minus <code>dt</code>, checked against
+    zero.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A frame arrives 16 milliseconds after the last. What is <code>dt</code>?</p>
+      <ul>
+        <li>16</li>
+        <li data-right>0.016</li>
+        <li>0.05</li>
+      </ul>
+      <p class="why">Milliseconds divided by 1000 gives seconds, and 0.016 is below the 0.05 cap.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>dt</code> capped at 0.05?</p>
+      <ul>
+        <li>To make the game run at 20 frames a second.</li>
+        <li data-right>After a long gap (like a hidden tab), one giant step could carry things through walls.</li>
+        <li>Because <code>requestAnimationFrame</code> can't go slower.</li>
+      </ul>
+      <p class="why">A capped step is small enough to be safe. The game loses the missing time instead of leaping through it.</p>
+    </div>
+    <div class="q">
+      <p>Why does the countdown keep <code>lastCount</code>?</p>
+      <ul>
+        <li data-right>So each number's banner and beep happen once, not every frame.</li>
+        <li>To count how many rounds have been played.</li>
+        <li>Because <code>Math.ceil</code> needs it.</li>
+      </ul>
+      <p class="why"><code>n</code> stays 3 for about sixty frames. Only the frame where it changes should beep.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-angles">
+  <header><p>Course 7 · Lesson 4</p></header>
+  <h1>Angles: Yaw and Pitch</h1>
+
+  <p>
+    Where you're looking is stored as two angles in the
+    <code>ctrl</code> object: <strong>yaw</strong> (turning left and
+    right) and <strong>pitch</strong> (looking up and down). Angles in
+    code are almost always in <strong>radians</strong>: a full turn is
+    <code>2 * Math.PI</code> (about 6.28), a half turn is
+    <code>Math.PI</code>, and a right angle is <code>Math.PI / 2</code>
+    (about 1.57).
+  </p>
+
+  <h2>From an angle to a direction</h2>
+  <script type="text/plain" data-file="spireclash/js/core.js">
+    // Yaw 0 looks down -z, matching the three.js camera.
+    G.forwardFromYaw = (yaw) => ({ x: -Math.sin(yaw), z: -Math.cos(yaw) });
+    G.yawFromDir = (x, z) => Math.atan2(-x, -z);
+  </script>
+  <p>
+    <code>Math.sin</code> and <code>Math.cos</code> turn an angle into a
+    point on a circle of radius 1. With yaw 0, forward is
+    <code>{ x: -0, z: -1 }</code>: straight down the -z axis, which is
+    where a three.js camera looks before it's turned. Turn a quarter left
+    (<code>Math.PI / 2</code>) and forward becomes <code>{ x: -1, z: 0 }</code>.
+    The minus signs are just there to match that camera.
+  </p>
+  <p>
+    <code>Math.atan2(y, x)</code> goes the other way: give it a direction
+    and it returns the angle. It's the go-to tool for "which way is the
+    rival from me?":
+  </p>
+  <script type="text/plain">
+    const ya = G.yawFromDir(attacker.pos.x - player.pos.x, attacker.pos.z - player.pos.z);
+  </script>
+  <p>
+    Subtract your position from theirs to get the direction from you to
+    them, then <code>atan2</code> turns it into a yaw. Unlike plain
+    <code>Math.atan</code>, <code>atan2</code> looks at both signs, so it
+    can tell "ahead and left" from "behind and right".
+  </p>
+
+  <h2>Adding pitch</h2>
+  <script type="text/plain">
+    G.dirFromYawPitch = (yaw, pitch, out) => {
+      const cp = Math.cos(pitch);
+      return (out || new THREE.Vector3()).set(-Math.sin(yaw) * cp, Math.sin(pitch), -Math.cos(yaw) * cp);
+    };
+  </script>
+  <p>
+    Looking up, more of your gaze goes upwards and less goes forwards.
+    <code>Math.sin(pitch)</code> is the upward part. The flat forward part
+    is shrunk by <code>Math.cos(pitch)</code>, so the whole direction still
+    has length 1. Look straight up (pitch π/2) and <code>cp</code> is 0:
+    all up, no forward.
+  </p>
+  <p>
+    That's why pitch is always clamped:
+    <code>G.clamp(ctrl.pitch, -1.45, 1.45)</code>. 1.45 is just under π/2
+    (1.571), so you can look nearly straight up or down but never tip over
+    backwards and see the world upside down.
+  </p>
+
+  <h2>The shortest way round</h2>
+  <script type="text/plain">
+    G.angleDiff = (from, to) => {
+      let d = (to - from) % (Math.PI * 2);
+      if (d > Math.PI) d -= Math.PI * 2;
+      if (d < -Math.PI) d += Math.PI * 2;
+      return d;
+    };
+  </script>
+  <p>
+    Angles wrap around. Facing 3.1 and wanting to face -3.1, plain
+    subtraction says turn by -6.2, nearly a full circle the long way. But
+    3.1 and -3.1 are only about 0.08 apart, across the "back" of the
+    circle. <code>angleDiff</code> always gives the short turn, between
+    -π and π:
+  </p>
+  <ul>
+    <li><code>% (Math.PI * 2)</code> removes whole turns. (In JavaScript, <code>%</code> keeps the sign of the left side, so the result is anywhere from -2π to 2π.)</li>
+    <li>More than half a turn one way is the same as less than half a turn the other way, so it adds or subtracts one whole turn.</li>
+  </ul>
+  <p>The aim assist and the rival's aiming both depend on this. Without it, a rival tracking you across that seam would spin all the way round.</p>
+
+  <h2>Easing helpers</h2>
+  <script type="text/plain">
+    G.lerp = (a, b, t) => a + (b - a) * t;
+    G.moveTowards = (v, target, maxDelta) => {
+      if (Math.abs(target - v) <= maxDelta) return target;
+      return v + Math.sign(target - v) * maxDelta;
+    };
+  </script>
+  <ul>
+    <li><strong><code>lerp</code></strong> ("linear interpolation") finds the point a share <code>t</code> of the way from <code>a</code> to <code>b</code>. <code>lerp(10, 20, 0.25)</code> is 12.5.</li>
+    <li><strong><code>moveTowards</code></strong> steps towards a target by at most <code>maxDelta</code>, and lands exactly on it rather than overshooting. Speeding up and slowing down use it.</li>
+  </ul>
+
+  <h2>Putting it to work: the camera</h2>
+  <p>The third-person camera sits behind your right shoulder. Trimmed from <code>updateCamera</code>:</p>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    const pivot = V1.set(player.pos.x, player.pos.y + 1.62, player.pos.z);
+    const cp = Math.cos(pitch);
+    const fx = -Math.sin(yaw) * cp;
+    const fy = Math.sin(pitch);
+    const fz = -Math.cos(yaw) * cp;
+    const rx = Math.cos(yaw);
+    const rz = -Math.sin(yaw);
+    const back = ctrl.ads ? 2 : 3.4;
+    const side = ctrl.ads ? 0.65 : 0.8;
+    const want = V2.set(pivot.x - fx * back + rx * side, pivot.y - fy * back + 0.3, pivot.z - fz * back + rz * side);
+    // ... pulled in closer if a wall is in the way ...
+    camera.position.copy(want);
+    camera.rotation.set(pitch, yaw, 0, 'YXZ');
+  </script>
+  <p>
+    Start at the knight's head (<code>pivot</code>), go 3.4 units
+    <em>backwards</em> along the look direction, then 0.8 units to the
+    <em>right</em> (the right direction is forward turned a quarter turn).
+    Then point the camera with the same yaw and pitch.
+    <code>'YXZ'</code> says "turn by yaw first, then tilt by pitch", the
+    order that keeps the horizon level. Aiming down sights moves the
+    camera closer and tighter to the shoulder.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What is <code>G.angleDiff(3.1, -3.1)</code>, roughly?</p>
+      <ul>
+        <li>-6.2</li>
+        <li data-right>0.08</li>
+        <li>3.1</li>
+      </ul>
+      <p class="why">-6.2 is less than -π, so a whole turn (6.283) is added: about 0.083. A small turn across the back of the circle.</p>
+    </div>
+    <div class="q">
+      <p>Why is pitch clamped to 1.45 rather than allowed up to 2?</p>
+      <ul>
+        <li>The mouse can't move that far.</li>
+        <li data-right>Past π/2 (about 1.57) you'd tip over backwards and see the world upside down.</li>
+        <li>three.js only accepts angles below 1.5.</li>
+      </ul>
+      <p class="why">Staying just short of straight up keeps the view the right way up.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>G.moveTowards(4, 10, 2)</code> return?</p>
+      <ul>
+        <li data-right>6</li>
+        <li>10</li>
+        <li>8</li>
+      </ul>
+      <p class="why">The gap (6) is more than the step (2), so it moves 2 towards the target.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-input">
+  <header><p>Course 7 · Lesson 5</p></header>
+  <h1>Mouse Look and the Keyboard</h1>
+
+  <h2>Capturing the mouse</h2>
+  <p>
+    Normally the mouse pointer stops at the edge of the screen. That's no
+    good for turning round in 3D: you'd run out of desk. The
+    <strong>Pointer Lock API</strong> hides the pointer and reports how
+    far the mouse <em>moved</em> instead, without limit.
+  </p>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    function requestLock() {
+      if (spectating) return;
+      // Touch play has no pointer lock: the on-screen controls are the input.
+      if (TOUCH.enabled) {
+        locked = true;
+        TOUCH.enterFullscreen();
+        return;
+      }
+      try {
+        const r = canvas.requestPointerLock();
+        if (r && r.catch) r.catch(() => showPause());
+      } catch (e) {
+        showPause();
+      }
+    }
+
+    document.addEventListener('pointerlockchange', () => {
+      locked = document.pointerLockElement === canvas;
+      if (!locked) {
+        mouseL = false;
+        mouseR = false;
+        if (state === 'playing' || state === 'countdown' || state === 'roundEnd') showPause();
+      }
+    });
+  </script>
+  <ul>
+    <li><strong>Browsers only grant a lock after a click or key press</strong>, so a page can't grab your mouse uninvited. That's why clicking the canvas mid-game calls <code>requestLock()</code> again if the lock was lost.</li>
+    <li>In some browsers <code>requestPointerLock()</code> returns a promise that can be rejected; in older ones it returns nothing. <code>r &amp;&amp; r.catch</code> handles both, and any failure shows the pause card instead of leaving you stuck.</li>
+    <li>Pressing Esc always releases the lock (the browser insists). The game listens for <code>pointerlockchange</code> and pauses, so Esc doubles as the pause key for free.</li>
+  </ul>
+
+  <h2>Turning</h2>
+  <script type="text/plain">
+    window.addEventListener('mousemove', (e) => {
+      if (!locked) return;
+      const s = 0.0022 * settings.sens * (ctrl.ads ? 0.6 : 1) * AIM.friction(assistLevel());
+      ctrl.yaw -= e.movementX * s;
+      ctrl.pitch = G.clamp(ctrl.pitch - e.movementY * s, -1.45, 1.45);
+    });
+  </script>
+  <p>
+    <code>movementX</code> and <code>movementY</code> are how many pixels
+    the mouse moved since the last event. Multiplying by
+    <code>s</code> turns pixels into radians: 0.0022 radians a pixel,
+    times your sensitivity setting, times 0.6 while aiming down sights (so
+    zoomed aim is steadier), times the aim assist's <em>friction</em>,
+    which you'll meet in Lesson 10. Moving the mouse right gives a
+    positive <code>movementX</code>, which <em>lowers</em> the yaw; with
+    yaw 0 looking down -z, a lower yaw turns you to the right.
+  </p>
+
+  <h2>Which keys are down?</h2>
+  <script type="text/plain">
+    const keys = {};
+
+    window.addEventListener('keydown', (e) => {
+      // The question box needs the keyboard to itself.
+      if (state === 'question') return;
+      // Stop bound keys (Tab, slash and the like) doing browser things mid-duel.
+      if (e.code === 'Space' || e.code.startsWith('Arrow') || (locked && KB.actionFor(e.code))) e.preventDefault();
+      keys[e.code] = true;
+      if (e.repeat) return;
+      // ...
+      onKey(e.code);
+    });
+    window.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+    });
+    window.addEventListener('blur', () => {
+      for (const k of Object.keys(keys)) keys[k] = false;
+      mouseL = false;
+      mouseR = false;
+    });
+  </script>
+  <ul>
+    <li><strong><code>keys</code> is a lookup table</strong> of which keys are held right now. Walking doesn't happen in the key event; each frame, the movement code checks <code>keys</code>. That way walking is smooth and keeps going for as long as the key is down.</li>
+    <li><strong><code>e.repeat</code></strong> is true for the automatic repeats you get when holding a key. One-off actions (switch weapon, drink) skip those, so holding 3 doesn't try to drink a draught thirty times.</li>
+    <li><strong>The <code>blur</code> handler</strong> fixes a classic bug: if you hold W and Alt-Tab away, the window never sees W come back up, and you'd walk forever when you return. Losing focus lets go of everything.</li>
+    <li><strong><code>preventDefault()</code></strong> stops Space scrolling the page and arrow keys moving the view mid-duel.</li>
+  </ul>
+
+  <h2>Rebindable keys</h2>
+  <p>
+    The game never checks for <code>'KeyW'</code> directly. It asks
+    <code>keybinds.js</code> which key is bound to each action, so players
+    can change them from the menu:
+  </p>
+  <script type="text/plain" data-file="spireclash/js/keybinds.js">
+    const ACTIONS = [
+      { id: 'forward', label: 'Move forward', def: 'KeyW', group: 'Movement' },
+      { id: 'back', label: 'Move back', def: 'KeyS', group: 'Movement' },
+      { id: 'jump', label: 'Jump', def: 'Space', group: 'Movement' },
+      { id: 'bow', label: 'Water Bolt', def: 'Digit1', group: 'Combat' },
+      { id: 'wall', label: 'Wall', def: 'KeyQ', group: 'Building' },
+      // ...
+    ];
+
+    function actionFor(code) {
+      for (const a of ACTIONS) if (binds[a.id] === code) return a.id;
+      return null;
+    }
+
+    // Bind code to id. A key already in use swaps over to the old binding.
+    function set(id, code) {
+      const prev = binds[id];
+      const other = actionFor(code);
+      binds[id] = code;
+      if (other && other !== id) binds[other] = prev;
+      return other && other !== id ? other : null;
+    }
+  </script>
+  <p>
+    Bindings are stored as <code>e.code</code> values, which name the
+    <em>physical</em> key, not the letter printed on it. On a French
+    keyboard the key where W sits on a British one types Z, but its
+    <code>code</code> is still <code>'KeyW'</code>, so forward stays in
+    the same place under your fingers. And <code>set</code> never lets two
+    actions share a key: give Jump the key that Wall had, and Wall takes
+    Jump's old key.
+  </p>
+
+  <h2>From keys to a wish</h2>
+  <p>Each frame, <code>updatePlayer</code> turns the held keys into a direction the knight <em>wishes</em> to go:</p>
+  <script type="text/plain">
+    const wish = V1.set(0, 0, 0);
+    const f = G.forwardFromYaw(ctrl.yaw);
+    const rx = Math.cos(ctrl.yaw);
+    const rz = -Math.sin(ctrl.yaw);
+    if (keys[KB.get('forward')]) wish.set(wish.x + f.x, 0, wish.z + f.z);
+    if (keys[KB.get('back')]) wish.set(wish.x - f.x, 0, wish.z - f.z);
+    if (keys[KB.get('right')]) wish.set(wish.x + rx, 0, wish.z + rz);
+    if (keys[KB.get('left')]) wish.set(wish.x - rx, 0, wish.z - rz);
+    // The touch stick is analogue: a light push walks slowly.
+    wish.x += f.x * -TOUCH.moveY + rx * TOUCH.moveX;
+    wish.z += f.z * -TOUCH.moveY + rz * TOUCH.moveX;
+    if (wish.lengthSq() > 1) wish.normalize();
+  </script>
+  <p>
+    Forward and right come from the yaw (Lesson 4), and each held key adds
+    or subtracts one of them. Holding W and D together adds forward and
+    right, which makes a diagonal of length about 1.41: you'd run 41%
+    faster diagonally. <code>normalize()</code> shrinks it back to length
+    1. It only does that when the length is over 1, so a gentle push on
+    the touch stick still walks slowly. Keyboard and touch both feed the
+    same <code>wish</code>, so the movement code doesn't care which one
+    you used.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does the game listen for <code>blur</code>?</p>
+      <ul>
+        <li>To pause the music.</li>
+        <li data-right>A key held while the window loses focus never reports its keyup, so it would stay "held" forever.</li>
+        <li>To save the settings.</li>
+      </ul>
+      <p class="why">Clearing <code>keys</code> on blur means you never come back to a knight that's still running.</p>
+    </div>
+    <div class="q">
+      <p>Why are bindings stored as <code>e.code</code> rather than <code>e.key</code>?</p>
+      <ul>
+        <li><code>e.key</code> doesn't exist for letters.</li>
+        <li data-right><code>e.code</code> names the physical key, so WASD stays in the same place on any keyboard layout.</li>
+        <li><code>e.code</code> is shorter.</li>
+      </ul>
+      <p class="why"><code>e.key</code> is the character typed, which changes with the layout.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>wish</code> normalised when its length is over 1?</p>
+      <ul>
+        <li>So the knight can't walk backwards.</li>
+        <li>To make the touch stick faster.</li>
+        <li data-right>Forward plus right has length about 1.41, which would make diagonal running faster.</li>
+      </ul>
+      <p class="why">Shrinking long wishes to length 1 makes every direction the same top speed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-physics">
+  <header><p>Course 7 · Lesson 6</p></header>
+  <h1>Moving a Knight</h1>
+
+  <p>
+    The wish says where you'd <em>like</em> to go. <code>physics()</code>
+    in <code>character.js</code> decides where you actually end up, given
+    gravity, walls and the pieces underfoot. It runs for you and the rival
+    alike.
+  </p>
+  <script type="text/plain" data-file="spireclash/js/character.js">
+    const GRAV = 24;
+    const SPEED = 6.4;
+    const HEIGHT = 1.8;
+    const RADIUS = 0.35;
+
+    // Returns the landing speed when touching down, for fall damage.
+    physics(dt, wish, jump, speedMul) {
+      if (!this.alive) return 0;
+      const sp = SPEED * (speedMul || 1);
+      const accel = this.onGround ? 55 : 16;
+      this.vel.x = G.moveTowards(this.vel.x, wish.x * sp, accel * dt);
+      this.vel.z = G.moveTowards(this.vel.z, wish.z * sp, accel * dt);
+      if (jump && this.onGround) {
+        this.vel.y = JUMP_V;
+        this.onGround = false;
+        this.groundPiece = null;
+      }
+      this.vel.y = Math.max(-45, this.vel.y - GRAV * dt);
+      const near = G.builds.collidersNear(this.pos.x, this.pos.z, this.owner());
+      this.moveAxis('x', this.vel.x * dt, near);
+      this.moveAxis('z', this.vel.z * dt, near);
+      // ...
+      this.pos.y += this.vel.y * dt;
+      const reach = Math.max(prevFeet, this.pos.y) + (wasGround ? G.STEP : 0.05);
+      const g = this.groundAt(this.pos.x, this.pos.z, reach, near);
+      let impact = 0;
+      if (this.pos.y <= g.h) {
+        if (!wasGround) impact = -this.vel.y;
+        this.pos.y = g.h;
+        this.vel.y = 0;
+        this.onGround = true;
+      }
+      // ...
+      const lim = G.ARENA - this.radius;
+      this.pos.x = G.clamp(this.pos.x, -lim, lim);
+      this.pos.z = G.clamp(this.pos.z, -lim, lim);
+      return impact;
+    }
+  </script>
+
+  <h2>Position, velocity, acceleration</h2>
+  <p>
+    A knight has a <strong>position</strong> (<code>pos</code>, where it
+    is) and a <strong>velocity</strong> (<code>vel</code>, how fast it's
+    going and which way, in units per second). Each frame, position
+    changes by <code>vel * dt</code>.
+  </p>
+  <p>
+    The velocity doesn't jump straight to the wish. <code>moveTowards</code>
+    nudges it there by at most <code>accel * dt</code>. On the ground the
+    acceleration is 55, so you reach full speed (6.4) in about a tenth of
+    a second: snappy but not instant. In the air it's only 16, so you can
+    steer a jump a little but not turn round in mid-air.
+  </p>
+
+  <h2>Gravity and jumping</h2>
+  <p>
+    Every frame, gravity takes <code>24 * dt</code> off the upward speed.
+    A jump sets it to a positive number (<code>JUMP_V</code>, about 8.6),
+    gravity slows it to zero at the top, then it goes negative and you
+    fall faster and faster. <code>Math.max(-45, ...)</code> is a
+    <em>terminal velocity</em>, so a long fall never reaches silly speeds.
+    You can only jump while <code>onGround</code>, so there's no jumping
+    off thin air.
+  </p>
+
+  <h2>One axis at a time</h2>
+  <p>
+    Notice it moves along x, then separately along z. If you walk
+    diagonally into a wall, the axis heading into the wall is blocked and
+    its velocity set to 0, but the other axis still moves. So instead of
+    sticking to the wall, you <strong>slide along it</strong>. This is
+    the simplest collision trick in games, and it feels right.
+  </p>
+  <p>
+    The walls and floors are <em>axis-aligned boxes</em> (their edges run
+    along x, y and z), stored as <code>{ min, max }</code> corners. Asking
+    "would I overlap it?" is four comparisons:
+  </p>
+  <script type="text/plain">
+    function overlapsH(x, z, r, b) {
+      return x + r > b.min.x && x - r < b.max.x && z + r > b.min.z && z - r < b.max.z;
+    }
+  </script>
+  <p>
+    The knight counts as a square of half-width <code>r</code> (its
+    radius) around <code>(x, z)</code>. Two boxes overlap only if they
+    overlap on <em>both</em> axes. If any one test fails, there's a gap
+    between them. <code>moveAxis</code> also lets you walk up anything
+    lower than <code>G.STEP</code> (0.6) without jumping, like a real step.
+  </p>
+
+  <h2>Landing</h2>
+  <p>
+    <code>groundAt</code> finds the highest surface under you: the ground
+    (height 0), a floor, or the slope of a stair. If your feet have sunk to
+    or below it, you've landed: snap to it, stop falling, and note how hard
+    you hit (<code>impact</code>, your downward speed). <code>game.js</code>
+    turns that into fall damage:
+  </p>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    function fallDamage(ch, impact) {
+      if (impact > 17) G.combat.damageChar(ch, (impact - 17) * 5, null, false);
+      if (impact > 9) G.sound.play('land', ch.pos);
+    }
+  </script>
+  <p>
+    Small drops are free. Past a speed of 17 (a drop of about a storey
+    and a half) each extra unit of speed costs 5 health. Finally,
+    <code>clamp</code> keeps both knights inside the arena's warded edge.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does the knight move along x and then z separately?</p>
+      <ul>
+        <li>It's faster to compute.</li>
+        <li data-right>A blocked axis stops while the other carries on, so you slide along walls instead of sticking.</li>
+        <li>three.js can only move one axis per frame.</li>
+      </ul>
+      <p class="why">Walking diagonally into a wall keeps the sideways part of your movement.</p>
+    </div>
+    <div class="q">
+      <p>Why is the acceleration lower in the air (16) than on the ground (55)?</p>
+      <ul>
+        <li>Gravity uses the rest.</li>
+        <li data-right>So a jump can be steered a little but not reversed in mid-air.</li>
+        <li>To make jumping higher.</li>
+      </ul>
+      <p class="why">Low air control makes jumps feel like they have weight.</p>
+    </div>
+    <div class="q">
+      <p>Two boxes overlap on x but not on z. Do they collide?</p>
+      <ul>
+        <li>Yes, one axis is enough.</li>
+        <li data-right>No. They only collide if they overlap on every axis.</li>
+        <li>Only if they're the same size.</li>
+      </ul>
+      <p class="why">A gap on any one axis separates them, which is why <code>overlapsH</code> joins its four tests with <code>&amp;&amp;</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-grid">
+  <header><p>Course 7 · Lesson 7</p></header>
+  <h1>The Building Grid</h1>
+
+  <p>
+    Building is what makes Spireclash different from a plain shooter. Every
+    wall, floor, stair and spire snaps to an invisible grid of 4 by 4
+    cells, stacked in storeys 4 high. A piece is described by a small
+    object called a <strong>spec</strong>:
+  </p>
+  <script type="text/plain">
+    { type: 'wall', axis: 'z', i: 2, j: -1, k: 0 }   // a wall on a cell edge
+    { type: 'floor', i: 2, j: -1, k: 1 }             // a floor one storey up
+    { type: 'ramp', i: 3, j: -1, k: 0, dir: 1 }      // a stair rising towards +z
+  </script>
+  <p>
+    <code>i</code> and <code>j</code> are the cell's column and row
+    (x and z), and <code>k</code> is the storey. To get world units,
+    multiply: cell <code>i</code> starts at <code>x = i * G.CELL</code>.
+    To go back the other way, divide and round down:
+    <code>Math.floor(x / G.CELL)</code>.
+  </p>
+
+  <h2>A name for every slot</h2>
+  <script type="text/plain" data-file="spireclash/js/builds.js">
+    function keyOf(s) {
+      if (s.type === 'wall') return `W${s.axis}${s.i},${s.j},${s.k}`;
+      if (s.type === 'floor') return `F${s.i},${s.j},${s.k}`;
+      return `S${s.i},${s.j},${s.k}`;
+    }
+
+    const pieces = new Map();
+  </script>
+  <p>
+    Every slot on the grid gets a unique string, like
+    <code>"Wz2,-1,0"</code>. The built pieces live in a
+    <code>Map</code> from key to piece, so "is something already here?" is
+    one quick lookup: <code>pieces.has(keyOf(spec))</code>. No searching
+    through a list. Stairs and spires share the <code>S</code> slot because
+    both sit on a cell's slope, so you can't have both in one cell.
+  </p>
+
+  <h2>A spatial hash: only look nearby</h2>
+  <p>
+    A long duel can leave hundreds of pieces. Checking every one of them
+    for collisions, every frame, for both knights, would be wasteful when
+    only the few next to you matter. So pieces are also filed by the
+    column of cells they stand in:
+  </p>
+  <script type="text/plain">
+    // In place(): file the piece under each column it touches.
+    for (const [ci, cj] of piece.cols) {
+      const ck = `${ci},${cj}`;
+      if (!columns.has(ck)) columns.set(ck, []);
+      columns.get(ck).push(piece);
+    }
+
+    // Pieces near (x, z): just the 3 x 3 block of columns around it.
+    function collidersNear(x, z, owner) {
+      const out = scratch;
+      out.clear();
+      const ci = Math.floor(x / C);
+      const cj = Math.floor(z / C);
+      for (let di = -1; di <= 1; di++) {
+        for (let dj = -1; dj <= 1; dj++) {
+          const list = columns.get(`${ci + di},${cj + dj}`);
+          if (list) for (const p of list) if (!(p.phaseT > 0) || p.owner !== owner) out.add(p);
+        }
+      }
+      return [...out];
+    }
+  </script>
+  <p>
+    This is a <strong>spatial hash</strong>: a lookup from "which square
+    of the map" to "what's in it". Whatever the size of the build,
+    a knight only ever checks nine columns. <code>out</code> is a
+    <code>Set</code> because a wall on a cell edge is filed under
+    <em>two</em> columns, and a Set ignores the duplicate. The last
+    condition skips your own pieces while you've phased them with the
+    phase wand.
+  </p>
+
+  <h2>Can it go here?</h2>
+  <script type="text/plain">
+    function canPlace(spec) {
+      if (!spec || !inBounds(spec)) return false;
+      if (pieces.has(keyOf(spec))) return false;
+      const box = aabbOf(spec);
+      if (grounded(box)) return true;
+      const js = jointsOf(spec);
+      for (const p of candidatesAround(colsOf(spec), scratch)) {
+        if (joined(spec.type, js, p.type, p.joints)) return true;
+      }
+      return false;
+    }
+  </script>
+  <p>
+    Four rules, cheapest first: the spot must be inside the arena; it
+    must be empty; and then the piece must be <strong>supported</strong>,
+    either standing on the ground or <em>joined</em> to a neighbouring
+    piece. "Joined" works out how big the patch is where their boxes
+    touch:
+  </p>
+  <script type="text/plain">
+    function contact(a, b) {
+      const e = 0.06;
+      const ov = [
+        Math.min(a.max.x, b.max.x) - Math.max(a.min.x, b.min.x),
+        Math.min(a.max.y, b.max.y) - Math.max(a.min.y, b.min.y),
+        Math.min(a.max.z, b.max.z) - Math.max(a.min.z, b.min.z),
+      ];
+      if (ov.some((v) => v < -e)) return -1;
+      const pos = ov.map((v) => Math.max(0, v)).sort((m, n) => n - m);
+      return pos[0] * pos[1];
+    }
+  </script>
+  <p>
+    On each axis, the overlap is "the smaller of the two ends minus the
+    larger of the two starts". A negative overlap means a gap, so no
+    contact. Otherwise the two biggest overlaps multiplied give the area
+    of the touching patch. A wall resting on a floor shares a long seam
+    and scores well; two pieces that only meet at a corner score almost
+    nothing, and don't hold each other up. (The <code>e</code> lets pieces
+    count as touching even with a hair's-width gap from rounding.)
+  </p>
+
+  <h2>A piece is born weak</h2>
+  <script type="text/plain">
+    const piece = {
+      key: keyOf(spec),
+      type,
+      owner,
+      maxHp: MAX_HP[type],
+      hp: MAX_HP[type] * 0.1,
+      age: 0,
+      // ...
+      aabb: aabbOf(spec),
+      joints: jointsOf(spec),
+      solid: type === 'wall' || type === 'floor',
+    };
+  </script>
+  <p>
+    A new piece starts with only 10% of its strength and builds up to
+    full over 0.9 seconds (<code>BUILD_TIME</code>). It <em>appears</em>
+    instantly, so building feels quick, but a wall thrown up in a panic can
+    be shot straight back down. The material's glow is tinted blue for
+    your pieces and red for the rival's.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why store pieces in a <code>Map</code> keyed by strings like <code>"F2,-1,1"</code>?</p>
+      <ul>
+        <li>Maps use less memory than arrays.</li>
+        <li data-right>"Is this slot taken?" becomes a single lookup instead of a search.</li>
+        <li>So pieces are drawn in order.</li>
+      </ul>
+      <p class="why"><code>pieces.has(key)</code> answers straight away however many pieces there are.</p>
+    </div>
+    <div class="q">
+      <p>Which column does <code>x = -1</code> fall in, with <code>G.CELL = 4</code>?</p>
+      <ul>
+        <li>0</li>
+        <li data-right>-1</li>
+        <li>-0.25</li>
+      </ul>
+      <p class="why"><code>Math.floor(-1 / 4)</code> is <code>Math.floor(-0.25)</code>, which rounds <em>down</em> to -1. (Rounding towards zero would wrongly give 0.)</p>
+    </div>
+    <div class="q">
+      <p>A floor four storeys up has nothing touching it. Can it be placed?</p>
+      <ul>
+        <li>Yes, if it's in bounds.</li>
+        <li data-right>No. It isn't on the ground and isn't joined to any piece.</li>
+        <li>Only by the Archmage.</li>
+      </ul>
+      <p class="why">Every piece needs support, and both duellists play by the same <code>canPlace</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-collapse">
+  <header><p>Course 7 · Lesson 8</p></header>
+  <h1>When Supports Break</h1>
+
+  <h2>Damaging a piece</h2>
+  <script type="text/plain" data-file="spireclash/js/builds.js">
+    function recomputeHp(p) {
+      const f = p.built ? 1 : Math.min(1, p.age / BUILD_TIME);
+      p.hp = p.maxHp * (0.1 + 0.9 * f) - p.dmg;
+    }
+
+    function damage(p, amount, attacker) {
+      if (!p.alive) return;
+      p.flash = 1;
+      if (p.fixed) return;
+      p.dmg += amount;
+      recomputeHp(p);
+      if (G.events && G.events.onBuildDamage) G.events.onBuildDamage(p, amount, attacker);
+      if (p.hp <= 0) destroy(p, true);
+    }
+  </script>
+  <p>
+    Instead of subtracting from <code>hp</code> directly, a piece keeps a
+    running total of damage taken (<code>dmg</code>), and
+    <code>hp</code> is worked out fresh: "the strength it has reached so
+    far, minus the damage". That's what lets a piece keep growing stronger
+    while it's being shot. <code>f</code> goes from 0 to 1 over the build
+    time, so the strength goes from 10% to 100%. The bulwark in the middle
+    of the arena is <code>fixed</code>: it flashes when hit but never
+    breaks.
+  </p>
+
+  <h2>What else falls?</h2>
+  <p>
+    Shoot out the bottom stair of a tower and everything resting on it
+    should come down. But a piece might be held up by more than one
+    neighbour, so you can't just knock down everything above. The real
+    question for each piece is: <em>is there still a chain of joined pieces
+    from me down to the ground?</em>
+  </p>
+  <script type="text/plain">
+    // Flood from every grounded piece; whatever is not reached falls.
+    function collapse() {
+      const reached = new Set();
+      const stack = [];
+      for (const p of pieces.values()) {
+        if (grounded(p.aabb)) {
+          reached.add(p);
+          stack.push(p);
+        }
+      }
+      const near = new Set();
+      while (stack.length) {
+        const p = stack.pop();
+        candidatesAround(p.cols, near);
+        for (const q of near) {
+          if (!reached.has(q) && joined(p.type, p.joints, q.type, q.joints)) {
+            reached.add(q);
+            stack.push(q);
+          }
+        }
+      }
+      const fallen = [];
+      for (const p of pieces.values()) if (!reached.has(p)) fallen.push(p);
+      fallen.forEach((p, n) => destroy(p, false, n > 24));
+    }
+  </script>
+  <p>This is a <strong>flood fill</strong>, the same idea as a paint bucket tool:</p>
+  <ol>
+    <li><strong>Seed</strong> it with every piece touching the ground. They're all safe, so they go in <code>reached</code> and onto the <code>stack</code> of pieces still to look around.</li>
+    <li><strong>Spread.</strong> Take a piece off the stack and look at its neighbours (using the spatial hash from the last lesson). Any neighbour that's joined to it and not yet reached is safe too: mark it and push it so <em>its</em> neighbours get checked in turn.</li>
+    <li><strong>Stop</strong> when the stack is empty. The flood has reached everything that connects to the ground.</li>
+    <li><strong>Everything else falls.</strong></li>
+  </ol>
+  <p>
+    The <code>!reached.has(q)</code> check is what stops it going round in
+    circles: a piece already reached is never pushed again, so each piece
+    is handled once and the loop always finishes.
+  </p>
+
+  <h2>Why flood from the ground?</h2>
+  <p>
+    It might seem easier to start at the broken piece and look upwards.
+    But "upwards" isn't simple: a floor might hang off a wall that rests on
+    a stair that leans on something else entirely. Flooding from the
+    ground asks one clear question of the whole build at once, and gets it
+    right whatever shape the build is.
+  </p>
+
+  <h2>Small touches</h2>
+  <ul>
+    <li><code>destroy(p, true)</code> runs the collapse; the pieces that fall call <code>destroy(p, false, ...)</code>, so their own removal doesn't start another flood.</li>
+    <li><code>n &gt; 24</code> makes every piece after the 25th fall <em>quietly</em>, with no tumbling rubble. A huge tower toppling would otherwise spawn hundreds of debris effects in one frame and stutter.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>A stack or a queue?</strong> <code>stack.pop()</code> takes the
+    newest item, so the flood runs deep along one branch first. Using
+    <code>queue.shift()</code> would spread out evenly in rings instead.
+    For "what's reachable?" either works, because the answer is the same
+    set of pieces. <code>pop</code> is just quicker.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does a piece store <code>dmg</code> instead of just lowering <code>hp</code>?</p>
+      <ul>
+        <li>To show damage numbers.</li>
+        <li data-right>Its strength is still growing after it's placed, so <code>hp</code> is recalculated as "strength so far minus damage".</li>
+        <li>Because <code>hp</code> can't go below zero.</li>
+      </ul>
+      <p class="why">Keeping the damage separate lets the growing strength and the damage combine correctly at any moment.</p>
+    </div>
+    <div class="q">
+      <p>Where does the collapse flood fill start?</p>
+      <ul>
+        <li>At the piece that was destroyed.</li>
+        <li>At the highest piece.</li>
+        <li data-right>At every piece touching the ground.</li>
+      </ul>
+      <p class="why">Anything the flood can reach from the ground is supported. Everything else falls.</p>
+    </div>
+    <div class="q">
+      <p>What stops the flood fill looping forever when pieces join in a circle?</p>
+      <ul>
+        <li>The stack has a maximum size.</li>
+        <li data-right>A piece already in <code>reached</code> is never pushed again.</li>
+        <li><code>n &gt; 24</code></li>
+      </ul>
+      <p class="why">Each piece is visited at most once, so the loop must end.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-shots">
+  <header><p>Course 7 · Lesson 9</p></header>
+  <h1>Hitscan Shots and Damage</h1>
+
+  <h2>Weapons are data</h2>
+  <script type="text/plain" data-file="spireclash/js/combat.js">
+    G.WEAPONS = [
+      {
+        id: 'bow',
+        name: 'Water Bolt',
+        dmg: 34,
+        head: 2,
+        interval: 0.36,
+        mag: 10,
+        reload: 1.7,
+        pellets: 1,
+        spread: 0.004,
+        range: 250,
+        falloff: null,
+        // ...
+      },
+      {
+        id: 'scatter',
+        name: 'Fire Blast',
+        dmg: 11,
+        head: 1.5,
+        interval: 0.85,
+        mag: 5,
+        reload: 2.1,
+        pellets: 9,
+        spread: 0.075,
+        range: 40,
+        falloff: [6, 22, 0.3],
+        // ...
+      },
+    ];
+  </script>
+  <p>
+    The two weapons are written as <em>data</em>, not code. The Water Bolt
+    is precise and long-ranged: one pellet, tiny spread, double damage to
+    the head. The Fire Blast is a close-range shotgun: nine pellets in a
+    wide cone, each weak, and weaker still further away. The same firing
+    code handles both by reading these numbers, so balancing the game
+    means changing numbers, not rewriting functions.
+  </p>
+
+  <h2>Hitscan: an instant ray</h2>
+  <p>
+    The bolts you see flying are only effects. The hit itself is decided
+    the instant you fire, by casting an invisible straight line (a
+    <strong>ray</strong>) from the shooter and finding the first thing it
+    meets. Games call this <strong>hitscan</strong>.
+  </p>
+  <script type="text/plain">
+    // First thing hit along a ray: a piece, a duellist or the ground.
+    function raycast(origin, dir, maxDist, ignore) {
+      ray.set(origin, dir);
+      ray.far = maxDist;
+      const objs = G.builds.meshes.slice();
+      for (const c of chars) {
+        if (c !== ignore && c.alive) objs.push(c.hitBody, c.hitHead);
+      }
+      const hits = ray.intersectObjects(objs, false);
+      const best = hits[0];
+      const groundT = dir.y < -1e-6 ? -origin.y / dir.y : Infinity;
+      if (best && best.distance <= groundT) {
+        const ud = best.object.userData;
+        return {
+          point: best.point,
+          distance: best.distance,
+          piece: ud.piece || null,
+          char: ud.char || null,
+          head: !!ud.head,
+        };
+      }
+      // ... or the ground, if that came first ...
+    }
+  </script>
+  <ul>
+    <li><strong>Only some meshes are tested.</strong> Each knight has two invisible cylinders, <code>hitBody</code> and <code>hitHead</code>, and each piece has one hit mesh. Testing those few simple shapes is far faster than testing every polygon of the armour. Each mesh's <code>userData</code> says what it belongs to, so the result can say "you hit the rival, in the head".</li>
+    <li><strong>The shooter is <code>ignore</code>d</strong>, so you never shoot yourself.</li>
+    <li><strong>The ground needs no mesh.</strong> It's the flat plane <code>y = 0</code>. A ray that starts at height <code>origin.y</code> and drops <code>dir.y</code> per unit reaches 0 after <code>-origin.y / dir.y</code> units. That only works when the ray points downwards, hence the check on <code>dir.y</code>. Whichever is nearer, the mesh or the ground, wins.</li>
+  </ul>
+  <p>The same <code>raycast</code> answers "can I see the rival?" for the aim assist and the AI: cast towards them and see if the first hit is them.</p>
+
+  <h2>Spread and falloff</h2>
+  <script type="text/plain">
+    function spreadFor(ch, w, mul) {
+      const moving = Math.hypot(ch.vel.x, ch.vel.z) > 1;
+      const air = ch.onGround ? 0 : w.airSpread;
+      return (w.spread + (moving ? w.moveSpread : 0) + air) * mul;
+    }
+
+    function falloff(w, d) {
+      if (!w.falloff) return 1;
+      const [a, b, min] = w.falloff;
+      if (d <= a) return 1;
+      if (d >= b) return min;
+      return G.lerp(1, min, (d - a) / (b - a));
+    }
+  </script>
+  <p>
+    Each pellet's direction is nudged by a random angle up to the
+    weapon's spread. Running or jumping widens it, and aiming down sights
+    passes <code>mul = 0.45</code> to tighten it: standing still and
+    aiming is rewarded.
+  </p>
+  <p>
+    The Fire Blast's falloff <code>[6, 22, 0.3]</code> means: full damage
+    up to 6 units away, 30% damage from 22 units on, and in between a
+    straight line from one to the other. <code>(d - a) / (b - a)</code>
+    turns the distance into "how far between 6 and 22", from 0 to 1, and
+    <code>lerp</code> turns that into a multiplier. At 14 units, halfway,
+    that's 0.65.
+  </p>
+
+  <h2>Adding up the pellets</h2>
+  <script type="text/plain">
+    function fire(shooter, origin, dir, spread, fxFrom) {
+      const w = G.WEAPONS[shooter.weaponIdx];
+      const totals = new Map();
+      for (let n = 0; n < w.pellets; n++) {
+        perturb(dir, spread, tmpD);
+        const hit = raycast(origin, tmpD, w.range, shooter);
+        // ... the visual effect for this pellet ...
+        if (!hit) continue;
+        const mul = falloff(w, hit.distance);
+        if (hit.char) {
+          const e = totals.get(hit.char) || { dmg: 0, head: false };
+          e.dmg += w.dmg * mul * (hit.head ? w.head : 1);
+          e.head = e.head || hit.head;
+          totals.set(hit.char, e);
+        } else if (hit.piece) {
+          G.builds.damage(hit.piece, w.dmg * mul, shooter);
+        }
+      }
+      for (const [c, e] of totals) damageChar(c, e.dmg, shooter, e.head);
+    }
+  </script>
+  <p>
+    Nine Fire Blast pellets hitting the rival shouldn't show nine little
+    damage numbers. <code>totals</code> is a <code>Map</code> from knight
+    to running total, so the pellets are added up first and dealt as one
+    hit. Pieces take each pellet as it lands, which is how a shot at a wall
+    can break the wall and carry on into the next pellet's target.
+  </p>
+
+  <h2>Ward first, then health</h2>
+  <script type="text/plain">
+    function damageChar(target, amount, attacker, head) {
+      if (!target.alive || amount <= 0) return;
+      const total = Math.round(amount);
+      const absorbed = Math.min(target.ward, total);
+      target.ward -= absorbed;
+      target.hp -= total - absorbed;
+      target.lastHurt = G.now;
+      if (G.events && G.events.onDamage) {
+        G.events.onDamage(target, total, attacker, head, absorbed === total);
+      }
+      if (target.hp <= 0) {
+        target.hp = 0;
+        target.alive = false;
+        if (G.events && G.events.onDeath) G.events.onDeath(target, attacker);
+      }
+    }
+  </script>
+  <p>
+    The ward is a magic shield on top of health. <code>Math.min(target.ward,
+    total)</code> is the part the ward can soak up: all of it if the ward
+    is big enough, otherwise whatever ward is left. The rest goes to health.
+  </p>
+  <p>
+    Notice that <code>combat.js</code> never touches the HUD or the round
+    score. It just calls <code>G.events.onDamage</code> and
+    <code>G.events.onDeath</code> if they exist, and <code>game.js</code>
+    fills those in to show numbers, play sounds and end the round. The
+    combat code doesn't need to know any of that exists. These are
+    <strong>events</strong>, or <em>callbacks</em>: a tidy way to let one
+    file react to another without tangling them together.
+  </p>
+
+  <h2>Can I fire yet?</h2>
+  <script type="text/plain">
+    function tryFire(ch, origin, dir, fxFrom, opts) {
+      const o = opts || {};
+      if (!ch.alive || ch.fireCd > 0 || ch.reloadT > 0 || ch.drinkT > 0 || ch.switchT > 0) return false;
+      const idx = ch.weaponIdx;
+      const w = G.WEAPONS[idx];
+      if (ch.ammo[idx] <= 0) {
+        startReload(ch);
+        return false;
+      }
+      ch.ammo[idx] -= 1;
+      ch.fireCd = w.interval * (o.mul ?? 1);
+      fire(ch, origin, dir, spreadFor(ch, w, o.spreadMul ?? 1), fxFrom);
+      // ... sound, flash and recoil ...
+      if (ch.ammo[idx] === 0) startReload(ch);
+      return true;
+    }
+  </script>
+  <p>
+    One guard line checks every reason you can't fire: dead, between
+    shots, reloading, drinking a draught, or switching weapons. Each is a
+    countdown timer in seconds, ticked down by <code>combat.tick(ch,
+    dt)</code> every frame, just like Lesson 3's countdown. Holding the
+    mouse button calls <code>tryFire</code> every frame, but
+    <code>fireCd</code> makes the Water Bolt fire at most once every 0.36
+    seconds.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A Fire Blast pellet hits at 14 units. What share of its damage does it do?</p>
+      <ul>
+        <li>30%</li>
+        <li data-right>65%</li>
+        <li>100%</li>
+      </ul>
+      <p class="why">14 is halfway from 6 to 22, so the multiplier is halfway from 1 to 0.3: <code>lerp(1, 0.3, 0.5)</code> = 0.65.</p>
+    </div>
+    <div class="q">
+      <p>A knight with 20 ward and 100 health takes 34 damage. What's left?</p>
+      <ul>
+        <li>0 ward, 66 health</li>
+        <li data-right>0 ward, 86 health</li>
+        <li>20 ward, 66 health</li>
+      </ul>
+      <p class="why">The ward absorbs <code>Math.min(20, 34)</code> = 20, and the other 14 comes off health.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>combat.js</code> call <code>G.events.onDeath</code> instead of ending the round itself?</p>
+      <ul>
+        <li>It's faster.</li>
+        <li data-right>So combat doesn't need to know about rounds or the HUD; <code>game.js</code> decides what a death means.</li>
+        <li>Because modules can't end rounds.</li>
+      </ul>
+      <p class="why">Callbacks keep each file to its own job.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-aim-assist">
+  <header><p>Course 7 · Lesson 10</p></header>
+  <h1>Aim Assist</h1>
+
+  <p>
+    Tracking a moving knight with a laptop trackpad is hard. So
+    Spireclash has <strong>aim assist</strong>, and it's on by default.
+    The menu has a checkbox and a strength picker:
+  </p>
+  <script type="text/plain" data-lang="html" data-file="spireclash/index.html">
+    <label class="check"><input type="checkbox" id="aim-assist-on" checked> Aim assist (helps with trackpads)</label>
+    <label>Aim assist strength
+      <select id="aim-assist">
+        <option value="light">Light</option>
+        <option value="standard">Standard</option>
+        <option value="strong">Strong</option>
+      </select></label>
+  </script>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    const settings = { sens: 1, /* ... */ aimAssist: 'standard', aimAssistOn: true };
+    Object.assign(settings, G.savedSettings);
+    // The aim assist level in use, or 'off' when the box is unticked.
+    const assistLevel = () => (settings.aimAssistOn ? settings.aimAssist : 'off');
+  </script>
+  <p>
+    The <code>checked</code> attribute ticks the box before any code runs,
+    and the defaults in <code>settings</code> agree. Saved settings are
+    copied over the defaults with <code>Object.assign</code>, so a player
+    who turned it off keeps it off. Unticking the box keeps your chosen
+    strength; <code>assistLevel()</code> just reports <code>'off'</code>
+    while it's unticked.
+  </p>
+
+  <h2>The strengths, as data</h2>
+  <script type="text/plain" data-file="spireclash/js/aimassist.js">
+    const LEVELS = {
+      off: null,
+      light: { radius: 1.5, pull: 4, track: 0.45, friction: 0.8 },
+      standard: { radius: 2.3, pull: 7, track: 0.7, friction: 0.65 },
+      strong: { radius: 3.2, pull: 11, track: 0.9, friction: 0.5 },
+    };
+    const MIN_CONE = 0.035;
+    const MAX_CONE = 0.32;
+  </script>
+  <p>It does three separate things, each with its own number: <strong>pull</strong> the crosshair onto the rival, <strong>track</strong> them as they move, and add <strong>friction</strong> so your own look slows down while you're on target.</p>
+
+  <h2>Step 1: are you close enough?</h2>
+  <script type="text/plain">
+    const radius = lv.radius * (ctrl.ads ? ADS_BOOST : 1);
+    const cone = G.clamp(Math.atan(radius / Math.max(dist, 0.1)), MIN_CONE, MAX_CONE);
+  </script>
+  <p>
+    "Close" is measured as an angle, a <strong>cone</strong> around the
+    line from the camera to the rival. Picture a ring of radius 2.3 units
+    around the rival. Seen from <code>dist</code> away, that ring's edge
+    is <code>Math.atan(radius / dist)</code> radians off centre: a right
+    triangle with the ring's radius as the opposite side and the distance
+    as the adjacent side. Nearby rivals get a wide cone; far ones a narrow
+    one. Clamping stops it getting uselessly tiny far away or absurdly
+    wide up close. <code>Math.max(dist, 0.1)</code> avoids dividing by
+    zero.
+  </p>
+  <script type="text/plain">
+    const dYaw = G.angleDiff(ctrl.yaw, G.yawFromDir(dx, dz));
+    const dPitch = aimPitch - ctrl.pitch;
+    const off = Math.hypot(dYaw * Math.cos(aimPitch), dPitch);
+    const visible = off <= cone && (canSee(camera, player, foe, foe.pos.y + 1.0) || canSee(camera, player, foe, foe.pos.y + 1.65));
+    if (!visible) {
+      lose();
+      return;
+    }
+  </script>
+  <p>
+    <code>off</code> is how far your crosshair is from the rival: the yaw
+    gap and the pitch gap combined with Pythagoras (<code>Math.hypot</code>).
+    The yaw gap is shrunk by <code>cos(aimPitch)</code> because, looking
+    steeply up or down, a big change of yaw is only a small sideways
+    movement on screen. Then two raycasts, at chest and head height, make
+    sure no wall is in the way. Aim assist never helps you track someone
+    behind cover.
+  </p>
+
+  <h2>Step 2: how strongly?</h2>
+  <script type="text/plain">
+    // 1 dead on the rival, falling to 0 at the edge of the close zone.
+    const w = Math.sqrt(1 - off / cone);
+    weight = w;
+  </script>
+  <p>
+    <code>off / cone</code> is 0 dead on target and 1 at the cone's edge,
+    so <code>1 - off / cone</code> goes from 1 to 0. The square root keeps
+    the help strong for most of the cone and lets it fade only near the
+    edge. (At halfway, <code>Math.sqrt(0.5)</code> is about 0.71, not 0.5.)
+    Because it reaches 0 at the edge, the assist eases in and out
+    smoothly instead of grabbing the view the moment you cross a line.
+  </p>
+
+  <h2>Step 3: track and pull</h2>
+  <script type="text/plain">
+    // Tracking: follow the rival's movement across the view since last frame.
+    anglesTo(cam, foe.pos.x, foe.pos.y + 1.0, foe.pos.z, centre);
+    if (prev) {
+      const follow = lv.track * Math.min(1, w * 3);
+      const ty = G.clamp(G.angleDiff(prev.yaw, centre.yaw), -MAX_TRACK_STEP, MAX_TRACK_STEP);
+      const tp = G.clamp(centre.pitch - prev.pitch, -MAX_TRACK_STEP, MAX_TRACK_STEP);
+      ctrl.yaw += ty * follow;
+      ctrl.pitch += tp * follow;
+    }
+    // ...
+
+    // Pull: close the rest of the gap, firmer the nearer the crosshair is.
+    const k = 1 - Math.exp(-lv.pull * w * dt);
+    ctrl.yaw += dYaw * k;
+    ctrl.pitch = G.clamp(ctrl.pitch + dPitch * k, -1.45, 1.45);
+  </script>
+  <p>
+    <strong>Tracking</strong> remembers which way the rival was last frame
+    (<code>prev</code>) and turns your view by a share of how far they've
+    moved across it since: 70% on Standard. If they strafe left, your
+    crosshair drifts left with them. <code>MAX_TRACK_STEP</code> caps it,
+    so if the rival teleports (a respawn), your view isn't yanked across
+    the arena.
+  </p>
+  <p>
+    <strong>Pulling</strong> closes a share <code>k</code> of the
+    remaining gap each frame. Why <code>1 - Math.exp(-rate * dt)</code>
+    instead of simply <code>rate * dt</code>? Because it gives the same
+    result however the time is sliced. Closing 10% of the gap twice leaves
+    0.9 × 0.9 = 81% of it; the exponential makes two frames of 0.01 seconds
+    close exactly as much as one frame of 0.02. With plain
+    <code>rate * dt</code>, a fast monitor and a slow one would pull at
+    different strengths, and a long frame could even overshoot. This
+    formula can never be more than 1, so it never overshoots.
+  </p>
+
+  <h2>Step 4: friction</h2>
+  <script type="text/plain">
+    // Multiplier for look speed: below 1 while the crosshair is on the rival.
+    function friction(level) {
+      const lv = LEVELS[level];
+      if (!lv) return 1;
+      return 1 - (1 - lv.friction) * weight;
+    }
+  </script>
+  <p>
+    Remember the mouse handler from Lesson 5 multiplied its sensitivity by
+    <code>AIM.friction(assistLevel())</code>? On Standard, dead on target
+    (<code>weight</code> 1), that's 0.65: your look moves at 65% speed, so
+    small corrections are easier. Off target (<code>weight</code> 0) it's
+    1, full speed. With aim assist off it's always 1.
+  </p>
+
+  <h2>Where it's called</h2>
+  <script type="text/plain">
+    // Aim assist steers the view onto the rival before the shot is aimed.
+    AIM.update(dt, {
+      ctrl,
+      camera,
+      player,
+      foe,
+      level: assistLevel(),
+      active: canAct && locked && player.alive && ctrl.mode === 'weapon',
+    });
+    player.yaw = ctrl.yaw;
+    player.pitch = ctrl.pitch;
+  </script>
+  <p>
+    The assist changes <code>ctrl.yaw</code> and <code>ctrl.pitch</code>,
+    the same two numbers the mouse and touch controls change. It never
+    touches the input itself, so it works the same for a mouse, a
+    trackpad or a thumb on a phone. It only runs while you're holding a
+    weapon, so it never fights you when you're aiming a wall.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What happens to the cone as the rival gets further away?</p>
+      <ul>
+        <li>It gets wider.</li>
+        <li data-right>It gets narrower, down to <code>MIN_CONE</code>.</li>
+        <li>It stays the same.</li>
+      </ul>
+      <p class="why"><code>Math.atan(radius / dist)</code> shrinks as <code>dist</code> grows: the same ring looks smaller from further away.</p>
+    </div>
+    <div class="q">
+      <p>Why use <code>1 - Math.exp(-pull * w * dt)</code> rather than <code>pull * w * dt</code>?</p>
+      <ul>
+        <li>It's quicker to calculate.</li>
+        <li data-right>It pulls the same amount however the time is split into frames, and never goes past 1.</li>
+        <li>It makes the pull stronger far away.</li>
+      </ul>
+      <p class="why">Frame-rate independence: 60 and 144 frames a second feel the same, and a long frame can't overshoot.</p>
+    </div>
+    <div class="q">
+      <p>With Standard strength and the crosshair dead on the rival, what does <code>friction</code> return?</p>
+      <ul>
+        <li>1</li>
+        <li data-right>0.65</li>
+        <li>0.35</li>
+      </ul>
+      <p class="why"><code>1 - (1 - 0.65) * 1</code> = 0.65, so your look runs at 65% speed while on target.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-rival">
+  <header><p>Course 7 · Lesson 11</p></header>
+  <h1>A Rival That Thinks</h1>
+
+  <p>
+    The rival plays by exactly your rules. It's another
+    <code>Character</code> with the same <code>physics</code>, the same
+    <code>tryFire</code>, the same <code>canPlace</code> and the same
+    box-in cooldown and phase wand (<code>G.RULES</code> in
+    <code>core.js</code>). The only difference is that an
+    <code>AIBrain</code> decides its wish, its aim and its builds instead
+    of a keyboard.
+  </p>
+
+  <h2>Difficulty as data</h2>
+  <script type="text/plain" data-file="spireclash/js/ai-difficulties.js">
+    G.DIFFICULTIES = {
+      squire: {
+        title: 'Bramble the Squire',
+        reaction: 0.55,
+        aimErr: 0.06,
+        track: 3.5,
+        fireTol: 0.12,
+        buildInterval: 0.6,
+        predictive: false,
+        think: 0.15,
+        // ...
+      },
+      knight: { title: 'Ser Varrick', reaction: 0.3, aimErr: 0.028, track: 7, /* ... */ },
+      archmage: { title: 'Morvane the Archmage', reaction: 0.14, aimErr: 0.011, track: 16, /* ... */ },
+    };
+  </script>
+  <p>
+    Like the weapons, the three rivals are one brain with three sets of
+    numbers. The Squire reacts in over half a second, aims loosely and
+    builds slowly. The Archmage reacts in 0.14 seconds, tracks you nearly five
+    times as fast and knows building tricks (<code>nineties</code>,
+    <code>cone</code>) the Squire doesn't. Making a rival harder is a
+    matter of turning dials.
+  </p>
+
+  <h2>Thinking isn't every frame</h2>
+  <script type="text/plain" data-file="spireclash/js/ai.js">
+    update(dt) {
+      const ch = this.ch;
+      const t = this.target;
+      if (!ch.alive || !t.alive) {
+        this.wish.set(0, 0, 0);
+        return;
+      }
+      this.recordHistory();
+      this.modeT += dt;
+      this.thinkT -= dt;
+      if (this.thinkT <= 0) {
+        this.thinkT = this.p.think;
+        this.think();
+      }
+      this.processQueue(dt);
+      this.aimAndShoot(dt);
+    }
+  </script>
+  <p>
+    Aiming happens every frame, so it's smooth. But the big decisions
+    (should I climb? box in? heal?) happen in <code>think()</code>, which
+    only runs every <code>p.think</code> seconds: 0.15 for the Squire,
+    0.05 for the Archmage. That's cheaper, and it's more human: people
+    don't change plans sixty times a second. <code>think()</code> is
+    another state machine, with modes like <code>'engage'</code>,
+    <code>'rampRush'</code>, <code>'nineties'</code>, <code>'box'</code>
+    and <code>'heal'</code>, and a <code>switch</code> that runs the plan
+    for the current mode.
+  </p>
+
+  <h2>Reaction time: seeing the past</h2>
+  <p>
+    A computer always knows exactly where you are. A fair rival
+    shouldn't. So the brain keeps a short history of where you've been,
+    and aims at where you were one reaction time ago:
+  </p>
+  <script type="text/plain">
+    recordHistory() {
+      const t = this.target;
+      const h = this.history;
+      h.push({ t: G.now, x: t.pos.x, y: t.pos.y, z: t.pos.z, vx: t.vel.x, vy: t.vel.y, vz: t.vel.z, grounded: t.onGround });
+      while (h.length > 1 && h[1].t <= G.now - this.p.reaction) h.shift();
+    }
+
+    // Where the AI believes its target is: a snapshot one reaction time old,
+    // extrapolated forward if the profile is predictive.
+    perceived() {
+      const s = this.history[0];
+      if (!s) return SEEN.copy(this.target.pos);
+      const lead = this.p.predictive ? Math.min(0.3, G.now - s.t) * 0.9 : 0;
+      return SEEN.set(s.x + s.vx * lead, s.y + (s.grounded ? 0 : s.vy * lead * 0.5), s.z + s.vz * lead);
+    }
+  </script>
+  <ul>
+    <li>Every frame, a snapshot goes on the end of <code>history</code>.</li>
+    <li>The <code>while</code> loop drops snapshots off the front while the <em>second</em> one is already old enough. That leaves <code>history[0]</code> as the newest snapshot that's at least <code>reaction</code> seconds old: what the rival "sees".</li>
+    <li>Dodge left and the Squire keeps shooting where you were for over half a second. That's your chance.</li>
+    <li>The Archmage is <code>predictive</code>: it takes that old snapshot and adds your velocity times the delay, guessing where you've got to since. Run in a straight line and it'll find you; change direction and it guesses wrong.</li>
+  </ul>
+
+  <h2>Aiming like a person</h2>
+  <script type="text/plain">
+    const desiredYaw = G.yawFromDir(D.x, D.z);
+    const desiredPitch = Math.atan2(D.y, Math.hypot(D.x, D.z));
+    const k = 1 - Math.exp(-p.track * dt);
+    this.aimYaw += G.angleDiff(this.aimYaw, desiredYaw) * k;
+    this.aimPitch += (desiredPitch - this.aimPitch) * k;
+    // ...
+    const err = Math.abs(G.angleDiff(this.aimYaw, desiredYaw)) + Math.abs(desiredPitch - this.aimPitch);
+    if (err > p.fireTol) return;
+
+    // Smooth wandering aim error, worse against a target on the move.
+    const n = G.now + this.seed;
+    const ny = ((Math.sin(n * 1.7) + 0.6 * Math.sin(n * 4.3 + 1.1)) / 1.6) * amp;
+    const np = ((Math.sin(n * 1.3 + 2) + 0.6 * Math.sin(n * 3.1 + 0.4)) / 1.6) * amp;
+    const dir = G.dirFromYawPitch(this.aimYaw + ny, this.aimPitch + np, D);
+  </script>
+  <ul>
+    <li><strong>Turning</strong> uses the very same frame-rate-safe easing as the aim assist's pull: close a share <code>1 - exp(-track * dt)</code> of the gap. <code>track</code> is how fast it swings round.</li>
+    <li><strong><code>fireTol</code></strong>: it holds fire until its aim is within that many radians of where it wants to be, like a person waiting to line up the shot.</li>
+    <li><strong>The wobble</strong> isn't <code>Math.random()</code>, which would jitter wildly from frame to frame. It's two sine waves of different speeds added together, which drifts smoothly and never quite repeats, like a slightly unsteady hand. <code>this.seed</code> starts each rival at a different point in the wave. <code>amp</code> comes from <code>aimErr</code>, and grows when you're moving fast.</li>
+  </ul>
+
+  <h2>Building on a timer</h2>
+  <script type="text/plain">
+    processQueue(dt) {
+      this.buildCd -= dt;
+      while (this.queue.length && this.buildCd <= 0) {
+        const s = this.queue.shift();
+        if (G.builds.get(s) || !G.builds.canPlace(s)) continue;
+        G.builds.place(s, this.owner);
+        this.buildCd += this.p.buildInterval * G.rand(0.85, 1.15);
+      }
+      if (this.buildCd < 0) this.buildCd = 0;
+    }
+  </script>
+  <p>
+    When <code>think()</code> decides to climb, it doesn't build the whole
+    staircase at once. It pushes specs onto a <code>queue</code>, and
+    <code>processQueue</code> places them one at a time, every
+    <code>buildInterval</code> seconds (with a little randomness so it
+    doesn't tick like a metronome). This queue is first in, first out:
+    <code>shift()</code> takes the oldest. Specs that have become
+    impossible (already built, or no longer supported) are skipped.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>With <code>reaction: 0.3</code>, which snapshot does <code>history[0]</code> hold?</p>
+      <ul>
+        <li>The newest one.</li>
+        <li data-right>The newest snapshot that is at least 0.3 seconds old.</li>
+        <li>The very first one of the round.</li>
+      </ul>
+      <p class="why">Older snapshots are dropped only while the next one is old enough to take their place.</p>
+    </div>
+    <div class="q">
+      <p>Why is the aim wobble made from sine waves rather than <code>Math.random()</code>?</p>
+      <ul>
+        <li data-right>Sines drift smoothly from frame to frame, like an unsteady hand; random numbers would jitter.</li>
+        <li><code>Math.random()</code> is too slow.</li>
+        <li>Sines make the rival more accurate.</li>
+      </ul>
+      <p class="why">Adding two sines of different speeds gives a smooth wander that doesn't obviously repeat.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>think()</code> run every <code>p.think</code> seconds instead of every frame?</p>
+      <ul>
+        <li>It can't run faster than that.</li>
+        <li data-right>Big decisions don't need to change sixty times a second; it's cheaper and feels more human.</li>
+        <li>So that aiming is slower.</li>
+      </ul>
+      <p class="why">Aiming still updates every frame; only planning is spaced out.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="spire-rounds">
+  <header><p>Course 7 · Lesson 12</p></header>
+  <h1>Rounds, Questions and the Leaderboard</h1>
+
+  <h2>Ending a round</h2>
+  <p>
+    A duel is first to 3 round wins (<code>WIN_SCORE</code>), so at most
+    five rounds. A round ends when a knight falls (<code>combat.js</code>
+    calls <code>G.events.onDeath</code>, which calls
+    <code>endRound</code>), or when the 60-second clock runs out:
+  </p>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    // Time ran out with both standing: most damage dealt this round wins.
+    // A dead heat falls back to whoever has more health and ward left.
+    function timeUp() {
+      const you = Math.round(roundDealt.you);
+      const foeDealt = Math.round(roundDealt.foe);
+      const reason = `Time! Damage ${you} to ${foeDealt}`;
+      if (you !== foeDealt) {
+        endRound(you > foeDealt ? 'you' : 'foe', reason);
+        return;
+      }
+      const youLeft = player.hp + player.ward;
+      const foeLeft = foe.hp + foe.ward;
+      if (youLeft === foeLeft) {
+        endRound(null, reason);
+        return;
+      }
+      endRound(youLeft > foeLeft ? 'you' : 'foe', `${reason}, decided on health`);
+    }
+  </script>
+  <p>
+    A <strong>tie-breaker</strong> chain with early returns: compare damage
+    dealt; if that's level, compare what's left; if <em>that's</em> level,
+    it's a draw (<code>null</code>). Each test only runs when the one
+    before it couldn't decide.
+  </p>
+  <script type="text/plain">
+    function formatClock(secs) {
+      const t = Math.max(0, Math.ceil(secs));
+      return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+    }
+  </script>
+  <p>
+    The round clock: 65 seconds is <code>Math.floor(65 / 60)</code> = 1
+    minute and <code>65 % 60</code> = 5 seconds. <code>padStart(2, '0')</code>
+    adds a leading zero, so it reads <code>1:05</code>, not
+    <code>1:5</code>.
+  </p>
+
+  <h2>The question gate</h2>
+  <script type="text/plain">
+    // Math questions between rounds (from quiz.js), then the next round or
+    // the results. Spectators skip them.
+    function afterRound() {
+      if (spectating || !G.askRoundQuestions) {
+        nextRound();
+        return;
+      }
+      state = 'question';
+      for (const k of Object.keys(keys)) keys[k] = false;
+      mouseL = false;
+      mouseR = false;
+      if (document.pointerLockElement) document.exitPointerLock();
+      G.askRoundQuestions(ROUND_TIME - roundT).then(() => {
+        if (state !== 'question') return;
+        nextRound();
+        if (state === 'countdown') requestLock();
+      });
+    }
+  </script>
+  <ol>
+    <li><strong>Let go of everything.</strong> Clear the held keys and buttons, and release the pointer lock so you have a mouse pointer to click the answer box with. The <code>'question'</code> state also makes the keydown handler ignore keys, so typing an answer doesn't swing your knight around.</li>
+    <li><strong>Ask.</strong> <code>ROUND_TIME - roundT</code> is how long the round lasted.</li>
+    <li><strong>Carry on</strong> once the promise resolves, but only if the game is still waiting for it. If you left for the menu meanwhile, <code>state</code> has changed, and starting a round would be a nasty surprise.</li>
+    <li><strong>Lock the mouse again</strong> for the countdown. That's allowed here because answering was a click.</li>
+  </ol>
+
+  <h2>quiz.js: the bridge from a module</h2>
+  <script type="text/plain" data-file="spireclash/js/quiz.js">
+    import { gameQuestions } from '../../js/game-shell.js';
+    import { recordSpireclashWin } from '../../js/leaderboard.js';
+
+    // A round fought for less than this many seconds needs 1 right answer.
+    // Anything longer needs 2.
+    const quickRound = 30;
+
+    const questions = gameQuestions('spireclash');
+
+    window.G.onMatchWon = recordSpireclashWin;
+
+    window.G.askRoundQuestions = async function (seconds) {
+      try {
+        await questions.loaded;
+      } catch (error) {
+        return;
+      }
+      const needed = seconds < quickRound ? 1 : 2;
+      await questions.askEach(needed, (i) => {
+        return needed === 1 ? 'Round over! Solve it to carry on' : `Question ${i} of ${needed}`;
+      });
+    };
+  </script>
+  <ul>
+    <li>This is the one module in the game. It imports the arcade's shared question code (the same <code>gameQuestions</code> tic-tac-toe uses), then hands two functions to the classic scripts by hanging them on <code>window.G</code>.</li>
+    <li>A quick round earns one question; a long one, two. <code>askEach</code> asks them one after another, and each must be answered correctly before the next appears.</li>
+    <li>If the question bank fails to load, <code>askRoundQuestions</code> just returns, and the duel carries on rather than getting stuck forever.</li>
+    <li>Your free arcade simply leaves <code>quiz.js</code> out. Then <code>G.askRoundQuestions</code> is <code>undefined</code>, and the <code>!G.askRoundQuestions</code> check in <code>afterRound</code> goes straight to the next round. Same <code>game.js</code>, no maths.</li>
+  </ul>
+
+  <h2>The leaderboard</h2>
+  <script type="text/plain" data-file="spireclash/js/game.js">
+    function endMatch() {
+      state = 'matchEnd';
+      if (document.pointerLockElement) document.exitPointerLock();
+      $('hud').classList.add('hidden');
+      const won = score.you > score.foe;
+      // A match won against a bot counts on the arcade leaderboard (quiz.js).
+      if (won && !spectating && G.onMatchWon) G.onMatchWon(settings.difficulty);
+      // ... the results card ...
+    }
+  </script>
+  <script type="text/plain" data-file="js/leaderboard.js">
+    export function recordSpireclashWin(bot) {
+      if (!spireclashBots.includes(bot)) return queue;
+      return update(() => {
+        return { spireclash: { [bot]: increment(1) } };
+      });
+    }
+  </script>
+  <p>
+    Each win against a rival adds one to your count for that rival on the
+    arcade leaderboard. <code>includes</code> checks the name is one of
+    the three real bots before anything is written. <code>{ [bot]: ... }</code>
+    is a <strong>computed key</strong>: the brackets use the
+    <em>value</em> of <code>bot</code> as the key, so a Knight win writes
+    <code>{ spireclash: { knight: increment(1) } }</code>.
+    <code>increment(1)</code> is a Firestore instruction meaning "add one
+    to whatever is stored", which is safe even if two wins are saved at
+    nearly the same moment.
+  </p>
+
+  <h2>Remembering your settings</h2>
+  <script type="text/plain">
+    function saveSettings() {
+      try {
+        localStorage.setItem('spireclash-settings', JSON.stringify(settings));
+      } catch (e) {
+        // Ignore: settings simply will not persist.
+      }
+    }
+  </script>
+  <p>
+    Sensitivity, volume, rival, key bindings and aim assist are saved as
+    one JSON string in <code>localStorage</code> whenever they change, and
+    read back by <code>core.js</code> at start-up. The
+    <code>try</code>/<code>catch</code> matters: in some private windows
+    storage throws an error, and a game that crashed over a volume setting
+    would be a poor game.
+  </p>
+
+  <div class="tip">
+    <strong>The whole duel, in one sentence:</strong> a page of overlays
+    over a three.js canvas, a loop that steps every system by
+    <code>dt</code>, angles turned into directions, boxes that collide one
+    axis at a time, a grid of pieces held up by a flood fill, rays that
+    decide every hit, an aim assist and a rival built from the same
+    smoothing maths, and a small module that asks the maths questions in
+    between.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Time runs out. You dealt 120 damage, the rival dealt 120, and you have more health and ward left. Who wins?</p>
+      <ul>
+        <li>Nobody: it's a draw.</li>
+        <li data-right>You, "decided on health".</li>
+        <li>The rival, because it's the defender.</li>
+      </ul>
+      <p class="why">Damage is level, so the next tie-breaker (health plus ward left) decides it.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>afterRound</code> release the pointer lock before asking questions?</p>
+      <ul>
+        <li>To pause the music.</li>
+        <li data-right>So you have a visible mouse pointer to use the answer box.</li>
+        <li>Pointer lock stops promises resolving.</li>
+      </ul>
+      <p class="why">With the pointer locked, it's hidden and stuck in the game.</p>
+    </div>
+    <div class="q">
+      <p>How does the free arcade skip the questions without changing <code>game.js</code>?</p>
+      <ul>
+        <li>It sets <code>quickRound</code> to 0.</li>
+        <li data-right>It leaves out <code>quiz.js</code>, so <code>G.askRoundQuestions</code> doesn't exist and <code>afterRound</code> goes straight on.</li>
+        <li>It answers the questions automatically.</li>
+      </ul>
+      <p class="why"><code>game.js</code> checks whether the function exists before using it.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>

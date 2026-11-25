@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Tic-Tac-Toe | Arcade Tutorial</title>
+</head>
+<body data-course="tictactoe">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/tictactoe.html">Play tic-tac-toe</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 2: TIC-TAC-TOE</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-page">
+  <header><p>Course 2 · Lesson 1</p></header>
+  <h1>The Game Page</h1>
+
+  <p>
+    Have a game first: <a href="../arcade/tictactoe.html">play tic-tac-toe</a>
+    on your site's free arcade. Then look at what the page is made of.
+    <code>tictactoe.html</code> has the same <code>&lt;head&gt;</code> as the
+    other signed-in pages (fonts, <code>retro.css</code>, and the
+    sessionStorage guard). The body is short:
+  </p>
+  <script type="text/plain" data-lang="html" data-file="tictactoe.html">
+    <body class="no-scanlines">
+    <header class="topbar">
+      <a class="brand" href="arcade.html">&lt; ARCADE</a>
+      <nav>
+        <span class="points-badge" data-points hidden></span>
+        <button class="btn small ghost" type="button" data-mute>Sound: on</button>
+        <button class="btn small ghost" type="button" data-signout>Sign out</button>
+      </nav>
+    </header>
+    <main class="screen">
+      <h1 class="heading">TIC-TAC-TOE</h1>
+      <div class="scores">
+        <div class="score you">YOU<strong id="score-you">0</strong></div>
+        <div class="score draw">DRAW<strong id="score-draw">0</strong></div>
+        <div class="score cpu">CPU<strong id="score-cpu">0</strong></div>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite">Loading...</p>
+      <div id="board" class="board" role="group" aria-label="Tic-tac-toe board"></div>
+      <button id="again" class="btn" type="button" hidden>Play again</button>
+      <p class="fine">You are X. ...</p>
+    </main>
+    <script type="module" src="js/tictactoe.js"><\/script>
+    </body>
+  </script>
+
+  <h2>Things to notice</h2>
+  <ul>
+    <li><strong><code>&amp;lt; ARCADE</code></strong>: a bare <code>&lt;</code> would start a tag, so the "less than" arrow is written as the entity <code>&amp;lt;</code>.</li>
+    <li><strong>The top bar is the same</strong> as the picker's, just with fewer buttons. <code>initPage()</code> from <code>ui.js</code> wires up whichever ones are there.</li>
+    <li><strong>The board is empty.</strong> Nine squares written by hand would work, but JavaScript creates them, so the HTML and the code can't disagree about how many there are.</li>
+    <li><strong><code>#status</code> starts as "Loading..."</strong>. If the script is slow or fails, the player sees something honest rather than an empty board that ignores clicks.</li>
+    <li><strong><code>aria-live="polite"</code></strong> makes screen readers read out every new status ("CPU is thinking...", "You win!") once they finish what they're saying.</li>
+    <li><strong><code>role="group"</code> with an <code>aria-label</code></strong> tells assistive technology that the nine buttons belong together as "Tic-tac-toe board".</li>
+  </ul>
+
+  <h2>The scores</h2>
+  <script type="text/plain" data-lang="css" data-file="css/retro.css">
+    .score {
+      min-width: 96px;
+      padding: 8px 12px;
+      border: 3px solid currentColor;
+      background: rgba(0, 0, 0, 0.4);
+      text-align: center;
+      font-size: 10px;
+    }
+
+    .score strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .score.you { color: var(--pink); }
+    .score.draw { color: var(--muted); }
+    .score.cpu { color: var(--cyan); }
+  </script>
+  <p>
+    <code>currentColor</code> means "whatever this element's text colour
+    is". The border rule is written once, and each box's border matches its
+    text automatically. <code>display: block</code> puts the number on its
+    own line under the label.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why is the back link written <code>&amp;lt; ARCADE</code>?</p>
+      <ul>
+        <li>So it shows in the pixel font.</li>
+        <li data-right>A bare <code>&lt;</code> could be read as the start of a tag.</li>
+        <li>Links can't contain symbols.</li>
+      </ul>
+      <p class="why"><code>&amp;lt;</code> is the HTML entity for "less than". The browser shows <code>&lt;</code> but never mistakes it for markup.</p>
+    </div>
+    <div class="q">
+      <p>Why does the HTML leave <code>#board</code> empty?</p>
+      <ul>
+        <li>Empty divs load faster.</li>
+        <li data-right>The script creates the nine squares, so the HTML and the code can't disagree about them.</li>
+        <li>Buttons can't be written in HTML.</li>
+      </ul>
+      <p class="why">The squares also need click handlers that know their own number, which is easiest to set up while creating them.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>border: 3px solid currentColor</code> do on <code>.score.cpu</code>?</p>
+      <ul>
+        <li>Makes the border black.</li>
+        <li>Makes the border match the page's text colour.</li>
+        <li data-right>Makes the border cyan, the same as that box's own text.</li>
+      </ul>
+      <p class="why"><code>.score.cpu</code> sets <code>color: var(--cyan)</code>, and <code>currentColor</code> picks it up.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-css">
+  <header><p>Course 2 · Lesson 2</p></header>
+  <h1>Styling the Board</h1>
+
+  <script type="text/plain" data-lang="css" data-file="css/retro.css">
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: min(100%, 360px);
+      aspect-ratio: 1;
+      padding: 8px;
+      background: var(--cyan);
+      box-shadow: 6px 6px 0 #000;
+    }
+  </script>
+
+  <h2>Grid lines that aren't lines</h2>
+  <p>
+    <code>repeat(3, 1fr)</code> makes three equal columns. The nine buttons
+    flow into them, three per row, with no row rule needed. Here's the
+    trick: the board's <em>background</em> is cyan, the squares are dark,
+    and there's an 8px <code>gap</code> between them. The cyan showing
+    through the gaps and padding <em>is</em> the grid. No borders, no
+    lines to draw.
+  </p>
+  <p>
+    <code>aspect-ratio: 1</code> keeps the board square at any width, and
+    <code>width: min(100%, 360px)</code> lets it shrink on small phones.
+  </p>
+
+  <h2>The squares</h2>
+  <script type="text/plain" data-lang="css">
+    .cell {
+      display: grid;
+      place-items: center;
+      border: none;
+      background: var(--bg-2);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: clamp(30px, 12vw, 60px);
+      cursor: pointer;
+    }
+
+    .cell:disabled {
+      cursor: default;
+    }
+  </script>
+  <p>
+    <code>display: grid; place-items: center</code> is the shortest way to
+    centre one thing (the X or O) both ways inside a box. Buttons come with
+    their own border and font, so both are reset.
+  </p>
+
+  <h2>A ghost X on hover</h2>
+  <script type="text/plain" data-lang="css">
+    .cell:empty:enabled:hover::after {
+      content: "X";
+      color: var(--pink);
+      opacity: 0.3;
+    }
+  </script>
+  <p>Read the selector one piece at a time. It matches a <code>.cell</code> that is:</p>
+  <ul>
+    <li><code>:empty</code>: has no text yet (nobody has played there),</li>
+    <li><code>:enabled</code>: isn't disabled (it's your turn and the game isn't over),</li>
+    <li><code>:hover</code>: under the mouse,</li>
+  </ul>
+  <p>
+    and then <code>::after</code> adds a faint pink "X" inside it. You see
+    where your move will go before you click, and there's no JavaScript
+    involved at all.
+  </p>
+
+  <h2>Marks and the winning line</h2>
+  <script type="text/plain" data-lang="css">
+    .cell.x { color: var(--pink); text-shadow: 4px 4px 0 #000; }
+    .cell.o { color: var(--cyan); text-shadow: 4px 4px 0 #000; }
+
+    .cell.win {
+      background: var(--yellow);
+      animation: flash 0.5s steps(1) 4;
+    }
+
+    @keyframes flash {
+      50% {
+        background: var(--bg-2);
+      }
+    }
+  </script>
+  <p>
+    JavaScript adds <code>x</code>, <code>o</code> and <code>win</code>
+    classes; CSS decides what they look like. The winning squares turn
+    yellow and flash: <code>4</code> is the number of times the animation
+    runs, so it flashes for 2 seconds and then stays yellow.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Where do the cyan lines between the squares come from?</p>
+      <ul>
+        <li>Each <code>.cell</code> has a cyan border.</li>
+        <li data-right>The board's cyan background shows through the 8px gaps.</li>
+        <li>An SVG drawn behind the board.</li>
+      </ul>
+      <p class="why">The squares are dark and the board is cyan, so the gaps look like lines.</p>
+    </div>
+    <div class="q">
+      <p>When does the faint X appear in a square?</p>
+      <ul>
+        <li>Whenever the mouse is over any square.</li>
+        <li data-right>When the mouse is over an empty square that isn't disabled.</li>
+        <li>After the CPU has moved.</li>
+      </ul>
+      <p class="why">All three conditions (<code>:empty</code>, <code>:enabled</code>, <code>:hover</code>) must be true. Taken squares and a finished board never show it.</p>
+    </div>
+    <div class="q">
+      <p>How long does the winning line flash for with <code>animation: flash 0.5s steps(1) 4</code>?</p>
+      <ul>
+        <li>0.5 seconds</li>
+        <li>Forever</li>
+        <li data-right>2 seconds</li>
+      </ul>
+      <p class="why">Each run is 0.5s and it runs 4 times. Afterwards the normal yellow background stays.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-state">
+  <header><p>Course 2 · Lesson 3</p></header>
+  <h1>The Game's State</h1>
+
+  <p>
+    A game's <strong>state</strong> is everything you'd need to write down
+    to pause it and carry on later. For tic-tac-toe that's not much, and
+    it's all at the top of <code>js/tictactoe.js</code>:
+  </p>
+  <script type="text/plain" data-file="js/tictactoe.js">
+    const human = "X";
+    const cpu = "O";
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
+    ];
+
+    const score = { cpu: 0, draw: 0, you: 0 };
+    let board = [];
+    let busy = false;
+    let over = false;
+    let winLine = [];
+  </script>
+
+  <h2>The board is an array of 9</h2>
+  <p>
+    Each square is numbered 0 to 8, left to right and top to bottom. An
+    empty square holds <code>null</code>; a taken one holds
+    <code>"X"</code> or <code>"O"</code>. A new round starts with:
+  </p>
+  <script type="text/plain">
+    board = Array(9).fill(null);
+  </script>
+  <p>Going between a square's number and its row and column is simple arithmetic:</p>
+  <script type="text/plain">
+    // From a square's number to its row and column (each 0, 1 or 2)
+    const row = Math.floor(i / 3);
+    const col = i % 3;
+
+    // And back again
+    const index = row * 3 + col;
+  </script>
+  <p>
+    So square 7 is row 2, column 1 (counting from 0): the bottom middle.
+    <code>%</code> is the remainder after dividing.
+  </p>
+
+  <h2>Every way to win, written down</h2>
+  <p>
+    There are only eight winning lines: three rows, three columns and two
+    diagonals. Instead of clever code to work them out, they're simply
+    listed. Short, obvious data often beats a clever formula.
+  </p>
+
+  <h2>The rest</h2>
+  <ul>
+    <li><code>score</code> keeps the totals. Its keys (<code>you</code>, <code>draw</code>, <code>cpu</code>) match the ids <code>score-you</code>, <code>score-draw</code> and <code>score-cpu</code>, which makes drawing them easy later.</li>
+    <li><code>busy</code> is true while a move is being played out (the CPU "thinking"). Clicks are ignored then.</li>
+    <li><code>over</code> is true once someone has won or the board is full.</li>
+    <li><code>winLine</code> holds the three winning squares, so they can flash.</li>
+  </ul>
+  <p>
+    <code>human</code>, <code>cpu</code> and <code>lines</code> never
+    change, so they're <code>const</code>. The others are reassigned during
+    play, so they're <code>let</code>. (<code>score</code> is a
+    <code>const</code> too: its numbers change, but it's always the same
+    object.)
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Which index is the square in the middle row, right-hand column?</p>
+      <ul>
+        <li>3</li>
+        <li data-right>5</li>
+        <li>7</li>
+      </ul>
+      <p class="why">Row 1, column 2 (counting from 0): 1 × 3 + 2 = 5.</p>
+    </div>
+    <div class="q">
+      <p>Why can <code>score</code> be a <code>const</code> when its numbers go up?</p>
+      <ul>
+        <li data-right><code>const</code> stops the variable pointing at a different object, not changes inside the object.</li>
+        <li>It can't. That's a bug.</li>
+        <li>Numbers inside objects are always writable.</li>
+      </ul>
+      <p class="why"><code>score.you += 1</code> changes the object. <code>score = {}</code> would be an error.</p>
+    </div>
+    <div class="q">
+      <p>What does an empty square hold in <code>board</code>?</p>
+      <ul>
+        <li>An empty string <code>""</code></li>
+        <li><code>0</code></li>
+        <li data-right><code>null</code></li>
+      </ul>
+      <p class="why"><code>Array(9).fill(null)</code>. <code>null</code> is "falsy", so <code>if (board[i])</code> means "is this square taken?".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-build">
+  <header><p>Course 2 · Lesson 4</p></header>
+  <h1>Building the Board with JavaScript</h1>
+
+  <script type="text/plain" data-file="js/tictactoe.js">
+    const boardEl = document.getElementById("board");
+
+    function buildBoard() {
+      for (let i = 0; i < 9; i += 1) {
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "cell";
+        cell.addEventListener("click", () => onCellClick(i));
+        boardEl.append(cell);
+      }
+    }
+  </script>
+
+  <h2>Creating elements</h2>
+  <p>
+    <code>document.createElement("button")</code> makes a new button that
+    isn't on the page yet. The code sets it up, then
+    <code>boardEl.append(cell)</code> puts it inside the board. Nine times
+    round the loop gives nine squares, and the CSS grid lays them out.
+  </p>
+
+  <h2>Why buttons?</h2>
+  <p>
+    The squares could have been <code>&lt;div&gt;</code>s with click
+    handlers, but buttons come with a lot for free: you can reach them with
+    Tab and press them with Enter or Space, screen readers announce them as
+    buttons, and <code>disabled</code> stops them working with one line.
+    <code>type = "button"</code> is just good habit, so they would never
+    try to submit a form.
+  </p>
+
+  <h2>Each square remembers its own number</h2>
+  <p>
+    <code>() =&gt; onCellClick(i)</code> is a small function that runs
+    later, when the square is clicked. By then the loop has long finished.
+    So which <code>i</code> does it use?
+  </p>
+  <p>
+    Because the loop uses <code>let</code>, every pass round the loop gets
+    its <strong>own</strong> <code>i</code>. The function for square 4
+    "closes over" the <code>i</code> that was 4, and keeps it. A function
+    that remembers variables from where it was made is called a
+    <strong>closure</strong>.
+  </p>
+  <div class="tip">
+    <strong>The classic bug.</strong> With <code>for (var i = 0; ...)</code>
+    there's only <em>one</em> <code>i</code> shared by every pass. By the
+    time anyone clicks, it has reached 9, so every square would call
+    <code>onCellClick(9)</code>. <code>let</code> fixes this, which is one
+    reason modern code never uses <code>var</code>.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>When you click the fifth square, what number does <code>onCellClick</code> receive?</p>
+      <ul>
+        <li>9, because the loop has finished.</li>
+        <li data-right>4, because that pass of the loop had its own <code>i</code>.</li>
+        <li>5</li>
+      </ul>
+      <p class="why">Squares are numbered from 0, so the fifth is 4. <code>let</code> gives each pass its own copy.</p>
+    </div>
+    <div class="q">
+      <p>When is a button made by <code>createElement</code> visible on the page?</p>
+      <ul>
+        <li>Straight away.</li>
+        <li data-right>Once it's added with something like <code>append</code>.</li>
+        <li>When its <code>className</code> is set.</li>
+      </ul>
+      <p class="why">A created element lives only in memory until it's attached to the document.</p>
+    </div>
+    <div class="q">
+      <p>Which of these do <code>&lt;button&gt;</code>s give you that <code>&lt;div&gt;</code>s don't?</p>
+      <ul>
+        <li>A click event.</li>
+        <li data-right>Keyboard focus and Enter/Space presses, plus a working <code>disabled</code>.</li>
+        <li>A grid layout.</li>
+      </ul>
+      <p class="why">Any element can have a click listener, but only real controls are reachable and usable from the keyboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-render">
+  <header><p>Course 2 · Lesson 5</p></header>
+  <h1>Drawing State to the Screen</h1>
+
+  <p>
+    This is the most important idea in the game. The <code>board</code>
+    array is the truth. The buttons on screen are just a picture of it. One
+    function, <code>render()</code>, repaints the whole picture from the
+    state, and it's called after every change.
+  </p>
+  <script type="text/plain" data-file="js/tictactoe.js">
+    function render() {
+      [...boardEl.children].forEach((cell, i) => {
+        const mark = board[i];
+        cell.textContent = mark ?? "";
+        cell.className = "cell";
+        if (mark) cell.classList.add(mark.toLowerCase());
+        if (winLine.includes(i)) cell.classList.add("win");
+        cell.disabled = Boolean(mark) || busy || over;
+        const row = Math.floor(i / 3) + 1;
+        const col = (i % 3) + 1;
+        cell.setAttribute(
+          "aria-label",
+          `Row ${row}, column ${col}: ${mark ?? "empty"}`,
+        );
+      });
+      Object.entries(scoreEls).forEach(([key, el]) => {
+        el.textContent = score[key];
+      });
+    }
+  </script>
+
+  <h2>Line by line</h2>
+  <ul>
+    <li><code>boardEl.children</code> is an <em>HTMLCollection</em>, which looks like an array but has no <code>forEach</code>. <code>[...boardEl.children]</code> <strong>spreads</strong> it into a real array.</li>
+    <li><code>mark ?? ""</code>: the <strong>nullish coalescing</strong> operator. If <code>mark</code> is <code>null</code> (or <code>undefined</code>), use <code>""</code> instead. An empty square shows nothing.</li>
+    <li><code>cell.className = "cell"</code> wipes any old classes first. Then only the ones that are true <em>now</em> are added. Without the reset, a <code>win</code> class from the last round would stay.</li>
+    <li><code>mark.toLowerCase()</code> turns <code>"X"</code> into the class <code>x</code>.</li>
+    <li>A square is disabled if it's taken, if the CPU is busy, or if the round is over. <code>Boolean(mark)</code> turns <code>"X"</code> into <code>true</code> and <code>null</code> into <code>false</code>.</li>
+    <li>The <code>aria-label</code> gives screen-reader users the same picture: "Row 2, column 3: O". Rows and columns are counted from 1 here because that's for people.</li>
+  </ul>
+
+  <h2>The scores</h2>
+  <script type="text/plain">
+    const scoreEls = {
+      cpu: document.getElementById("score-cpu"),
+      draw: document.getElementById("score-draw"),
+      you: document.getElementById("score-you"),
+    };
+  </script>
+  <p>
+    <code>Object.entries(scoreEls)</code> gives pairs like
+    <code>["cpu", &lt;strong&gt;]</code>. The arrow function
+    <strong>destructures</strong> each pair into <code>key</code> and
+    <code>el</code>, then copies <code>score[key]</code> into it. Because the
+    keys of <code>score</code> and <code>scoreEls</code> match, one line
+    handles all three boxes.
+  </p>
+
+  <div class="tip">
+    <strong>Why redraw everything?</strong> It would be a little faster to
+    change only the square that was clicked. But redrawing all nine from
+    the state means the screen can never drift out of step with the game.
+    You never need to ask "did I remember to update that?". With nine
+    squares, the cost is nothing.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does <code>render</code> write <code>[...boardEl.children]</code> instead of <code>boardEl.children.forEach</code>?</p>
+      <ul>
+        <li>The spread is faster.</li>
+        <li data-right><code>children</code> is an HTMLCollection, which has no <code>forEach</code>.</li>
+        <li>It makes a copy so the buttons can't change.</li>
+      </ul>
+      <p class="why">Spreading into an array unlocks <code>forEach</code>, <code>map</code> and the rest. (<code>querySelectorAll</code>'s NodeList does have <code>forEach</code>, which is why other code can skip it.)</p>
+    </div>
+    <div class="q">
+      <p>What is <code>null ?? "empty"</code>?</p>
+      <ul>
+        <li><code>null</code></li>
+        <li data-right><code>"empty"</code></li>
+        <li><code>false</code></li>
+      </ul>
+      <p class="why"><code>??</code> uses the right side only when the left is <code>null</code> or <code>undefined</code>.</p>
+    </div>
+    <div class="q">
+      <p>What would go wrong if <code>render</code> didn't start with <code>cell.className = "cell"</code>?</p>
+      <ul>
+        <li>The squares would lose their grid layout.</li>
+        <li>Nothing.</li>
+        <li data-right>Old classes like <code>win</code> or <code>x</code> would stay on squares in the next round.</li>
+      </ul>
+      <p class="why"><code>classList.add</code> only adds. Resetting first means the classes always match the current state.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-win">
+  <header><p>Course 2 · Lesson 6</p></header>
+  <h1>Finding a Winner</h1>
+
+  <h2>Which squares are free?</h2>
+  <script type="text/plain" data-file="js/tictactoe.js">
+    function emptyCells(cells) {
+      return cells.flatMap((mark, i) => (mark ? [] : [i]));
+    }
+  </script>
+  <p>
+    <code>flatMap</code> is <code>map</code> followed by flattening one
+    level. Returning <code>[]</code> drops an item and <code>[i]</code>
+    keeps its index, so it filters and transforms in one go. For
+    <code>["X", null, "O", null, null, "X", "O", null, "X"]</code> it gives
+    <code>[1, 3, 4, 7]</code>.
+  </p>
+  <p>
+    Notice it takes <code>cells</code> as a parameter instead of reading
+    <code>board</code>. That lets the CPU use it on imaginary boards later.
+  </p>
+
+  <h2>Has anyone won?</h2>
+  <script type="text/plain">
+    function winnerOf(cells) {
+      const line = lines.find(
+        ([a, b, c]) => cells[a] && cells[a] === cells[b] && cells[a] === cells[c],
+      );
+      return line ? { line, mark: cells[line[0]] } : null;
+    }
+  </script>
+  <ul>
+    <li><code>lines.find</code> returns the first line that passes the test, or <code>undefined</code> if none does.</li>
+    <li><code>([a, b, c]) =&gt;</code> <strong>destructures</strong> each line, so <code>[0, 4, 8]</code> becomes <code>a = 0</code>, <code>b = 4</code>, <code>c = 8</code>.</li>
+    <li><code>cells[a] &amp;&amp;</code> comes first for a reason: three <em>empty</em> squares are also all equal (<code>null === null</code>). Checking that the first one is taken stops an empty row counting as a win.</li>
+    <li>It returns an object with the winning line (for the flashing) and the mark (to know who won), or <code>null</code>.</li>
+  </ul>
+
+  <h2>Is the round over?</h2>
+  <script type="text/plain">
+    // Returns true when the round is finished.
+    function checkEnd() {
+      const win = winnerOf(board);
+      if (win) {
+        winLine = win.line;
+        if (win.mark === human) {
+          recordTicTacToeWin();
+          endRound("you", "You win!", "win");
+        } else {
+          endRound("cpu", "CPU wins! Try again", "lose");
+        }
+        return true;
+      }
+      if (emptyCells(board).length === 0) {
+        endRound("draw", "It's a draw!", "draw");
+        return true;
+      }
+      return false;
+    }
+  </script>
+  <p>
+    The order matters. The ninth move can fill the board <em>and</em>
+    complete a line, and that's a win, not a draw. So wins are checked
+    first. <code>recordTicTacToeWin()</code> adds one to the player's
+    leaderboard count (it does nothing for guests).
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What would go wrong if <code>winnerOf</code> left out <code>cells[a] &amp;&amp;</code>?</p>
+      <ul>
+        <li>Diagonals wouldn't be checked.</li>
+        <li data-right>A row of three empty squares would count as a win, so the game would end at once.</li>
+        <li>Nothing. It's just for speed.</li>
+      </ul>
+      <p class="why"><code>null === null</code> is <code>true</code>, so an empty line would pass. On a new board, the very first line would "win".</p>
+    </div>
+    <div class="q">
+      <p>What does <code>emptyCells([null, "X", null])</code> return?</p>
+      <ul>
+        <li><code>[null, null]</code></li>
+        <li data-right><code>[0, 2]</code></li>
+        <li><code>2</code></li>
+      </ul>
+      <p class="why">It returns the <em>indices</em> of the empty squares.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>checkEnd</code> look for a win before checking for a full board?</p>
+      <ul>
+        <li data-right>The last move can fill the board and complete a line, and that should count as a win.</li>
+        <li>Wins are more common than draws.</li>
+        <li><code>emptyCells</code> is slow.</li>
+      </ul>
+      <p class="why">If the draw check came first, a ninth-move win would be scored as a draw.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-turns">
+  <header><p>Course 2 · Lesson 7</p></header>
+  <h1>Taking Turns with async/await</h1>
+
+  <h2>Waiting without freezing</h2>
+  <script type="text/plain" data-file="js/tictactoe.js">
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  </script>
+  <p>
+    A <strong>Promise</strong> is an object that stands for a result that
+    will arrive later. <code>new Promise((resolve) =&gt; ...)</code> hands
+    you a <code>resolve</code> function to call when it's ready. Here,
+    <code>setTimeout</code> calls it after <code>ms</code> milliseconds. So
+    <code>wait(650)</code> is "a promise that comes true in 0.65 seconds".
+  </p>
+  <p>
+    Inside an <code>async</code> function, <code>await wait(650)</code>
+    pauses <em>that function</em> for 0.65 seconds. The page doesn't freeze:
+    animations keep running and the browser stays responsive. That's why
+    the game needs a <code>busy</code> flag. Something has to stop the
+    player clicking while the CPU "thinks".
+  </p>
+
+  <h2>A click, start to finish</h2>
+  <script type="text/plain">
+    async function onCellClick(index) {
+      if (busy || over || board[index]) return;
+      busy = true;
+      render();
+
+      board[index] = human;
+      play("place");
+      if (!checkEnd()) await cpuTurn();
+
+      busy = false;
+      render();
+    }
+
+    async function cpuTurn() {
+      setStatus("CPU is thinking...");
+      render();
+      await wait(650);
+      board[chooseCpuMove()] = cpu;
+      play("cpu");
+      if (!checkEnd()) setStatus("Your move: pick a square");
+    }
+  </script>
+  <ol>
+    <li><strong>Guard.</strong> Ignore the click if a move is already happening, the round is over, or the square is taken. Early <code>return</code>s like this keep the rest of the function simple.</li>
+    <li><strong>Lock.</strong> <code>busy = true</code>, then <code>render()</code>, which disables every square.</li>
+    <li><strong>Move.</strong> Put an X in the state and play a sound.</li>
+    <li><strong>Check.</strong> If that move didn't end the round, let the CPU go, and <em>wait</em> for its whole turn to finish.</li>
+    <li><strong>Unlock.</strong> <code>busy = false</code> and render again. Empty squares come back to life, unless the round is over.</li>
+  </ol>
+  <p>
+    The CPU's pause is pure theatre: the computer picks its move in a
+    blink. 650 milliseconds of "CPU is thinking..." just makes the game
+    feel like a game.
+  </p>
+
+  <div class="tip">
+    <strong>Look closely:</strong> <code>checkEnd()</code> calls
+    <code>endRound(...)</code> without <code>await</code>. That's
+    deliberate. <code>endRound</code> goes off and runs its own slow story
+    (a pause, then a maths question), while <code>onCellClick</code>
+    finishes straight away. <code>over</code> is already <code>true</code>,
+    so the board stays locked anyway.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>While <code>await wait(650)</code> is pausing <code>cpuTurn</code>, what happens to the rest of the page?</p>
+      <ul>
+        <li>Everything freezes until the wait is over.</li>
+        <li data-right>It keeps running normally. Only that function is paused.</li>
+        <li>The page reloads.</li>
+      </ul>
+      <p class="why"><code>await</code> pauses the async function and lets the browser get on with everything else.</p>
+    </div>
+    <div class="q">
+      <p>What stops the player placing a second X while the CPU is "thinking"?</p>
+      <ul>
+        <li>The <code>wait</code> function blocks clicks.</li>
+        <li data-right><code>busy</code> is true: <code>render()</code> disables every square and <code>onCellClick</code> returns early.</li>
+        <li>Nothing. It's a bug.</li>
+      </ul>
+      <p class="why">Two layers: disabled buttons don't fire clicks, and the guard catches anything that slips through.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>wait(1000)</code> return?</p>
+      <ul>
+        <li><code>undefined</code>, after one second.</li>
+        <li>The number 1000.</li>
+        <li data-right>A Promise that resolves after one second.</li>
+      </ul>
+      <p class="why">It returns straight away, with a promise. <code>await</code> is what waits for it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-minimax">
+  <header><p>Course 2 · Lesson 8</p></header>
+  <h1>Minimax: a CPU That Looks Ahead</h1>
+
+  <p>
+    How does the CPU choose a square? It plays out <em>every possible rest
+    of the game</em> in its head, and picks the move that turns out best
+    assuming you also play your best. Tic-tac-toe is small enough to do
+    that completely. The method is called <strong>minimax</strong>.
+  </p>
+
+  <script type="text/plain" data-file="js/tictactoe.js">
+    // Scores a position for the computer: positive is a CPU win, negative a
+    // player win. Quicker wins score higher.
+    function minimax(cells, turn, depth) {
+      const win = winnerOf(cells);
+      if (win) return win.mark === cpu ? 10 - depth : depth - 10;
+      const open = emptyCells(cells);
+      if (open.length === 0) return 0;
+      const scores = open.map((i) => {
+        cells[i] = turn;
+        const value = minimax(cells, turn === cpu ? human : cpu, depth + 1);
+        cells[i] = null;
+        return value;
+      });
+      return turn === cpu ? Math.max(...scores) : Math.min(...scores);
+    }
+  </script>
+
+  <h2>Recursion</h2>
+  <p>
+    <code>minimax</code> calls itself. Every recursive function needs
+    <strong>base cases</strong>, places where it stops and answers directly:
+  </p>
+  <ul>
+    <li>Someone has won: return a score.</li>
+    <li>The board is full: it's a draw, return 0.</li>
+  </ul>
+  <p>
+    Otherwise it tries each empty square in turn: place the mark, ask
+    minimax to score the position <em>after</em> that move (with the other
+    player to go), then <strong>undo</strong> the move with
+    <code>cells[i] = null</code>. Trying a move and taking it back is called
+    <strong>backtracking</strong>. It lets one array stand in for thousands
+    of imaginary boards.
+  </p>
+
+  <h2>Max and min</h2>
+  <p>
+    On the CPU's turn it picks the <em>highest</em> score (good for it). On
+    your turn it assumes you'll pick the <em>lowest</em> (good for you).
+    That's the "mini" and "max" in the name. It never hopes you'll make a
+    mistake.
+  </p>
+
+  <h2>Why <code>10 - depth</code>?</h2>
+  <p>
+    <code>depth</code> counts how many moves into the future we are. A CPU
+    win scores <code>10 - depth</code>, so winning next move (depth 1,
+    score 9) beats winning in three moves (depth 3, score 7). A loss scores
+    <code>depth - 10</code>, so losing later is "less bad" than losing now.
+    Without this, the CPU might dawdle when it could win at once.
+  </p>
+
+  <h2>Picking the move</h2>
+  <script type="text/plain">
+    function bestMoves(cells) {
+      const scratch = [...cells];
+      const scored = emptyCells(scratch).map((i) => {
+        scratch[i] = cpu;
+        const value = minimax(scratch, human, 1);
+        scratch[i] = null;
+        return { i, value };
+      });
+      const top = Math.max(...scored.map((m) => m.value));
+      return scored.filter((m) => m.value === top).map((m) => m.i);
+    }
+  </script>
+  <ul>
+    <li><code>[...cells]</code> makes a <strong>copy</strong> to experiment on, so the real <code>board</code> is never touched.</li>
+    <li>Each possible CPU move is scored, then all moves that tie for the top score are returned. Choosing randomly between equally good moves stops the CPU playing exactly the same game every time.</li>
+    <li><code>Math.max(...array)</code>: <code>Math.max</code> wants separate numbers, so the array is spread into them.</li>
+  </ul>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does minimax set <code>cells[i] = null</code> after the recursive call?</p>
+      <ul>
+        <li>To clear the board for the next round.</li>
+        <li data-right>To undo the imaginary move before trying the next one.</li>
+        <li>Because the move was bad.</li>
+      </ul>
+      <p class="why">This is backtracking. Without the undo, every imaginary move would pile up on the same array.</p>
+    </div>
+    <div class="q">
+      <p>When it's your turn in the search, which score does minimax assume you'll choose?</p>
+      <ul>
+        <li>The highest.</li>
+        <li data-right>The lowest, which is the worst for the CPU.</li>
+        <li>A random one.</li>
+      </ul>
+      <p class="why">It assumes you play perfectly against it, so it plans for your best reply.</p>
+    </div>
+    <div class="q">
+      <p>The CPU can win now (depth 1) or in three moves (depth 3). Which scores higher?</p>
+      <ul>
+        <li data-right>Winning now: 9 beats 7.</li>
+        <li>Winning later: 7 beats 9.</li>
+        <li>They score the same.</li>
+      </ul>
+      <p class="why"><code>10 - depth</code> rewards quicker wins.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-mistakes">
+  <header><p>Course 2 · Lesson 9</p></header>
+  <h1>Making the CPU Beatable</h1>
+
+  <p>
+    A perfect tic-tac-toe player can never lose. The best you could ever do
+    against it is a draw, which isn't much fun. So the arcade's CPU makes
+    mistakes on purpose:
+  </p>
+  <script type="text/plain" data-file="js/tictactoe.js">
+    // Usually plays the best move. Each move has a config.aiMistakeChance chance
+    // of being a deliberate mistake instead: any square that isn't a best one.
+    // Every move rolls separately, so mistakes can come back to back.
+    function chooseCpuMove() {
+      const best = bestMoves(board);
+      const blunder = Math.random() < config.aiMistakeChance;
+      const worse = emptyCells(board).filter((i) => !best.includes(i));
+      const options = blunder && worse.length > 0 ? worse : best;
+      return options[Math.floor(Math.random() * options.length)];
+    }
+  </script>
+
+  <h2>Rolling the dice</h2>
+  <p>
+    <code>Math.random()</code> gives a number from 0 up to (but not
+    including) 1. With <code>aiMistakeChance</code> at <code>0.2</code> in
+    <code>config.js</code>, <code>Math.random() &lt; 0.2</code> is true about
+    one time in five. Turning the dial is one change in one file: 0 makes a
+    perfect CPU, 1 makes one that always blunders when it can.
+  </p>
+
+  <h2>What counts as a mistake</h2>
+  <p>
+    <code>worse</code> is every empty square that isn't one of the best
+    moves. Sometimes there aren't any (all the free squares are equally
+    good), so <code>worse.length &gt; 0</code> falls back to the best moves.
+    Without it, <code>options</code> could be an empty array and the CPU
+    would pick <code>undefined</code>.
+  </p>
+
+  <h2>Picking at random from a list</h2>
+  <script type="text/plain">
+    options[Math.floor(Math.random() * options.length)]
+  </script>
+  <p>
+    This is the standard recipe. For a list of 3,
+    <code>Math.random() * 3</code> is somewhere from 0 to just under 3, and
+    <code>Math.floor</code> rounds it down to 0, 1 or 2, each equally
+    likely: exactly the valid indexes.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What happens with <code>aiMistakeChance: 0</code>?</p>
+      <ul>
+        <li>The CPU always makes mistakes.</li>
+        <li data-right>The CPU always plays a best move, so you can't beat it.</li>
+        <li>The CPU picks squares at random.</li>
+      </ul>
+      <p class="why"><code>Math.random() &lt; 0</code> is never true, so <code>blunder</code> is always <code>false</code>.</p>
+    </div>
+    <div class="q">
+      <p>What values can <code>Math.floor(Math.random() * 4)</code> produce?</p>
+      <ul>
+        <li>1, 2, 3 or 4</li>
+        <li data-right>0, 1, 2 or 3</li>
+        <li>Any number from 0 to 4</li>
+      </ul>
+      <p class="why">Random times 4 is from 0 to just under 4; rounding down gives a whole number from 0 to 3.</p>
+    </div>
+    <div class="q">
+      <p>Why check <code>worse.length &gt; 0</code>?</p>
+      <ul>
+        <li>To make the CPU blunder more often.</li>
+        <li>Because <code>filter</code> can return <code>null</code>.</li>
+        <li data-right>If every free square is a best move, there's no mistake to make, and picking from an empty list gives <code>undefined</code>.</li>
+      </ul>
+      <p class="why">Then it just plays one of the best moves.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="ttt-rounds">
+  <header><p>Course 2 · Lesson 10</p></header>
+  <h1>Ending a Round and the Question Gate</h1>
+
+  <h2>Ending a round</h2>
+  <script type="text/plain" data-file="js/tictactoe.js">
+    // Shows the result, then a question that must be solved before the next
+    // round can start.
+    async function endRound(result, message, sound) {
+      over = true;
+      score[result] += 1;
+      setStatus(message);
+      play(sound);
+      render();
+      await wait(1400);
+      await questions.ask({ label: "Solve it to play again" });
+      againButton.hidden = false;
+      againButton.focus();
+    }
+  </script>
+  <ul>
+    <li><code>score[result] += 1</code> uses <strong>bracket notation</strong>: <code>result</code> is a string like <code>"draw"</code>, so this is <code>score.draw += 1</code>. One line serves all three outcomes.</li>
+    <li>The result shows for 1.4 seconds so you can see the winning line flash.</li>
+    <li><code>await questions.ask(...)</code> opens the maths question. That promise only resolves once a question is answered <em>correctly</em>: <code>askQuestion</code> in <code>questions.js</code> keeps asking new ones in a <code>while (!correct)</code> loop. Tic-tac-toe doesn't need to know any of that. It just waits.</li>
+    <li>Then the Play again button appears, and gets the keyboard focus so Enter starts the next round.</li>
+  </ul>
+
+  <h2>Where <code>questions</code> comes from</h2>
+  <script type="text/plain">
+    import { gameQuestions } from "./game-shell.js";
+
+    // The bank the teacher has assigned this game (Teacher page).
+    const questions = gameQuestions("tictactoe");
+  </script>
+  <p>
+    <code>gameQuestions</code> is shared by every game. It looks up which
+    question bank the teacher has assigned to <code>"tictactoe"</code> and
+    returns an object with <code>loaded</code> (a promise for when the bank
+    is ready) and <code>ask</code>. In your free arcade, the build script
+    swaps the question code for a stub whose <code>ask</code> resolves at
+    once, so the same <code>tictactoe.js</code> runs with no maths at all.
+  </p>
+
+  <h2>A new round</h2>
+  <script type="text/plain">
+    function newRound() {
+      board = Array(9).fill(null);
+      over = false;
+      winLine = [];
+      againButton.hidden = true;
+      setStatus("Your move: pick a square");
+      render();
+    }
+  </script>
+  <p>
+    Reset the state, then render. Because <code>render</code> draws
+    everything from the state, there's nothing else to clean up: the old
+    marks and the flashing line vanish by themselves.
+  </p>
+
+  <h2>Starting up</h2>
+  <script type="text/plain">
+    async function start() {
+      if (!initPage()) return;
+      buildBoard();
+      againButton.addEventListener("click", newRound);
+      try {
+        await questions.loaded;
+        newRound();
+      } catch (error) {
+        board = Array(9).fill(null);
+        over = true;
+        render();
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    start();
+  </script>
+  <ol>
+    <li><code>initPage()</code> checks the session and wires up the top bar. No session, no game.</li>
+    <li>Build the nine buttons and hook up Play again.</li>
+    <li>Wait for the question bank. The game can't let you play a round it has no way to finish, so the first round only starts once questions are ready. Until then, the status still says "Loading...".</li>
+    <li>If the bank fails to load, the board is drawn locked (<code>over = true</code>) and the status explains the error instead of failing silently.</li>
+  </ol>
+
+  <div class="tip">
+    <strong>The whole build, in one sentence:</strong> HTML gives the page
+    its parts, CSS gives the look, the state variables hold the truth,
+    <code>render()</code> paints the truth, click handlers change it, async
+    functions pace it, and shared modules handle sessions, sound and
+    questions so the game file only has to be a game.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>If <code>result</code> is <code>"cpu"</code>, what does <code>score[result] += 1</code> do?</p>
+      <ul>
+        <li>Adds a new key called <code>result</code> to <code>score</code>.</li>
+        <li data-right>Adds one to <code>score.cpu</code>.</li>
+        <li>Throws an error.</li>
+      </ul>
+      <p class="why">Brackets use the variable's <em>value</em> as the key. <code>score.result</code> would use the literal name "result".</p>
+    </div>
+    <div class="q">
+      <p>When does <code>await questions.ask(...)</code> finish?</p>
+      <ul>
+        <li>As soon as the question appears.</li>
+        <li>After any answer, right or wrong.</li>
+        <li data-right>Once a question has been answered correctly.</li>
+      </ul>
+      <p class="why">Wrong answers bring a new question. The promise resolves only on a right one, so Play again stays hidden until then.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>start()</code> wait for <code>questions.loaded</code> before the first round?</p>
+      <ul>
+        <li>To make the page look busy.</li>
+        <li data-right>A round ends with a question, so the game shouldn't start one until questions can be asked.</li>
+        <li><code>buildBoard</code> needs the questions.</li>
+      </ul>
+      <p class="why">And if loading fails, the error is shown and the board stays locked.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Arcade Tutorial</title>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/index.html">Play the arcade</a>
+    <a href="../index.html">Back to my site</a>
+  </nav>
+</header>
+<main class="home">
+  <section class="hero">
+    <h1>BUILD THE<br>MATH ARCADE</h1>
+    <p>
+      A step-by-step course on how the Math Arcade is put together, file by
+      file. Each lesson explains a piece of the real code and ends with a
+      short quiz. The labs are small projects of their own that practise the
+      same skills on something new. Write the code in the editor, run the
+      tests, and you're done when they all pass.
+    </p>
+    <p>
+      Progress and lab code are saved in this browser only. Nothing is sent
+      anywhere.
+    </p>
+  </section>
+  <div id="courses"></div>
+</main>
+<script type="module">
+  import { courses, stepHref } from "./js/course.js";
+  import { isDone } from "./js/progress.js";
+
+  const holder = document.getElementById("courses");
+  courses.forEach((course) => {
+    const done = course.steps.filter((step) => isDone(step.id)).length;
+    const section = document.createElement("section");
+    section.className = "course";
+    section.innerHTML = `
+      <h2></h2>
+      <p></p>
+      <div class="meter" role="img"><span></span></div>
+      <ol class="steps"></ol>`;
+    section.querySelector("h2").textContent = course.title;
+    section.querySelector("p").textContent =
+      `${course.summary} (${done} of ${course.steps.length} done)`;
+    const meter = section.querySelector(".meter");
+    meter.setAttribute(
+      "aria-label",
+      `${done} of ${course.steps.length} steps done`,
+    );
+    meter.firstElementChild.style.width =
+      `${(100 * done) / course.steps.length}%`;
+    const list = section.querySelector(".steps");
+    course.steps.forEach((step) => {
+      const li = document.createElement("li");
+      li.classList.toggle("done", isDone(step.id));
+      const a = document.createElement("a");
+      a.href = stepHref(course, step);
+      const tick = document.createElement("span");
+      tick.className = "tick";
+      tick.textContent = isDone(step.id) ? "✓" : "";
+      const kind = document.createElement("span");
+      kind.className = step.lab ? "kind lab" : "kind";
+      kind.textContent = step.lab ? "Lab" : "Lesson";
+      a.append(tick, step.title.replace(/^Lab: /, ""), kind);
+      li.append(a);
+      list.append(li);
+    });
+    holder.append(section);
+  });
+</script>
+</body>
+</html>

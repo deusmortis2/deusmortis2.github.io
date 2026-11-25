@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Lab | Arcade Tutorial</title>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a id="back" href="index.html">Back to the lessons</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lab-layout">
+  <section class="brief">
+    <p class="kind" data-course></p>
+    <h1>Loading...</h1>
+    <div data-intro></div>
+    <h2>User stories</h2>
+    <ol data-stories></ol>
+    <h2>Tests</h2>
+    <ul class="tests"></ul>
+    <p><a id="next" class="btn" href="index.html" hidden>Next</a></p>
+  </section>
+  <section class="workbench" aria-label="Code editor">
+    <div class="tabs" role="tablist">
+      <button class="tab" type="button" role="tab" data-tab="html">index.html</button>
+      <button class="tab" type="button" role="tab" data-tab="css">styles.css</button>
+      <button class="tab" type="button" role="tab" data-tab="js">script.js</button>
+    </div>
+    <div>
+      <textarea id="code-html" class="editor" spellcheck="false" aria-label="HTML (inside the body)"></textarea>
+      <textarea id="code-css" class="editor" spellcheck="false" aria-label="CSS" hidden></textarea>
+      <textarea id="code-js" class="editor" spellcheck="false" aria-label="JavaScript" hidden></textarea>
+    </div>
+    <div class="actions">
+      <button id="run" class="btn" type="button">Run the tests (Ctrl + Enter)</button>
+      <button id="reset" class="btn ghost" type="button">Reset code</button>
+      <span id="result" class="result" role="status"></span>
+    </div>
+    <iframe id="preview" class="preview" title="Preview of your code"></iframe>
+  </section>
+</div>
+<script type="module" src="js/lab.js"></script>
+</body>
+</html>

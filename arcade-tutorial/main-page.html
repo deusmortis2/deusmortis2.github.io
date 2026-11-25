@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>The Main Page | Arcade Tutorial</title>
+</head>
+<body data-course="main-page">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/index.html">Play the arcade</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 1: THE MAIN PAGE</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="tour">
+  <header><p>Course 1 · Lesson 1</p></header>
+  <h1>A Tour of the Arcade</h1>
+
+  <p>
+    Before writing any code, it helps to know what the finished project
+    looks like from the outside. The Math Arcade is a <strong>static
+    website</strong>: a folder of HTML, CSS and JavaScript files that a
+    server hands to the browser exactly as they are. There is no build step
+    and no server code of our own. Everything the arcade "does" happens in
+    the player's browser.
+  </p>
+
+  <h2>The folder</h2>
+  <p>Here is the part of the <code>math-arcade/</code> folder that these two courses cover:</p>
+  <script type="text/plain" data-lang="text">
+    math-arcade/
+      index.html        the sign-in screen: the "main page"
+      arcade.html       the game picker you land on after signing in
+      tictactoe.html    one HTML page per game
+      draconis.html, astro.html, tidesong.html, jormungandr.html, spireclash/
+      teacher.html      the teacher's dashboard
+      css/
+        retro.css       the look every page shares
+      js/
+        config.js       site settings (Firebase project, guest play, CPU mistakes)
+        firebase.js     connects to Firebase and logs people in
+        auth.js         remembers who is signed in, guards pages
+        signin.js       runs the sign-in form on index.html
+        ui.js           the top bar every signed-in page shares
+        games.js        the list of every game in the arcade
+        sound.js        8-bit sound effects made in code
+        questions.js    the maths question pop-up
+        game-shell.js   what every game shares: its question bank, start-up
+        tictactoe.js    the tic-tac-toe game itself
+      banks/*.json      the question banks
+  </script>
+  <p>
+    Notice the pattern: <strong>one file, one job</strong>. <code>sound.js</code>
+    knows nothing about sign-in, and <code>tictactoe.js</code> knows nothing
+    about Firebase. When something breaks, the file names tell you where to
+    look.
+  </p>
+
+  <h2>What happens on a visit</h2>
+  <ol>
+    <li>The browser loads <code>index.html</code>, which loads <code>css/retro.css</code> and <code>js/signin.js</code>.</li>
+    <li>The student types a username and PIN. <code>signin.js</code> asks <code>firebase.js</code> to log them in.</li>
+    <li>On success, <code>auth.js</code> writes a small "session" note into the browser's <code>sessionStorage</code>.</li>
+    <li>The page jumps to <code>arcade.html</code>. A tiny script at the top of that page checks for the note, and sends anyone without one back to sign in.</li>
+    <li>The student clicks a game card, for example <code>tictactoe.html</code>, which runs <code>js/tictactoe.js</code>.</li>
+  </ol>
+
+  <h2>Running it on your computer</h2>
+  <p>
+    You might expect to double-click <code>index.html</code> and play. That
+    opens the page from a <code>file://</code> address, and browsers refuse
+    to run JavaScript <em>modules</em> or <code>fetch</code> files from
+    <code>file://</code> pages for security reasons. So the README says to
+    start a tiny local web server instead:
+  </p>
+  <script type="text/plain" data-lang="text">
+    cd math-arcade
+    python3 -m http.server 8080
+  </script>
+  <p>Then open <code>http://localhost:8080</code>.</p>
+
+  <div class="tip">
+    <strong>Two copies.</strong> The class version (with logins and maths
+    questions) is hosted on Firebase. Your own site has a second, "free"
+    copy in <a href="../arcade/index.html">arcade/</a> with no logins and no
+    questions. A Python script, <code>build_free_arcade.py</code>, makes it
+    from the same files. You'll see how the two share text in a later
+    lesson.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Which file is the first page a student sees?</p>
+      <ul>
+        <li><code>arcade.html</code></li>
+        <li data-right><code>index.html</code></li>
+        <li><code>js/signin.js</code></li>
+      </ul>
+      <p class="why"><code>index.html</code> is the sign-in screen. <code>arcade.html</code> is where you land after signing in, and <code>signin.js</code> is a script that <code>index.html</code> loads.</p>
+    </div>
+    <div class="q">
+      <p>Why does the README tell you to run <code>python3 -m http.server</code> instead of double-clicking the HTML file?</p>
+      <ul>
+        <li>Python makes the pages load faster.</li>
+        <li>The pages are written in Python.</li>
+        <li data-right>Browsers block JavaScript modules and <code>fetch</code> on <code>file://</code> pages.</li>
+      </ul>
+      <p class="why">The site is plain HTML, CSS and JavaScript. Python is just a quick way to serve the files over <code>http://</code> so modules and <code>fetch</code> are allowed.</p>
+    </div>
+    <div class="q">
+      <p>Where do the styles that every page shares live?</p>
+      <ul>
+        <li data-right><code>css/retro.css</code></li>
+        <li>A <code>&lt;style&gt;</code> block at the top of each page</li>
+        <li><code>js/ui.js</code></li>
+      </ul>
+      <p class="why">Every page links the same stylesheet, so a colour changed once in <code>retro.css</code> changes everywhere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="skeleton">
+  <header><p>Course 1 · Lesson 2</p></header>
+  <h1>The Page Skeleton</h1>
+
+  <p>Every page in the arcade starts with the same <code>&lt;head&gt;</code>. Here is the one from <code>index.html</code>:</p>
+  <script type="text/plain" data-lang="html" data-file="index.html">
+    <!doctype html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+    <link rel="stylesheet" href="css/retro.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <title>Math Arcade</title>
+    </head>
+  </script>
+
+  <h2>Line by line</h2>
+  <ul>
+    <li><code>&lt;!doctype html&gt;</code> tells the browser to use modern "standards mode" rules instead of old quirks.</li>
+    <li><code>lang="en"</code> tells screen readers which voice to use and lets translators know the language.</li>
+    <li><code>charset="utf-8"</code> lets the page show any character, like the Ö in JÖRMUNGANDR and the É in APPÉTIT.</li>
+    <li>The <strong>viewport</strong> meta tag matters on phones and tablets. Without it, they pretend to be a wide desktop screen and shrink the whole page. With <code>width=device-width</code>, the page is laid out for the real screen width.</li>
+  </ul>
+
+  <h2>Loading a web font quickly</h2>
+  <p>
+    The pixel font, <em>Press Start 2P</em>, comes from Google Fonts. That
+    takes two different servers: <code>fonts.googleapis.com</code> sends a
+    small CSS file, and <code>fonts.gstatic.com</code> sends the font
+    itself. The two <code>preconnect</code> links tell the browser to start
+    connecting to both straight away, before it has even read the CSS that
+    needs them.
+  </p>
+  <p>
+    Fonts are always downloaded in "CORS mode" (a stricter kind of request),
+    so the preconnect to the font server needs <code>crossorigin</code> to
+    match. Without it, the browser opens a connection it can't reuse.
+  </p>
+  <p>
+    The <code>display=swap</code> at the end of the font URL means "show the
+    text in a fallback font straight away, then swap in the pixel font when
+    it arrives". Without it, text could be invisible while the font loads.
+  </p>
+
+  <h2>Our own files</h2>
+  <p>
+    <code>css/retro.css</code> is a <strong>relative path</strong>: it is
+    looked up starting from the folder the page is in. That's why the same
+    line works on your laptop, on Firebase and on GitHub Pages. The favicon
+    is an SVG, so it stays sharp at any size.
+  </p>
+
+  <h2>The body</h2>
+  <script type="text/plain" data-lang="html" data-file="index.html">
+    <body>
+    <main class="screen center">
+      <h1 class="title">MATH<br>ARCADE</h1>
+      <p class="subtitle blink">INSERT COIN TO PLAY</p>
+      <form id="login" class="panel login">
+        ...
+      </form>
+      <p class="fine">Your teacher gave you a username and PIN. ...</p>
+    </main>
+    <script type="module" src="js/signin.js"><\/script>
+    </body>
+  </script>
+  <p>
+    The <code>&lt;main&gt;</code> element marks the page's main content,
+    which helps screen-reader users jump straight to it. The classes
+    (<code>screen</code>, <code>center</code>, <code>title</code>,
+    <code>blink</code>, <code>panel</code>) are all defined in
+    <code>retro.css</code>. The HTML says <em>what</em> things are; the CSS
+    decides how they look.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What happens on a phone if you leave out the viewport meta tag?</p>
+      <ul>
+        <li>The page refuses to load.</li>
+        <li data-right>The phone lays the page out like a wide desktop screen and shrinks it.</li>
+        <li>The fonts don't load.</li>
+      </ul>
+      <p class="why"><code>width=device-width</code> tells mobile browsers to use the real screen width.</p>
+    </div>
+    <div class="q">
+      <p>Why does the <code>fonts.gstatic.com</code> preconnect have <code>crossorigin</code>?</p>
+      <ul>
+        <li>It makes the font download faster on every request.</li>
+        <li>It's required on every <code>&lt;link&gt;</code>.</li>
+        <li data-right>Fonts are fetched in CORS mode, so the early connection has to match or it can't be reused.</li>
+      </ul>
+      <p class="why">The other preconnect (to <code>fonts.googleapis.com</code>) is for an ordinary stylesheet, so it doesn't need it.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>display=swap</code> do?</p>
+      <ul>
+        <li data-right>Shows text in a fallback font until the web font arrives.</li>
+        <li>Swaps between light and dark mode.</li>
+        <li>Hides the text until the font has loaded.</li>
+      </ul>
+      <p class="why">"Swap" means the text is readable straight away and changes font once Press Start 2P has downloaded.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="theme">
+  <header><p>Course 1 · Lesson 3</p></header>
+  <h1>A Retro Theme with CSS Variables</h1>
+
+  <h2>Custom properties</h2>
+  <p><code>retro.css</code> opens by naming every colour the arcade uses:</p>
+  <script type="text/plain" data-lang="css" data-file="css/retro.css">
+    :root {
+      --bg: #0a0a1f;
+      --bg-2: #15153d;
+      --ink: #f4f4ff;
+      --muted: #9a9ac8;
+      --pink: #ff2e88;
+      --cyan: #00e5ff;
+      --yellow: #ffd400;
+      --green: #39ff14;
+      --red: #ff4545;
+      --font: "Press Start 2P", ui-monospace, monospace;
+    }
+  </script>
+  <p>
+    Names that start with two dashes are <strong>custom properties</strong>
+    (often called CSS variables). <code>:root</code> is the
+    <code>&lt;html&gt;</code> element, and custom properties are
+    <em>inherited</em>, so every element on the page can use them with
+    <code>var()</code>: <code>color: var(--pink);</code>. Change
+    <code>--pink</code> once and every pink thing changes.
+  </p>
+  <p>
+    <code>--font</code> is a <strong>font stack</strong>: if Press Start 2P
+    hasn't loaded, the browser tries the system's monospace font instead.
+  </p>
+
+  <h2>Box sizing</h2>
+  <script type="text/plain" data-lang="css">
+    * {
+      box-sizing: border-box;
+    }
+  </script>
+  <p>
+    By default, <code>width</code> only counts the content, and padding and
+    borders are added on top. With <code>border-box</code>, a panel with
+    <code>width: 440px</code> really is 440px wide, padding and border
+    included. Almost every modern site starts with this rule.
+  </p>
+
+  <h2>The background</h2>
+  <script type="text/plain" data-lang="css">
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at top, #1d1d55 0%, var(--bg) 65%);
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+  </script>
+  <p>
+    <code>100vh</code> is the full height of the browser window, so the
+    gradient fills the screen even when the page is short. The
+    <code>radial-gradient</code> makes a soft glow at the top that fades to
+    the background colour. The pixel font is very wide, so the body text is
+    only 12px, with generous line spacing to keep it readable.
+  </p>
+
+  <h2>CRT scanlines with a pseudo-element</h2>
+  <p>Old arcade screens had thin dark lines across them. The arcade fakes that with one rule:</p>
+  <script type="text/plain" data-lang="css">
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 2px,
+        rgba(0, 0, 0, 0.22) 2px 3px
+      );
+      z-index: 1000;
+    }
+  </script>
+  <ul>
+    <li><code>::after</code> creates an extra box inside the body with no HTML needed. It only appears if it has a <code>content</code>, even an empty one.</li>
+    <li><code>position: fixed; inset: 0</code> pins it to all four edges of the window. <code>inset: 0</code> is short for <code>top: 0; right: 0; bottom: 0; left: 0</code>.</li>
+    <li>The <code>repeating-linear-gradient</code> paints 2px of nothing, then 1px of dark, over and over: a scanline every 3 pixels.</li>
+    <li><code>z-index: 1000</code> puts it on top of everything, and <code>pointer-events: none</code> lets clicks fall through it to the buttons underneath. Without that line, nothing on the page could be clicked.</li>
+  </ul>
+  <p>
+    Game pages turn the lines off with <code>&lt;body class="no-scanlines"&gt;</code>
+    and this rule: <code>body.no-scanlines::after { display: none; }</code>.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why can every element use <code>var(--pink)</code> when it is only defined on <code>:root</code>?</p>
+      <ul>
+        <li>Custom properties are global variables, like in JavaScript.</li>
+        <li data-right>Custom properties are inherited, and <code>:root</code> is the ancestor of every element.</li>
+        <li>The browser copies them into every rule when it loads the page.</li>
+      </ul>
+      <p class="why">They behave like <code>color</code>: set on a parent, they flow down to every child unless overridden.</p>
+    </div>
+    <div class="q">
+      <p>What would happen if you removed <code>pointer-events: none</code> from the scanline overlay?</p>
+      <ul>
+        <li>The scanlines would disappear.</li>
+        <li>Nothing. It's only there for speed.</li>
+        <li data-right>The overlay would catch every click, so no button on the page would work.</li>
+      </ul>
+      <p class="why">The overlay covers the whole window and sits on top, so it has to let clicks pass through.</p>
+    </div>
+    <div class="q">
+      <p>With <code>box-sizing: border-box</code>, how wide is a box with <code>width: 200px; padding: 20px; border: 4px solid</code>?</p>
+      <ul>
+        <li data-right>200px</li>
+        <li>248px</li>
+        <li>240px</li>
+      </ul>
+      <p class="why">Border-box counts padding and border inside the width. Without it, the box would be 200 + 40 + 8 = 248px.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="layout">
+  <header><p>Course 1 · Lesson 4</p></header>
+  <h1>Screens, Panels and Big Type</h1>
+
+  <h2>A column of things: flexbox</h2>
+  <script type="text/plain" data-lang="css" data-file="css/retro.css">
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 32px 16px 48px;
+    }
+
+    .screen.center {
+      min-height: 100vh;
+      justify-content: center;
+      text-align: center;
+    }
+  </script>
+  <p>
+    Every page's <code>&lt;main&gt;</code> has the class <code>screen</code>:
+    a <strong>flex column</strong> whose children are centred side to side
+    (<code>align-items</code>) with 24px between them (<code>gap</code>).
+    In a column, <code>align-items</code> works across the page and
+    <code>justify-content</code> works down it.
+  </p>
+  <p>
+    The sign-in page adds <code>center</code>. The selector
+    <code>.screen.center</code> (no space) means "an element with
+    <em>both</em> classes". It makes the column at least as tall as the
+    window and centres everything vertically too, so the title and form sit
+    in the middle of the screen.
+  </p>
+
+  <h2>Panels</h2>
+  <script type="text/plain" data-lang="css">
+    .panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: min(100%, 440px);
+      padding: 24px 16px;
+      border: 4px solid var(--cyan);
+      background: var(--bg-2);
+      box-shadow: 6px 6px 0 #000;
+    }
+  </script>
+  <p>
+    <code>width: min(100%, 440px)</code> means "440px, unless the screen is
+    narrower, then the full width". One line replaces a media query.
+  </p>
+  <p>
+    The <code>box-shadow</code> has <strong>no blur</strong> (the third
+    number is 0), so it's a solid black block offset 6px right and down.
+    Hard shadows like that are what make it look like pixel art instead of
+    a modern app.
+  </p>
+
+  <h2>The title</h2>
+  <script type="text/plain" data-lang="css">
+    .title {
+      margin: 0;
+      color: var(--pink);
+      font-size: clamp(28px, 9vw, 60px);
+      line-height: 1.25;
+      text-shadow: 4px 4px 0 var(--cyan), 8px 8px 0 #000;
+    }
+  </script>
+  <p>
+    <code>clamp(28px, 9vw, 60px)</code> picks 9% of the window's width, but
+    never smaller than 28px or bigger than 60px. The title grows and shrinks
+    with the screen without ever getting silly.
+  </p>
+  <p>
+    <code>text-shadow</code> can take several shadows separated by commas.
+    Here a cyan copy sits 4px away and a black copy 8px away, which makes
+    the chunky 3D letters.
+  </p>
+
+  <h2>Blinking text</h2>
+  <script type="text/plain" data-lang="css">
+    .blink {
+      animation: blink 1.1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+  </script>
+  <p>
+    <code>@keyframes</code> describes an animation. Only the halfway point
+    is given; the browser fills in 0% and 100% from the element's normal
+    style. <code>steps(1)</code> means "jump, don't fade", so "INSERT COIN
+    TO PLAY" snaps on and off like an old arcade cabinet instead of gently
+    pulsing.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>In a <code>flex-direction: column</code> container, which property centres the children vertically?</p>
+      <ul>
+        <li><code>align-items: center</code></li>
+        <li data-right><code>justify-content: center</code></li>
+        <li><code>text-align: center</code></li>
+      </ul>
+      <p class="why"><code>justify-content</code> works along the main axis, which is vertical in a column.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>.screen.center</code> select?</p>
+      <ul>
+        <li>A <code>.center</code> element inside a <code>.screen</code> element.</li>
+        <li data-right>An element that has both the <code>screen</code> and <code>center</code> classes.</li>
+        <li>Every <code>.screen</code> and every <code>.center</code>.</li>
+      </ul>
+      <p class="why">No space means "the same element". A space (<code>.screen .center</code>) would mean "inside".</p>
+    </div>
+    <div class="q">
+      <p>How big is <code>font-size: clamp(28px, 9vw, 60px)</code> on a 1000px-wide window?</p>
+      <ul>
+        <li>28px</li>
+        <li>90px</li>
+        <li data-right>60px</li>
+      </ul>
+      <p class="why">9vw is 90px there, which is above the 60px maximum, so it stops at 60px.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="buttons">
+  <header><p>Course 1 · Lesson 5</p></header>
+  <h1>Pixel Buttons</h1>
+
+  <h2>The base button</h2>
+  <script type="text/plain" data-lang="css" data-file="css/retro.css">
+    .btn {
+      font-family: var(--font);
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--bg);
+      background: var(--yellow);
+      border: none;
+      padding: 12px 16px;
+      cursor: pointer;
+      text-decoration: none;
+      text-transform: uppercase;
+      box-shadow:
+        inset -4px -4px 0 rgba(0, 0, 0, 0.35),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.45),
+        4px 4px 0 #000;
+    }
+  </script>
+  <p>
+    Buttons don't inherit the page's font by default, so
+    <code>font-family</code> is set again. <code>text-decoration: none</code>
+    is there because the same class is used on links (like the Teacher link
+    in the top bar), and links are underlined by default.
+  </p>
+  <p>The three shadows build a 3D bevel:</p>
+  <ul>
+    <li><code>inset -4px -4px</code>: a dark edge along the bottom and right, inside the button.</li>
+    <li><code>inset 4px 4px</code>: a light edge along the top and left.</li>
+    <li><code>4px 4px 0 #000</code>: a hard shadow outside, like the panels.</li>
+  </ul>
+
+  <h2>States</h2>
+  <script type="text/plain" data-lang="css">
+    .btn:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: inset 4px 4px 0 rgba(0, 0, 0, 0.35), 2px 2px 0 #000;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      filter: grayscale(1) brightness(0.7);
+    }
+
+    .btn:focus-visible {
+      outline: 3px dashed var(--green);
+      outline-offset: 3px;
+    }
+  </script>
+  <p>
+    While you hold the mouse down (<code>:active</code>), the button moves
+    2px down and right and its outside shadow shrinks by the same amount.
+    It looks like the button is pushed into the screen. The bevel flips
+    too: the dark edge moves to the top left.
+  </p>
+  <p>
+    <code>:focus-visible</code> only shows when the browser thinks the
+    outline helps, usually when someone uses the keyboard. Mouse users
+    don't see a dashed box after every click, but keyboard users always
+    know where they are.
+  </p>
+
+  <h2>Modifier classes</h2>
+  <script type="text/plain" data-lang="css">
+    .btn.small { font-size: 9px; padding: 8px 10px; }
+    .btn.ghost {
+      background: transparent;
+      color: var(--cyan);
+      box-shadow: inset 0 0 0 3px var(--cyan);
+    }
+    .btn.danger { background: var(--red); color: var(--ink); }
+    .btn.alt { background: var(--cyan); }
+  </script>
+  <p>
+    Rather than writing a whole new button for each look, the HTML stacks
+    classes: <code>class="btn small ghost"</code> is a small outline
+    button. A ghost button's "border" is really an inset shadow with no
+    offset, which doesn't change the button's size.
+  </p>
+
+  <h2>Making <code>hidden</code> always win</h2>
+  <script type="text/plain" data-lang="css">
+    [hidden] {
+      display: none !important;
+    }
+  </script>
+  <p>
+    The <code>hidden</code> HTML attribute hides things using the browser's
+    built-in styles, but <em>any</em> <code>display</code> rule in your own
+    CSS beats those. A <code>.panel</code> with <code>hidden</code> would
+    still show, because <code>.panel</code> sets <code>display: flex</code>.
+    This rule makes <code>hidden</code> mean hidden, everywhere. The
+    JavaScript relies on that a lot: <code>button.hidden = true</code>.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What makes a <code>.btn</code> look pressed while you hold it down?</p>
+      <ul>
+        <li data-right>It moves 2px down and right, and its outside shadow shrinks to match.</li>
+        <li>It gets darker.</li>
+        <li>Its text gets smaller.</li>
+      </ul>
+      <p class="why">The <code>:active</code> rule uses <code>transform: translate(2px, 2px)</code> and a 2px shadow instead of 4px.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>retro.css</code> need <code>[hidden] { display: none !important; }</code>?</p>
+      <ul>
+        <li>Old browsers don't understand the <code>hidden</code> attribute.</li>
+        <li data-right>Any author <code>display</code> rule, like <code>.panel { display: flex }</code>, would otherwise override <code>hidden</code>.</li>
+        <li>It makes hidden elements load faster.</li>
+      </ul>
+      <p class="why">The browser's built-in <code>[hidden]</code> style is the weakest kind of rule, so your own CSS wins without this.</p>
+    </div>
+    <div class="q">
+      <p>When does <code>:focus-visible</code> usually show its outline?</p>
+      <ul>
+        <li>Every time the button is clicked.</li>
+        <li>Only on touch screens.</li>
+        <li data-right>When the button is reached with the keyboard.</li>
+      </ul>
+      <p class="why">It's the browser's best guess about when a focus ring helps, which is mainly keyboard navigation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="form">
+  <header><p>Course 1 · Lesson 6</p></header>
+  <h1>The Sign-in Form</h1>
+
+  <script type="text/plain" data-lang="html" data-file="index.html">
+    <form id="login" class="panel login">
+      <p>Enter your username and PIN</p>
+      <label>Username
+        <input id="login-name" autocomplete="username" autocapitalize="off" spellcheck="false" required>
+      </label>
+      <label><span id="login-secret-label">PIN</span>
+        <input id="login-secret" type="password" inputmode="numeric" autocomplete="current-password" required>
+      </label>
+      <button class="btn" type="submit">Press start</button>
+      <button id="guest-start" class="btn small ghost" type="button" hidden>Play as guest</button>
+      <p id="signin-note" class="note" role="status"></p>
+    </form>
+  </script>
+
+  <h2>Labels that wrap their inputs</h2>
+  <p>
+    Each <code>&lt;input&gt;</code> sits <em>inside</em> its
+    <code>&lt;label&gt;</code>. That connects the two without needing
+    <code>for</code> and <code>id</code>: clicking the word "Username" puts
+    the cursor in the box, and a screen reader reads "Username" when the box
+    is focused. The second label's text is wrapped in a
+    <code>&lt;span&gt;</code> with an id so JavaScript can change it from
+    "PIN" to "Password" later.
+  </p>
+
+  <h2>Helping the keyboard and the password manager</h2>
+  <ul>
+    <li><code>autocomplete="username"</code> and <code>"current-password"</code> tell password managers what each box is for.</li>
+    <li><code>autocapitalize="off"</code> and <code>spellcheck="false"</code> stop phones from "fixing" a username like <code>bluefox</code> into <code>Bluefox</code>.</li>
+    <li><code>type="password"</code> hides the PIN as dots.</li>
+    <li><code>inputmode="numeric"</code> shows a number pad on phones and tablets, because a PIN is four digits. It only changes the keyboard; it doesn't stop letters being typed.</li>
+    <li><code>required</code> makes the browser refuse to submit while a box is empty, with no JavaScript needed.</li>
+  </ul>
+
+  <h2>Two kinds of button</h2>
+  <p>
+    Inside a form, a button's <code>type</code> decides what it does.
+    <code>type="submit"</code> (Press start) submits the form, which also
+    happens when you press Enter in a box. <code>type="button"</code> (Play
+    as guest) does nothing on its own; JavaScript gives it a job. If the
+    guest button had no type, it would default to <code>submit</code> and
+    try to sign in.
+  </p>
+  <p>
+    The guest button starts <code>hidden</code>. The script shows it only
+    if guest play is switched on in <code>config.js</code>.
+  </p>
+
+  <h2>A status line</h2>
+  <p>
+    <code>&lt;p id="signin-note" role="status"&gt;</code> starts empty. The
+    script writes "Signing in..." or an error like "Wrong username or PIN."
+    into it. <code>role="status"</code> makes screen readers announce the
+    new text without moving the user's focus.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What does <code>inputmode="numeric"</code> do?</p>
+      <ul>
+        <li>Rejects anything that isn't a number.</li>
+        <li data-right>Shows a number keypad on touch screens.</li>
+        <li>Turns the box into a number spinner.</li>
+      </ul>
+      <p class="why">It's a keyboard hint only. <code>type="number"</code> is the one that changes the box itself, and that would show the PIN instead of dots.</p>
+    </div>
+    <div class="q">
+      <p>A <code>&lt;button&gt;</code> inside a form has no <code>type</code>. What happens when it's clicked?</p>
+      <ul>
+        <li>Nothing.</li>
+        <li data-right>It submits the form.</li>
+        <li>It resets the form.</li>
+      </ul>
+      <p class="why">Buttons in forms default to <code>type="submit"</code>. That's why "Play as guest" says <code>type="button"</code>.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>role="status"</code> on the note paragraph?</p>
+      <ul>
+        <li>It makes the text green.</li>
+        <li>It stops the form submitting.</li>
+        <li data-right>Screen readers announce changes to its text.</li>
+      </ul>
+      <p class="why">It's a "live region": new text is read out without moving the focus away from the form.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="modules">
+  <header><p>Course 1 · Lesson 7</p></header>
+  <h1>JavaScript Modules</h1>
+
+  <p>The sign-in page loads exactly one script:</p>
+  <script type="text/plain" data-lang="html">
+    <script type="module" src="js/signin.js"><\/script>
+  </script>
+  <p>
+    <code>type="module"</code> changes a lot about how the file runs:
+  </p>
+  <ul>
+    <li><strong>It can import other files.</strong> <code>signin.js</code> pulls in what it needs from <code>auth.js</code>, <code>config.js</code> and <code>firebase.js</code>, which pull in what <em>they</em> need. The browser fetches the whole tree.</li>
+    <li><strong>It waits for the page.</strong> Module scripts are deferred: they run after the HTML has been read, so <code>document.getElementById("login")</code> always finds the form.</li>
+    <li><strong>It has its own scope.</strong> A <code>const</code> at the top of a module isn't a global. Two modules can both have a variable called <code>form</code> without clashing.</li>
+    <li><strong>It's strict.</strong> Some sloppy old JavaScript (like using a variable you never declared) throws an error instead of quietly misbehaving.</li>
+  </ul>
+
+  <h2>Export and import</h2>
+  <p>A module shares things by exporting them:</p>
+  <script type="text/plain" data-file="js/config.js">
+    // Site settings. Everything here is public, so never put secrets in this file.
+    export const config = {
+      firebase: { /* project details */ },
+      teacherUid: "c7XsczYvZOghPpQEfeyblMnro2T2",
+      allowGuests: true,
+      aiMistakeChance: 0.2,
+    };
+  </script>
+  <p>and another module imports them by name:</p>
+  <script type="text/plain" data-file="js/signin.js">
+    import { getSession, startSession } from "./auth.js";
+    import { config } from "./config.js";
+    import { logIn } from "./firebase.js";
+  </script>
+  <p>
+    The names in the curly braces must match the exports exactly. In the
+    browser the path must be complete: <code>"./auth.js"</code>, with the
+    <code>./</code> and the <code>.js</code>. A module can also import from
+    a full URL, which is how <code>firebase.js</code> loads Firebase straight
+    from Google's servers with no install:
+  </p>
+  <script type="text/plain">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  </script>
+
+  <h2>A settings file</h2>
+  <p>
+    <code>config.js</code> collects the things you might want to change
+    (allow guests? how often should the tic-tac-toe CPU blunder?) into one
+    object. Other files read <code>config.allowGuests</code> instead of
+    having <code>true</code> buried in their code.
+  </p>
+  <div class="tip">
+    <strong>Everything in the browser is public.</strong> Anyone can open
+    developer tools and read <code>config.js</code>. The Firebase settings
+    are designed to be public; the database is protected by
+    <code>firestore.rules</code> on Google's side. Never put a real secret,
+    like a password or a private API key, in front-end code.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why can <code>signin.js</code> safely call <code>document.getElementById("login")</code> on its first line, even though the script tag comes from the page?</p>
+      <ul>
+        <li data-right>Module scripts are deferred: they run after the whole HTML has been read.</li>
+        <li><code>getElementById</code> waits until the element exists.</li>
+        <li>The form is created by the script.</li>
+      </ul>
+      <p class="why">Here the tag is also at the end of the body, but even in the <code>&lt;head&gt;</code> a module would wait.</p>
+    </div>
+    <div class="q">
+      <p>Which import works in the browser without any build tool?</p>
+      <ul>
+        <li><code>import { config } from "config";</code></li>
+        <li><code>import { config } from "./config";</code></li>
+        <li data-right><code>import { config } from "./config.js";</code></li>
+      </ul>
+      <p class="why">Browsers need a real path or URL, file extension included. Bare names like <code>"config"</code> only work with bundlers or import maps.</p>
+    </div>
+    <div class="q">
+      <p>Is it safe to put a secret API key in <code>config.js</code>?</p>
+      <ul>
+        <li>Yes, modules have their own scope, so other sites can't read it.</li>
+        <li data-right>No. Every file the browser downloads can be read by the person using it.</li>
+        <li>Yes, if the file is minified.</li>
+      </ul>
+      <p class="why">Module scope hides names from other scripts, not from people. The Firebase config is fine to publish because the rules protect the data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="signin">
+  <header><p>Course 1 · Lesson 8</p></header>
+  <h1>Handling the Sign-in</h1>
+
+  <h2>Find things once</h2>
+  <script type="text/plain" data-file="js/signin.js">
+    const form = document.getElementById("login");
+    const nameInput = document.getElementById("login-name");
+    const secretInput = document.getElementById("login-secret");
+    const secretLabel = document.getElementById("login-secret-label");
+    const submit = form.querySelector("button[type=submit]");
+    const guestButton = document.getElementById("guest-start");
+    const noteEl = document.getElementById("signin-note");
+  </script>
+  <p>
+    The script looks up every element it will touch at the top and keeps
+    them in constants. <code>form.querySelector(...)</code> searches only
+    inside the form, using a CSS attribute selector to find the submit
+    button.
+  </p>
+
+  <h2>Reacting as you type</h2>
+  <script type="text/plain">
+    // An @ means the teacher, so the second box asks for a password instead of
+    // a PIN.
+    function matchSecretToName() {
+      const isEmail = nameInput.value.includes("@");
+      secretLabel.textContent = isEmail ? "Password" : "PIN";
+      secretInput.inputMode = isEmail ? "text" : "numeric";
+    }
+
+    nameInput.addEventListener("input", matchSecretToName);
+  </script>
+  <p>
+    The <code>input</code> event fires on every keystroke (and on paste).
+    The moment the username contains an <code>@</code>, the label switches
+    to "Password" and the phone keyboard switches back to letters. The
+    <code>? :</code> is the <strong>ternary operator</strong>: "if
+    <code>isEmail</code>, this, otherwise that".
+  </p>
+
+  <h2>Taking over the submit</h2>
+  <script type="text/plain">
+    async function onSubmit(event) {
+      event.preventDefault();
+      submit.disabled = true;
+      noteEl.textContent = "Signing in...";
+      try {
+        startSession(await logIn(nameInput.value, secretInput.value));
+        enterArcade();
+      } catch (error) {
+        noteEl.textContent = error.message;
+        secretInput.value = "";
+        secretInput.focus();
+        submit.disabled = false;
+      }
+    }
+
+    form.addEventListener("submit", onSubmit);
+  </script>
+  <p>Step by step:</p>
+  <ol>
+    <li><code>event.preventDefault()</code> stops the browser's normal submit, which would reload the page and wipe everything. Always listen for <code>submit</code> on the <em>form</em>, not <code>click</code> on the button, so pressing Enter is handled too.</li>
+    <li>The button is disabled so an impatient double-click can't send two logins.</li>
+    <li><code>logIn</code> has to talk to Firebase over the internet, which takes time. It returns a <strong>Promise</strong>. <code>await</code> pauses this function (not the whole page) until the answer comes back. Only an <code>async</code> function can use <code>await</code>.</li>
+    <li>If <code>logIn</code> fails, it <strong>throws</strong>, and the code jumps straight to <code>catch</code>. The error's friendly message is shown, the PIN box is cleared and focused for another try, and the button comes back.</li>
+  </ol>
+
+  <h2>Leaving the page</h2>
+  <script type="text/plain">
+    function enterArcade() {
+      location.replace("arcade.html");
+    }
+
+    if (getSession()) {
+      enterArcade();
+    } else {
+      // ...set up the form
+    }
+  </script>
+  <p>
+    <code>location.replace</code> goes to a new page <em>and replaces</em>
+    the current one in the browser history. After signing in, pressing Back
+    doesn't land on the sign-in form again. (Setting
+    <code>location.href</code> would add a history entry instead.) If
+    someone who is already signed in opens <code>index.html</code>, they're
+    sent straight through.
+  </p>
+
+  <h2>Friendly errors</h2>
+  <p>
+    Firebase reports failures with codes like
+    <code>"auth/invalid-credential"</code>. Showing that to a student
+    wouldn't help, so <code>firebase.js</code> catches it and throws a new
+    <code>Error</code> with a message a person can act on:
+  </p>
+  <script type="text/plain" data-file="js/firebase.js">
+    if (wrong.includes(error.code)) {
+      throw new Error(
+        isEmail ? "Wrong email or password." : "Wrong username or PIN.",
+      );
+    }
+    if (error.code === "auth/too-many-requests") {
+      throw new Error("Too many tries. Wait a minute and try again.");
+    }
+    throw new Error("Couldn't sign in. Check your connection.");
+  </script>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What would happen without <code>event.preventDefault()</code> in <code>onSubmit</code>?</p>
+      <ul>
+        <li>The form couldn't be submitted at all.</li>
+        <li data-right>The browser would do a normal submit and reload the page before the login finished.</li>
+        <li>The <code>catch</code> block would always run.</li>
+      </ul>
+      <p class="why">A form's default action is to navigate. <code>preventDefault</code> keeps the page in place so JavaScript can handle the login.</p>
+    </div>
+    <div class="q">
+      <p>Why listen for <code>submit</code> on the form instead of <code>click</code> on the Press start button?</p>
+      <ul>
+        <li data-right>Pressing Enter in a box submits the form too, and <code>submit</code> catches both.</li>
+        <li>Buttons don't have a click event.</li>
+        <li>It's faster.</li>
+      </ul>
+      <p class="why">It also means the browser's <code>required</code> check runs first: the submit event only fires once both boxes are filled.</p>
+    </div>
+    <div class="q">
+      <p>After a successful sign-in, why does the student not see the form when they press Back?</p>
+      <ul>
+        <li>The form deletes itself.</li>
+        <li data-right><code>location.replace</code> swapped the sign-in page out of the history.</li>
+        <li>The browser blocks the Back button.</li>
+      </ul>
+      <p class="why">And if they did reach <code>index.html</code> somehow, <code>getSession()</code> would send them straight back to the arcade.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="sessions">
+  <header><p>Course 1 · Lesson 9</p></header>
+  <h1>Remembering Who's Playing</h1>
+
+  <h2>sessionStorage</h2>
+  <p>
+    Each page load starts JavaScript from scratch, so variables don't
+    survive the jump from <code>index.html</code> to
+    <code>arcade.html</code>. To remember something between pages, the
+    arcade uses the browser's <strong>Web Storage</strong>:
+  </p>
+  <ul>
+    <li><code>localStorage</code> keeps data until it's deleted, even after the browser closes. The arcade uses it for the mute setting.</li>
+    <li><code>sessionStorage</code> keeps data only while the tab is open. Close the tab and it's gone.</li>
+  </ul>
+  <p>
+    Sign-ins go in <code>sessionStorage</code> on purpose. Students share
+    Chromebooks: closing the tab should sign them out, so the next student
+    can't play as them.
+  </p>
+
+  <h2>Storing an object</h2>
+  <p>Web Storage only holds strings, so objects are turned into JSON text first:</p>
+  <script type="text/plain" data-file="js/auth.js">
+    const sessionKey = "mathArcadeSession";
+
+    export function startSession({ guest = false, teacher, username }) {
+      sessionStorage.setItem(
+        sessionKey,
+        JSON.stringify({ guest, teacher: Boolean(teacher), username }),
+      );
+    }
+
+    export function getSession() {
+      try {
+        return JSON.parse(sessionStorage.getItem(sessionKey));
+      } catch {
+        return null;
+      }
+    }
+  </script>
+  <ul>
+    <li><code>{ guest = false, teacher, username }</code> in the parameter list is <strong>destructuring with a default</strong>: the function takes one object and pulls out those three properties, using <code>false</code> if <code>guest</code> is missing.</li>
+    <li><code>JSON.stringify</code> turns <code>{ guest: false, teacher: false, username: "bluefox" }</code> into the text <code>'{"guest":false,"teacher":false,"username":"bluefox"}'</code>.</li>
+    <li><code>JSON.parse</code> turns it back. If nothing is stored, <code>getItem</code> returns <code>null</code>, and <code>JSON.parse(null)</code> is <code>null</code>. If someone has typed rubbish into the storage, <code>parse</code> throws, and the <code>catch</code> treats it as "not signed in".</li>
+  </ul>
+
+  <h2>The page guard</h2>
+  <p>Every signed-in page has this in its <code>&lt;head&gt;</code>:</p>
+  <script type="text/plain" data-lang="html" data-file="arcade.html">
+    <script>if (!sessionStorage.getItem("mathArcadeSession")) location.replace("index.html");<\/script>
+  </script>
+  <p>
+    It's a plain script, not a module, and it sits in the head, so it runs
+    <em>before</em> the body is drawn. Someone who isn't signed in is sent
+    away without ever seeing a flash of the game picker.
+  </p>
+  <p>
+    It is only a convenience. Anyone could set that storage key by hand in
+    developer tools. Real protection lives in the Firebase rules, and
+    <code>requireSession()</code> in <code>auth.js</code> also double-checks
+    that Firebase still has a real sign-in, and ends the session if not.
+  </p>
+
+  <h2>Guests and signing out</h2>
+  <script type="text/plain" data-file="js/signin.js">
+    guestButton.hidden = !config.allowGuests;
+    guestButton.addEventListener("click", () => {
+      startSession({ guest: true, teacher: false, username: "guest" });
+      enterArcade();
+    });
+  </script>
+  <p>
+    A guest gets a session too, just one marked <code>guest: true</code>.
+    Other code checks that flag to skip saving scores. Signing out removes
+    the key and goes back to the start:
+  </p>
+  <script type="text/plain" data-file="js/auth.js">
+    export async function endSession() {
+      sessionStorage.removeItem(sessionKey);
+      try {
+        await logOut();
+      } finally {
+        location.replace("index.html");
+      }
+    }
+  </script>
+  <p>
+    <code>finally</code> runs whether <code>logOut</code> worked or threw,
+    so the student always ends up on the sign-in page.
+  </p>
+
+  <h2>Usernames into email addresses</h2>
+  <p>
+    Firebase only signs people in with an email and a password of at least
+    6 characters. Students have a username and a 4-digit PIN. So
+    <code>firebase.js</code> quietly converts them: the username
+    <code>BlueFox</code> becomes <code>bluefox@students.example.com</code>
+    and the PIN <code>1234</code> becomes the password <code>pin-1234</code>.
+    The <code>example.com</code> domain is reserved and never receives mail.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does the arcade keep the sign-in in <code>sessionStorage</code> rather than <code>localStorage</code>?</p>
+      <ul>
+        <li><code>sessionStorage</code> can hold more data.</li>
+        <li data-right>Closing the tab signs the student out, so the next person on a shared computer can't play as them.</li>
+        <li><code>localStorage</code> doesn't work on Chromebooks.</li>
+      </ul>
+      <p class="why"><code>localStorage</code> would keep them signed in for days. The mute setting, on the other hand, <em>should</em> stick around, so it uses <code>localStorage</code>.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>getSession()</code> return when nobody is signed in?</p>
+      <ul>
+        <li>An empty object <code>{}</code></li>
+        <li data-right><code>null</code></li>
+        <li>It throws an error.</li>
+      </ul>
+      <p class="why"><code>getItem</code> gives <code>null</code> for a missing key, and <code>JSON.parse(null)</code> is <code>null</code>. Bad JSON is caught and also becomes <code>null</code>.</p>
+    </div>
+    <div class="q">
+      <p>Why is the page guard a classic script in the <code>&lt;head&gt;</code> instead of part of a module?</p>
+      <ul>
+        <li>Modules can't use <code>sessionStorage</code>.</li>
+        <li>Classic scripts are more secure.</li>
+        <li data-right>It runs before the body is drawn, so signed-out visitors never see the page.</li>
+      </ul>
+      <p class="why">A module is deferred until the page has been read, which could flash the content first.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="picker">
+  <header><p>Course 1 · Lesson 10</p></header>
+  <h1>The Game Picker Grid</h1>
+
+  <h2>The top bar</h2>
+  <script type="text/plain" data-lang="html" data-file="arcade.html">
+    <header class="topbar">
+      <a class="brand" href="arcade.html">MATH ARCADE</a>
+      <nav>
+        <span class="points-badge" data-points hidden></span>
+        <a class="btn small alt" href="teacher.html" data-teacher-link hidden>Teacher</a>
+        <a class="btn small" href="leaderboard.html" data-leaderboard-link hidden>Leaderboards</a>
+        <button class="btn small" type="button" data-feedback-open>Feedback</button>
+        <button class="btn small ghost" type="button" data-mute>Sound: on</button>
+        <button class="btn small ghost" type="button" data-signout>Sign out</button>
+      </nav>
+    </header>
+  </script>
+  <p>
+    <code>.topbar</code> is a flex row with
+    <code>justify-content: space-between</code>, which pushes the brand to
+    the left edge and the <code>&lt;nav&gt;</code> to the right.
+    <code>flex-wrap: wrap</code> lets the buttons drop onto a second line on
+    narrow screens instead of squashing.
+  </p>
+  <p>
+    Look at the attributes like <code>data-signout</code> and
+    <code>data-mute</code>. These <strong>data attributes</strong> are hooks
+    for JavaScript, separate from the classes that style things. The script
+    finds the sign-out button with <code>[data-signout]</code>, so you can
+    restyle it freely without breaking it. Several of them start
+    <code>hidden</code> and are revealed only for the right people.
+  </p>
+
+  <h2>An auto-filling grid</h2>
+  <script type="text/plain" data-lang="css" data-file="css/retro.css">
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      width: min(100%, 960px);
+    }
+  </script>
+  <p>
+    This one line of <code>grid-template-columns</code> makes the picker
+    work on every screen size with no media queries. Read it from the
+    inside out:
+  </p>
+  <ul>
+    <li><code>minmax(220px, 1fr)</code>: each column is at least 220px and at most an equal share of the space.</li>
+    <li><code>repeat(auto-fit, ...)</code>: fit as many of those columns as the width allows.</li>
+  </ul>
+  <p>
+    At 960px wide that's four columns; on a phone it's one. The grid works
+    it out.
+  </p>
+
+  <h2>Cards that are links</h2>
+  <script type="text/plain" data-lang="html">
+    <a class="game-card" href="tictactoe.html">
+      <img class="card-shot" src="img/previews/tictactoe.png" width="480" height="360" alt="">
+      <h2>TIC-TAC-TOE</h2>
+      <p>Beat the CPU. ...</p>
+    </a>
+  </script>
+  <ul>
+    <li>The whole card is one <code>&lt;a&gt;</code>, so the picture, title and text are all clickable, and it's a single stop for keyboard users.</li>
+    <li><code>width</code> and <code>height</code> on the image let the browser reserve space before the picture downloads, so the cards don't jump around as images arrive. CSS still scales it with <code>width: 100%; height: auto</code>.</li>
+    <li><code>alt=""</code> marks the picture as decorative. The heading already names the game, so a screen reader doesn't need to hear about it twice.</li>
+  </ul>
+  <script type="text/plain" data-lang="css">
+    .game-card:hover {
+      border-color: var(--yellow);
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 #000;
+    }
+  </script>
+  <p>
+    On hover the card lifts up and left while the shadow grows by the same
+    3px. The shadow stays in the same place on screen, so the card looks as
+    if it's rising off the page. It's the opposite of the button press.
+  </p>
+
+  <h2>The NEW! sticker</h2>
+  <p>
+    The sticker is <code>position: absolute</code> inside a wrapper with
+    <code>position: relative</code>. Absolute positioning measures from the
+    nearest positioned ancestor, so <code>top: -10px; right: -10px</code>
+    places it just over the picture's top-right corner, with
+    <code>transform: rotate(12deg)</code> for the slapped-on look.
+  </p>
+
+  <h2>One page, two editions</h2>
+  <script type="text/plain" data-lang="html">
+    <p>Beat the CPU. <span data-only="full">Solve a question after every game to play again.</span><span data-only="free">Best of as many rounds as you like.</span></p>
+  </script>
+  <p>
+    The class site and your free copy say different things about maths.
+    Both versions of the text are in the HTML. On the class site,
+    <code>retro.css</code> hides the free text with
+    <code>[data-only="free"] { display: none; }</code>. The free-arcade
+    build script keeps only the <code>free</code> spans. One source file,
+    two sites.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>With <code>repeat(auto-fit, minmax(220px, 1fr))</code> and a container 500px wide (no gap), how many columns are there?</p>
+      <ul>
+        <li>1</li>
+        <li data-right>2</li>
+        <li>3</li>
+      </ul>
+      <p class="why">Two 220px columns fit in 500px but three (660px) don't. The two then stretch to share the space, 250px each.</p>
+    </div>
+    <div class="q">
+      <p>Why does the card's image have <code>width</code> and <code>height</code> attributes when CSS resizes it anyway?</p>
+      <ul>
+        <li>They make the image download faster.</li>
+        <li data-right>They let the browser reserve the right space before the image loads, so the layout doesn't jump.</li>
+        <li>They're required for <code>alt</code> to work.</li>
+      </ul>
+      <p class="why">The browser uses the ratio of the two numbers (4:3 here) to size the box early.</p>
+    </div>
+    <div class="q">
+      <p>Why does the script find the sign-out button with <code>[data-signout]</code> rather than a class?</p>
+      <ul>
+        <li>Classes can't be used in <code>querySelector</code>.</li>
+        <li>Data attributes are faster.</li>
+        <li data-right>It keeps JavaScript hooks separate from styling, so changing classes can't break behaviour.</li>
+      </ul>
+      <p class="why">Classes are for CSS, data attributes are for scripts. Either side can change without surprising the other.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="shared">
+  <header><p>Course 1 · Lesson 11</p></header>
+  <h1>Shared Setup and the Game List</h1>
+
+  <h2>One list of games</h2>
+  <p><code>js/games.js</code> describes every game as an object in an array:</p>
+  <script type="text/plain" data-file="js/games.js">
+    export const games = [
+      {
+        board: true,
+        defaultSet: "congruent-triangles-parts",
+        id: "tictactoe",
+        label: "Tic-Tac-Toe",
+        page: "tictactoe.html",
+        released: true,
+      },
+      // ...one object per game...
+      {
+        board: false,
+        id: "analog",
+        label: "Analog Appétit",
+        page: "analog.html",
+        released: false,
+      },
+    ];
+
+    export function findGame(id) {
+      return games.find((game) => game.id === id);
+    }
+  </script>
+  <p>
+    The picker, the teacher dashboard, the feedback form and the
+    leaderboards all read this one list. Adding a game starts here instead
+    of hunting through ten files. That idea, keeping facts in data rather
+    than spreading them through code, is called a <strong>single source of
+    truth</strong>.
+  </p>
+
+  <h2>Hiding unreleased games</h2>
+  <script type="text/plain" data-lang="html" data-file="arcade.html">
+    <script type="module">
+      import { initPage } from "./js/ui.js";
+      import { initFeedbackForm } from "./js/feedback.js";
+      import { games } from "./js/games.js";
+      // Held-back games stay on the picker only on a local test server.
+      const local = ["localhost", "127.0.0.1"].includes(location.hostname);
+      games
+        .filter((game) => !game.released && !local)
+        .forEach((game) => {
+          document.querySelector(`.game-card[href="${game.page}"]`)?.remove();
+        });
+      initPage();
+      initFeedbackForm();
+    <\/script>
+  </script>
+  <ul>
+    <li><code>.filter</code> keeps only the games that should be hidden: not released, and not on your own computer. On localhost you still see everything, so you can test.</li>
+    <li><code>.forEach</code> runs once for each of those games.</li>
+    <li>The backtick string is a <strong>template literal</strong>: <code>${game.page}</code> drops the page name into the selector, making <code>.game-card[href="analog.html"]</code>.</li>
+    <li><code>?.remove()</code> is <strong>optional chaining</strong>. If <code>querySelector</code> finds nothing it returns <code>null</code>, and <code>null.remove()</code> would crash. <code>?.</code> just skips the call instead.</li>
+  </ul>
+
+  <h2>initPage: the shared top bar</h2>
+  <p>Every signed-in page calls <code>initPage()</code> from <code>js/ui.js</code>:</p>
+  <script type="text/plain" data-file="js/ui.js">
+    export function initPage(options) {
+      const session = requireSession(options);
+      if (!session) return null;
+
+      document
+        .querySelector("[data-signout]")
+        ?.addEventListener("click", endSession);
+
+      const teacherLink = document.querySelector("[data-teacher-link]");
+      if (teacherLink) teacherLink.hidden = !session.teacher;
+
+      // Guests have no leaderboard: nothing they play is saved.
+      document.querySelectorAll("[data-leaderboard-link]").forEach((link) => {
+        link.hidden = Boolean(session.guest);
+      });
+
+      const mute = document.querySelector("[data-mute]");
+      if (mute) {
+        const render = () => {
+          mute.textContent = isMuted() ? "Sound: off" : "Sound: on";
+        };
+        render();
+        mute.addEventListener("click", () => {
+          toggleMute();
+          render();
+        });
+      }
+
+      return session;
+    }
+  </script>
+  <p>
+    It checks the session (sending signed-out visitors away), then wires up
+    whichever top-bar buttons the page happens to have. Every lookup is
+    allowed to find nothing, thanks to <code>?.</code> and
+    <code>if (mute)</code>, so a page with no mute button still works. It
+    <em>returns</em> the session, or <code>null</code> if it redirected, so
+    a game can write <code>if (!initPage()) return;</code> and stop early.
+  </p>
+  <p>
+    Notice <code>render</code> for the mute button: one small function sets
+    the label from the stored setting, and it's called once at the start
+    and again after every click. You'll see this "change the data, then
+    redraw from the data" pattern all through the tic-tac-toe game.
+  </p>
+
+  <h2>Sounds made from numbers</h2>
+  <script type="text/plain" data-file="js/sound.js">
+    const tunes = {
+      place: [[880, 0, 0.08]],
+      win: [[523, 0, 0.1], [659, 0.1, 0.1], [784, 0.2, 0.1], [1047, 0.3, 0.3]],
+      // ...
+    };
+  </script>
+  <p>
+    There are no sound files. Each tune is a list of notes:
+    <code>[frequency in Hz, start time, length in seconds]</code>.
+    <code>play("win")</code> uses the Web Audio API to create an oscillator
+    (a tone generator) for each note, which gives that 8-bit beep. Mute is
+    remembered in <code>localStorage</code>, so it stays off next week too.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What does <code>document.querySelector(".nope")?.remove()</code> do when there is no <code>.nope</code> element?</p>
+      <ul>
+        <li>Throws "Cannot read properties of null".</li>
+        <li data-right>Nothing. The call is skipped because the result is <code>null</code>.</li>
+        <li>Removes the whole document.</li>
+      </ul>
+      <p class="why"><code>?.</code> stops at <code>null</code> or <code>undefined</code> and returns <code>undefined</code> instead of crashing.</p>
+    </div>
+    <div class="q">
+      <p>Why does the picker keep unreleased games visible on <code>localhost</code>?</p>
+      <ul>
+        <li data-right>So you can test a game on your own computer before it goes public.</li>
+        <li>Because <code>localhost</code> can't run <code>.filter</code>.</li>
+        <li>It's a bug.</li>
+      </ul>
+      <p class="why">The filter only hides a game when it's both unreleased and not on a local server.</p>
+    </div>
+    <div class="q">
+      <p>A game page starts with <code>if (!initPage()) return;</code>. When does it return early?</p>
+      <ul>
+        <li>When the page has no mute button.</li>
+        <li data-right>When there's no session and <code>initPage</code> has sent the visitor to sign in.</li>
+        <li>When the player is a guest.</li>
+      </ul>
+      <p class="why"><code>initPage</code> returns <code>null</code> after redirecting. Guests do have a session, so they carry on.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>

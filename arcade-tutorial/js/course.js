@@ -50,6 +50,61 @@ export const courses = [
       { id: "rps-scoreboard", lab: true, title: "Lab: Rock, Paper, Scissors" },
     ],
   },
+  {
+    id: "draconis",
+    page: "draconis.html",
+    summary:
+      "A canvas action game from the ground up: the game loop, delta time, " +
+      "held keys, sprites, collisions, stage data, monster state machines " +
+      "and a maths clock that never resets.",
+    title: "Course 3: Deus Draconis",
+    steps: [
+      { id: "dd-canvas", title: "The Canvas and Its Coordinates" },
+      { id: "dd-loop", title: "The Game Loop" },
+      { id: "dd-input", title: "Keyboard and Pointer Input" },
+      { id: "window-washer", lab: true, title: "Lab: Window Washer" },
+      { id: "dd-entities", title: "Game Objects as Plain Objects" },
+      { id: "dd-sprites", title: "Drawing Sprites" },
+      { id: "dd-collide", title: "Collisions: Circles and Boxes" },
+      { id: "firefly-jar", lab: true, title: "Lab: Firefly Jar" },
+      { id: "dd-stages", title: "Stages and Spawn Schedules" },
+      { id: "dd-gate", title: "Phases and the Question Gate" },
+      { id: "sushi-conveyor", lab: true, title: "Lab: Sushi Conveyor" },
+      { id: "dd-monsters", title: "Monsters as State Machines" },
+      { id: "dd-shots", title: "Monster Shots" },
+      { id: "dd-powers", title: "Fireballs, Levels and Power-ups" },
+      { id: "robot-sparring", lab: true, title: "Lab: Robot Sparring" },
+      { id: "dd-boss", title: "The Wyrm Boss" },
+      { id: "dd-scenery", title: "Scenery, the HUD and the Draw Order" },
+    ],
+  },
+  {
+    id: "astro",
+    page: "astro.html",
+    summary:
+      "A tour of a big canvas platformer: tile physics, forgiving jumps, " +
+      "aliens and bosses as data plus state machines, drop tables and an " +
+      "oxygen meter.",
+    title: "Course 7: Astro Stomp",
+    steps: [
+      { id: "astro-tour", title: "A Tour of Astro Stomp" },
+      { id: "astro-levels", title: "Planets Made of Data" },
+      { id: "astro-physics", title: "Tile Collision Without Tunnelling" },
+      { id: "lunar-leap", lab: true, title: "Lab: Moon Rover Hop" },
+      { id: "astro-player", title: "The Astronaut: Run, Jump, Smash" },
+      { id: "astro-contacts", title: "Stomp or Ouch?" },
+      { id: "drone-stomper", lab: true, title: "Lab: Drone Stomper" },
+      { id: "astro-minions", title: "Aliens as Data" },
+      { id: "astro-moves", title: "Move Sets: Little State Machines" },
+      { id: "astro-bosses", title: "Bosses and the Open Moment" },
+      { id: "astro-shots", title: "Shots, Lobs and Warning Strikes" },
+      { id: "astro-powerups", title: "Power-ups and the Drop Table" },
+      { id: "supply-pod", lab: true, title: "Lab: Supply Pod" },
+      { id: "astro-frame", title: "One Frame, Start to Finish" },
+      { id: "astro-oxygen", title: "Oxygen, Score and Game Over" },
+      { id: "spacewalk-air", lab: true, title: "Lab: Spacewalk Air Supply" },
+    ],
+  },
 ];
 
 // Where a step lives: lessons are sections of their course page, labs all

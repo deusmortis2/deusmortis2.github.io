@@ -1,0 +1,2327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Deus Draconis | Arcade Tutorial</title>
+</head>
+<body data-course="draconis">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/draconis.html">Play Deus Draconis</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 3: DEUS DRACONIS</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-canvas">
+  <header><p>Course 3 · Lesson 1</p></header>
+  <h1>The Canvas and Its Coordinates</h1>
+
+  <p>
+    Have a flight first: <a href="../arcade/draconis.html">play Deus
+    Draconis</a> on your site's free arcade. Steer the dragon with the
+    arrow keys, breathe fire with space, and try to reach the first wyrm.
+  </p>
+  <p>
+    Tic-tac-toe was built from buttons: real HTML elements that the browser
+    draws for you. Deus Draconis is a different kind of page. Monsters
+    swoop, fireballs fly and the sky scrolls sixty times a second, and
+    there's no element for any of it. Instead, the whole game is painted,
+    pixel by pixel, onto one <strong>canvas</strong>. This course walks
+    through all 17 files in <code>js/draconis/</code> and explains how
+    they turn into a game.
+  </p>
+
+  <h2>One element to draw on</h2>
+  <script type="text/plain" data-lang="html" data-file="draconis.html">
+    <div id="game-frame" class="game-frame">
+      <canvas id="game" class="game-canvas" width="480" height="360" aria-label="Deus Draconis game. Fly the dragon through three stages, dodge monsters and their attacks, and breathe fire."></canvas>
+    </div>
+    <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+    <p id="load-error" class="status" role="status"></p>
+  </script>
+  <ul>
+    <li><strong><code>&lt;canvas&gt;</code></strong> is a blank rectangle of pixels. On its own it shows nothing. JavaScript draws on it.</li>
+    <li><strong><code>width="480" height="360"</code></strong> is the size of the <em>drawing</em>: 480 by 360 pixels. CSS can still show it bigger (fullscreen stretches it right across the screen), but the game always draws as if it were 480 by 360. Everything is scaled up together.</li>
+    <li><strong><code>aria-label</code></strong> matters more here than usual. A screen reader can't see anything painted on a canvas, so the label is the only description it gets.</li>
+    <li><strong><code>#load-error</code></strong> is an ordinary paragraph for a message if the art or questions fail to load. Plain HTML is still the easiest way to show text that has to be read.</li>
+  </ul>
+  <p>The only other thing in the body that matters to the game is the script:</p>
+  <script type="text/plain" data-lang="html" data-file="draconis.html">
+    <script type="module" src="js/draconis/game.js"><\/script>
+  </script>
+
+  <h2>Getting a pen</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+  </script>
+  <p>
+    <code>getContext("2d")</code> hands back the canvas's <strong>drawing
+    context</strong>, which every canvas program calls <code>ctx</code>.
+    Every drawing command in the game goes through it:
+    <code>ctx.fillRect</code>, <code>ctx.drawImage</code>,
+    <code>ctx.fillText</code> and friends. The canvas itself is just the
+    paper; <code>ctx</code> is the pen.
+  </p>
+
+  <h2>Which way is up?</h2>
+  <p>
+    A canvas measures from its <strong>top-left corner</strong>. The point
+    <code>(0, 0)</code> is the top-left pixel, <code>x</code> grows to the
+    right, and <code>y</code> grows <strong>downwards</strong>. That's
+    upside down compared with graphs in maths lessons, and it catches
+    everyone out at first. The game's size and the dragon's playing area
+    live in <code>entities.js</code>:
+  </p>
+  <script type="text/plain" data-file="js/draconis/entities.js">
+    export const width = 480;
+    export const height = 360;
+
+    export const dragonBounds = { maxX: 464, maxY: 280, minX: 16, minY: 185 };
+    export const dragonSpeed = 165;
+    export const dragonStart = { x: 154, y: 234 };
+  </script>
+  <p>
+    Read <code>dragonBounds</code> with "y goes down" in mind:
+    <code>minY: 185</code> and <code>maxY: 280</code> keep the dragon in
+    the <em>lower</em> part of the screen, below the monsters. The canvas
+    is 360 tall, so <code>maxY: 280</code> leaves a strip at the bottom for
+    the lives and fireball icons.
+  </p>
+
+  <h2>Filling rectangles and writing text</h2>
+  <p>Here's the level bar from the heads-up display: a dark box with a blue bar inside it.</p>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    function drawLevel(ctx, progress) {
+      text(ctx, `LV ${progress.level}`, 10, 42, { colour: "#7fe7ff", size: 8 });
+      const w = 80;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+      ctx.fillRect(52, 42, w + 2, 8);
+      ctx.fillStyle = "#7fe7ff";
+      ctx.fillRect(53, 43, (w * progress.xp) / xpNeeded(progress.level), 6);
+    }
+  </script>
+  <p>
+    The pattern is always the same: <strong>set the style, then
+    draw</strong>. <code>fillStyle</code> takes any CSS colour, and
+    <code>fillRect(x, y, width, height)</code> paints a rectangle whose
+    top-left corner is at <code>(x, y)</code>. The second bar starts one
+    pixel in and is drawn as wide as the player's share of the XP they
+    need, so it fills up as they level.
+  </p>
+  <p>Text works the same way, through a small helper every screen uses:</p>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    const font = '"Press Start 2P", monospace';
+
+    export function text(ctx, value, x, y, { align = "left", colour = "#ffffff", size = 10 } = {}) {
+      ctx.font = `${size}px ${font}`;
+      ctx.textAlign = align;
+      ctx.textBaseline = "top";
+      // Small text gets a thinner shadow so it stays readable.
+      const drop = size < 8 ? 1 : 2;
+      ctx.fillStyle = "#000000";
+      ctx.fillText(value, x + drop, y + drop);
+      ctx.fillStyle = colour;
+      ctx.fillText(value, x, y);
+    }
+  </script>
+  <ul>
+    <li><code>ctx.font</code> is written exactly like the CSS <code>font</code> shorthand.</li>
+    <li><code>textBaseline = "top"</code> makes <code>y</code> the top of the letters, so text sits where you'd expect a box to sit.</li>
+    <li>The text is drawn <strong>twice</strong>: once in black, nudged down and right, then in colour on top. That's a drop shadow, so the words stay readable over a bright sky or a busy fight.</li>
+    <li>The last parameter is an object with <strong>defaults</strong>. <code>text(ctx, "HI", 10, 10)</code> gets white, size-10, left-aligned text without passing anything else.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>A canvas has no memory of shapes.</strong> Once a rectangle is
+    painted it's just coloured pixels. There's no "rectangle object" to
+    move later. To make something move, the game paints the
+    <em>whole picture again</em>, with the thing in its new place. The
+    next lesson shows the loop that does that.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>On a canvas, where is the point with <code>y = 0</code>?</p>
+      <ul>
+        <li>Along the bottom edge.</li>
+        <li data-right>Along the top edge.</li>
+        <li>Across the middle.</li>
+      </ul>
+      <p class="why">The origin is the top-left corner, and <code>y</code> counts downwards. That's why the dragon, which flies low on the screen, has big <code>y</code> values (185 to 280).</p>
+    </div>
+    <div class="q">
+      <p>Fullscreen shows the canvas 960 pixels wide. What <code>x</code> does the game use for the right-hand edge?</p>
+      <ul>
+        <li data-right>480, the canvas's own <code>width</code>.</li>
+        <li>960, the size on screen.</li>
+        <li>It depends on the monitor.</li>
+      </ul>
+      <p class="why">The <code>width</code> attribute sets the drawing size. CSS only stretches the finished picture, so the game's maths never changes.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>text()</code> call <code>fillText</code> twice?</p>
+      <ul>
+        <li>The first call loads the font.</li>
+        <li>To make the letters bolder.</li>
+        <li data-right>The first, black and nudged, is a drop shadow under the coloured text.</li>
+      </ul>
+      <p class="why">Drawing the shadow first and the colour on top keeps HUD text readable over any background.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-loop">
+  <header><p>Course 3 · Lesson 2</p></header>
+  <h1>The Game Loop</h1>
+
+  <p>
+    Every action game is the same two steps, repeated as fast as the screen
+    can refresh: <strong>update</strong> the world a little, then
+    <strong>draw</strong> it. Each pass is one <strong>frame</strong>. The
+    arcade's canvas games share this loop. It lives in
+    <code>game-shell.js</code>, at the end of <code>runGame</code>:
+  </p>
+  <script type="text/plain" data-file="js/game-shell.js">
+    let last = performance.now();
+    const frame = (now) => {
+      // A frame's timestamp can be a touch earlier than the moment the loop
+      // was set up, so the first step is clamped at 0 rather than going back.
+      update(Math.min(Math.max((now - last) / 1000, 0), 0.05));
+      endFrame?.();
+      last = now;
+      draw();
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  </script>
+
+  <h2>requestAnimationFrame</h2>
+  <p>
+    <code>requestAnimationFrame(frame)</code> asks the browser: "call
+    <code>frame</code> just before you next repaint the screen". It calls it
+    once, with a timestamp in milliseconds. So <code>frame</code> ends by
+    asking again, which makes a loop that runs once per screen refresh:
+    usually 60 times a second, sometimes 120 or more on fast screens. When
+    the tab is hidden, the browser stops calling it, so a game in a
+    background tab costs nothing.
+  </p>
+  <div class="tip">
+    <strong>Why not a <code>while (true)</code> loop?</strong> JavaScript
+    runs on one thread. A loop that never stops would never give the
+    browser a chance to show the picture or handle a key press, and the
+    page would freeze. <code>requestAnimationFrame</code> does one frame,
+    then hands control back until the next one.
+  </div>
+
+  <h2>Delta time</h2>
+  <p>
+    <code>(now - last) / 1000</code> is the time since the last frame, in
+    <strong>seconds</strong>. Games call it <code>dt</code> ("delta time").
+    On a 60 Hz screen it's about 0.0167; on a 120 Hz screen it's half that.
+    Every speed in the game is written <em>per second</em> and multiplied by
+    <code>dt</code>:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function steerDragon(dt) {
+      const step = dragonSpeed * speedBoost(game.progress) * dt;
+      // (cut: turning held keys into dx and dy, next lesson)
+    }
+  </script>
+  <p>
+    <code>dragonSpeed</code> is 165, so the dragon covers 165 pixels in one
+    second whether that second had 60 frames of 2.75 pixels or 120 frames
+    of 1.375 pixels. Without <code>dt</code>, the game would run twice as
+    fast on a fast screen.
+  </p>
+
+  <h2>The cap</h2>
+  <p>
+    <code>Math.min(..., 0.05)</code> means no step is ever longer than a
+    twentieth of a second. Switch to another tab for ten seconds and come
+    back: the first frame would otherwise have a <code>dt</code> of 10, and
+    every monster and fireball would jump ten seconds' worth in one go,
+    straight through the dragon. With the cap, a slow frame makes the game
+    run slightly slower for a moment instead of teleporting.
+    <code>Math.max(..., 0)</code> guards the other end, so time never runs
+    backwards.
+  </p>
+
+  <h2>Update, then draw</h2>
+  <p>
+    <code>update</code> changes the game's state. <code>draw</code> paints
+    it. They're kept strictly apart: the top of <code>render.js</code>
+    says <em>"Pure output: reads game state, never changes it."</em> It's
+    the same idea as <code>render()</code> in tic-tac-toe, but now it runs
+    every frame instead of after every click.
+  </p>
+
+  <h2>How Draconis plugs in</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    runGame({
+      canvas,
+      draw: () => draw(ctx, sprites, game),
+      fonts: ['10px "Press Start 2P"'],
+      height,
+      load: () => [questions.loaded, loadDragon(sprites), loadMonsters(sprites)],
+      pixelated: true,
+      ready: () => {
+        keys = bindInput(canvas, {
+          // (cut: the input handlers, next lesson)
+        });
+      },
+      run: { id: "draconis", score: () => game.score },
+      setup: () => {
+        game.sceneryArt = buildScenery();
+        game.scenery = createScenery("day");
+        newRound();
+      },
+      update,
+      width,
+    });
+  </script>
+  <p>
+    The game hands <code>runGame</code> one object full of settings and
+    functions, and <code>runGame</code> does the rest in order:
+  </p>
+  <ol>
+    <li>Checks the player is signed in and sets the canvas size.</li>
+    <li>Runs <code>setup()</code>, so there's a scene ready to draw.</li>
+    <li>Waits for everything in <code>load()</code> at once with <code>Promise.all</code>: the question bank, the dragon's art, the monsters' art, and the pixel font. A canvas can only use a web font that has already downloaded, so <code>document.fonts.load</code> fetches it before the first frame.</li>
+    <li>Runs <code>ready()</code>, which turns on the controls.</li>
+    <li>Starts the loop, calling the game's <code>update(dt)</code> and <code>draw()</code> every frame.</li>
+  </ol>
+  <p>
+    If anything fails to load, the <code>catch</code> in
+    <code>runGame</code> writes the error into <code>#load-error</code> and
+    the loop never starts. Astro Stomp and Jörmungandr use exactly the
+    same shell, so none of the three needs a loop of its own.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why is every speed multiplied by <code>dt</code>?</p>
+      <ul>
+        <li>To make the numbers smaller.</li>
+        <li data-right>So things move the same distance per second however many frames the screen shows.</li>
+        <li><code>requestAnimationFrame</code> needs it.</li>
+      </ul>
+      <p class="why">Speeds are "pixels per second". Multiplying by the seconds since the last frame gives the right step for that frame.</p>
+    </div>
+    <div class="q">
+      <p>The player comes back after 3 seconds in another tab. What <code>dt</code> does the next <code>update</code> get?</p>
+      <ul>
+        <li>3</li>
+        <li data-right>0.05</li>
+        <li>0</li>
+      </ul>
+      <p class="why"><code>Math.min(3, 0.05)</code> is 0.05. The cap stops everything jumping three seconds ahead in one frame.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>requestAnimationFrame(frame)</code> do?</p>
+      <ul>
+        <li>Calls <code>frame</code> 60 times, then stops.</li>
+        <li>Calls <code>frame</code> straight away.</li>
+        <li data-right>Calls <code>frame</code> once, before the next repaint. <code>frame</code> asks again to keep the loop going.</li>
+      </ul>
+      <p class="why">It's a one-off request. The loop exists because each frame requests the next.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-input">
+  <header><p>Course 3 · Lesson 3</p></header>
+  <h1>Keyboard and Pointer Input</h1>
+
+  <p>
+    In tic-tac-toe, a click <em>was</em> the move. An action game can't work
+    like that. When you hold the right arrow, the dragon should glide
+    smoothly for as long as the key is down, and holding up at the same time
+    should fly diagonally. So the game doesn't react to key presses
+    directly. It keeps a list of the keys that are <strong>held down right
+    now</strong>, and every frame looks at that list.
+  </p>
+
+  <h2>A set of held keys</h2>
+  <script type="text/plain" data-file="js/draconis/input.js">
+    const gameKeys = [
+      "arrowup", "arrowdown", "arrowleft", "arrowright",
+      "w", "a", "s", "d", " ", "enter", "1", "2", "3",
+    ];
+
+    // `handlers` has onAction(input), onPick(index), pickAt(point) and
+    // onDrag(dx, dy). Returns the set of keys currently held down.
+    export function bindInput(canvas, handlers) {
+      const keys = new Set();
+      window.addEventListener("keydown", (event) => {
+        if (document.querySelector("dialog[open]")) return;
+        const key = event.key.toLowerCase();
+        if (!gameKeys.includes(key)) return;
+        event.preventDefault();
+        if (event.repeat) return;
+        if (key === " ") handlers.onAction("fire");
+        if (key === "enter") handlers.onAction("enter");
+        if (["1", "2", "3"].includes(key)) handlers.onPick(Number(key) - 1);
+        keys.add(key);
+      });
+      window.addEventListener("keyup", (event) => {
+        keys.delete(event.key.toLowerCase());
+      });
+      window.addEventListener("blur", () => keys.clear());
+      // (cut: pointer input, below)
+      return keys;
+    }
+  </script>
+  <ul>
+    <li>A <strong><code>Set</code></strong> is a collection with no duplicates. <code>keys.add("w")</code> twice still holds one <code>"w"</code>, and <code>keys.has("w")</code> is a quick yes or no.</li>
+    <li><strong>keydown adds, keyup deletes.</strong> Between the two, the key is in the set.</li>
+    <li><code>event.key.toLowerCase()</code> turns <code>"ArrowUp"</code> into <code>"arrowup"</code> and a Caps Lock <code>"W"</code> into <code>"w"</code>, so both work.</li>
+    <li><code>preventDefault()</code> stops the browser's own reaction to these keys. Without it, space and the arrows would scroll the page while you play.</li>
+    <li><strong><code>event.repeat</code></strong> is true for the automatic repeats a held key sends. One-off actions (fire, pick a card) happen on the first press only, so holding space doesn't empty your fireballs.</li>
+    <li>If a <code>&lt;dialog&gt;</code> is open (a maths question), keys are left alone, so typing an answer of "3" doesn't pick a power-up.</li>
+    <li><strong><code>blur</code></strong> fires when the window loses focus. If you hold right and click into another window, the keyup goes to that window, not the game. Clearing the set stops the dragon flying right forever.</li>
+  </ul>
+
+  <h2>Reading the set every frame</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function held(...names) {
+      return names.some((name) => keys.has(name));
+    }
+
+    function steerDragon(dt) {
+      const step = dragonSpeed * speedBoost(game.progress) * dt;
+      const dx = (held("arrowright", "d") ? step : 0) - (held("arrowleft", "a") ? step : 0);
+      const dy = (held("arrowdown", "s") ? step : 0) - (held("arrowup", "w") ? step : 0);
+      moveDragon(dx, dy);
+    }
+  </script>
+  <p>
+    <code>...names</code> is a <strong>rest parameter</strong>: it gathers
+    all the arguments into an array, so <code>held("arrowup", "w")</code>
+    asks "is either of these down?". Then <code>dx</code> is "right minus
+    left". Hold right: <code>step - 0</code>. Hold left:
+    <code>0 - step</code>. Hold both: <code>step - step</code>, which is 0,
+    so they cancel out instead of fighting.
+  </p>
+
+  <h2>Staying on screen</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function moveDragon(dx, dy) {
+      const { dragon } = game.round;
+      dragon.x = Math.min(Math.max(dragon.x + dx, dragonBounds.minX), dragonBounds.maxX);
+      dragon.y = Math.min(Math.max(dragon.y + dy, dragonBounds.minY), dragonBounds.maxY);
+    }
+  </script>
+  <p>
+    <code>Math.min(Math.max(value, low), high)</code> is the standard
+    <strong>clamp</strong>. <code>Math.max</code> lifts anything below
+    <code>low</code> up to it; <code>Math.min</code> pulls anything above
+    <code>high</code> down to it. A move to <code>x = 500</code> becomes
+    464, and a move to <code>x = 3</code> becomes 16.
+  </p>
+
+  <h2>Dragging on a touch screen</h2>
+  <script type="text/plain" data-file="js/draconis/input.js">
+    let drag = null;
+    const scale = () => width / canvas.getBoundingClientRect().width;
+    // (cut: toCanvas, and pointerdown, which starts a drag or picks a card)
+    canvas.addEventListener("pointermove", (event) => {
+      if (!drag) return;
+      const dx = (event.clientX - drag.x) * scale();
+      const dy = (event.clientY - drag.y) * scale();
+      drag.moved += Math.abs(dx) + Math.abs(dy);
+      drag.x = event.clientX;
+      drag.y = event.clientY;
+      handlers.onDrag(dx, dy);
+    });
+    canvas.addEventListener("pointerup", () => {
+      if (drag && drag.moved < 8) handlers.onAction("tap");
+      drag = null;
+    });
+  </script>
+  <p>
+    Pointer events cover mouse, finger and pen in one go. A finger's
+    position is in <em>screen</em> pixels, but the game thinks in
+    <em>canvas</em> pixels. If the canvas is shown 960 wide, moving your
+    finger 10 screen pixels is only 5 canvas pixels, so
+    <code>scale()</code> (480 divided by the size on screen) converts one
+    to the other. A touch that barely moved (under 8 pixels in total) counts
+    as a tap, which breathes fire.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The player holds both the left and right arrows. What is <code>dx</code>?</p>
+      <ul>
+        <li data-right>0, so the dragon doesn't move sideways.</li>
+        <li><code>step</code>, because right is checked first.</li>
+        <li><code>-step</code>, because left wins.</li>
+      </ul>
+      <p class="why"><code>step - step</code> is 0. Opposite keys cancel out.</p>
+    </div>
+    <div class="q">
+      <p>Why does the game clear the held keys on <code>blur</code>?</p>
+      <ul>
+        <li>To save memory.</li>
+        <li data-right>A key released while another window has focus never sends its keyup to the game.</li>
+        <li>So the player has to press start again.</li>
+      </ul>
+      <p class="why">Without it, a key could stay "held" in the set forever, and the dragon would drift on its own.</p>
+    </div>
+    <div class="q">
+      <p>With <code>dragonBounds.maxX</code> at 464, where does <code>moveDragon</code> put a dragon that tries to reach <code>x = 470</code>?</p>
+      <ul>
+        <li>470</li>
+        <li data-right>464</li>
+        <li>16</li>
+      </ul>
+      <p class="why"><code>Math.max(470, 16)</code> is 470, then <code>Math.min(470, 464)</code> is 464.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-entities">
+  <header><p>Course 3 · Lesson 4</p></header>
+  <h1>Game Objects as Plain Objects</h1>
+
+  <p>
+    The dragon, every monster, every arrow, every explosion: each is just a
+    plain JavaScript object with an <code>x</code> and a <code>y</code>, plus
+    whatever else it needs. There are no classes and nothing special. A
+    thing in the game is a bag of numbers that <code>update</code> changes
+    and <code>draw</code> paints.
+  </p>
+
+  <h2>The whole game in one object</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    const game = {
+      bossCheckpoint: false,
+      // The boss's health when the dragon last died fighting it, so a respawn
+      // (or a continue) picks the fight up where it was. Null means full health.
+      bossHp: null,
+      choice: null,
+      clock: 0,
+      deaths: 0,
+      mathTime: 0,
+      nextQuestion: questionEvery,
+      phase: "title",
+      phaseTime: 0,
+      progress: createProgress(),
+      round: null,
+      score: 0,
+      scenery: null,
+      sceneryArt: null,
+      stage: 0,
+      stageBonus: 0,
+      toast: null,
+    };
+  </script>
+  <p>
+    This is the game's whole <strong>state</strong>, the same idea as
+    tic-tac-toe's <code>board</code> and <code>score</code>. It holds what
+    lasts across lives: the score, the stage, how many times the dragon
+    has died, its level and powers (<code>progress</code>). What happens
+    during one life lives in <code>game.round</code>.
+  </p>
+
+  <h2>A fresh round</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    // A round is one attempt at the current stage. Losing a life restarts it,
+    // or restarts at the boss once the boss has been reached, with the boss
+    // keeping the damage it had already taken.
+    function newRound() {
+      const atBoss = game.bossCheckpoint;
+      const spawns = buildSpawns(stages[game.stage]);
+      const round = {
+        ammo: maxAmmo(game.progress),
+        ammoClock: 0,
+        boss: null,
+        dragon: { ...dragonStart },
+        effects: [],
+        fireballs: [],
+        incoming: [],
+        invincibleFor: 0,
+        monsters: [],
+        shots: [],
+        spawnIndex: atBoss ? spawns.length : 0,
+        spawns,
+        time: atBoss ? stageSeconds - 1 : 0,
+        xpClock: 0,
+      };
+      // Monsters and shots call this to fire. New shots join after the update.
+      round.spawnShots = (list, sound) => {
+        round.incoming.push(...list);
+        if (sound && game.phase === "playing") play(sound);
+      };
+      game.round = round;
+    }
+  </script>
+  <p>
+    When the dragon loses a life, the game doesn't hunt down every monster
+    and arrow to remove them. It simply builds a brand-new
+    <code>round</code> and throws the old one away. Fresh empty lists, a
+    dragon back at the start, done.
+  </p>
+  <p>
+    Look at <code>dragon: { ...dragonStart }</code>. The <strong>spread</strong>
+    makes a <em>copy</em> of the starting position. If the round used
+    <code>dragonStart</code> itself, then moving the dragon would change
+    <code>dragonStart</code>, and the next life would begin wherever the
+    dragon died.
+  </p>
+
+  <h2>Lists that update themselves</h2>
+  <p>
+    Monsters, shots, fireballs and effects each live in an array. This is
+    how the monsters and shots are moved every frame:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function updateFoes(round, dt) {
+      round.monsters = round.monsters.filter((m) => updateMonster(m, dt, round));
+      if (round.boss && !updateBoss(round.boss, dt, round)) round.boss = null;
+      round.shots = round.shots.filter((s) => updateShot(s, dt, round));
+      round.shots.push(...round.incoming);
+      round.incoming = [];
+      round.effects.forEach((e) => {
+        e.age += dt;
+      });
+      round.effects = round.effects.filter((e) => e.age < (e.life ?? 0.4));
+    }
+  </script>
+  <p>
+    It's one neat trick. <code>updateMonster</code> moves a monster
+    <em>and</em> returns whether it should stay: <code>true</code> to keep
+    it, <code>false</code> once it has flown off screen or finished
+    fading. <code>filter</code> keeps only the ones that answered
+    <code>true</code>. Moving and tidying up happen in a single line, and
+    nothing ever builds up off screen.
+  </p>
+
+  <h2>Why new shots wait in <code>incoming</code></h2>
+  <p>
+    A monster fires <em>during</em> its update, which runs in the middle of
+    the loop over the monsters, and a bursting boulder fires shards in the
+    middle of the loop over the shots. Adding to an array while
+    <code>filter</code> is walking through it is asking for trouble. So
+    <code>spawnShots</code> puts new shots in a waiting list, and they join
+    the real list once all the updates are done.
+  </p>
+
+  <h2>Effects with an age</h2>
+  <p>
+    An effect (an explosion, a lightning bolt, a spark) is an object with an
+    <code>age</code> that grows every frame and a <code>life</code>. When
+    <code>age</code> passes <code>life</code> it's filtered away.
+    <code>e.life ?? 0.4</code> gives effects without a <code>life</code> a
+    default of 0.4 seconds. When a boss falls, the game queues ten
+    explosions with <em>negative</em> ages, so they go off one after
+    another:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    for (let i = 0; i < 10; i += 1) {
+      round.effects.push({
+        age: -i * 0.12,
+        life: 0.5,
+        size: 30 + Math.random() * 20,
+        type: "boom",
+        x: boss.x + (Math.random() - 0.5) * 90,
+        y: boss.y + (Math.random() - 0.5) * 60,
+      });
+    }
+  </script>
+  <p>The drawing code skips any effect whose age is still below 0, so explosion 5 stays invisible until 0.6 seconds have passed.</p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does <code>newRound</code> write <code>dragon: { ...dragonStart }</code>?</p>
+      <ul>
+        <li>Spreading is faster than assigning.</li>
+        <li data-right>It copies the start position, so moving the dragon can't change <code>dragonStart</code>.</li>
+        <li><code>dragonStart</code> is a <code>const</code>, so it can't be used directly.</li>
+      </ul>
+      <p class="why">Objects are shared by reference. Without the copy, the next life would start wherever the last one ended.</p>
+    </div>
+    <div class="q">
+      <p>How does a monster get removed from <code>round.monsters</code>?</p>
+      <ul>
+        <li>The game calls <code>splice</code> when it dies.</li>
+        <li data-right>Its update returns <code>false</code>, and <code>filter</code> leaves it out of the new list.</li>
+        <li>It's removed when the round ends, and not before.</li>
+      </ul>
+      <p class="why">Every update both moves the thing and answers "keep me?".</p>
+    </div>
+    <div class="q">
+      <p>An effect has <code>age: -0.36</code>. When does it first appear?</p>
+      <ul>
+        <li>Straight away.</li>
+        <li data-right>After 0.36 seconds, when its age reaches 0.</li>
+        <li>Never: negative ages are filtered out.</li>
+      </ul>
+      <p class="why">The filter keeps it (its age is below its life), and the drawing code skips it until its age is 0 or more.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-sprites">
+  <header><p>Course 3 · Lesson 5</p></header>
+  <h1>Drawing Sprites</h1>
+
+  <p>
+    A <strong>sprite</strong> is a small picture that gets drawn again and
+    again: the dragon, a goblin, a fireball. Deus Draconis gets its sprites
+    two ways: tiny ones are written out as text in the code, and big ones
+    are cut from the artist's picture files.
+  </p>
+
+  <h2>Pixel art written as text</h2>
+  <script type="text/plain" data-file="js/draconis/sprites.js">
+    export const art = {
+      // (cut: the axe, boulder and feather)
+      fireball: [
+        "..rr..",
+        ".royr.",
+        "royyor",
+        "ryyyyr",
+        ".ryyr.",
+        "..rr..",
+      ],
+      // (cut: the shard)
+    };
+
+    const palettes = {
+      // (cut: the other palettes)
+      fireball: { o: "#ff9a3c", r: "#e8381f", y: "#fff27a" },
+      // (cut: the shard palette)
+    };
+  </script>
+  <p>
+    Squint and you can see the fireball: a red rim (<code>r</code>), orange
+    (<code>o</code>), a yellow-hot middle (<code>y</code>), and
+    <code>.</code> for see-through. This little function turns the text into
+    a picture:
+  </p>
+  <script type="text/plain" data-file="js/draconis/sprites.js">
+    function makeSprite(rows, palette, scale) {
+      const canvas = document.createElement("canvas");
+      canvas.width = rows[0].length * scale;
+      canvas.height = rows.length * scale;
+      const ctx = canvas.getContext("2d");
+      rows.forEach((row, y) => {
+        [...row].forEach((ch, x) => {
+          if (!palette[ch]) return;
+          ctx.fillStyle = palette[ch];
+          ctx.fillRect(x * scale, y * scale, scale, scale);
+        });
+      });
+      return canvas;
+    }
+  </script>
+  <p>
+    It makes a <strong>second, off-screen canvas</strong> that's never added
+    to the page, and fills one <code>scale</code>-sized square per letter.
+    <code>palette["."]</code> is <code>undefined</code>, so dots are
+    skipped and stay transparent. The finished little canvas <em>is</em>
+    the sprite: <code>ctx.drawImage</code> happily draws a canvas onto
+    another canvas, just like an image. The same rows at scale 2 make the
+    flying fireball, and at scale 3 the bigger HUD icon.
+  </p>
+
+  <h2>Cutting frames from a sheet</h2>
+  <p>
+    The dragon's art is one PNG strip holding six pictures side by side,
+    each with the wings in a different position. The game cuts it up once,
+    at load time:
+  </p>
+  <script type="text/plain" data-file="js/draconis/sprites.js">
+    function sliceFrames(image, count) {
+      const frameWidth = image.width / count;
+      return Array.from({ length: count }, (_, i) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = frameWidth;
+        canvas.height = image.height;
+        canvas.getContext("2d").drawImage(image, -i * frameWidth, 0);
+        return canvas;
+      });
+    }
+
+    // (cut: tinted and scaledCopy)
+    export async function loadDragon(sprites) {
+      const image = new Image();
+      image.src = dragonSheet;
+      await image.decode();
+      const frames = sliceFrames(image, dragonFrameCount);
+      sprites.dragonFrames = frames;
+      // (cut: hit flashes, shadows, the life icon and the boss colours)
+    }
+  </script>
+  <p>
+    The cutting trick: each frame gets a canvas exactly one frame wide, and
+    the whole strip is drawn into it shifted left by
+    <code>i * frameWidth</code>. Only frame <code>i</code> lands inside; the
+    rest falls off the edges. <code>await image.decode()</code> waits until
+    the PNG has downloaded and is ready to draw, which is why
+    <code>loadDragon</code> is one of the promises <code>runGame</code>
+    waits for.
+  </p>
+
+  <h2>Drawing at the centre</h2>
+  <script type="text/plain" data-file="js/draconis/render.js">
+    function drawCentred(ctx, sprite, x, y) {
+      ctx.drawImage(sprite, Math.round(x - sprite.width / 2), Math.round(y - sprite.height / 2));
+    }
+  </script>
+  <p>
+    <code>drawImage(sprite, x, y)</code> puts the sprite's
+    <em>top-left</em> corner at <code>(x, y)</code>. But the game stores
+    every thing's <em>centre</em>, which makes collisions and aiming much
+    simpler. So the drawing code subtracts half the width and height.
+    <code>Math.round</code> keeps the sprite on whole pixels, so pixel art
+    never goes blurry from being drawn half a pixel off.
+  </p>
+  <p>
+    Remember <code>pixelated: true</code> in the last lesson? It sets
+    <code>ctx.imageSmoothingEnabled = false</code>. When pixel art is drawn
+    bigger, the browser normally blurs it smooth. With smoothing off, each
+    pixel becomes a crisp square block.
+  </p>
+
+  <h2>Flapping: animation from the clock</h2>
+  <script type="text/plain" data-file="js/draconis/render.js">
+    const flapFps = 5;
+
+    export function flapFrame(clock) {
+      return flapOrder[Math.floor(clock * flapFps) % flapOrder.length];
+    }
+  </script>
+  <p>
+    <code>flapOrder</code> (in <code>sprites.js</code>) is
+    <code>[4, 2, 0, 5, 3, 1, 3, 5, 0, 2]</code>: the frame numbers in the
+    order that makes a smooth flap, wings up, level, down, folded and back.
+    <code>game.clock</code> counts seconds, so
+    <code>Math.floor(clock * 5)</code> goes up by one five times a second,
+    and <code>% flapOrder.length</code> wraps it back to the start. No
+    timers, no counters: the frame is <em>worked out</em> from the time.
+  </p>
+
+  <h2>Rotating with save and restore</h2>
+  <script type="text/plain" data-file="js/draconis/render-foes.js">
+    function drawRotated(ctx, sprite, x, y, angle) {
+      ctx.save();
+      ctx.translate(Math.round(x), Math.round(y));
+      ctx.rotate(angle);
+      ctx.drawImage(sprite, -sprite.width / 2, -sprite.height / 2);
+      ctx.restore();
+    }
+  </script>
+  <p>
+    A canvas can't rotate a picture directly. Instead you rotate the
+    <em>paper</em>. <code>translate</code> moves the origin to the sprite's
+    centre, <code>rotate</code> turns the paper around that point, and the
+    sprite is drawn centred on the new origin. The axes are now twisted,
+    so <code>save()</code> (before) and <code>restore()</code> (after) put
+    everything back. Spinning axes and boulders use this, with the angle
+    growing from their age.
+  </p>
+
+  <div class="tip">
+    <strong>See-through and flashing.</strong>
+    <code>ctx.globalAlpha</code> sets how solid everything drawn next is,
+    from 0 (invisible) to 1. The dying dragon fades with
+    <code>ctx.globalAlpha = Math.max(0, 1 - game.phaseTime / 1.2)</code>,
+    and a shielded dragon blinks by skipping its draw on every other tenth
+    of a second. Always set it back to 1 afterwards, or everything else
+    goes see-through too.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A sprite is 40 pixels wide and 30 tall. To centre it on <code>(100, 100)</code>, where is its top-left corner drawn?</p>
+      <ul>
+        <li><code>(100, 100)</code></li>
+        <li data-right><code>(80, 85)</code></li>
+        <li><code>(120, 115)</code></li>
+      </ul>
+      <p class="why">Subtract half the width (20) and half the height (15).</p>
+    </div>
+    <div class="q">
+      <p>At <code>game.clock = 1</code>, which dragon frame does <code>flapFrame</code> pick?</p>
+      <ul>
+        <li>Frame 5</li>
+        <li data-right>Frame 1</li>
+        <li>Frame 0</li>
+      </ul>
+      <p class="why"><code>Math.floor(1 * 5) % 10</code> is 5, and <code>flapOrder[5]</code> is 1.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>drawRotated</code> call <code>ctx.restore()</code> at the end?</p>
+      <ul>
+        <li>To show the sprite on screen.</li>
+        <li data-right>To undo the translate and rotate, so later drawing isn't moved and twisted.</li>
+        <li>To free the sprite's memory.</li>
+      </ul>
+      <p class="why"><code>save()</code> remembers the context's settings and <code>restore()</code> brings them back.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-collide">
+  <header><p>Course 3 · Lesson 6</p></header>
+  <h1>Collisions: Circles and Boxes</h1>
+
+  <p>
+    "Did the arrow hit the dragon?" A canvas can't answer that: it only has
+    coloured pixels. The game has to work it out from its own numbers. The
+    trick is to pretend every thing is a simple shape and test the shapes.
+  </p>
+
+  <h2>Circles</h2>
+  <script type="text/plain" data-file="js/draconis/entities.js">
+    export const radius = { dragon: 14, fireball: 6, monster: 20 };
+
+    // (cut: randomBetween)
+    export function overlaps(a, ra, b, rb) {
+      return Math.hypot(a.x - b.x, a.y - b.y) < ra + rb;
+    }
+  </script>
+  <p>
+    Two circles touch when the distance between their centres is less than
+    their two radii added together. <code>Math.hypot(dx, dy)</code> is
+    Pythagoras: <code>√(dx² + dy²)</code>, the straight-line distance. A
+    dragon (radius 14) and a goblin (radius 20) whose centres are 30 apart
+    are touching, because 30 is less than 34.
+  </p>
+  <p>
+    Circles suit Draconis because almost everything spins, tilts and swoops,
+    and a circle looks the same at every angle. The circles are also a bit
+    smaller than the pictures: each dragon frame is about 100 pixels
+    wide with its wings out, but only a 28-pixel circle round its body
+    counts. Small, forgiving
+    <strong>hitboxes</strong> make near misses feel fair.
+  </p>
+
+  <h2>Who hits the dragon?</h2>
+  <script type="text/plain" data-file="js/draconis/combat.js">
+    const hitRadius = (t) => t.r ?? radius.monster;
+
+    // (cut: targets, chain and burnFoes, below)
+    export function dragonHit(round) {
+      const { boss, dragon, monsters, shots } = round;
+      const touching = (m) => touchesDragon(m) && overlaps(m, hitRadius(m), dragon, radius.dragon);
+      if (monsters.some(touching)) return true;
+      if (boss && touching(boss)) return true;
+      return shots.some((s) => shotHits(s, dragon));
+    }
+  </script>
+  <ul>
+    <li><code>t.r ?? radius.monster</code>: a thing with its own radius uses it (the boss's is 38); everything else counts as 20.</li>
+    <li><code>some</code> stops at the first match. One hit is enough.</li>
+    <li><code>touchesDragon(m)</code> skips monsters that are dead or faded out, so a skeleton that has vanished can't hurt you.</li>
+  </ul>
+  <p>Shots have their own check, and one of them isn't a circle at all:</p>
+  <script type="text/plain" data-file="js/draconis/shots.js">
+    export function shotHits(shot, dragon) {
+      if (shot.type !== "beam") return overlaps(shot, shot.r, dragon, radius.dragon * 0.8);
+      if (!beamFiring(shot)) return false;
+      const inColumn = Math.abs(dragon.x - shot.x) < shot.r + radius.dragon * 0.6;
+      return inColumn && dragon.y > shot.y;
+    }
+  </script>
+  <p>
+    The floating eye's beam is a column of light from the eye down to the
+    bottom of the screen. So the test is "is the dragon's <code>x</code>
+    close enough to the beam's <code>x</code>, and is it below the eye?".
+    Use whatever shape matches the thing.
+  </p>
+
+  <h2>Fireballs that hit once</h2>
+  <script type="text/plain" data-file="js/draconis/combat.js">
+    export function burnFoes(round, progress, dt, reward) {
+      const lightning = rank(progress, "lightning");
+      round.fireballs = round.fireballs.filter((f) => {
+        const live = targets(round);
+        const target = live.find(
+          (t) => !f.hits.has(t) && overlaps(t, hitRadius(t), f, radius.fireball * f.scale),
+        );
+        if (!target) return updateFireball(f, dt, live);
+        const result = damageMonster(target, f.damage);
+        reward(result, target);
+        if (result === "blocked") return false;
+        if (lightning > 0) chain(round, target, lightning, reward);
+        f.hits.add(target);
+        if (f.pierce <= 0) return false;
+        f.pierce -= 1;
+        return true;
+      });
+    }
+  </script>
+  <p>
+    A fireball and a monster overlap for several frames in a row while one
+    passes through the other. Without care, a piercing fireball would hit
+    the same orc on every one of those frames. So each fireball carries a
+    <code>Set</code> called <code>hits</code>, and a target already in it is
+    skipped. An ordinary fireball (no pierce) simply returns
+    <code>false</code> and disappears on its first hit.
+  </p>
+
+  <h2>Boxes</h2>
+  <p>
+    Rectangles have a test too, and the game uses it for the power-up cards.
+    "Is this tap inside a card?" is a <strong>point in a box</strong>:
+  </p>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    // Which card (if any) is under a point in canvas coordinates.
+    export function choiceAt(options, point) {
+      return choiceLayout(options.length).findIndex(
+        (c) => point.x >= c.x && point.x <= c.x + c.w && point.y >= c.y && point.y <= c.y + c.h,
+      );
+    }
+  </script>
+  <p>
+    The point must be right of the left edge, left of the right edge, below
+    the top and above the bottom. <code>findIndex</code> returns the card's
+    number, or <code>-1</code> for "none", which is how
+    <code>input.js</code> knows a tap missed every card and should fire
+    instead.
+  </p>
+  <p>
+    Two boxes overlapping is the same idea, done for both. The ground
+    painter uses it to keep crop fields apart (with a 6-pixel gap):
+  </p>
+  <script type="text/plain" data-file="js/draconis/ground.js">
+    const clash = fields.some(
+      (o) => f.x < o.x + o.w + 6 && o.x < f.x + w + 6 && f.y < o.y + o.h + 6 && o.y < f.y + h + 6,
+    );
+  </script>
+  <p>
+    Leave out the 6s and it reads: <em>A's left is before B's right, and B's
+    left is before A's right</em> (so they overlap sideways), and the same
+    for top and bottom. Only when both directions overlap do the boxes
+    really overlap. This is called an <strong>axis-aligned bounding
+    box</strong> test (AABB for short), and platform games use it
+    everywhere, because their walls and floors are rectangles.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A fireball (radius 6) is 25 pixels from a goblin (radius 20). Do they overlap?</p>
+      <ul>
+        <li data-right>Yes: 25 is less than 26.</li>
+        <li>No: 25 is more than 20.</li>
+        <li>Only if the fireball is moving towards it.</li>
+      </ul>
+      <p class="why">Compare the distance with the two radii added together: 6 + 20 = 26.</p>
+    </div>
+    <div class="q">
+      <p>Why does each fireball keep a <code>hits</code> set?</p>
+      <ul>
+        <li>To count the score.</li>
+        <li data-right>So a fireball passing through a foe over several frames only hits it once.</li>
+        <li>To remember which monsters are stone.</li>
+      </ul>
+      <p class="why">Overlaps last for several frames. The set makes each hit count once.</p>
+    </div>
+    <div class="q">
+      <p>Box A runs from x = 0 to 10, box B from x = 10 to 20, both at the same height. With the strict <code>&lt;</code> test, do they overlap?</p>
+      <ul>
+        <li>Yes, they share the line x = 10.</li>
+        <li data-right>No. B's left edge (10) isn't less than A's right edge (10).</li>
+        <li>It depends on their heights only.</li>
+      </ul>
+      <p class="why"><code>10 &lt; 10</code> is false, so boxes that only touch edges don't count as overlapping.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-stages">
+  <header><p>Course 3 · Lesson 7</p></header>
+  <h1>Stages and Spawn Schedules</h1>
+
+  <p>
+    What makes the second stage different from the first? Not different
+    code. Different <strong>data</strong>. Each stage is one object in a
+    list, and the rest of the game reads it.
+  </p>
+
+  <script type="text/plain" data-file="js/draconis/stages.js">
+    export const stageSeconds = 60;
+
+    // Each stage ends with a wyrm boss. Later wyrms are tougher and know more
+    // attacks (see boss.js).
+    export const stages = [
+      {
+        boss: {
+          attacks: ["sweep", "ring"],
+          hp: 30,
+          look: "storm",
+          minions: [],
+          name: "STORM WYRM",
+          points: 100,
+        },
+        kinds: [kinds.goblin, kinds.eye, kinds.griffin],
+        name: "BLUE SKY",
+        pace: 1,
+        scenery: "day",
+        spawnGaps: [4.5, 3.2],
+      },
+      // (cut: NIGHT SKY and LOW FLIGHT, which have the same shape)
+    ];
+  </script>
+  <ul>
+    <li><code>kinds</code>: which monsters appear. Stage 1 has goblins, eyes and griffins; stage 3 has all six.</li>
+    <li><code>pace</code>: how long monsters wait between attacks (smaller is faster). Stage 3's 0.85 makes everyone attack 15% more often.</li>
+    <li><code>spawnGaps</code>: seconds between monsters at the start of the stage, and at the end.</li>
+    <li><code>scenery</code>: which background to paint.</li>
+    <li><code>boss</code>: everything about the wyrm, including the list of attacks it cycles through.</li>
+  </ul>
+  <p>Making the game harder, or adding a fourth stage, means editing this list. No other file has to change.</p>
+
+  <h2>Building the timetable</h2>
+  <script type="text/plain" data-file="js/draconis/stages.js">
+    // Monsters take turns through the stage's kinds, so every kind keeps
+    // showing up. The gap between spawns shrinks from the first value to the
+    // second, and spawning stops a few seconds before the stage ends.
+    export function buildSpawns(stage) {
+      const [startGap, endGap] = stage.spawnGaps;
+      const list = [];
+      let order = [];
+      let at = 1.5;
+      while (at < stageSeconds - 5) {
+        if (order.length === 0) order = stage.shuffle ? shuffled(stage.kinds) : [...stage.kinds];
+        list.push({ at, kind: order.shift() });
+        at += startGap + (endGap - startGap) * (at / stageSeconds);
+      }
+      return list;
+    }
+  </script>
+  <p>
+    Before the stage starts, the whole timetable is written out: a list like
+    <code>[{ at: 1.5, kind: 0 }, { at: 5.9675, kind: 4 }, ...]</code>.
+  </p>
+  <ul>
+    <li><strong>Taking turns.</strong> <code>order</code> is a queue of kinds. <code>shift()</code> takes the first one off the front. When it's empty it's refilled, so the kinds go round and round and none can be missed out.</li>
+    <li><strong>Getting faster.</strong> <code>at / stageSeconds</code> is how far through the stage we are, from 0 to 1. The gap slides from <code>startGap</code> towards <code>endGap</code> along the way. Halfway through stage 1 it's <code>4.5 + (3.2 - 4.5) × 0.5</code> = 3.85 seconds. Sliding from one value to another like this is called <strong>linear interpolation</strong> (or "lerp").</li>
+    <li><strong>A breather.</strong> Spawning stops 5 seconds before the end, so the sky can clear before the boss arrives.</li>
+  </ul>
+
+  <h2>A fair shuffle</h2>
+  <script type="text/plain" data-file="js/draconis/stages.js">
+    function shuffled(list) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+  </script>
+  <p>
+    Stage 3 sets <code>shuffle: true</code>, so each round of six comes in a
+    random order. This is the <strong>Fisher-Yates shuffle</strong>: walk
+    backwards through the list, swapping each item with a random one at or
+    before it. Every order is equally likely. The line
+    <code>[copy[i], copy[j]] = [copy[j], copy[i]]</code> swaps two items
+    using destructuring, with no spare variable needed.
+  </p>
+
+  <h2>Spawning during play</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function spawnFoes(round) {
+      const stage = stages[game.stage];
+      while (round.spawns[round.spawnIndex]?.at <= round.time) {
+        round.monsters.push(createMonster(round.spawns[round.spawnIndex].kind, stage.pace));
+        round.spawnIndex += 1;
+      }
+      if (round.boss || round.bossDown || round.time < stageSeconds) return;
+      round.boss = createBoss(stage.boss);
+      if (game.bossHp !== null) round.boss.hp = game.bossHp;
+      game.bossCheckpoint = true;
+      showToast(`${stage.boss.name} APPROACHES!`, "#ff4d4d");
+      play("launch");
+    }
+  </script>
+  <p>
+    <code>spawnIndex</code> points at the next entry in the timetable. Every
+    frame, while that entry's time has come, its monster is created and the
+    index moves on. It's a <code>while</code>, not an <code>if</code>, so
+    two entries due in the same frame both spawn.
+  </p>
+  <p>
+    When the index runs past the end, <code>round.spawns[round.spawnIndex]</code>
+    is <code>undefined</code>. The <strong>optional chaining</strong>
+    <code>?.at</code> turns that into <code>undefined</code> instead of an
+    error, and <code>undefined &lt;= time</code> is false, so the loop just
+    stops. After 60 seconds, the boss arrives.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>With <code>spawnGaps: [4.5, 3.2]</code>, what's the gap after a monster at <code>at = 30</code>?</p>
+      <ul>
+        <li>4.5 seconds</li>
+        <li data-right>3.85 seconds</li>
+        <li>3.2 seconds</li>
+      </ul>
+      <p class="why">30 is halfway through 60, so the gap is halfway between 4.5 and 3.2.</p>
+    </div>
+    <div class="q">
+      <p>What stops the <code>while</code> loop in <code>spawnFoes</code> once the timetable is used up?</p>
+      <ul>
+        <li>An error, caught by <code>runGame</code>.</li>
+        <li data-right><code>?.at</code> gives <code>undefined</code>, and <code>undefined &lt;= time</code> is false.</li>
+        <li>The boss deletes the timetable.</li>
+      </ul>
+      <p class="why">Optional chaining stops at <code>undefined</code> instead of throwing.</p>
+    </div>
+    <div class="q">
+      <p>Why is the stage list good news for whoever balances the game?</p>
+      <ul>
+        <li>It loads faster than code.</li>
+        <li data-right>Difficulty, monsters and bosses can all be changed by editing data, without touching the logic.</li>
+        <li>Players can edit it.</li>
+      </ul>
+      <p class="why">The code reads whatever the data says, so tuning is a matter of changing numbers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-gate">
+  <header><p>Course 3 · Lesson 8</p></header>
+  <h1>Phases and the Question Gate</h1>
+
+  <p>
+    The game is always in exactly one <strong>phase</strong>: the title
+    screen, a stage intro, playing, a maths question, dying, game over and
+    so on. The phase is just a string in <code>game.phase</code>, and every
+    frame, <code>update</code> does whatever that phase needs:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function setPhase(phase) {
+      game.phase = phase;
+      game.phaseTime = 0;
+    }
+
+    // (cut: everything in between)
+    function update(dt) {
+      game.clock += dt;
+      game.phaseTime += dt;
+      const pace = game.choice && game.phase === "playing" ? choosingPace : 1;
+      if (game.phase !== "question") updateScenery(game.scenery, dt * pace);
+      if (game.phase === "playing") updatePlaying(dt * pace);
+      if (game.phase === "clear") updateFoes(game.round, dt);
+      if (game.phase === "dying") updateDying();
+      if (game.phase === "clear" && game.phaseTime > 2.5) startStage(game.stage + 1);
+      if (game.phase === "intro" && game.phaseTime > 2.2) setPhase("playing");
+      const respawning = game.phase === "ready" || game.phase === "revived";
+      if (respawning && game.phaseTime > 2) {
+        newRound();
+        setPhase("playing");
+      }
+    }
+  </script>
+  <ul>
+    <li><code>phaseTime</code> resets to 0 on every change, so "show the stage intro for 2.2 seconds" is one comparison.</li>
+    <li>Only the <code>"playing"</code> phase runs the real game. Everything else is a screen that waits.</li>
+    <li>During <code>"question"</code>, nothing moves at all, not even the stars or the scrolling ground. The game is frozen behind the question.</li>
+    <li>While power-up cards are showing, <code>pace</code> is 0.35: the whole fight runs in slow motion so the player has time to choose.</li>
+  </ul>
+  <p>
+    The overlay screens are drawn from the phase too, so adding a phase
+    means a new string, a line in <code>update</code>, and a line in the
+    HUD's list of screens.
+  </p>
+
+  <h2>A clock that never resets</h2>
+  <p>
+    Every 30 seconds of flying, a maths question pops up. Answer it right
+    and the dragon gets a shield, 10 points and a full belly of fire. The
+    obvious way to time that would be the stage clock,
+    <code>round.time</code>. But <code>round.time</code> goes back to 0
+    every time the dragon dies, and a struggling player would then never
+    see a question. So the game keeps a separate clock just for maths:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function startGame() {
+      game.score = 0;
+      game.deaths = 0;
+      game.progress = createProgress();
+      game.choice = null;
+      // The math clock runs across the whole game: dying, the boss and new
+      // stages don't reset it.
+      game.mathTime = 0;
+      game.nextQuestion = questionEvery;
+      startStage(0);
+    }
+  </script>
+  <p>
+    <code>game.mathTime</code> is set to 0 here, when a new game starts,
+    and <strong>nowhere else</strong>. It lives on <code>game</code>, not
+    on the round, so throwing away a round on death leaves it alone. It only
+    grows in <code>updatePlaying</code>:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function updatePlaying(dt) {
+      const { round } = game;
+      round.time += dt;
+      game.mathTime += dt;
+      // (cut: shields, XP, steering, spawning, collisions)
+      if (game.mathTime >= game.nextQuestion) runQuestion();
+    }
+  </script>
+  <p>
+    Because it only ticks while playing, it pauses during intros, the
+    "OUCH!" screen and the question itself. Seconds count only when the
+    player is actually flying. Die at 25 seconds and the question still
+    comes after 5 more seconds of play.
+  </p>
+
+  <h2>Asking the question</h2>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    async function runQuestion() {
+      setPhase("question");
+      keys.clear();
+      await questions.ask({ inputDelay: 300, label: "Answer to power up!" });
+      const { round } = game;
+      game.nextQuestion += questionEvery;
+      round.invincibleFor = shieldSeconds;
+      game.score += bonusPoints;
+      round.ammo = maxAmmo(game.progress);
+      showToast(`${free ? "BOOST!" : "CORRECT!"} +${bonusPoints} & FULL FIRE`, "#39ff14");
+      setPhase("playing");
+    }
+  </script>
+  <ol>
+    <li><strong>Freeze.</strong> The phase becomes <code>"question"</code>, so <code>update</code> stops moving anything. <code>updatePlaying</code> calls <code>runQuestion()</code> without <code>await</code>: the loop keeps running (and drawing the frozen scene) while the question waits.</li>
+    <li><strong>Let go of the keys.</strong> <code>keys.clear()</code> forgets whatever was held when the question popped up. When play resumes, the dragon only moves once the player presses a key again, instead of shooting off in whatever direction it was flying before the question.</li>
+    <li><strong>Wait for a right answer.</strong> As in tic-tac-toe, <code>questions.ask</code> only resolves on a correct answer. <code>inputDelay: 300</code> ignores typing for 0.3 seconds, so a player mashing space doesn't type into the answer box.</li>
+    <li><strong>Reward and move the target.</strong> <code>nextQuestion += 30</code> sets the next question 30 seconds later, then play resumes with a 2.5-second shield.</li>
+  </ol>
+  <p>
+    The HUD shows the countdown in the top-right corner, worked out fresh
+    every frame from the same two numbers:
+  </p>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    const wait = Math.max(0, Math.ceil(game.nextQuestion - game.mathTime));
+    text(ctx, `${free ? "BOOST" : "MATH"} IN ${wait}`, width - 10, 10, { align: "right", colour: "#ff2e88" });
+  </script>
+  <p>
+    <code>free</code> comes from <code>edition.js</code>. On your public
+    free arcade the build script sets it, the question code is swapped for
+    one that answers itself at once, and the same timer gives a "BOOST"
+    instead of a maths question.
+  </p>
+
+  <h2>Buying a continue</h2>
+  <p>
+    After the third life, the game-over screen offers a continue: answer
+    <code>continueQuestions</code> (2) questions in a row with
+    <code>questions.askEach</code>, and the dragon gets three new lives on
+    the same stage, keeping its level and power-ups. The score goes back to
+    0, so the leaderboard always measures one set of three lives.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The dragon dies with <code>mathTime</code> at 25 and <code>nextQuestion</code> at 30. When is the next question?</p>
+      <ul>
+        <li>30 seconds into the new life.</li>
+        <li data-right>After 5 more seconds of play.</li>
+        <li>Straight away, as a penalty.</li>
+      </ul>
+      <p class="why"><code>mathTime</code> lives on <code>game</code> and isn't reset by a new round. It only stops while the dragon isn't playing.</p>
+    </div>
+    <div class="q">
+      <p>Does <code>game.mathTime</code> grow while the "OUCH!" screen is showing?</p>
+      <ul>
+        <li>Yes, it's added to in <code>update</code> every frame.</li>
+        <li data-right>No. Only <code>updatePlaying</code> adds to it, and that only runs in the <code>"playing"</code> phase.</li>
+        <li>Only on the last life.</li>
+      </ul>
+      <p class="why">The maths clock counts flying time, not screen time.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>runQuestion</code> call <code>keys.clear()</code>?</p>
+      <ul>
+        <li>To stop the player cheating.</li>
+        <li>Because the question needs the keys.</li>
+        <li data-right>So keys held when the question appeared don't keep steering the dragon when play resumes.</li>
+      </ul>
+      <p class="why">The player's hands have been busy answering. Starting again with nothing held means the dragon waits for a fresh key press.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-monsters">
+  <header><p>Course 3 · Lesson 9</p></header>
+  <h1>Monsters as State Machines</h1>
+
+  <p>
+    Six monsters, six ways of fighting. The floating eye hovers and fires a
+    beam. The skeleton blinks in, aims and vanishes. The gargoyle sits as
+    stone, then dive-bombs you. Each one is written the same way, as a
+    <strong>state machine</strong>: the monster is always in one named
+    state, each state does one simple thing, and a timer or an event moves
+    it on to the next. It's the same idea as the game's phases, one level
+    down.
+  </p>
+
+  <h2>One object, any kind</h2>
+  <script type="text/plain" data-file="js/draconis/monsters.js">
+    export const kinds = { eye: 4, gargoyle: 3, goblin: 0, griffin: 5, orc: 1, skeleton: 2 };
+
+    // Hit points and score for each kind, indexed by kind number.
+    const toughness = [1, 3, 1, 2, 2, 1];
+    const points = [5, 15, 10, 15, 10, 10];
+
+    // (cut: the behaviours, below)
+    const behaviours = [goblin, orc, skeleton, gargoyle, eye, griffin];
+
+    // `pace` scales the gaps between attacks, so later stages press harder.
+    export function createMonster(kind, pace = 1) {
+      const m = {
+        age: 0,
+        alive: true,
+        fade: 0,
+        flash: 0,
+        hp: toughness[kind],
+        kind,
+        maxHp: toughness[kind],
+        pace,
+        tilt: 0,
+        x: 0,
+        y: 0,
+      };
+      behaviours[kind].init(m);
+      return m;
+    }
+  </script>
+  <p>
+    A monster's <code>kind</code> is a number, and that number is also its
+    tile in the monster picture (goblin first, griffin last). It's used as
+    an index everywhere: <code>toughness[kind]</code>,
+    <code>points[kind]</code>, <code>behaviours[kind]</code>. Every
+    behaviour is an object with two functions: <code>init</code> sets the
+    monster up (where it enters, which state it starts in) and
+    <code>update</code> runs it every frame.
+  </p>
+
+  <h2>Small helpers</h2>
+  <script type="text/plain" data-file="js/draconis/monsters.js">
+    function setState(m, state, timer = 0) {
+      m.state = state;
+      m.timer = timer;
+    }
+
+    // Moves towards a point at a fixed speed. Returns true on arrival.
+    function approach(m, x, y, speed, dt) {
+      const dx = x - m.x;
+      const dy = y - m.y;
+      const dist = Math.hypot(dx, dy);
+      const step = speed * dt;
+      if (dist <= step) {
+        m.x = x;
+        m.y = y;
+        return true;
+      }
+      m.x += (dx / dist) * step;
+      m.y += (dy / dist) * step;
+      return false;
+    }
+  </script>
+  <p>
+    <code>approach</code> moves in a straight line towards a point.
+    <code>dx / dist</code> and <code>dy / dist</code> make a
+    <strong>direction</strong> of length 1 (a "unit vector"), so the
+    monster moves <code>step</code> pixels whichever way it's heading,
+    diagonals included. If the point is closer than one step, it snaps
+    there and reports that it has arrived, so it never overshoots and
+    jitters back and forth.
+  </p>
+
+  <h2>The floating eye</h2>
+  <script type="text/plain" data-file="js/draconis/monsters.js">
+    // Floating eye: drifts above the dragon, stares, then fires a beam straight
+    // down. The warning line shows where the beam will land.
+    const eye = {
+      init(m) {
+        m.x = randomBetween(60, width - 60);
+        m.y = -30;
+        m.hoverY = randomBetween(50, 85);
+        m.cycles = 0;
+        setState(m, "enter");
+      },
+      update(m, dt, world) {
+        m.charging = m.state === "charge";
+        if (m.state === "enter" && approach(m, m.x, m.hoverY, 60, dt)) {
+          setState(m, "drift", 1.6 * m.pace);
+        }
+        if (m.state === "drift") {
+          approach(m, world.dragon.x, m.hoverY + Math.sin(m.age * 2) * 6, 34, dt);
+          m.timer -= dt;
+          if (m.timer <= 0) {
+            world.spawnShots([beam(m)], "launch");
+            setState(m, "charge", 1.6);
+          }
+        }
+        if (m.state === "charge") {
+          m.timer -= dt;
+          if (m.timer > 0) return true;
+          m.cycles += 1;
+          setState(m, m.cycles >= 3 ? "leave" : "drift", 2.2 * m.pace);
+        }
+        if (m.state === "leave") m.y -= 60 * dt;
+        return m.y > -40;
+      },
+    };
+  </script>
+  <p>Follow it state by state:</p>
+  <ol>
+    <li><strong>enter</strong>: starts above the screen (<code>y = -30</code>) and floats down to its hover height. On arrival, <strong>drift</strong>.</li>
+    <li><strong>drift</strong>: slides sideways towards the dragon at a lazy 34 pixels a second, bobbing on a sine wave, while its timer counts down. At zero it fires a beam and switches to <strong>charge</strong>.</li>
+    <li><strong>charge</strong>: holds still for 1.6 seconds while the beam warns and fires. Then it goes back to <strong>drift</strong>, or after three beams, to <strong>leave</strong>.</li>
+    <li><strong>leave</strong>: rises off the top. Once it's above <code>y = -40</code>, <code>update</code> returns <code>false</code> and the filter removes it.</li>
+  </ol>
+  <p>
+    Each <code>if</code> handles one state, and because they run in order,
+    a monster can change state and start the next one in the same frame.
+    <code>m.pace</code> stretches the waiting times, so later stages (pace
+    0.85) attack sooner.
+  </p>
+
+  <h2>Flags for the artist</h2>
+  <p>
+    The very first line, <code>m.charging = m.state === "charge"</code>,
+    doesn't affect the fight at all. It's there for <code>render-foes.js</code>,
+    which draws a red glow round a charging eye. In the same way the orc
+    sets <code>m.windup</code> (it shakes before it throws), the gargoyle
+    sets <code>m.stone</code> and <code>m.awake</code>, and the skeleton
+    sets <code>m.hidden</code>. These little flags are the monster
+    telling the drawing code "warn the player". Every attack in Draconis
+    has a warning like this, so dodging is about reading the signs, not
+    luck.
+  </p>
+  <p>
+    Some flags change the rules too. A <code>hidden</code> skeleton can't
+    be hit, and a <code>stone</code> gargoyle bounces fireballs off:
+  </p>
+  <script type="text/plain" data-file="js/draconis/monsters.js">
+    export function canBeHit(m) {
+      return m.alive && !m.hidden;
+    }
+
+    // Applies one fireball. Returns "blocked", "hurt" or the points for a kill.
+    export function damageMonster(m) {
+      if (m.stone) return "blocked";
+      m.hp -= 1;
+      m.flash = 0.12;
+      if (m.hp > 0) return "hurt";
+      m.alive = false;
+      return points[m.kind];
+    }
+  </script>
+  <p>
+    A defeated monster isn't removed straight away. <code>alive</code>
+    becomes <code>false</code>, and for the next second
+    <code>updateMonster</code> only grows its <code>fade</code>, while the
+    drawing code greys it out, spins it and shrinks it. Then it's filtered
+    away.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does <code>approach</code> divide <code>dx</code> and <code>dy</code> by <code>dist</code>?</p>
+      <ul>
+        <li>To make the monster slow down as it gets close.</li>
+        <li data-right>To get a direction of length 1, so the monster moves exactly <code>step</code> pixels whichever way it goes.</li>
+        <li>To avoid dividing by zero.</li>
+      </ul>
+      <p class="why">Without it, a monster far away would move much faster than one nearby.</p>
+    </div>
+    <div class="q">
+      <p>An eye has just fired its third beam and its charge timer runs out. What happens next?</p>
+      <ul>
+        <li>It fires a fourth beam.</li>
+        <li data-right><code>cycles</code> reaches 3, so it switches to <code>"leave"</code> and floats away.</li>
+        <li>It dives at the dragon.</li>
+      </ul>
+      <p class="why"><code>m.cycles &gt;= 3 ? "leave" : "drift"</code>.</p>
+    </div>
+    <div class="q">
+      <p>What is <code>m.charging</code> for?</p>
+      <ul>
+        <li>It decides when the beam fires.</li>
+        <li>It makes the eye take double damage.</li>
+        <li data-right>It tells the drawing code to show a warning glow.</li>
+      </ul>
+      <p class="why">The state machine runs the fight. Flags like this let <code>render-foes.js</code> show what's about to happen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-shots">
+  <header><p>Course 3 · Lesson 10</p></header>
+  <h1>Monster Shots</h1>
+
+  <p>
+    Every monster has its own projectile: lobbed axes, fluttering feathers,
+    beams, bursting boulders, arrow volleys and homing wisps. They all live
+    in one list, <code>round.shots</code>, and they're all plain objects
+    with a <code>type</code>.
+  </p>
+
+  <h2>Aiming</h2>
+  <script type="text/plain" data-file="js/draconis/entities.js">
+    // Velocity of the given speed pointing from one thing to another, turned by
+    // an optional angle (radians) so callers can fan out spreads.
+    export function aimAt(from, to, speed, turn = 0) {
+      const angle = Math.atan2(to.y - from.y, to.x - from.x) + turn;
+      return { vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed };
+    }
+  </script>
+  <p>
+    <code>Math.atan2(dy, dx)</code> answers "which way is it?" as an angle
+    in <strong>radians</strong> (a full turn is <code>2π</code>, about 6.28).
+    <code>Math.cos</code> and <code>Math.sin</code> turn an angle back into
+    an x and y part. Multiply by the speed and you have a
+    <strong>velocity</strong>: how many pixels per second to move along
+    each axis. The optional <code>turn</code> twists the aim a little, which
+    is how spreads are made:
+  </p>
+  <script type="text/plain" data-file="js/draconis/shots.js">
+    // Griffin feathers: a fan aimed at the dragon that flutters side to side.
+    export function featherFan(from, target, count = 5) {
+      return Array.from({ length: count }, (_, i) => {
+        const turn = (i - (count - 1) / 2) * 0.22;
+        return {
+          age: 0,
+          r: 4,
+          type: "feather",
+          ...aimAt(from, target, 125, turn),
+          x: from.x,
+          y: from.y,
+        };
+      });
+    }
+  </script>
+  <p>
+    For 5 feathers, <code>i - (count - 1) / 2</code> runs -2, -1, 0, 1, 2,
+    so the middle feather flies straight at the dragon and the others fan
+    out evenly on both sides. <code>...aimAt(...)</code> spreads the
+    returned <code>vx</code> and <code>vy</code> straight into the new
+    object. The dragon's spread fire uses the same centring formula.
+  </p>
+
+  <h2>One update, many movements</h2>
+  <script type="text/plain" data-file="js/draconis/shots.js">
+    const movers = {
+      axe(shot, dt) {
+        shot.vy += axeGravity * dt;
+      },
+      beam() {},
+      boulder(shot, _dt, world) {
+        if (shot.y < shot.burstY) return;
+        shot.dead = true;
+        world.spawnShots(shards(shot, 7));
+        world.effects.push({ age: 0, type: "dust", x: shot.x, y: shot.y });
+      },
+      // (cut: feather and wisp)
+    };
+
+    // Returns false once the shot should be removed.
+    export function updateShot(shot, dt, world) {
+      shot.age += dt;
+      if (shot.type === "beam") {
+        const warning = shot.age < shot.warnSecs;
+        if (warning && !shot.owner.alive) return false;
+        return shot.age < shot.warnSecs + shot.fireSecs;
+      }
+      shot.x += (shot.vx ?? 0) * dt;
+      shot.y += (shot.vy ?? 0) * dt;
+      movers[shot.type]?.(shot, dt, world);
+      if (shot.dead) return false;
+      return onScreen(shot, 20);
+    }
+  </script>
+  <p>
+    Every shot moves the same basic way: position plus velocity times
+    <code>dt</code>. Then <code>movers</code>, an object of functions
+    looked up by <code>type</code>, adds anything special.
+    <code>movers[shot.type]?.(...)</code> calls the function only if
+    there is one: an ember or an arrow has no mover and just flies straight.
+    A lookup table like this replaces a long chain of <code>if</code>s, and
+    a new shot type is one new entry.
+  </p>
+  <ul>
+    <li><strong>Axe</strong>: gravity adds to <code>vy</code> every frame, so it curves in an arc like a thrown ball.</li>
+    <li><strong>Boulder</strong>: once it falls past <code>burstY</code> it marks itself dead and spawns 7 shards in a ring. They go through <code>spawnShots</code>, so they join the list safely after this update.</li>
+    <li><strong>Beam</strong>: doesn't move at all. It's a warning line for <code>warnSecs</code>, then a beam for <code>fireSecs</code>, then gone. If the eye is killed during the warning, the beam is cancelled: fair reward for a quick shot.</li>
+  </ul>
+
+  <h2>An axe that lands where you were</h2>
+  <script type="text/plain" data-file="js/draconis/shots.js">
+    // Goblin axe: lobbed in an arc so it lands where the dragon was standing.
+    export function axe(from, target, flightSecs = 1.5) {
+      const vx = (target.x - from.x) / flightSecs;
+      const vy = (target.y - from.y - 0.5 * axeGravity * flightSecs ** 2) / flightSecs;
+      return { age: 0, r: 6, type: "axe", vx, vy, x: from.x, y: from.y + 10 };
+    }
+  </script>
+  <p>
+    This is school physics working for a game. Sideways, the axe moves at a
+    steady speed, so it needs <code>distance / time</code>. Downwards,
+    gravity will add <code>½ × g × t²</code> on its own over the flight, so
+    the throw subtracts that first. The result: the axe is thrown slightly
+    upwards and arcs down onto where the dragon was 1.5 seconds earlier.
+    Keep moving and it misses.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>With <code>count = 3</code>, what turns does <code>(i - (count - 1) / 2) * 0.22</code> give?</p>
+      <ul>
+        <li>0, 0.22, 0.44</li>
+        <li data-right>-0.22, 0, 0.22</li>
+        <li>-0.44, 0, 0.44</li>
+      </ul>
+      <p class="why"><code>(count - 1) / 2</code> is 1, so <code>i - 1</code> runs -1, 0, 1. The fan is centred on the aim.</p>
+    </div>
+    <div class="q">
+      <p>What happens in <code>movers[shot.type]?.(shot, dt, world)</code> for an ember, which has no entry in <code>movers</code>?</p>
+      <ul>
+        <li>It throws an error.</li>
+        <li data-right>Nothing. <code>?.</code> skips the call, and the ember just flies straight.</li>
+        <li>It uses the axe's mover.</li>
+      </ul>
+      <p class="why"><code>movers.ember</code> is <code>undefined</code>, and optional chaining doesn't call <code>undefined</code>.</p>
+    </div>
+    <div class="q">
+      <p>Why does the boulder add its shards with <code>world.spawnShots</code> instead of pushing them onto <code>round.shots</code>?</p>
+      <ul>
+        <li data-right>It's running inside the <code>filter</code> over <code>round.shots</code>, so new shots wait in <code>incoming</code> until it's finished.</li>
+        <li>So the shards make a sound.</li>
+        <li><code>round.shots</code> is read-only.</li>
+      </ul>
+      <p class="why">Changing a list while walking through it causes bugs. <code>incoming</code> joins the list after the update.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-powers">
+  <header><p>Course 3 · Lesson 11</p></header>
+  <h1>Fireballs, Levels and Power-ups</h1>
+
+  <h2>A belly of fire</h2>
+  <p>
+    The dragon can't fire non-stop. It stores 3 fireballs, and they
+    recharge one at a time. Firing spends one:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function fire() {
+      const { round } = game;
+      if (round.ammo <= 0) return;
+      round.ammo -= 1;
+      round.fireballs.push(...createFireballs(round.dragon, game.progress));
+      play("fire");
+    }
+
+    // (cut: everything in between)
+    function refillAmmo(round, dt) {
+      const full = maxAmmo(game.progress);
+      round.ammoClock = round.ammo < full ? round.ammoClock + dt : 0;
+      if (round.ammoClock < refillSeconds(game.progress)) return;
+      round.ammo += 1;
+      round.ammoClock = 0;
+    }
+  </script>
+  <p>
+    <code>refillAmmo</code> is a <strong>cooldown timer</strong>, and it's a
+    pattern worth remembering. A clock counts up by <code>dt</code> while
+    there's something to refill (and sits at 0 when the belly is full).
+    When the clock reaches the refill time, add one fireball and start the
+    clock again. How long that takes depends on the dragon's level:
+  </p>
+  <script type="text/plain" data-file="js/draconis/powers.js">
+    // Seconds for one fireball to recharge: 10% quicker each level.
+    export function refillSeconds(progress) {
+      return Math.max(0.5, 2 * 0.9 ** (progress.level - 1));
+    }
+  </script>
+  <p>
+    <code>**</code> means "to the power of". At level 1 it's 2 seconds, at
+    level 2 it's 1.8, at level 3 1.62, each level 10% quicker than the
+    last. <code>Math.max(0.5, ...)</code> puts a floor under it, so even a
+    level-30 dragon can't fire faster than twice a second.
+  </p>
+
+  <h2>Levelling up</h2>
+  <script type="text/plain" data-file="js/draconis/powers.js">
+    export function xpNeeded(level) {
+      return 15 + level * 8;
+    }
+
+    // (cut: refillSeconds, maxAmmo and speedBoost)
+    // Adds XP and returns how many levels were gained.
+    export function addXp(progress, amount) {
+      progress.xp += amount;
+      let gained = 0;
+      while (progress.xp >= xpNeeded(progress.level)) {
+        progress.xp -= xpNeeded(progress.level);
+        progress.level += 1;
+        gained += 1;
+        const sinceFirst = progress.level - firstChoiceLevel;
+        if (sinceFirst >= 0 && sinceFirst % choiceEvery === 0) progress.choices += 1;
+      }
+      return gained;
+    }
+  </script>
+  <p>
+    Kills give XP equal to their points, and staying alive trickles in 1
+    XP a second. Level 1 needs 23 XP, level 2 needs 31, and so on. It's a
+    <code>while</code>, not an <code>if</code>, because one big kill (a
+    boss is worth 100 or more) can be enough for several levels at once.
+    Leftover XP carries over into the next level instead of being lost.
+  </p>
+  <p>
+    <code>firstChoiceLevel</code> is 5 and <code>choiceEvery</code> is 3, so
+    levels 5, 8, 11 and so on each earn a power-up <strong>choice</strong>.
+    <code>%</code> (remainder) is the "every 3rd" test: it's 0 at 5, 8 and
+    11, and not in between.
+  </p>
+
+  <h2>Three cards to choose from</h2>
+  <script type="text/plain" data-file="js/draconis/powers.js">
+    export const powerList = [
+      { colour: "#ff9a3c", id: "spread", letter: "S", max: 2, name: "SPREAD FIRE", text: "MORE FIREBALLS IN A FAN" },
+      { colour: "#7fe7ff", id: "lightning", letter: "L", max: 2, name: "LIGHTNING", text: "HITS ARC TO A NEARBY FOE" },
+      // (cut: seven more powers)
+    ];
+
+    // (cut: everything in between)
+    // Three different powers that can still be upgraded, picked at random.
+    export function rollChoices(progress) {
+      const open = powerList.filter((p) => rank(progress, p.id) < p.max).map((p) => p.id);
+      for (let i = open.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [open[i], open[j]] = [open[j], open[i]];
+      }
+      return open.slice(0, 3);
+    }
+  </script>
+  <p>
+    The powers are data again: a name, a colour, a description for the card
+    and a <code>max</code> rank. <code>rollChoices</code> drops any power
+    already at its max, shuffles the rest with the same Fisher-Yates loop as
+    the stages, and keeps the first three. A power's <strong>rank</strong>
+    is just a count in <code>progress.powers</code>, and every effect reads
+    it. Spread fire, for example:
+  </p>
+  <script type="text/plain" data-file="js/draconis/powers.js">
+    // One trigger pull: a single fireball, or a fan of 3 or 5 with spread fire.
+    export function createFireballs(dragon, progress) {
+      const count = 1 + 2 * rank(progress, "spread");
+      const speed = baseFireballSpeed * (1 + 0.45 * rank(progress, "speed"));
+      const power = rank(progress, "power");
+      return Array.from({ length: count }, (_, i) => {
+        const angle = (i - (count - 1) / 2) * 0.16;
+        return {
+          damage: 1 + power,
+          hits: new Set(),
+          homing: rank(progress, "homing") > 0,
+          pierce: rank(progress, "pierce"),
+          scale: 1 + 0.25 * power,
+          vx: Math.sin(angle) * speed,
+          vy: -Math.cos(angle) * speed,
+          x: dragon.x,
+          y: dragon.y - 20,
+        };
+      });
+    }
+  </script>
+  <p>
+    Each fireball carries its own copy of the powers that matter to it
+    (damage, pierce, homing, size), so the collision code only has to look
+    at the fireball. <code>vy</code> is negative because the fireballs fly
+    <em>up</em> the screen, towards smaller <code>y</code>.
+  </p>
+
+  <div class="tip">
+    <strong>Spot the bug.</strong> <code>burnFoes</code> calls
+    <code>damageMonster(target, f.damage)</code>, but look back at
+    <code>damageMonster(m)</code>: it only has one parameter and always
+    does <code>m.hp -= 1</code>. JavaScript quietly ignores an extra
+    argument, so nothing complains, and Big Fire currently makes fireballs
+    bigger (<code>scale</code>) without making them hit harder. Bugs like
+    this hide well because nothing crashes. Giving
+    <code>damageMonster</code> a <code>damage</code> parameter and using it
+    would fix it.
+  </div>
+
+  <h2>What a hit is worth</h2>
+  <p>
+    <code>damageMonster</code> (from the monsters lesson) answers with
+    <code>"blocked"</code>, <code>"hurt"</code> or a number of points.
+    <code>game.js</code> turns that answer into sounds, score and XP:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    function reward(result, target) {
+      const { round } = game;
+      if (result === "blocked") {
+        round.effects.push({ age: 0, type: "clink", x: target.x, y: target.y });
+        play("bounce");
+        return;
+      }
+      if (result === "hurt") {
+        play("slam");
+        return;
+      }
+      game.score += result;
+      gainXp(result);
+      play("kill");
+      if (target.boss) bossDown(target);
+    }
+  </script>
+  <p>
+    Notice the split. <code>monsters.js</code> knows the rules of a hit;
+    <code>game.js</code> knows about sound, score and the boss. Neither has
+    to know the other's business: they agree only on the three possible
+    answers.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>A level-1 dragon (needing 23 XP) with 0 XP gains 30 XP at once. What does <code>addXp</code> return, and how much XP is left?</p>
+      <ul>
+        <li>1, with 0 XP left.</li>
+        <li data-right>1, with 7 XP left over towards level 3.</li>
+        <li>2, because 30 is more than 23.</li>
+      </ul>
+      <p class="why">30 - 23 = 7. Level 2 needs 31, so the loop stops after one level and the 7 carries over.</p>
+    </div>
+    <div class="q">
+      <p>The belly is full (3 of 3). What does <code>refillAmmo</code> do to <code>ammoClock</code>?</p>
+      <ul>
+        <li>Keeps counting, so the next refill is instant.</li>
+        <li data-right>Holds it at 0, so the cooldown starts fresh after the next shot.</li>
+        <li>Adds a fourth fireball.</li>
+      </ul>
+      <p class="why"><code>round.ammo &lt; full ? round.ammoClock + dt : 0</code>: a full belly keeps the clock at zero.</p>
+    </div>
+    <div class="q">
+      <p>Why is <code>addXp</code> a <code>while</code> loop?</p>
+      <ul>
+        <li>To make levelling slower.</li>
+        <li data-right>One big reward can be worth several levels in a row.</li>
+        <li>Because XP can be negative.</li>
+      </ul>
+      <p class="why">An <code>if</code> would only ever give one level, however much XP arrived.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-boss">
+  <header><p>Course 3 · Lesson 12</p></header>
+  <h1>The Wyrm Boss</h1>
+
+  <p>
+    After 60 seconds, a rival dragon arrives: the stage's wyrm. It's built
+    exactly like a monster (an object, a state, a timer) with one
+    difference: its list of attacks comes from the stage data.
+  </p>
+  <script type="text/plain" data-file="js/draconis/boss.js">
+    export function createBoss(spec) {
+      return {
+        age: 0,
+        alive: true,
+        attack: 0,
+        boss: true,
+        fade: 0,
+        flash: 0,
+        hidden: true,
+        hp: spec.hp,
+        maxHp: spec.hp,
+        points: spec.points,
+        r: bossRadius,
+        spec,
+        state: "enter",
+        timer: 0,
+        x: width / 2,
+        y: -90,
+      };
+    }
+  </script>
+  <p>
+    The boss has the same fields that <code>damageMonster</code>,
+    <code>canBeHit</code> and the collision code look for
+    (<code>hp</code>, <code>alive</code>, <code>hidden</code>,
+    <code>flash</code>), so all of that code works on it unchanged. It also
+    carries its own radius, <code>r: 38</code>, which
+    <code>hitRadius</code> picks up instead of the monsters' 20.
+    <code>hidden: true</code> makes it untouchable while it makes its
+    entrance.
+  </p>
+
+  <h2>Attack, rest, repeat</h2>
+  <script type="text/plain" data-file="js/draconis/boss.js">
+    const attacks = { dive, ring, summon, sweep };
+
+    // Returns false once the boss has finished fading out after its defeat.
+    export function updateBoss(b, dt, world) {
+      if (!b.alive) {
+        b.fade += dt;
+        return b.fade < 1.8;
+      }
+      b.age += dt;
+      b.flash = Math.max(0, b.flash - dt);
+      b.hidden = b.state === "enter";
+      b.charging = b.state === "dive" && b.timer < 0.9;
+      if (b.state === "enter") {
+        b.y += 70 * dt;
+        if (b.y >= hoverY) setState(b, "idle", 1.4);
+        return true;
+      }
+      if (b.state === "idle") {
+        drift(b, dt);
+        b.timer -= dt;
+        if (b.timer > 0) return true;
+        const list = b.spec.attacks;
+        setState(b, list[b.attack % list.length], 0);
+        b.flip = Math.random() < 0.5;
+        b.attack += 1;
+        return true;
+      }
+      const done = attacks[b.state](b, dt, world);
+      if (b.state !== "dive") drift(b, dt * 0.3);
+      if (done) setState(b, "idle", 1.5 * pace(b));
+      return true;
+    }
+  </script>
+  <ul>
+    <li><strong>Taking turns again.</strong> <code>b.attack</code> counts attacks forever, and <code>list[b.attack % list.length]</code> wraps it round the stage's list. The Crimson Wyrm's list is <code>["sweep", "dive", "ring", "summon", "dive"]</code>, so it dives twice as often as anything else, in a fixed rhythm a player can learn.</li>
+    <li><strong>The state is the attack's name.</strong> In any state other than enter and idle, <code>attacks[b.state]</code> looks up the function with that name and runs it. Each attack function returns <code>true</code> once it's finished, and the boss rests in idle before the next one.</li>
+    <li><strong>Enraged.</strong> <code>pace(b)</code> is 0.7 once the boss is at half health or below, so its rests get 30% shorter. Some attacks get nastier too.</li>
+  </ul>
+
+  <h2>Firing on a timetable</h2>
+  <script type="text/plain" data-file="js/draconis/boss.js">
+    // Fire breath: a stream of embers that sweeps from one side to the other.
+    function sweep(b, dt, world) {
+      b.timer += dt;
+      const count = enraged(b) ? 22 : 16;
+      const due = Math.floor(b.timer / 0.11);
+      while (b.shots < Math.min(due, count)) {
+        const k = b.shots / (count - 1);
+        const from = b.flip ? 0.85 : 0.15;
+        const angle = Math.PI * (from + (b.flip ? -0.7 : 0.7) * k);
+        world.spawnShots([ember(mouth(b), angle, 150)], b.shots % 3 === 0 ? "fire" : null);
+        b.shots += 1;
+      }
+      return b.shots >= count;
+    }
+  </script>
+  <p>
+    The breath should be one ember every 0.11 seconds. A naive version
+    would fire one ember per frame, which would depend on the screen's
+    frame rate. Instead, <code>due</code> works out how many embers
+    <em>should</em> have been fired by now, and the <code>while</code> loop
+    catches up to that number. On a slow frame it fires two at once; on a
+    fast screen it fires none on some frames. Either way, the stream is the
+    same.
+  </p>
+  <p>
+    <code>k</code> goes from 0 to 1 across the stream, and the angle slides
+    from 0.15π to 0.85π (or the other way when <code>flip</code> is true).
+    With <code>y</code> pointing down, those angles aim downwards: the
+    breath sweeps from one side of the dragon's area to the other.
+  </p>
+  <p>The ring attack leaves a gap to escape through:</p>
+  <script type="text/plain" data-file="js/draconis/boss.js">
+    for (let i = 0; i < 16; i += 1) {
+      if (i % 8 === 4) continue;
+      list.push(ember(mouth(b), offset + (i / 16) * Math.PI * 2, 105));
+    }
+  </script>
+  <p>
+    Sixteen embers evenly round a circle, except where <code>i % 8</code> is
+    4 (that's <code>i</code> = 4 and 12). <code>continue</code> skips them,
+    so there are two gaps, opposite each other. The random
+    <code>offset</code> turns the whole ring, so the safe spot moves.
+  </p>
+
+  <h2>A checkpoint</h2>
+  <p>
+    Losing a life against a boss would be miserable if you had to fly the
+    whole minute again. So when the boss appears,
+    <code>game.bossCheckpoint</code> becomes true. On a death,
+    <code>takeHit</code> saves the boss's health in
+    <code>game.bossHp</code>, and <code>newRound</code> (from lesson 4)
+    starts the next life at the boss:
+  </p>
+  <script type="text/plain" data-file="js/draconis/game.js">
+    const atBoss = game.bossCheckpoint;
+    // (cut: the spawn list and the start of the round object)
+    spawnIndex: atBoss ? spawns.length : 0,
+    spawns,
+    time: atBoss ? stageSeconds - 1 : 0,
+  </script>
+  <p>
+    The timetable is marked as used up, and the stage clock is set one
+    second before the boss is due. <code>spawnFoes</code> then brings the
+    boss in and gives it back the saved health, so the damage you did still
+    counts.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The Storm Wyrm's attacks are <code>["sweep", "ring"]</code>. Which attack is its fifth (<code>b.attack</code> = 4)?</p>
+      <ul>
+        <li data-right>sweep</li>
+        <li>ring</li>
+        <li>It has run out of attacks.</li>
+      </ul>
+      <p class="why"><code>4 % 2</code> is 0, and <code>list[0]</code> is "sweep". The list repeats forever.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>sweep</code> use <code>due</code> and a <code>while</code> loop instead of firing one ember per frame?</p>
+      <ul>
+        <li>To fire as many embers as possible.</li>
+        <li data-right>So the ember stream has the same timing at any frame rate.</li>
+        <li>Because embers are expensive to draw.</li>
+      </ul>
+      <p class="why">It fires however many embers are due by the clock, which is the same on every screen.</p>
+    </div>
+    <div class="q">
+      <p>The dragon dies when the boss has 12 of 50 health left. What happens next life?</p>
+      <ul>
+        <li>The stage restarts and the boss has 50 health again.</li>
+        <li>The boss is skipped.</li>
+        <li data-right>The life starts at the boss, and the boss comes back with 12 health.</li>
+      </ul>
+      <p class="why"><code>game.bossHp</code> remembers it, and <code>newRound</code> jumps straight to the boss.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="dd-scenery">
+  <header><p>Course 3 · Lesson 13</p></header>
+  <h1>Scenery, the HUD and the Draw Order</h1>
+
+  <h2>Painting back to front</h2>
+  <script type="text/plain" data-file="js/draconis/render.js">
+    export function draw(ctx, sprites, game) {
+      const { boss, effects, monsters, shots } = game.round;
+      const t = game.clock;
+      const theme = game.scenery.theme;
+      drawScenery(ctx, game.scenery, game.sceneryArt);
+      if (theme === "ground") {
+        drawMonsterShadows(ctx, sprites, monsters, shadowStyles.ground);
+      }
+      drawShots(ctx, sprites, shots, t, true);
+      if (boss) drawBoss(ctx, sprites, boss, flapFrame(t * 0.8), t, theme);
+      drawFireballs(ctx, sprites, game);
+      monsters.forEach((m, i) => drawMonster(ctx, sprites, m, t + i));
+      drawShots(ctx, sprites, shots, t, false);
+      drawEffects(ctx, effects);
+      drawDragon(ctx, sprites, game);
+      drawHud(ctx, sprites, game);
+      // (cut: the toast message)
+      drawOverlay(ctx, game);
+    }
+  </script>
+  <p>
+    A canvas has no layers or <code>z-index</code>. Whatever is drawn
+    <em>last</em> ends up on top. So <code>draw</code> works like a painter:
+    sky first, then shadows on the ground, then beams (which should sit
+    behind the monsters), the boss, fireballs, monsters, the other shots,
+    explosions, the dragon, the HUD, and finally any full-screen message.
+    This is literally called the <strong>painter's algorithm</strong>.
+  </p>
+  <p>
+    And since the sky is painted first over the entire canvas, it wipes out
+    the last frame. Every frame is a complete, fresh picture.
+  </p>
+
+  <h2>Skies and a scrolling ground</h2>
+  <script type="text/plain" data-file="js/draconis/scenery.js">
+    function drawGround(ctx, scene, assets) {
+      const { tile } = assets.ground;
+      const offset = scene.scroll % tile.height;
+      ctx.drawImage(tile, 0, Math.floor(offset));
+      ctx.drawImage(tile, 0, Math.floor(offset) - tile.height);
+    }
+  </script>
+  <p>
+    In the low-flight stage, the countryside slides down the screen forever,
+    so the dragon seems to fly forward. <code>scene.scroll</code> grows by 55
+    pixels a second without end. <code>% tile.height</code> wraps it, so
+    <code>offset</code> always stays between 0 and the tile's height. The
+    tile is drawn twice: once at the offset, and once directly above it.
+    As the first copy slides down off the bottom, the second slides in at
+    the top, and the tile is painted so its top and bottom edges match.
+    No seam, no end.
+  </p>
+  <p>
+    That tile, with its river, fields, cottages and trees, is painted
+    <em>once</em> at load time by <code>ground.js</code>, pixel by pixel,
+    into an off-screen canvas. Drawing one finished image per frame is far
+    cheaper than painting 150 trees every frame.
+  </p>
+  <script type="text/plain" data-file="js/draconis/entities.js">
+    // A small seeded random generator so the painted scenery is the same every
+    // time the page loads.
+    export function seeded(seed) {
+      // (cut: a few lines of bit-mixing arithmetic)
+    }
+  </script>
+  <p>
+    The trees and fields are placed "at random", but with a
+    <strong>seeded</strong> generator: <code>seeded(2024)</code> returns a
+    function that gives the same "random" numbers in the same order every
+    time. The countryside looks scattered, yet it's identical on every
+    visit. <code>Math.random()</code> can't be seeded, which is why the game
+    has its own.
+  </p>
+  <p>
+    The sky gradients are cached as well: <code>gradient()</code> in
+    <code>scenery.js</code> builds each one the first time and keeps it in a
+    <code>Map</code>, so it isn't rebuilt sixty times a second.
+  </p>
+
+  <h2>The heads-up display</h2>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    function drawBossBar(ctx, boss) {
+      if (!boss || !boss.alive) return;
+      const w = 240;
+      const x = (width - w) / 2;
+      text(ctx, boss.spec.name, width / 2, 46, { align: "center", colour: "#ff4d4d", size: 8 });
+      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+      ctx.fillRect(x - 2, 58, w + 4, 10);
+      ctx.fillStyle = boss.hp <= boss.maxHp / 2 ? "#ff2e2e" : "#ff8a2e";
+      ctx.fillRect(x, 60, (w * Math.max(0, boss.hp)) / boss.maxHp, 6);
+    }
+  </script>
+  <p>
+    Every bar in the HUD is the same recipe: a dark background box, then a
+    coloured box whose width is the full width times
+    <code>value / max</code>. <code>(width - w) / 2</code> centres the bar.
+    The bar turns from orange to red when the boss is enraged, so the
+    player can see the danger change.
+  </p>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    for (let i = 0; i < maxAmmo(game.progress); i += 1) {
+      ctx.globalAlpha = i < ammo ? 1 : 0.25;
+      ctx.drawImage(sprites.fireballIcon, width - 28 - i * 24, height - 28);
+    }
+    ctx.globalAlpha = 1;
+  </script>
+  <p>
+    The fireball icons draw one per slot, solid for each fireball stored and
+    faded for each one still recharging. The lives along the bottom left
+    work the same way, with <code>3 - game.deaths</code> little dragons.
+  </p>
+
+  <h2>Full-screen messages</h2>
+  <script type="text/plain" data-file="js/draconis/render-hud.js">
+    function overlayLines(game) {
+      const lives = 3 - game.deaths;
+      const stage = stages[game.stage];
+      const screens = {
+        clear: [`STAGE ${game.stage + 1} CLEAR!`, `+${game.stageBonus} BONUS`, ""],
+        intro: [`STAGE ${game.stage + 1}`, stage.name, "GET READY..."],
+        // (cut: over, ready and revived)
+        title: ["DEUS DRACONIS", "SURVIVE 3 STAGES", "SPACE OR TAP TO START"],
+        // (cut: won)
+      };
+      return screens[game.phase];
+    }
+  </script>
+  <p>
+    One object maps each phase to its three lines of text, and
+    <code>screens[game.phase]</code> picks the right one. In the
+    <code>"playing"</code> phase there's no entry, so it's
+    <code>undefined</code>, and <code>drawOverlay</code> returns without
+    drawing anything. Lookup tables again: the phase decides, the data
+    describes.
+  </p>
+
+  <div class="tip">
+    <strong>The whole build, in one sentence:</strong> a canvas and its 2D
+    context to paint on, one loop that updates by <code>dt</code> and then
+    redraws everything back to front, plain objects for every thing in the
+    world, held keys read every frame, circles and boxes for collisions,
+    stage data that drives timetables and bosses, small state machines for
+    every monster, and a maths clock that keeps ticking across every life.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why is the dragon drawn after the monsters?</p>
+      <ul>
+        <li>It's more important, so the browser draws it faster.</li>
+        <li data-right>Whatever is drawn last ends up on top, so the dragon is never hidden behind a monster.</li>
+        <li>It has to be drawn after the collisions are checked.</li>
+      </ul>
+      <p class="why">The canvas has no layers. Drawing order is the only thing that decides what's in front.</p>
+    </div>
+    <div class="q">
+      <p>The ground tile is 720 pixels tall and <code>scene.scroll</code> is 1500. What is <code>offset</code>?</p>
+      <ul>
+        <li>1500</li>
+        <li data-right>60</li>
+        <li>780</li>
+      </ul>
+      <p class="why">1500 - 720 - 720 = 60. The remainder keeps the offset inside one tile's height.</p>
+    </div>
+    <div class="q">
+      <p>Why does the ground painter use <code>seeded(2024)</code> instead of <code>Math.random()</code>?</p>
+      <ul>
+        <li>It's more random.</li>
+        <li data-right>A seeded generator gives the same numbers every time, so the countryside looks the same on every visit.</li>
+        <li><code>Math.random()</code> doesn't work on canvases.</li>
+      </ul>
+      <p class="why">Same seed, same sequence, same trees in the same places.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>

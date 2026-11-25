@@ -1,0 +1,2037 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/tutorial.css">
+<title>Astro Stomp | Arcade Tutorial</title>
+</head>
+<body data-course="astro">
+<header class="topbar">
+  <a class="brand" href="index.html">ARCADE TUTORIAL</a>
+  <nav>
+    <a href="../arcade/astro.html">Play Astro Stomp</a>
+    <a href="index.html">Course map</a>
+  </nav>
+</header>
+<div class="lesson-layout">
+<nav class="sidebar" aria-label="Lessons in this course">
+  <h2>COURSE 7: ASTRO STOMP</h2>
+  <ol class="steps"></ol>
+</nav>
+<main class="lesson">
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-tour">
+  <header><p>Course 7 · Lesson 1</p></header>
+  <h1>A Tour of Astro Stomp</h1>
+
+  <p>
+    Have a go first: <a href="../arcade/astro.html">play Astro Stomp</a> on
+    your site's free arcade. You fly an astronaut from Mercury out to
+    Neptune. Each planet is a long side-scrolling level full of aliens, and
+    a boss waits at the end beside your rocket. You jump, and press down in
+    mid-air to <strong>smash</strong> whatever is underneath you.
+  </p>
+  <p>
+    It's the biggest game in the arcade: about 6,500 lines spread over 39
+    files in <code>js/astro/</code>. This course won't go through them one
+    by one. Instead it takes a guided tour of the main systems, reading the
+    real code as it goes.
+  </p>
+
+  <h2>The page</h2>
+  <script type="text/plain" data-lang="html" data-file="astro.html">
+    <main class="screen">
+      <h1 class="heading">ASTRO STOMP</h1>
+      <div id="game-frame" class="game-frame wide">
+      <canvas id="game" class="game-canvas wide" width="960" height="540" aria-label="Astro Stomp game. ..."></canvas>
+      </div>
+      <button id="fullscreen" class="btn small" type="button">Fullscreen</button>
+      <p id="load-error" class="status" role="status"></p>
+      <p class="controls wide">
+        <strong>Move:</strong> arrow keys or A/D &nbsp;
+        <strong>Jump:</strong> space, up or W &nbsp;
+        <strong>Smash:</strong> down or S while in the air &nbsp;
+        ...
+      </p>
+    </main>
+    <script type="module" src="js/astro/game.js"><\/script>
+  </script>
+  <p>
+    The whole game happens on one 960 by 540 canvas. Everything you see in
+    play (the planet, the aliens, the score, even the title screen) is
+    drawn there by JavaScript.
+  </p>
+
+  <div class="tip">
+    <strong>Already covered in Course 3.</strong> Deus Draconis taught the
+    canvas basics, and Astro Stomp uses every one of them, so here they get
+    just a sentence each:
+    <ul>
+      <li><strong>Canvas and context:</strong> <code>getContext("2d")</code> gives the drawing tools. Astro Stomp asks for <code>{ alpha: false }</code> because its picture always covers the whole canvas.</li>
+      <li><strong>The game loop:</strong> the shared <code>runGame()</code> in <code>game-shell.js</code> calls <code>update(dt)</code> then <code>draw()</code> every <code>requestAnimationFrame</code>, with <code>dt</code> in seconds and capped at 0.05.</li>
+      <li><strong>Input state:</strong> <code>input.held("left")</code> is "is it down now?" and <code>input.pressed("jump")</code> is "was it pressed this frame?".</li>
+      <li><strong>Sprites, entities and collisions:</strong> images drawn with <code>drawImage</code>, game things as plain objects with <code>x, y, w, h</code>, and rectangle overlap tests.</li>
+      <li><strong>Stage data and the question gate:</strong> levels written as data, and <code>await questions.ask()</code> that only resolves on a right answer.</li>
+    </ul>
+  </div>
+
+  <h2>A map of the files</h2>
+  <ul>
+    <li><strong>The boss of it all:</strong> <code>game.js</code> (phases, lives, score, questions) and <code>world.js</code> (one frame of play).</li>
+    <li><strong>The ground:</strong> <code>levels.js</code>, <code>stagesInner.js</code>, <code>stagesOuter.js</code> and <code>physics.js</code>.</li>
+    <li><strong>The astronaut:</strong> <code>player.js</code>, <code>status.js</code> and <code>input.js</code>.</li>
+    <li><strong>The aliens:</strong> <code>minions.js</code> (the list), <code>enemies.js</code> and <code>enemyKit.js</code> (shared parts), and <code>movesHot.js</code>, <code>movesWild.js</code>, <code>movesSky.js</code> and <code>movesIce.js</code> (what each one does).</li>
+    <li><strong>Bosses:</strong> <code>bosses.js</code>, <code>bossKit.js</code>, <code>bossesInner.js</code> and <code>bossesOuter.js</code>.</li>
+    <li><strong>Things that fly or hurt:</strong> <code>shots.js</code>, <code>strikes.js</code>, <code>hazards.js</code>, <code>patches.js</code> and <code>contacts.js</code>.</li>
+    <li><strong>Help and danger:</strong> <code>powerups.js</code> and <code>oxygen.js</code>.</li>
+    <li><strong>Drawing:</strong> <code>render.js</code>, <code>looks.js</code>, <code>hud.js</code> and the <code>*Art.js</code> files, plus <code>spriteSizes.js</code> and <code>machineSizes.js</code>, which are written by art tools rather than by hand.</li>
+  </ul>
+
+  <h2>One object holds the game</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    const game = {
+      clock: 0,
+      // How long this planet has taken so far, counting checkpoint retries.
+      // Only play time counts, not time spent on questions.
+      planetTime: 0,
+      hinted: false,
+      input,
+      lives: startLives,
+      // (cut: the maths question clock)
+      phase: "title",
+      phaseTime: 0,
+      powers: newPowers(),
+      round: null,
+      saved: readSaved(),
+      score: 0,
+      stageIndex: 0,
+      tipped: new Set(),
+      toast: null,
+    };
+  </script>
+  <p>
+    Everything that lasts the whole trip (score, lives, power-ups, which
+    planet) lives on <code>game</code>. Everything about the planet you're
+    on right now (the astronaut, the aliens, the boss, every shot in the
+    air) lives on <code>game.round</code>, which <code>newRound()</code>
+    builds from scratch each time a planet starts. Throwing a planet away is
+    then a single line: make a new round.
+  </p>
+
+  <h2>Phases</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    function setPhase(phase) {
+      game.phase = phase;
+      game.phaseTime = 0;
+    }
+
+    function update(dt) {
+      game.clock += dt;
+      game.phaseTime += dt;
+      // (cut)
+      if (game.phase === "title") updateTitle();
+      const ready = art && art.ready[game.round.stage.id];
+      if (game.phase === "intro" && game.phaseTime > 2 && ready) {
+        setPhase("playing");
+        // (cut: the first-planet hint)
+      }
+      if (game.phase === "over") updateOver();
+      if (game.phase === "playing") updatePlaying(dt);
+      if (game.phase === "clear") {
+        game.round.rocket.lift += (120 + game.phaseTime * 500) * dt;
+        game.round.shake = 0.1;
+      }
+      if (game.phase === "clear" && game.phaseTime > 2.6) nextPlanet();
+      // (cut: the "won" phase)
+    }
+  </script>
+  <p>
+    The game is always in exactly one <strong>phase</strong>:
+    <code>"title"</code>, <code>"intro"</code> (the planet's name card),
+    <code>"playing"</code>, <code>"question"</code>, <code>"clear"</code>
+    (the rocket taking off), <code>"over"</code> or <code>"won"</code>.
+    <code>update</code> only runs the code for the current one.
+    <code>phaseTime</code> restarts at 0 on every change, which makes timed
+    steps easy: the intro card stays up for 2 seconds, the rocket flies for
+    2.6. Notice the intro also waits for <code>ready</code>: the next
+    planet's pictures must have loaded before you can play it.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Where does the list of aliens on the current planet live?</p>
+      <ul>
+        <li>On <code>game</code>, next to the score.</li>
+        <li data-right>On <code>game.round</code>, which is rebuilt for each planet.</li>
+        <li>In <code>astro.html</code>.</li>
+      </ul>
+      <p class="why">Anything that belongs to one planet goes on the round, so starting a planet (or restarting it) is just building a new round.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>setPhase</code> reset <code>phaseTime</code> to 0?</p>
+      <ul>
+        <li>To save memory.</li>
+        <li data-right>So each phase can time itself, like "after 2 seconds of intro, start playing".</li>
+        <li>Because <code>update</code> would crash otherwise.</li>
+      </ul>
+      <p class="why"><code>phaseTime</code> is "how long have we been in this phase?", which is exactly what timed steps need.</p>
+    </div>
+    <div class="q">
+      <p>When does the intro card give way to play?</p>
+      <ul>
+        <li>As soon as the player presses a key.</li>
+        <li>After exactly 2 seconds, always.</li>
+        <li data-right>After 2 seconds, and only once that planet's art has loaded.</li>
+      </ul>
+      <p class="why">Both conditions must be true, so a slow connection just keeps the name card up a little longer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-levels">
+  <header><p>Course 7 · Lesson 2</p></header>
+  <h1>Planets Made of Data</h1>
+
+  <p>
+    Course 3 showed stage data in Deus Draconis. Astro Stomp takes the idea
+    further: each planet is one object that says where the floor, ledges,
+    aliens and hazards go, and a builder turns it into a grid of tiles.
+  </p>
+  <script type="text/plain" data-file="js/astro/stagesInner.js">
+    // Layouts for the inner planets: Mercury, Venus, Earth and Mars.
+    //   blocks     [col, row, width, height] of solid rock
+    //   platforms  [row, fromCol, toCol] one-way ledges (thorns and spikes too)
+    //   enemies    [kind, col, row]; row is where the feet rest (9 is the floor)
+    //   hazards    see hazards.js; items are O2 tanks and checkpoint flags
+    //   arena      where the boss room starts, and its ledges (columns counted
+    //              from the arena's left edge)
+    // Pace speeds up how often the aliens use their tricks.
+    export const innerStages = [
+      {
+        arena: { boss: "magmaw", from: 110, platforms: [[7, 2, 5], [7, 15, 18]] },
+        blocks: [[16, 9, 2, 1], [34, 8, 2, 2], [52, 7, 1, 3], [70, 9, 3, 1], [92, 8, 2, 2]],
+        enemies: [
+          ["cindercrab", 10], ["flameimp", 30], ["cindercrab", 40],
+          ["magmabeetle", 56], ["ashhound", 72], ["flameimp", 88],
+          ["magmabeetle", 98],
+        ],
+        floor: [[0, 22], [26, 44], [48, 60], [64, 80], [84, 104]],
+        // (cut: hazards)
+        id: "mercury",
+        items: [["tank", 64, 9], ["flag", 66], ["tank", 100, 9]],
+        lava: true,
+        name: "MERCURY",
+        pace: 1,
+        platforms: [[7, 22, 26], [7, 44, 48], [6, 60, 64], [7, 80, 84]],
+        start: 2,
+        tagline: "THE SCORCHED FURNACE",
+      },
+      // (cut: Venus, Earth and Mars)
+    ];
+  </script>
+  <p>
+    Look at <code>floor</code>. It doesn't list tiles, it lists
+    <em>ranges</em>: floor from column 0 to 22, then 26 to 44, and so on.
+    The gaps between the ranges (23 to 25, 45 to 47...) are the pits.
+    Mercury has <code>lava: true</code>, so those pits are lava. Each
+    platform sits right over a pit, so there's always a way across. Writing
+    ranges instead of every tile keeps a planet over 130 columns long to
+    about twenty lines.
+  </p>
+  <p>
+    Planets are spread over two files (inner and outer) only to keep each
+    file short. <code>levels.js</code> joins them into one list:
+  </p>
+  <script type="text/plain" data-file="js/astro/levels.js">
+    export const tile = 45;
+    export const rows = 12;
+    export const arenaCols = 21;
+
+    export const stages = [...innerStages, ...outerStages];
+  </script>
+
+  <h2>From data to a grid</h2>
+  <script type="text/plain" data-file="js/astro/levels.js">
+    // Builds the tile grid: "#" solid, "=" one-way platform, "L" lava, "v" spikes
+    // hanging from a roof, "^" thorns growing up from the floor, "." air.
+    export function buildLevel(stage) {
+      const length = stage.arena.from + arenaCols + 1;
+      const grid = Array.from({ length: rows }, () => {
+        return Array(length).fill(".");
+      });
+      const fill = (col, row, ch) => {
+        if (grid[row] && col >= 0 && col < length) grid[row][col] = ch;
+      };
+      const floor = [...stage.floor, [stage.arena.from - 6, length - 1]];
+      floor.forEach(([from, to]) => {
+        for (let col = from; col <= to; col += 1) {
+          fill(col, 10, "#");
+          fill(col, 11, "#");
+        }
+      });
+      if (stage.lava) {
+        for (let col = 0; col < length; col += 1) {
+          if (grid[11][col] === ".") fill(col, 11, "L");
+        }
+      }
+      // (cut: the arena wall and solid blocks)
+      const strip = (ch, offset = 0) => {
+        return ([row, from, to]) => {
+          for (let col = from; col <= to; col += 1) fill(col + offset, row, ch);
+        };
+      };
+      stage.platforms.forEach(strip("="));
+      stage.arena.platforms.forEach(strip("=", stage.arena.from));
+      (stage.spikes ?? []).forEach(strip("v"));
+      (stage.thorns ?? []).forEach(strip("^"));
+      // (cut: icy columns)
+      return {
+        arena: stage.arena.from,
+        cols: length,
+        grid,
+        height: rows * tile,
+        icy,
+        width: length * tile,
+      };
+    }
+  </script>
+  <ul>
+    <li>The grid is an array of 12 rows, each an array of one-letter strings. <code>grid[row][col]</code> is one tile. Every tile starts as air, <code>"."</code>.</li>
+    <li><code>fill</code> quietly ignores anything off the grid, so a typo in the stage data can't crash the builder.</li>
+    <li>The builder adds one extra floor range itself: the last 6 columns before the boss arena and the arena floor. Every planet needs that, so no stage has to remember it.</li>
+    <li>Lava is put only where row 11 is still air, which means only in pits.</li>
+    <li><code>strip(ch, offset)</code> is a function that <em>returns a function</em>. <code>strip("=")</code> makes a painter for ledges, which <code>forEach</code> then calls with each <code>[row, from, to]</code>. Arena ledges use an offset because they're counted from the arena's left edge.</li>
+    <li><code>stage.spikes ?? []</code>: most planets have no spikes, so a missing list counts as empty.</li>
+  </ul>
+
+  <h2>Asking about a tile</h2>
+  <script type="text/plain" data-file="js/astro/levels.js">
+    export function tileAt(level, col, row) {
+      if (col < 0 || col >= level.cols) return "#";
+      if (row < 0 || row >= rows) return ".";
+      return level.grid[row][col];
+    }
+  </script>
+  <p>
+    Everything else reads the level through <code>tileAt</code>, and it has
+    a clever answer for places off the map. Past the left or right end it
+    says <code>"#"</code>, an invisible wall, so nothing can walk off the
+    ends. Above the top or below the bottom it says <code>"."</code>, so you
+    can jump above the screen and fall out of the bottom of a pit.
+  </p>
+  <p>
+    The boss arena gate works the same way: <code>setGate(level, true)</code>
+    writes a column of <code>"#"</code> into the grid just left of the arena,
+    and from then on the physics treats it like any other wall.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Mercury's floor is <code>[[0, 22], [26, 44], ...]</code>. What is at column 24?</p>
+      <ul>
+        <li>Solid floor.</li>
+        <li data-right>A pit, and since Mercury has lava, a lava pool in row 11.</li>
+        <li>A one-way ledge.</li>
+      </ul>
+      <p class="why">Columns 23 to 25 are outside every floor range. Lava fills row 11 wherever it is still air.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>tileAt(level, -1, 5)</code> return?</p>
+      <ul>
+        <li><code>"."</code>, because it's off the map.</li>
+        <li data-right><code>"#"</code>, so the left edge acts like a wall.</li>
+        <li><code>undefined</code>.</li>
+      </ul>
+      <p class="why">Off the left or right side always counts as solid, so nothing can leave the level sideways.</p>
+    </div>
+    <div class="q">
+      <p>What is <code>strip("=")</code>?</p>
+      <ul>
+        <li>A string of equals signs.</li>
+        <li data-right>A function that paints <code>"="</code> along one <code>[row, from, to]</code> entry.</li>
+        <li>The number of platforms.</li>
+      </ul>
+      <p class="why"><code>strip</code> returns a new function each time it's called, set up for one tile letter and offset. That's why it can be passed straight to <code>forEach</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-physics">
+  <header><p>Course 7 · Lesson 3</p></header>
+  <h1>Tile Collision Without Tunnelling</h1>
+
+  <p>
+    Every body in the game (the astronaut, a walking alien, a dropped
+    power-up) is a box with <code>x, y, w, h</code> and a velocity
+    <code>vx, vy</code> in pixels per second. <code>physics.js</code> moves
+    those boxes through the tile grid and stops them at walls and floors.
+  </p>
+  <p>
+    Turning a pixel position into a tile is a division:
+    <code>Math.floor(x / tile)</code>. With 45-pixel tiles, x = 100 is in
+    column 2 (it covers 90 to 134).
+  </p>
+
+  <h2>Sideways first</h2>
+  <script type="text/plain" data-file="js/astro/physics.js">
+    export const gravity = 2200;
+    const maxStep = 18;
+
+    const isSolid = (ch) => ch === "#";
+    const isFloor = (ch) => ch === "#" || ch === "=";
+
+    function moveX(body, dx, level) {
+      body.x += dx;
+      if (dx === 0) return;
+      const edge = dx > 0 ? body.x + body.w - 0.01 : body.x;
+      const col = Math.floor(edge / tile);
+      const top = Math.floor(body.y / tile);
+      const bottom = Math.floor((body.y + body.h - 0.01) / tile);
+      for (let row = top; row <= bottom; row += 1) {
+        if (isSolid(tileAt(level, col, row))) {
+          body.x = dx > 0 ? col * tile - body.w : (col + 1) * tile;
+          body.hitWall = Math.sign(dx);
+          body.vx = 0;
+          return;
+        }
+      }
+    }
+  </script>
+  <ol>
+    <li>Move first, then check.</li>
+    <li>Find the <strong>leading edge</strong>: the right side when moving right, the left side when moving left.</li>
+    <li>Check every tile that edge touches, from the row of the head to the row of the feet.</li>
+    <li>If one is solid, snap the body back so it's touching the wall but not inside it, and stop it. <code>hitWall</code> records which way it bumped (aliens use it to turn round).</li>
+  </ol>
+  <p>
+    Why <code>- 0.01</code>? An astronaut standing on the floor has their
+    feet at exactly 450, the top edge of row 10 (10 × 45). Without the tiny
+    nudge, the check would count row 10 as one the body covers, and every
+    floor tile beside their feet would look like a wall.
+  </p>
+
+  <h2>Then up and down, with one-way ledges</h2>
+  <script type="text/plain" data-file="js/astro/physics.js">
+    function moveY(body, dy, level) {
+      const oldBottom = body.y + body.h;
+      body.y += dy;
+      const left = Math.floor(body.x / tile);
+      const right = Math.floor((body.x + body.w - 0.01) / tile);
+      if (dy > 0) {
+        const row = Math.floor((body.y + body.h) / tile);
+        for (let col = left; col <= right; col += 1) {
+          const ch = tileAt(level, col, row);
+          // One-way platforms only catch bodies that were above them.
+          const catches = isSolid(ch) || (ch === "=" && oldBottom <= row * tile + 0.5);
+          if (catches) {
+            body.y = row * tile - body.h;
+            body.vy = 0;
+            body.onGround = true;
+            return;
+          }
+        }
+      }
+      // (cut: moving up, which bumps heads on "#" tiles the same way)
+    }
+  </script>
+  <p>
+    A <code>"="</code> ledge is the classic platformer trick: you can jump
+    up through it from below and still land on it from above. The rule is
+    one line. A ledge only <em>catches</em> you if your feet were above its
+    top edge <strong>before</strong> this move (<code>oldBottom</code>). Rising
+    through it, your feet started below, so it lets you pass. Moving up
+    only checks <code>isSolid</code>, so ledges never bump your head.
+  </p>
+  <p>
+    Landing is also where <code>onGround</code> becomes <code>true</code>.
+    The player code reads that flag to decide whether a jump is allowed.
+  </p>
+
+  <h2>Small steps, so nothing tunnels</h2>
+  <script type="text/plain" data-file="js/astro/physics.js">
+    // Moves a body through the level in small steps so fast falls can't tunnel.
+    export function moveBody(body, dt, level, fall = gravity) {
+      body.vy += fall * dt;
+      body.hitWall = 0;
+      body.onGround = false;
+      const distance = Math.max(Math.abs(body.vx), Math.abs(body.vy)) * dt;
+      const steps = Math.max(1, Math.ceil(distance / maxStep));
+      for (let i = 0; i < steps; i += 1) {
+        moveX(body, (body.vx * dt) / steps, level);
+        moveY(body, (body.vy * dt) / steps, level);
+        if (body.onGround) {
+          moveX(body, (body.vx * dt * (steps - i - 1)) / steps, level);
+          break;
+        }
+      }
+    }
+  </script>
+  <p>
+    A smash drops the astronaut at 1,900 pixels per second. In a 0.05-second
+    frame that's 95 pixels, more than two whole tiles. If the body jumped
+    95 pixels in one go, it could start above a ledge and finish below it
+    without ever being <em>in</em> it, and fall straight through. That bug
+    is called <strong>tunnelling</strong>.
+  </p>
+  <p>
+    The fix: split the move into steps of at most <code>maxStep</code>
+    (18 pixels, less than half a tile). 95 pixels becomes 6 steps of about
+    16, and one of them is sure to land in the ledge's row. Once the body
+    lands, it finishes its sideways movement in one go and stops stepping.
+    Gravity is added first, and <code>fall</code> can be swapped: the
+    astronaut passes a lower gravity, and a smash passes 0.
+  </p>
+
+  <div class="tip">
+    <strong>Recap from Course 3:</strong> touching other <em>bodies</em>
+    (aliens, shots, power-ups) doesn't use tiles at all. It's the same
+    rectangle overlap test you met there, <code>overlaps(a, b)</code> in
+    <code>physics.js</code>.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>The astronaut jumps up from underneath a <code>"="</code> ledge. What happens?</p>
+      <ul>
+        <li>They bump their head and fall back.</li>
+        <li data-right>They pass up through it, and can land on top of it on the way down.</li>
+        <li>They get stuck inside it.</li>
+      </ul>
+      <p class="why">Moving up only stops at solid <code>"#"</code> tiles, and a ledge only catches feet that were already above it.</p>
+    </div>
+    <div class="q">
+      <p>A body falls 80 pixels in one frame. How many steps does <code>moveBody</code> split that into?</p>
+      <ul>
+        <li>1</li>
+        <li data-right>5</li>
+        <li>80</li>
+      </ul>
+      <p class="why"><code>Math.ceil(80 / 18)</code> is 5, so each step moves 16 pixels, never enough to skip over a tile.</p>
+    </div>
+    <div class="q">
+      <p>Which tile does <code>moveX</code> check when the body moves left?</p>
+      <ul>
+        <li>The column at the body's right edge.</li>
+        <li data-right>The column at the body's left edge, for every row it covers.</li>
+        <li>Only the row of its feet.</li>
+      </ul>
+      <p class="why">The leading edge is the one that could run into something. Every row from head to feet is checked so tall bodies hit low walls too.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-player">
+  <header><p>Course 7 · Lesson 4</p></header>
+  <h1>The Astronaut: Run, Jump, Smash</h1>
+
+  <p>
+    Good platformer controls are mostly small tricks you never notice.
+    <code>player.js</code> has several, and they start with the numbers:
+  </p>
+  <script type="text/plain" data-file="js/astro/player.js">
+    const runSpeed = 300;
+    const runAccel = 2600;
+    // Low gravity: a slow, floaty arc with a gentle top speed when falling.
+    const playerGravity = 1150;
+    const maxFallSpeed = 620;
+    const jumpSpeed = 760;
+    const coyoteSeconds = 0.1;
+    const bufferSeconds = 0.12;
+    const smashHang = 0.08;
+    const smashSpeed = 1900;
+  </script>
+  <p>
+    The astronaut falls with about half the world's gravity (1,150 instead
+    of 2,200), so jumps feel like space. Tuning the feel of the game is
+    changing these numbers, not the code.
+  </p>
+
+  <h2>Speeding up and slowing down</h2>
+  <script type="text/plain" data-file="js/astro/player.js">
+    function approach(value, target, step) {
+      if (value < target) return Math.min(value + step, target);
+      return Math.max(value - step, target);
+    }
+
+    function steer(player, input, dt, level) {
+      if (player.knockFor > 0) return;
+      const { powers, status } = player;
+      let dir = (input.held("right") ? 1 : 0) - (input.held("left") ? 1 : 0);
+      if (status.confused > 0) dir = -dir;
+      if (status.frozen > 0) dir = 0;
+      // (cut: turning round)
+      let top = runSpeed * (powers.speed > 0 ? 1.45 : 1);
+      if (status.slow > 0) top *= 0.45;
+      let accel = player.onGround ? runAccel : runAccel * 0.6;
+      if (onIce(player, level)) accel *= 0.18;
+      player.vx = approach(player.vx, dir * top, accel * dt);
+    }
+  </script>
+  <ul>
+    <li><code>dir</code> is -1, 0 or 1. Holding both arrows cancels out to 0.</li>
+    <li>The astronaut doesn't jump straight to full speed. <code>approach</code> moves <code>vx</code> towards the target speed by at most <code>accel * dt</code> each frame, and never overshoots. Letting go means the target is 0, so they slow to a stop the same way.</li>
+    <li>Every effect is a small change to one number: a mind ring flips <code>dir</code>, goo cuts the top speed, ice cuts the acceleration to 18% (so you slide), and steering in mid-air is a bit weaker than on the ground.</li>
+  </ul>
+
+  <h2>Forgiving jumps</h2>
+  <script type="text/plain" data-file="js/astro/player.js">
+    function tryJump(player, input) {
+      const { powers, status } = player;
+      if (input.pressed("jump")) player.buffer = bufferSeconds;
+      if (status.frozen > 0) return false;
+      const power = jumpSpeed * (status.slow > 0 ? 0.75 : 1);
+      if (player.buffer > 0 && player.coyote > 0) {
+        player.vy = -power;
+        player.buffer = 0;
+        player.coyote = 0;
+        player.airJumps = powers.boots > 0 ? 1 : 0;
+        return true;
+      }
+      // (cut: jet boots' extra jump in mid-air)
+      // Letting go early makes a shorter hop.
+      if (!input.held("jump") && player.vy < -260) player.vy = -260;
+      return false;
+    }
+  </script>
+  <p>And from the timers, run every frame:</p>
+  <script type="text/plain" data-file="js/astro/player.js">
+    player.buffer = Math.max(0, player.buffer - dt);
+    player.coyote = player.onGround ? coyoteSeconds : player.coyote - dt;
+  </script>
+  <p>Three tricks are packed in here:</p>
+  <ul>
+    <li><strong>Coyote time.</strong> Like a cartoon coyote running off a cliff, you can still jump for 0.1 seconds after leaving a ledge. <code>coyote</code> is topped up while you stand and runs down once you don't. Without it, pressing jump a hair too late at the edge would do nothing, and it would feel like the game ignored you.</li>
+    <li><strong>Jump buffering.</strong> The opposite mistake: pressing jump just <em>before</em> you land. The press is remembered in <code>buffer</code> for 0.12 seconds, so if you touch down in that time, the jump happens anyway.</li>
+    <li><strong>Variable jump height.</strong> If you let go of jump while still rising fast, your upward speed is cut to 260. Tap for a hop, hold for a full jump.</li>
+  </ul>
+
+  <h2>The smash</h2>
+  <script type="text/plain" data-file="js/astro/player.js">
+    // (inside updatePlayer)
+    const canSmash = player.knockFor <= 0 && status.frozen <= 0;
+    if (input.pressed("down") && !player.onGround && canSmash) {
+      player.smash = { hang: smashHang };
+      events.push("smash");
+      return events;
+    }
+
+    function smashing(player, dt, level, events) {
+      player.smash.hang -= dt;
+      player.vx = 0;
+      const falling = player.smash.hang <= 0;
+      player.vy = falling ? smashSpeed : 0;
+      moveBody(player, dt, level, 0);
+      if (!player.onGround) return;
+      player.smash = null;
+      player.landFor = 0.16;
+      events.push("slam");
+    }
+  </script>
+  <p>
+    Pressing down in the air sets <code>player.smash</code> to an object.
+    While it's there, <code>updatePlayer</code> skips normal steering and
+    runs <code>smashing</code> instead: hang in the air for 0.08 seconds
+    (a tiny pause that makes it feel heavy), then plunge straight down at
+    1,900 pixels per second with gravity switched off. Hitting the ground
+    clears it and reports a <code>"slam"</code>.
+  </p>
+  <p>
+    <code>updatePlayer</code> returns a list of <strong>events</strong> like
+    <code>["jump"]</code> or <code>["slam"]</code> rather than playing
+    sounds itself. <code>world.js</code> turns them into sounds, dust and
+    screen shake. The player file stays about movement only.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>You run off a ledge and press jump 0.05 seconds later. What happens?</p>
+      <ul>
+        <li>Nothing: you're in the air.</li>
+        <li data-right>You jump, because coyote time hasn't run out yet.</li>
+        <li>You smash.</li>
+      </ul>
+      <p class="why"><code>coyote</code> was 0.1 when you left the ground and is still above 0, so the jump is allowed.</p>
+    </div>
+    <div class="q">
+      <p>What does <code>approach(250, 0, 100)</code> return?</p>
+      <ul>
+        <li>0</li>
+        <li data-right>150</li>
+        <li>350</li>
+      </ul>
+      <p class="why">It moves 250 towards 0 by at most 100.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>updatePlayer</code> return events instead of calling <code>play("jump")</code> itself?</p>
+      <ul>
+        <li>Sounds can't be played from modules.</li>
+        <li data-right>It keeps movement separate from sound and effects, which are handled in one place in <code>world.js</code>.</li>
+        <li>Events are faster.</li>
+      </ul>
+      <p class="why">The player code reports what happened. Something else decides how that looks and sounds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-contacts">
+  <header><p>Course 7 · Lesson 5</p></header>
+  <h1>Stomp or Ouch?</h1>
+
+  <p>
+    Every platformer has to answer one question many times a second: the
+    hero is touching an enemy, so who gets hurt? In
+    <code>contacts.js</code> the answer depends on <em>how</em> they touch.
+  </p>
+  <script type="text/plain" data-file="js/astro/contacts.js">
+    function touchEnemy(game, enemy, hurt) {
+      const { player } = game.round;
+      if (player.powers.star > 0) {
+        killEnemy(game, enemy);
+        return;
+      }
+      const feet = player.y + player.h;
+      const onTop = player.vy > 0 && feet - enemy.y < Math.min(40, enemy.h / 2);
+      if (onTop || player.smash) {
+        stompEnemy(game, enemy, hurt);
+        return;
+      }
+      // (cut: kicking a turtle shell)
+      const harmless = enemy.harmless || isStunned(enemy) || enemy.flash > 0;
+      if (!harmless && player.bounceGrace <= 0) hurt(centre(enemy).x, "hit");
+    }
+  </script>
+
+  <h2>What counts as "on top"?</h2>
+  <p>
+    Overlapping isn't enough: you also need to be coming <em>down</em>
+    (<code>vy &gt; 0</code>), and your feet must be only a little way into
+    the alien, less than 40 pixels or half its height, whichever is
+    smaller. If your feet are deep inside it, you ran into its side. The
+    "half its height" part matters for small aliens like spiderlings, where
+    40 pixels would be most of the body.
+  </p>
+
+  <h2>A stomp has rules too</h2>
+  <script type="text/plain" data-file="js/astro/contacts.js">
+    function stompEnemy(game, enemy, hurt) {
+      const { player } = game.round;
+      // (cut: bouncing on a turtle shell)
+      if (enemy.spiky) {
+        hurt(centre(enemy).x, "hit");
+        hint(game, "OUCH! DON'T STOMP IT NOW!", "#ff8a3a");
+        return;
+      }
+      if (enemy.guarded) {
+        bouncePlayer(player, false);
+        play("bounce");
+        hint(game, "CLANG! WAIT FOR AN OPENING!");
+        return;
+      }
+      if (player.smash || isStunned(enemy)) {
+        bouncePlayer(player, true);
+        game.round.shake = 0.2;
+        damageEnemy(game, enemy);
+        return;
+      }
+      bouncePlayer(player, false);
+      play("bounce");
+      if (!game.hinted) game.showToast("PRESS DOWN IN THE AIR TO SMASH!", "#ffd400");
+      game.hinted = true;
+    }
+  </script>
+  <p>Read it as a list of rules, checked in order. The first one that matches wins:</p>
+  <ol>
+    <li><strong>Spiky</strong> (a red-hot beetle): stomping hurts <em>you</em>.</li>
+    <li><strong>Guarded</strong> (a crab with its claws up): you bounce off with a clang.</li>
+    <li><strong>A smash, or a stunned alien:</strong> a high bounce and one point of damage.</li>
+    <li><strong>Anything else:</strong> a plain jump on its head just bounces you. This is Astro Stomp's twist: you have to <em>smash</em> to do damage, and the game tells you so the first time.</li>
+  </ol>
+  <p>
+    The order matters. A spiky alien that is also guarded must hurt, so
+    spiky is checked first. Early <code>return</code>s keep each rule on its
+    own and stop the later ones running.
+  </p>
+
+  <h2>The bounce and its grace period</h2>
+  <script type="text/plain" data-file="js/astro/player.js">
+    // Bounce off an enemy's head. A smash that lands a hit bounces higher.
+    // A short grace period stops the alien you just bounced off from hurting you
+    // while you're still overlapping it on the way up.
+    export function bouncePlayer(player, high) {
+      player.bounceGrace = 0.3;
+      player.smash = null;
+      player.vy = high ? -540 : -400;
+    }
+  </script>
+  <p>
+    Right after a bounce you're still overlapping the alien, but now moving
+    <em>up</em>, so next frame you're not "on top" any more. Without
+    <code>bounceGrace</code>, that next frame would count as a side touch
+    and hurt you for a perfectly good stomp.
+  </p>
+
+  <h2>Getting hurt</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    function hurt(fromX, kind) {
+      const { round } = game;
+      const { player } = round;
+      const { powers } = player;
+      if (game.phase !== "playing") return;
+      if (kind !== "fell" && (player.hurtFor > 0 || powers.star > 0)) return;
+      round.shake = 0.3;
+      if (kind !== "fell" && powers.shield > 0) {
+        powers.shield = 0;
+        player.hurtFor = 1;
+        player.status.frozen = 0;
+        showToast("SHIELD BROKEN!", "#00e5ff");
+        play("bounce");
+        return;
+      }
+      if (kind === "fell") {
+        placePlayer(player, player.safe);
+        player.hurtFor = 1.4;
+      } else {
+        hurtPlayer(player, fromX, kind === "spike");
+      }
+      loseLife();
+    }
+  </script>
+  <p>
+    <code>hurt</code> lives in <code>game.js</code> and is passed
+    <em>into</em> <code>resolveContacts(game, hurt)</code> as a callback.
+    The contact code only decides <em>that</em> you were hurt and from
+    where; the game decides what it costs. After a hit,
+    <code>hurtFor</code> gives 1.4 seconds when nothing can hurt you again
+    (the astronaut blinks), so one alien can't take three lives in three
+    frames. Falling into a pit ignores the shield and the star, because
+    they can't save you from a bottomless drop: you're put back on the last
+    <code>safe</code> ground instead.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>You fall onto a plain cinder crab without pressing down. What happens?</p>
+      <ul>
+        <li>The crab is beaten.</li>
+        <li data-right>You bounce off and the crab is unharmed.</li>
+        <li>You lose a life.</li>
+      </ul>
+      <p class="why">Only a smash (or landing on a stunned alien) does damage. A plain stomp just bounces.</p>
+    </div>
+    <div class="q">
+      <p>You smash down onto a magma beetle while it's glowing red hot (<code>spiky</code>). What happens?</p>
+      <ul>
+        <li>The smash beats it because smashes always win.</li>
+        <li data-right>You get hurt: spiky is checked before smashing.</li>
+        <li>You clang off.</li>
+      </ul>
+      <p class="why">The first matching rule wins, and the spiky rule comes first.</p>
+    </div>
+    <div class="q">
+      <p>What is <code>bounceGrace</code> for?</p>
+      <ul>
+        <li>Making bounces higher.</li>
+        <li data-right>Stopping the alien you just bounced off from hurting you while you still overlap it.</li>
+        <li>Counting how many times you've bounced.</li>
+      </ul>
+      <p class="why">For 0.3 seconds after a bounce, side touches don't hurt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-minions">
+  <header><p>Course 7 · Lesson 6</p></header>
+  <h1>Aliens as Data</h1>
+
+  <p>
+    There are 33 kinds of alien: four per planet plus the Brood Queen's
+    spiderlings. They all share one body-making and updating system, and
+    each kind is a single line of data in <code>minions.js</code>:
+  </p>
+  <script type="text/plain" data-file="js/astro/minions.js">
+    const flier = { box: [0.62, 0.66], flies: true };
+
+    export const kinds = {
+      // Mercury.
+      ashhound: { art: "mercury/hound", faces: 1, move: emberCharge, points: 250, speed: 70 },
+      cindercrab: { art: "mercury/crab", faces: 1, move: scuttle, points: 150, speed: 60 },
+      flameimp: { art: "mercury/imp", faces: 0, move: lobber, points: 200, speed: 45 },
+      magmabeetle: { art: "mercury/beetle", faces: 1, move: molten, points: 250, speed: 35 },
+      // Venus.
+      acidjelly: { ...flier, art: "venus/jelly", faces: 0, move: drifter, points: 200 },
+      // (cut)
+      sludgeslug: {
+        art: "venus/slug", faces: 1, move: splitter, onDeath: splitInTwo, points: 200, speed: 34,
+      },
+      // (cut: Earth to Neptune)
+      // The Brood Queen's babies: her own picture, shrunk right down.
+      spiderling: { art: "venus/boss", faces: 0, move: skitter, points: 100, scale: 0.22, speed: 120 },
+    };
+  </script>
+  <ul>
+    <li><code>art</code> names the picture, <code>points</code> the score and <code>speed</code> the walking pace.</li>
+    <li><code>faces</code> says which way the artwork looks (1 right, -1 left, 0 straight at you), so the renderer knows when to flip it.</li>
+    <li><code>move</code> is a <strong>function</strong> stored as data. Each kind points at its behaviour, like <code>scuttle</code> or <code>molten</code>. That's next lesson.</li>
+    <li><code>...flier</code> spreads shared settings into every flying alien, so "fliers have a smaller hit box and ignore gravity" is written once.</li>
+    <li>Optional extras only appear where needed: <code>onDeath</code> (the slug splits in two), <code>hp</code>, <code>scale</code>, <code>shell</code>.</li>
+  </ul>
+
+  <h2>A body sized from its picture</h2>
+  <script type="text/plain" data-file="js/astro/enemies.js">
+    const defaultBox = [0.72, 0.88];
+
+    function body(kind, small) {
+      const def = kinds[kind];
+      const [sw, sh] = spriteSizes[def.art];
+      const scale = (def.scale ?? 1) * (small ? 0.6 : 1);
+      const [bx, by] = def.box ?? defaultBox;
+      return {
+        def,
+        h: Math.round(sh * scale * by),
+        scale,
+        w: Math.round(sw * scale * bx),
+      };
+    }
+  </script>
+  <p>
+    <code>spriteSizes.js</code> is written by the art cutting tool, not by
+    hand: it records each picture's size, like
+    <code>"mercury/crab": [76, 54]</code>. The collision box is a share of
+    that picture: 72% of its width and 88% of its height by default. Art is
+    rarely a perfect rectangle (claws, antennae, empty corners), so a
+    slightly smaller box feels fairer. Redraw a crab bigger, re-run the
+    cutter, and its hit box follows with no code change.
+  </p>
+
+  <h2>Making one</h2>
+  <script type="text/plain" data-file="js/astro/enemies.js">
+    function fresh(kind, x, y, made) {
+      return {
+        age: Math.random() * 10,
+        dir: -1,
+        flash: 0,
+        hp: made.def.hp ?? 1,
+        kind,
+        // (cut: a second cooldown)
+        state: "patrol",
+        timer: 0.5 + Math.random(),
+        vx: 0,
+        vy: 0,
+        ...made,
+        home: { x, y },
+        x,
+        y,
+      };
+    }
+
+    export function createEnemy([kind, col, row = 9]) {
+      const made = body(kind, false);
+      const x = col * tile + tile / 2 - made.w / 2;
+      const y = made.def.flies
+        ? row * tile + tile / 2 - made.h / 2
+        : (row + 1) * tile - made.h;
+      const enemy = fresh(kind, x, y, made);
+      made.def.setup?.(enemy, row);
+      return enemy;
+    }
+  </script>
+  <ul>
+    <li><code>createEnemy</code> takes a stage entry like <code>["cindercrab", 10]</code> and <strong>destructures</strong> it, with <code>row = 9</code> (standing on the floor) when it's left out.</li>
+    <li>Walkers are placed with their feet on the row; fliers hover with their middle there.</li>
+    <li><code>age</code> and <code>timer</code> start a little random, so two crabs side by side don't move in perfect step.</li>
+    <li><code>def.setup?.(enemy, row)</code>: <code>?.</code> calls <code>setup</code> only if this kind has one (the Mars crawler uses it to start hanging from the roof).</li>
+  </ul>
+
+  <h2>Flags are rebuilt every frame</h2>
+  <script type="text/plain" data-file="js/astro/enemies.js">
+    export function updateEnemy(enemy, dt, round) {
+      enemy.age += dt;
+      enemy.flash = Math.max(0, enemy.flash - dt);
+      if (enemy.dying !== undefined) {
+        enemy.dying += dt;
+        return;
+      }
+      clearFlags(enemy);
+      // (cut)
+      enemy.def.move(enemy, dt, round);
+      if (enemy.y > round.level.height + 200) enemy.gone = true;
+    }
+  </script>
+  <p>
+    <code>clearFlags</code> sets <code>spiky</code>, <code>guarded</code>,
+    <code>harmless</code>, <code>glow</code>, <code>tint</code> and the
+    rest back to "off" at the start of every frame. Then the move function
+    switches on only what is true <em>right now</em>. A beetle is spiky
+    because this frame's <code>molten</code> said so. Nobody has to
+    remember to switch a flag off again, so a flag can never be left on by
+    mistake. It's the same idea as Course 2's <code>render()</code>
+    starting each square with <code>className = "cell"</code>.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What is stored in a kind's <code>move</code> field?</p>
+      <ul>
+        <li>A speed in pixels per second.</li>
+        <li data-right>A function that runs that alien's behaviour each frame.</li>
+        <li>The name of a sound.</li>
+      </ul>
+      <p class="why">Functions are values in JavaScript, so they can sit in a data table like any number or string.</p>
+    </div>
+    <div class="q">
+      <p>A crab picture is 76 by 54 pixels and uses the default box. How wide is its hit box?</p>
+      <ul>
+        <li>76</li>
+        <li data-right>55</li>
+        <li>48</li>
+      </ul>
+      <p class="why">76 × 0.72 = 54.72, rounded to 55.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>updateEnemy</code> call <code>clearFlags</code> before the move function?</p>
+      <ul>
+        <li>To make the alien invisible for a frame.</li>
+        <li data-right>So each frame starts with every flag off and the move function turns on only what's true now.</li>
+        <li>To reset the alien's health.</li>
+      </ul>
+      <p class="why">Rebuilding flags from scratch means none can be accidentally left on.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-moves">
+  <header><p>Course 7 · Lesson 7</p></header>
+  <h1>Move Sets: Little State Machines</h1>
+
+  <p>
+    The four <code>moves*.js</code> files hold about 30 behaviours. Nearly
+    all of them are <strong>state machines</strong>: the alien is in one
+    named <code>state</code> at a time, a <code>timer</code> counts down,
+    and when it runs out (or the player comes close) it switches to the
+    next state.
+  </p>
+
+  <h2>The cinder crab</h2>
+  <script type="text/plain" data-file="js/astro/movesHot.js">
+    // Cinder crab: wanders, then scuttles at you at triple speed.
+    export function scuttle(enemy, dt, round) {
+      const { level, player } = round;
+      enemy.timer -= dt;
+      if (enemy.state === "rush") {
+        walk(enemy, dt, level, enemy.def.speed * 3);
+        if (enemy.timer > 0) return;
+        enemy.state = "patrol";
+        enemy.timer = cooldown(round, 1.2);
+        return;
+      }
+      if (enemy.state === "windup") {
+        if (windup(enemy, dt, level, "rush")) enemy.timer = 1.1;
+        return;
+      }
+      walk(enemy, dt, level);
+      if (enemy.timer > 0 || !nearby(enemy, player, 300)) return;
+      faceTowards(enemy, player);
+      enemy.state = "windup";
+      enemy.timer = 0.35;
+    }
+  </script>
+  <p>Three states, round and round:</p>
+  <ul>
+    <li><strong>patrol:</strong> walk back and forth. Once the cooldown is over and you're within 300 pixels on the same floor, turn to face you and go to...</li>
+    <li><strong>windup:</strong> stand still for 0.35 seconds (the renderer shakes anything in <code>"windup"</code>, which is your warning). Then...</li>
+    <li><strong>rush:</strong> charge at triple speed for 1.1 seconds, then back to patrol with a cooldown.</li>
+  </ul>
+  <p>
+    The wind-up is a design rule across the whole game: every attack
+    <em>tells</em> you it's coming. That's what makes a hard game feel fair.
+  </p>
+
+  <h2>Shared parts</h2>
+  <p>
+    <code>walk</code>, <code>windup</code>, <code>nearby</code> and
+    <code>faceTowards</code> come from <code>enemyKit.js</code>, a toolbox
+    every behaviour uses:
+  </p>
+  <script type="text/plain" data-file="js/astro/enemyKit.js">
+    // Later planets recharge alien abilities faster.
+    export const cooldown = (round, seconds) => seconds / round.stage.pace;
+
+    // Back and forth, turning at walls and ledges. The ledge is checked before
+    // stepping, so turning to face the player every frame can't walk it off.
+    export function walk(enemy, dt, level, speed = enemy.def.speed) {
+      if (atLedge(enemy, level)) {
+        enemy.dir = -enemy.dir;
+        stand(enemy, dt, level);
+        return;
+      }
+      enemy.vx = enemy.dir * speed;
+      moveBody(enemy, dt, level);
+      if (enemy.hitWall || atLedge(enemy, level)) enemy.dir = -enemy.dir;
+    }
+  </script>
+  <p>
+    <code>cooldown</code> is how difficulty rises across the trip. Each
+    planet has a <code>pace</code>: 1 on Mercury up to 1.45 on Neptune.
+    Dividing the rest time by the pace means a crab that rests 1.2 seconds
+    on Mercury rests about 0.83 on Neptune. One number per planet makes
+    every alien a bit fiercer, without touching a single behaviour.
+  </p>
+
+  <h2>A state table</h2>
+  <script type="text/plain" data-file="js/astro/movesHot.js">
+    // Magma beetle: its shell glows red hot (stomping it burns you), then it
+    // vents steam and cools down for a couple of seconds. Smash it then.
+    export function molten(enemy, dt, round) {
+      enemy.timer -= dt;
+      walk(enemy, dt, round.level);
+      const steps = { cool: ["hot", 3], hot: ["vent", 0.5], vent: ["cool", 2.2] };
+      if (!steps[enemy.state]) {
+        enemy.state = "hot";
+        enemy.timer = 3;
+      }
+      if (enemy.timer <= 0) {
+        const [next, seconds] = steps[enemy.state];
+        enemy.state = next;
+        enemy.timer = next === "cool" ? seconds : seconds / round.stage.pace;
+        if (next === "cool") emit(round, "steam", enemy);
+      }
+      enemy.spiky = enemy.state !== "cool";
+      enemy.glow = enemy.spiky ? "#ff5a1a" : null;
+      enemy.tint = enemy.state === "cool" ? "cool" : null;
+    }
+  </script>
+  <p>
+    Here the state machine is written as data: <code>steps</code> maps each
+    state to the next one and how long it lasts. hot, then vent, then cool,
+    then hot again. The last three lines set this frame's flags from the
+    state: hot and venting are <code>spiky</code> with an orange glow, cool
+    is grey and safe to smash. The cool spell is <em>not</em> shortened by
+    pace, so the beetle's opening stays fair even on later planets.
+  </p>
+  <p>
+    The sky aliens share a general version of this,
+    <code>loop(enemy, round, steps)</code> in <code>movesSky.js</code>, which
+    takes a list like <code>[["idle", 2.8], ["flap", 0.5], ["blow", 1.8]]</code>.
+    The gale wyvern uses exactly that, and during <code>"blow"</code> it
+    calls <code>shove(player, ...)</code> to push you sideways.
+  </p>
+
+  <h2>Telling the rest of the game</h2>
+  <p>
+    <code>emit(round, "steam", enemy)</code> doesn't play a sound. It adds
+    <code>{ type: "steam", x, y }</code> to <code>round.events</code>, and
+    <code>playEvents</code> in <code>contacts.js</code> looks the type up
+    in a table of effects (<code>steam: { colour: "#e8e8e8", sound: "whoosh" }</code>).
+    It's the same "report, don't do" pattern the player uses.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does the cinder crab spend 0.35 seconds in <code>"windup"</code> before rushing?</p>
+      <ul>
+        <li>To let its animation load.</li>
+        <li data-right>To warn the player (it shakes) so the charge can be dodged.</li>
+        <li>Because <code>walk</code> needs a pause.</li>
+      </ul>
+      <p class="why">Every attack in the game is signalled first. Fair warning is a design rule.</p>
+    </div>
+    <div class="q">
+      <p>Neptune's pace is 1.45. About how long does <code>cooldown(round, 2.9)</code> come to there?</p>
+      <ul>
+        <li>4.2 seconds</li>
+        <li>2.9 seconds</li>
+        <li data-right>2 seconds</li>
+      </ul>
+      <p class="why">2.9 ÷ 1.45 = 2. A higher pace means shorter rests.</p>
+    </div>
+    <div class="q">
+      <p>A magma beetle is in <code>"vent"</code> and its timer runs out. What comes next?</p>
+      <ul>
+        <li data-right><code>"cool"</code> for 2.2 seconds, with a puff of steam.</li>
+        <li><code>"hot"</code> for 3 seconds.</li>
+        <li>It stays in <code>"vent"</code>.</li>
+      </ul>
+      <p class="why"><code>steps.vent</code> is <code>["cool", 2.2]</code>, and switching to cool emits steam.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-bosses">
+  <header><p>Course 7 · Lesson 8</p></header>
+  <h1>Bosses and the Open Moment</h1>
+
+  <h2>Walking into the arena</h2>
+  <script type="text/plain" data-file="js/astro/world.js">
+    // Walking into the arena shuts the gate behind you and wakes the boss.
+    function checkArena(game) {
+      const { round } = game;
+      const { level, player, stage } = round;
+      if (round.fight !== "before") return;
+      if (player.x < (level.arena + 1) * tile) return;
+      setGate(level, true);
+      round.fight = "on";
+      round.boss = createBoss(stage.arena.boss, level);
+      round.checkpoint = "arena";
+      // (cut: clearing out stray aliens)
+      game.showToast(`BOSS: ${round.boss.def.name}!`, "#ff8a3a");
+      play("fire");
+    }
+  </script>
+  <p>
+    <code>round.fight</code> is a tiny state machine of its own:
+    <code>"before"</code>, <code>"on"</code>, <code>"won"</code>. One step
+    into the arena shuts the gate (a column of wall tiles), creates the
+    boss and moves the checkpoint to the arena door, so losing your lives
+    to a boss lets you continue right outside its room.
+  </p>
+
+  <h2>A boss is a table of attacks</h2>
+  <script type="text/plain" data-file="js/astro/bossesInner.js">
+    // Mercury. Hurls lava rocks and slams the ground to send out shock waves,
+    // then has to catch its breath.
+    const magmaw = {
+      art: "mercury/boss",
+      begin: (boss) => go(boss, "walk", 1.5),
+      faces: -1,
+      h: 240,
+      hp: 5,
+      name: "MAGMAW",
+      update(boss, dt, round) {
+        const { player } = round;
+        const steps = {
+          hurl: () => {
+            boss.shake = true;
+            boss.glow = "#ff6a00";
+            if (boss.timer > 0) return;
+            throwFan(round, boss, "lavarock", boss.angry ? 5 : 3, 110);
+            go(boss, "walk", 1.8);
+          },
+          slam: () => {
+            boss.shake = true;
+            if (boss.timer > 0) return;
+            fireShot(round, "wave", boss.x - 10, floorY, -380);
+            fireShot(round, "wave", boss.x + boss.w + 10, floorY, 380);
+            emitAt(round, "quake", centreX(boss), floorY);
+            if (boss.angry) rainDown(round, 4, "lavarock");
+            go(boss, "tired", boss.angry ? 1.9 : 2.4);
+          },
+          tired: () => {
+            boss.open = true;
+            boss.crouch = 0.3;
+            if (boss.timer <= 0) go(boss, "walk", 1.6);
+          },
+          walk: () => {
+            stepTo(boss, centreX(player), boss.angry ? 85 : 55, dt);
+            if (boss.timer > 0) return;
+            go(boss, nextAttack(boss, ["hurl", "slam"]), 0.7);
+          },
+        };
+        steps[boss.state]();
+      },
+      w: 150,
+    };
+  </script>
+  <p>
+    Bosses use the same state machine idea as aliens, written as an object
+    of small functions, one per state. <code>steps[boss.state]()</code>
+    looks up the function for the current state and calls it. Magmaw's
+    fight goes:
+  </p>
+  <ol>
+    <li><strong>walk</strong> towards you, then pick the next attack.</li>
+    <li><strong>hurl</strong>: shake and glow while the timer runs (the warning), then throw a fan of lava rocks.</li>
+    <li><strong>slam</strong>: send shock waves along the floor both ways, which you have to jump. A big attack leaves it...</li>
+    <li><strong>tired</strong>: crouched and <code>open</code>. This is your moment to smash it.</li>
+  </ol>
+  <p>The helpers come from <code>bossKit.js</code>:</p>
+  <script type="text/plain" data-file="js/astro/bossKit.js">
+    export function go(boss, state, seconds = 0) {
+      boss.state = state;
+      boss.timer = seconds;
+    }
+
+    // Picks the next attack from a list, in order, looping round.
+    export function nextAttack(boss, list) {
+      const attack = list[boss.turn % list.length];
+      boss.turn += 1;
+      return attack;
+    }
+  </script>
+  <p>
+    <code>boss.turn % list.length</code> walks through the list and wraps
+    round: hurl, slam, hurl, slam... A fixed order makes a boss
+    <em>learnable</em>. Beating it is about spotting the pattern.
+  </p>
+
+  <h2>Damage only when it's open</h2>
+  <script type="text/plain" data-file="js/astro/bosses.js">
+    // Takes health off. Returns true if that beat the boss.
+    export function hurtBoss(boss, amount) {
+      if (boss.grace > 0 || boss.dying !== undefined) return false;
+      boss.hp = Math.max(0, boss.hp - amount);
+      boss.flash = 0.3;
+      boss.grace = amount >= 1 ? 0.7 : 0.05;
+      if (!boss.angry && boss.hp <= boss.max / 2) boss.angry = true;
+      if (boss.hp > 0) return false;
+      boss.dying = 0;
+      return true;
+    }
+  </script>
+  <p>
+    In <code>touchBoss</code> (in <code>contacts.js</code>), a stomp or
+    smash calls <code>hurtBoss(boss, 1)</code> only when
+    <code>boss.open</code> is true; otherwise you just bounce off with the
+    hint "WAIT TILL IT'S WORN OUT!". After a hit, <code>grace</code> stops
+    the same smash counting twice in a row of frames. And at half health the
+    boss turns <code>angry</code>: Magmaw walks faster, throws five rocks
+    instead of three, rains rocks after a slam and rests for less time. A
+    second phase, from one boolean.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>With <code>["hurl", "slam"]</code> and <code>boss.turn</code> at 5, which attack does <code>nextAttack</code> pick?</p>
+      <ul>
+        <li><code>"hurl"</code></li>
+        <li data-right><code>"slam"</code></li>
+        <li><code>undefined</code></li>
+      </ul>
+      <p class="why">5 % 2 is 1, and <code>list[1]</code> is <code>"slam"</code>.</p>
+    </div>
+    <div class="q">
+      <p>When can a smash take health off Magmaw?</p>
+      <ul>
+        <li>Any time you land on its head.</li>
+        <li data-right>While it's <code>open</code>, in the tired state after a slam.</li>
+        <li>Only while it's angry.</li>
+      </ul>
+      <p class="why">The tired state sets <code>open = true</code>. At any other time a stomp just bounces.</p>
+    </div>
+    <div class="q">
+      <p>Magmaw has 5 hp. After which hit does it become angry?</p>
+      <ul>
+        <li>The first.</li>
+        <li data-right>The third, when it drops to 2 hp.</li>
+        <li>The last.</li>
+      </ul>
+      <p class="why">Angry starts when <code>hp &lt;= max / 2</code>, which is 2.5. After two hits it has 3, after three it has 2.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-shots">
+  <header><p>Course 7 · Lesson 9</p></header>
+  <h1>Shots, Lobs and Warning Strikes</h1>
+
+  <h2>One table for everything thrown</h2>
+  <script type="text/plain" data-file="js/astro/shots.js">
+    // Gravity shots fall; "runs" shots slide along the floor and stop at a
+    // ledge; "ghost" shots pass through walls; "pierce" shots keep going after
+    // they hit you (a boss's ring has to fly back to it).
+    const kinds = {
+      // (cut)
+      fireball: { gravity: 900, h: 22, land: "fire", life: 4, w: 22 },
+      frost: { effect: "freeze", h: 26, life: 0.7, w: 26 },
+      // (cut)
+      lavarock: { gravity: 900, h: 30, land: "fire", life: 5, w: 30 },
+      mindwave: { effect: "confuse", h: 56, life: 2.2, runs: true, w: 28 },
+      // (cut)
+      wave: { h: 26, life: 1.25, runs: true, w: 30 },
+    };
+  </script>
+  <p>
+    Fireballs, shock waves, frost and mind waves are all the same kind of
+    object. What makes them different is a handful of settings:
+    <code>gravity</code> (does it fall?), <code>runs</code> (does it slide
+    along the floor?), <code>land</code> (does it leave a burning or acid
+    patch where it lands?), <code>effect</code> (does it freeze or confuse
+    instead of hurting?) and <code>life</code> (how many seconds before it
+    disappears anyway).
+  </p>
+
+  <h2>Throwing so it lands on you</h2>
+  <script type="text/plain" data-file="js/astro/shots.js">
+    // Throws a falling shot so it lands at a target point after a set time.
+    export function lob(round, kind, from, target, seconds) {
+      const g = kinds[kind].gravity;
+      const vx = (target.x - from.x) / seconds;
+      const vy = (target.y - from.y) / seconds - 0.5 * g * seconds;
+      return fireShot(round, kind, from.x, from.y, vx, vy);
+    }
+  </script>
+  <p>
+    A flame imp wants its fireball to land where you're standing, in 0.95
+    seconds. Sideways is easy: distance divided by time. Up and down is
+    harder, because gravity bends the path. The physics formula for
+    distance fallen is <code>y = vy × t + ½ × g × t²</code>. Solving that for
+    the starting speed gives <code>vy = y / t - ½ × g × t</code>, which is
+    exactly the second line. Picking the <em>time</em> rather than the
+    speed is the trick: a near target gets a gentle lob and a far one a
+    faster throw, but both take the same time, so you always get the same
+    amount of warning.
+  </p>
+
+  <h2>Moving them all</h2>
+  <script type="text/plain" data-file="js/astro/shots.js">
+    export function updateShots(round, dt) {
+      const { level } = round;
+      const splashes = [];
+      round.shots = round.shots.filter((shot) => {
+        const { def } = shot;
+        shot.age += dt;
+        if (shot.steer) shot.steer(shot, dt);
+        shot.vy += (def.gravity ?? 0) * dt;
+        shot.x += shot.vx * dt;
+        shot.y += shot.vy * dt;
+        const outside = shot.y > level.height || shot.x < -60;
+        if (outside || shot.age > def.life) return false;
+        if (!blocked(shot, level)) return true;
+        splash(round, shot);
+        splashes.push(shot);
+        return false;
+      });
+      return splashes;
+    }
+  </script>
+  <p>
+    Moving and deleting happen in one <code>filter</code>: return
+    <code>true</code> to keep a shot, <code>false</code> to drop it. A shot
+    goes when it leaves the level, runs out of life, or is
+    <code>blocked</code> (hit a wall, landed, or a floor runner ran out of
+    floor). Blocked shots <code>splash</code> first, which may leave a fire
+    patch or burst into shards. Note <code>def.gravity ?? 0</code>: shots
+    with no gravity setting just fly straight.
+  </p>
+
+  <h2>Strikes: warn, then hit</h2>
+  <script type="text/plain" data-file="js/astro/strikes.js">
+    // Each one flashes a warning for `warn` seconds, then hurts for `on`.
+    export function addStrike(round, spec) {
+      round.strikes.push({ age: 0, on: 0, ...spec, fired: false });
+    }
+
+    export function updateStrikes(round, dt) {
+      round.strikes = round.strikes.filter((strike) => {
+        strike.age += dt;
+        if (!strike.fired && strike.age >= strike.warn) {
+          strike.fired = true;
+          strike.fire?.(round, strike);
+          // (cut: report an event for sound and dust)
+        }
+        return strike.age < strike.warn + strike.on;
+      });
+    }
+  </script>
+  <p>
+    Lightning bolts, ice spikes and breath beams hit a fixed spot. First
+    they show a warning for <code>warn</code> seconds, then they're live
+    for <code>on</code> seconds. Only a live strike can hurt
+    (<code>strikeLive</code> checks <code>fired</code>). A
+    <code>"mark"</code> is a strike that's only a warning circle: when it
+    fires, its <code>fire</code> function drops something from the sky.
+    That's how angry Magmaw's <code>rainDown</code> works: a red circle on
+    the floor, then a lava rock falls right there.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>What makes a shock <code>wave</code> slide along the floor instead of flying through the air?</p>
+      <ul>
+        <li>It has a large <code>gravity</code>.</li>
+        <li data-right>Its kind has <code>runs: true</code>.</li>
+        <li>Its <code>life</code> is short.</li>
+      </ul>
+      <p class="why">Floor runners sit on the floor and are removed when the floor under their leading edge runs out.</p>
+    </div>
+    <div class="q">
+      <p>A lob covers 300 pixels sideways in 0.75 seconds. What is its <code>vx</code>?</p>
+      <ul>
+        <li>225</li>
+        <li data-right>400</li>
+        <li>300</li>
+      </ul>
+      <p class="why">300 ÷ 0.75 = 400 pixels per second. Gravity doesn't change sideways speed.</p>
+    </div>
+    <div class="q">
+      <p>A strike has <code>warn: 0.9</code> and <code>on: 0.5</code>. When can it hurt you?</p>
+      <ul>
+        <li>From the moment it appears.</li>
+        <li data-right>From 0.9 seconds after it appears until 1.4 seconds.</li>
+        <li>Only at exactly 0.9 seconds.</li>
+      </ul>
+      <p class="why">It warns first, fires at <code>warn</code>, stays live for <code>on</code>, then the filter removes it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-powerups">
+  <header><p>Course 7 · Lesson 10</p></header>
+  <h1>Power-ups and the Drop Table</h1>
+
+  <script type="text/plain" data-file="js/astro/powerups.js">
+    export const powerInfo = {
+      blaster: { colour: "#ff2e88", label: "BLASTER! PRESS X TO FIRE", seconds: 15 },
+      boots: { colour: "#ffd400", label: "JET BOOTS! JUMP IN MID-AIR", seconds: 20 },
+      heart: { colour: "#ff2e88", label: "EXTRA LIFE!" },
+      o2: { colour: "#9cf0ff", label: "OXYGEN BUBBLE!" },
+      quake: { colour: "#ff8a3a", label: "QUAKE SMASH! SMASH THE FLOOR", seconds: 15 },
+      shield: { colour: "#00e5ff", label: "SHIELD! BLOCKS ONE HIT" },
+      speed: { colour: "#39ff14", label: "SPEED BOOTS!", seconds: 12 },
+      star: { colour: "#ffffff", label: "STAR POWER! YOU CAN'T BE HURT", seconds: 8 },
+    };
+
+    const dropTable = [
+      ["o2", 24], ["shield", 15], ["blaster", 15], ["boots", 12], ["speed", 12],
+      ["quake", 10], ["star", 6], ["heart", 4],
+    ];
+    const dropChance = 0.35;
+  </script>
+  <p>
+    Two tables. <code>powerInfo</code> says what each power-up looks like
+    and how long it lasts (no <code>seconds</code> means it's used up some
+    other way). <code>dropTable</code> says how <em>likely</em> each one
+    is. The weights add up to 98, so oxygen turns up about 24 times in 98
+    and a heart only 4.
+  </p>
+
+  <h2>Picking by weight</h2>
+  <script type="text/plain" data-file="js/astro/powerups.js">
+    function pickKind(table) {
+      const total = table.reduce((sum, [, weight]) => sum + weight, 0);
+      let roll = Math.random() * total;
+      const found = table.find(([, weight]) => {
+        roll -= weight;
+        return roll < 0;
+      });
+      return found ? found[0] : table[0][0];
+    }
+
+    export function maybeDrop(round, x, y) {
+      if (Math.random() < dropChance) dropPower(round, x, y);
+    }
+
+    // A boss always leaves a heart and one other power-up.
+    export function bossDrops(round, x, y) {
+      dropPower(round, x - 30, y, "heart");
+      const others = dropTable.filter(([kind]) => kind !== "heart");
+      dropPower(round, x + 30, y, pickKind(others));
+    }
+  </script>
+  <p>
+    Picture the weights laid end to end on a ruler 98 long: o2 takes 0 to
+    24, shield 24 to 39, and so on. <code>roll</code> is a random point on
+    the ruler. Subtracting each weight in turn and stopping when it goes
+    below 0 finds which piece the point landed in. <code>[, weight]</code>
+    destructures each entry but skips the name, since only the weight
+    matters there.
+  </p>
+  <p>
+    <code>bossDrops</code> reuses <code>pickKind</code> on a filtered
+    table. Removing the heart from the list is enough: the other weights
+    still work, because <code>pickKind</code> adds up whatever it's given.
+    And a beaten alien drops anything at all only 35% of the time.
+  </p>
+
+  <h2>Timers that run down</h2>
+  <script type="text/plain" data-file="js/astro/powerups.js">
+    function apply(game, kind) {
+      const { player } = game.round;
+      const { powers } = player;
+      const info = powerInfo[kind];
+      if (info.seconds) powers[kind] = info.seconds;
+      if (kind === "shield") powers.shield = 1;
+      if (kind === "heart") game.lives = Math.min(maxLives, game.lives + 1);
+      if (kind === "o2") game.round.oxygen = Math.min(maxOxygen, game.round.oxygen + 12);
+      game.showToast(info.label, info.colour);
+    }
+
+    export function tickPowers(powers, dt) {
+      Object.keys(powerInfo).forEach((kind) => {
+        if (powerInfo[kind].seconds && powers[kind] > 0) {
+          powers[kind] = Math.max(0, powers[kind] - dt);
+        }
+      });
+    }
+  </script>
+  <p>
+    The player's powers are one object from <code>newPowers()</code>:
+    <code>{ blaster: 0, boots: 0, quake: 0, shield: 0, speed: 0, star: 0 }</code>.
+    Each is "seconds left", and "is the blaster on?" is simply
+    <code>powers.blaster &gt; 0</code>. Picking one up sets its timer to
+    the full amount (picking up a second one doesn't stack, it refills).
+    <code>tickPowers</code> runs every frame and counts only the timed ones
+    down, stopping at 0. The shield is the odd one out: it's a
+    <em>count</em> of hits, and <code>hurt()</code> in <code>game.js</code>
+    sets it back to 0 when it soaks one up, as you saw in Lesson 5.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>With the drop table above, which power-up is picked when <code>roll</code> starts at 30?</p>
+      <ul>
+        <li>o2</li>
+        <li data-right>shield</li>
+        <li>blaster</li>
+      </ul>
+      <p class="why">30 − 24 = 6, still not below 0. 6 − 15 = −9, below 0, so it stops on shield.</p>
+    </div>
+    <div class="q">
+      <p>You pick up speed boots with 4 seconds left on your current pair. How long do they last now?</p>
+      <ul>
+        <li>16 seconds</li>
+        <li data-right>12 seconds</li>
+        <li>4 seconds</li>
+      </ul>
+      <p class="why"><code>apply</code> sets the timer to <code>info.seconds</code>; it doesn't add to what's left.</p>
+    </div>
+    <div class="q">
+      <p>Why does <code>tickPowers</code> skip the shield?</p>
+      <ul>
+        <li>It forgot to.</li>
+        <li data-right>The shield has no <code>seconds</code>: it lasts until it blocks a hit, however long that takes.</li>
+        <li>The shield counts up instead.</li>
+      </ul>
+      <p class="why">Only kinds with <code>seconds</code> in <code>powerInfo</code> are timers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-frame">
+  <header><p>Course 7 · Lesson 11</p></header>
+  <h1>One Frame, Start to Finish</h1>
+
+  <p>
+    You've now seen every big system. <code>world.js</code> is where they
+    meet. Here is everything that happens during one frame of play, in
+    order:
+  </p>
+  <script type="text/plain" data-file="js/astro/world.js">
+    export function updateWorld(game, dt, hurt) {
+      const { input, round } = game;
+      const { level, player } = round;
+      playerEvents(game, updatePlayer(player, input, dt, level));
+      if (tryFire(round, input)) play("fire");
+      tickPowers(player.powers, dt);
+      updateHazards(round, dt);
+      round.enemies.forEach((enemy) => updateEnemy(enemy, dt, round));
+      round.enemies = round.enemies.filter((e) => {
+        return !e.gone && !(e.dying > 0.45);
+      });
+      if (round.boss) updateBoss(round.boss, dt, round);
+      updateStrikes(round, dt);
+      // (cut: shots, bolts, patches and dropped power-ups move)
+      playEvents(round);
+      resolveContacts(game, hurt);
+      // (cut: noticing the boss is beaten)
+      checkArena(game);
+      updateRocket(round, dt);
+      showTips(game);
+      updateDust(round, dt);
+      moveCamera(round, dt);
+    }
+  </script>
+  <ol>
+    <li><strong>Move everything.</strong> The astronaut, then hazards, aliens, the boss, strikes and shots. Each updates itself.</li>
+    <li><strong>Turn events into effects.</strong> Everything that moved has added its events (<code>"steam"</code>, <code>"throw"</code>, <code>"quake"</code>) to <code>round.events</code>; <code>playEvents</code> plays them all and empties the list.</li>
+    <li><strong>Then decide who touched what.</strong> <code>resolveContacts</code> runs once, after all the movement, so everything is checked in its final position for this frame.</li>
+    <li><strong>Then the bigger picture:</strong> the boss fight, the rocket, hints, and finally the camera.</li>
+  </ol>
+  <p>
+    Dead aliens aren't removed straight away. <code>dying</code> counts
+    up from 0 while the renderer squashes and fades them, and the filter
+    drops them once they've been dying for 0.45 seconds.
+  </p>
+
+  <h2>A smooth camera</h2>
+  <script type="text/plain" data-file="js/astro/world.js">
+    function moveCamera(round, dt) {
+      const { level, player } = round;
+      let ideal = player.x + player.w / 2 - viewWidth * 0.4;
+      if (round.fight !== "before") {
+        const { left } = arenaOf(level);
+        ideal = left - (viewWidth - arenaCols * tile) / 2;
+      }
+      const camera = Math.min(Math.max(ideal, 0), level.width - viewWidth);
+      round.camera += (camera - round.camera) * Math.min(1, dt * 8);
+    }
+  </script>
+  <p>
+    The camera is one number: how far the view has scrolled right. Ideally
+    the astronaut sits 40% of the way across the screen, so you see more
+    of what's ahead. In a boss fight the camera centres on the arena
+    instead. It's clamped so it never shows past either end of the level.
+    Then the last line moves the camera only <em>part</em> of the way to
+    where it wants to be each frame (about 13% at 60 frames a second).
+    That's called <strong>easing</strong>: it follows quickly when you're
+    far off and gently when you're close, so the view glides instead of
+    jerking.
+  </p>
+
+  <h2>Drawing, in layers</h2>
+  <script type="text/plain" data-file="js/astro/render.js">
+    // Draws the world: background, tiles, rocket, aliens, boss, astronaut and
+    // effects. Pure output: reads game state, never changes it.
+    export function draw(ctx, art, game) {
+      const { round } = game;
+      // (cut: a plain screen while the planet's art loads)
+      ctx.save();
+      if (round.shake > 0) {
+        const s = round.shake * 30;
+        ctx.translate((Math.random() - 0.5) * s, (Math.random() - 0.5) * s);
+      }
+      drawBackground(ctx, art.strips[zone], round);
+      drawTiles(ctx, art, round, game.clock);
+      drawPatches(ctx, round, game.clock, art.images.slime, art.fx);
+      drawItems(ctx, round, game.clock, art.images);
+      drawRocket(ctx, round, game.clock, art.images.rocket);
+      round.enemies.forEach((e) => drawEnemy(ctx, art, e, round, game.clock));
+      if (round.boss) drawBoss(ctx, art, round, game.clock);
+      drawPlayer(ctx, art, round, game.clock);
+      drawHazards(ctx, round, game.clock, art);
+      drawStrikes(ctx, round, game.clock, art.fx);
+      drawShots(ctx, round, art.fx);
+      drawBolts(ctx, round, game.clock);
+      drawDust(ctx, round);
+      ctx.restore();
+      drawHud(ctx, art, game);
+    }
+  </script>
+  <ul>
+    <li><strong>"Pure output"</strong>: the renderer only reads state. All the game rules live in the update code, so you could swap the art for coloured boxes and the game would play the same.</li>
+    <li><strong>Painter's order:</strong> later drawings cover earlier ones, so the list runs from back (sky) to front (dust).</li>
+    <li><strong>Screen shake</strong> is a random <code>translate</code> of everything between <code>save</code> and <code>restore</code>. The HUD is drawn after <code>restore</code>, so the score stays still while the world shakes.</li>
+    <li><strong>Parallax:</strong> <code>drawBackground</code> scrolls the sky at 0.3 times the camera's speed, so it looks far away.</li>
+  </ul>
+
+  <h2>Fast enough for a Chromebook</h2>
+  <p>
+    A screen shows about 22 columns by 12 rows of tiles. Drawing 264 small
+    pictures every frame adds up on a school laptop, so
+    <code>render.js</code> paints the tiles that never move into
+    <strong>chunks</strong>: canvases 16 tiles wide, made once and kept.
+    Each frame then draws two or three big pictures instead. The cache key
+    is a fingerprint of the chunk's tiles, so when the arena gate shuts
+    (and the grid changes), that chunk is repainted.
+  </p>
+  <p>
+    <code>looks.js</code> uses the same trick for effects:
+    <code>tintedCopy</code> makes the grey "cooled beetle" version of a
+    sprite once and keeps it in a <code>Map</code>, and glows are painted
+    once per colour and stretched into place. Build it once, reuse it every
+    frame.
+  </p>
+  <script type="text/plain" data-file="js/astro/render.js">
+    // (inside drawEnemy)
+    const flip = def.faces !== 0 && enemy.dir !== def.faces;
+    // (cut)
+    ctx.scale(flip ? -1 : 1, (enemy.flipY ? -1 : 1) * squashY);
+    const drawTop = enemy.flipY ? 0 : top;
+    const sprite = enemy.tint ? tintedCopy(image, enemy.tint) : image;
+    ctx.drawImage(sprite, -w / 2, drawTop, w, h);
+  </script>
+  <p>
+    Here's the <code>faces</code> field from Lesson 6 at work. If the art
+    looks right but the alien is walking left, <code>scale(-1, 1)</code>
+    mirrors the drawing. One picture serves both directions, and aliens
+    drawn facing you (<code>faces: 0</code>) are never flipped.
+  </p>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>Why does <code>resolveContacts</code> run after everything has moved?</p>
+      <ul>
+        <li>It's the slowest function.</li>
+        <li data-right>So every touch is checked with everything in its final position for this frame.</li>
+        <li>Because the renderer needs it.</li>
+      </ul>
+      <p class="why">Checking halfway through would test some things in old positions and some in new ones.</p>
+    </div>
+    <div class="q">
+      <p>The camera is at 100 and wants to be at 500. With <code>dt</code> of 0.05, where is it after one frame?</p>
+      <ul>
+        <li>500</li>
+        <li data-right>260</li>
+        <li>120</li>
+      </ul>
+      <p class="why"><code>Math.min(1, 0.05 × 8)</code> is 0.4, and 0.4 of the 400-pixel gap is 160. 100 + 160 = 260.</p>
+    </div>
+    <div class="q">
+      <p>Why is the HUD drawn after <code>ctx.restore()</code>?</p>
+      <ul>
+        <li>So it's drawn behind the world.</li>
+        <li data-right>So screen shake moves the world but not the score and meters.</li>
+        <li>Because the HUD uses a different canvas.</li>
+      </ul>
+      <p class="why"><code>restore</code> undoes the shake's <code>translate</code>, so the HUD is drawn steady on top.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="lesson-body" id="astro-oxygen">
+  <header><p>Course 7 · Lesson 12</p></header>
+  <h1>Oxygen, Score and Game Over</h1>
+
+  <h2>The oxygen meter</h2>
+  <script type="text/plain" data-file="js/astro/oxygen.js">
+    export const maxOxygen = 30;
+    const chokeSeconds = 2;
+    // Units drained per second: a full meter lasts 20 seconds.
+    const drainRate = 1.5;
+
+    export function fillOxygen(round) {
+      round.oxygen = maxOxygen;
+      round.choke = chokeSeconds;
+    }
+
+    // Drains the meter. Returns true when an empty tank should cost a life.
+    export function breathe(round, dt) {
+      // No drain during the boss fight (or after it, on the way to the rocket).
+      if (round.fight !== "before") return false;
+      const drain = drainRate * (round.poisoned ? 5 : 1);
+      round.oxygen = Math.max(0, round.oxygen - dt * drain);
+      if (round.oxygen > 0) {
+        round.choke = chokeSeconds;
+        return false;
+      }
+      round.choke -= dt;
+      if (round.choke > 0) return false;
+      round.choke = chokeSeconds;
+      return true;
+    }
+  </script>
+  <p>
+    Oxygen is what keeps you moving. A full meter (30) lasts 20 seconds,
+    and drains five times faster inside a Venus miner's poison cloud. Read the rules
+    straight from the code:
+  </p>
+  <ul>
+    <li><strong>The boss fight pauses it.</strong> Once <code>fight</code> isn't <code>"before"</code>, <code>breathe</code> returns at once. A boss is hard enough without a clock.</li>
+    <li><strong>Empty means choking.</strong> At 0, <code>choke</code> counts down 2 seconds, then <code>breathe</code> returns <code>true</code> (lose a life) and starts another 2 seconds. You have time to reach a tank, but not long.</li>
+    <li><strong>Only tanks and bubbles refill it.</strong> An O2 tank on the ground fills the meter and gives back a lost life (up to 3); an oxygen bubble power-up adds 12.</li>
+  </ul>
+  <p>
+    <code>breathe</code> doesn't take the life itself. It returns
+    <code>true</code> and lets <code>game.js</code> decide, which keeps
+    the oxygen file small and easy to test. (You'll write one just like it
+    in the next lab.)
+  </p>
+
+  <h2>Where it's called</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    function updatePlaying(dt) {
+      updateWorld(game, dt, hurt);
+      const { player, rocket, level } = game.round;
+      if (game.phase !== "playing") return;
+      game.mathTime += dt;
+      game.planetTime += dt;
+      if (breathe(game.round, dt)) {
+        choke();
+        if (game.phase !== "playing") return;
+      }
+      const fell = player.y > level.height + 40 || touchesLava(player, level);
+      if (fell) {
+        hurt(player.x, "fell");
+        return;
+      }
+      const atRocket = Math.abs(player.x + player.w / 2 - rocket.x) < 36;
+      if (rocket.landed && atRocket && player.onGround) {
+        launch();
+        return;
+      }
+      if (game.mathTime >= game.nextQuestion) runQuestion();
+    }
+  </script>
+  <p>
+    Notice <code>if (game.phase !== "playing") return;</code> appears
+    twice. <code>updateWorld</code> might hurt you and
+    <code>choke</code> might take your last life, and either can switch the
+    phase to <code>"over"</code>. Checking again stops the rest of the
+    function playing on after the game has ended.
+  </p>
+
+  <h2>The question gate, Astro style</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    // Every 30 seconds. The round only ends on a right answer, which scores a
+    // bonus and a shield, so nobody is hit mid-question. Answers don't refill
+    // oxygen.
+    async function runQuestion() {
+      setPhase("question");
+      input.clear();
+      await questions.ask({
+        inputDelay: 300,
+        label: `Answer for +${answerBonus} points!`,
+      });
+      input.clear();
+      const { round } = game;
+      game.nextQuestion += questionEvery;
+      round.player.hurtFor = shieldSeconds;
+      round.player.status.frozen = 0;
+      round.shots = [];
+      game.score += answerBonus;
+      showToast(`${free ? "BOOST!" : "CORRECT!"} +${answerBonus}`);
+      setPhase("playing");
+    }
+  </script>
+  <p>
+    You know <code>questions.ask</code> from Course 3. Astro Stomp's twist:
+    while the phase is <code>"question"</code>, <code>updatePlaying</code>
+    doesn't run, so the world freezes and the oxygen clock and the planet
+    timer stop. A right answer gives 100 points, clears every shot in the
+    air and a 2.5-second shield, so you're never hit the instant play
+    resumes. It does <em>not</em> give oxygen: answering questions can't
+    replace finding tanks. <code>input.clear()</code> on both sides stops a
+    key you were holding from leaking into the question box or back into
+    the game.
+  </p>
+
+  <h2>The launch bonus</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    const launchBonusTop = 3000;
+    const launchBonusPerSecond = 12;
+    const launchBonusLeast = 150;
+
+    function clockText(seconds) {
+      const whole = Math.floor(seconds);
+      const secs = String(whole % 60).padStart(2, "0");
+      return `${Math.floor(whole / 60)}:${secs}`;
+    }
+
+    // The quicker the planet, the bigger the bonus, rounded to tens.
+    function launchBonus(seconds) {
+      const bonus = launchBonusTop - seconds * launchBonusPerSecond;
+      return Math.max(launchBonusLeast, Math.round(bonus / 10) * 10);
+    }
+  </script>
+  <p>
+    Reach the rocket and you get 3,000 points, less 12 for every second the
+    planet took. <code>Math.round(bonus / 10) * 10</code> rounds to the
+    nearest ten (2,268 becomes 2,270), and <code>Math.max</code> makes sure
+    even a very slow planet pays 150. <code>clockText</code> shows the time
+    as "1:05": <code>% 60</code> is the seconds left over after whole
+    minutes, and <code>padStart(2, "0")</code> turns "5" into "05".
+  </p>
+
+  <h2>Out of lives</h2>
+  <script type="text/plain" data-file="js/astro/game.js">
+    function loseLife() {
+      game.lives -= 1;
+      play("hit");
+      if (game.lives <= 0) gameOver();
+    }
+
+    // The last life is gone: the player picks a checkpoint retry or a restart.
+    function gameOver() {
+      play("lose");
+      recordRun("astro", game.score);
+      setPhase("over");
+    }
+
+    function retryPlanet() {
+      const { checkpoint } = game.round;
+      game.lives = startLives;
+      // The score is lost with the lives; the checkpoint is kept.
+      game.score = 0;
+      game.powers = newPowers();
+      newRound(game.stageIndex, checkpoint);
+      setPhase("intro");
+    }
+  </script>
+  <p>
+    When the last life goes, the score is sent to the leaderboard
+    <em>first</em> (<code>recordRun</code>), so it still counts. Then you
+    choose. <strong>C</strong> calls <code>retryPlanet</code>: you keep
+    your place (the last flag you touched, or the boss's door) but start
+    again with 3 lives, no power-ups and a score of 0. <strong>R</strong>
+    calls <code>startMission(0)</code>, back to Mercury. Either way, a high
+    score has to be earned in one go.
+  </p>
+  <p>
+    Finally, the furthest planet you've reached is kept in
+    <code>localStorage</code> under <code>"astroStompReached"</code>,
+    inside <code>try</code>/<code>catch</code> because private windows can
+    refuse storage. That's what lets you press C on the title screen to
+    carry on another day.
+  </p>
+
+  <div class="tip">
+    <strong>The whole game, in one breath:</strong> planets are data built
+    into a tile grid, small-step physics moves boxes through it, aliens and
+    bosses are data tables pointing at little state machines, everything
+    reports events instead of making noise itself, one function decides
+    every touch, a renderer that only reads draws it all in layers, and
+    <code>game.js</code> keeps score, lives, oxygen and questions on top.
+  </div>
+
+  <div class="quiz">
+    <h2>QUIZ</h2>
+    <div class="q">
+      <p>You walk into the boss arena with 3 oxygen left. What happens to your oxygen during the fight?</p>
+      <ul>
+        <li>It runs out in 2 seconds and you start choking.</li>
+        <li data-right>It stays at 3: <code>breathe</code> doesn't drain once the fight has started.</li>
+        <li>It refills to 30.</li>
+      </ul>
+      <p class="why"><code>round.fight</code> is <code>"on"</code>, so <code>breathe</code> returns <code>false</code> straight away.</p>
+    </div>
+    <div class="q">
+      <p>You answer a maths question right with your oxygen low. What do you get?</p>
+      <ul>
+        <li>A full oxygen meter.</li>
+        <li data-right>100 points and a short shield, but no oxygen.</li>
+        <li>An extra life.</li>
+      </ul>
+      <p class="why">Answers score a bonus and a shield. Only O2 tanks and oxygen bubbles refill the meter.</p>
+    </div>
+    <div class="q">
+      <p>A planet took 4 minutes (240 seconds). What is the launch bonus?</p>
+      <ul>
+        <li>120</li>
+        <li data-right>150</li>
+        <li>0</li>
+      </ul>
+      <p class="why">3000 − 240 × 12 = 120, which is below the least the rocket pays, so it's 150.</p>
+    </div>
+    <div class="q">
+      <p>You lose your last life on Mars after touching its checkpoint flag, then press C. What happens?</p>
+      <ul>
+        <li>You go back to Mercury with your score kept.</li>
+        <li data-right>You restart Mars from the flag with 3 lives and a score of 0.</li>
+        <li>You carry on exactly where you were with 1 life.</li>
+      </ul>
+      <p class="why"><code>retryPlanet</code> keeps the checkpoint but resets lives, power-ups and the score.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module" src="js/lessons.js"></script>
+</body>
+</html>
